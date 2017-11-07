@@ -3,6 +3,8 @@
 namespace App\Api\V1\Controllers;
 
 use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tymon\JWTAuth\JWTAuth;
@@ -39,6 +41,14 @@ class LoginController extends Controller
      */
     public function redirectToProvider($provider)
     {
+        Log::info('MMMMMM Redirect to Provider: '.$provider);
+        Log::info('MMMMMM GOOGLE: '.config('services.google.client_id'));
+        Log::info('MMMMMM MAILGUN: '.config('services.mailgun.domain'));
+
+        if ($provider !== 'google' && $provider !== 'facebook') {
+            throw new AccessDeniedHttpException();
+        }
+
         return Socialite::driver($provider)
             ->stateless()
             ->redirect();
@@ -54,75 +64,70 @@ class LoginController extends Controller
     /**
     also see https://isaacearl.com/blog/stateless-socialite
      **/
-    public function handleProviderCallback($provider)
+    public function handleProviderCallback(Request $request, $provider)
     {
-        try {
-
-            /**
-             * get user infos with callback provider token
-             */
-
-            $user = Socialite::driver($provider)
-                ->stateless()
-                ->user();
-
-            /**
-             * check if user email exists in database
-             */
-            $existsUser = User::where('email',$user->email)->first();
-
-            if(!$existsUser) {
-
-                /**
-                 * create user array infos to save in database
-                 */
-                /**
-                $table->string('provider')->nullable();
-                $table->string('provider_id',60)->unique()->nullable();
-                $table->string('avatar_url')->nullable();
-                 */
-                $userInfos = [
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'password' => null,
-                    'remember_token' => str_random(10),
-                    // TODO 'provider' => $provider,
-                    // TODO 'provider_id' => $user->id,
-                    // TODO 'avatar_url' => $user->avatar
-                ];
-
-                /**
-                 * generate a personal token access from this new user
-                 */
-
-                //$token = $this->userController->createUserFromProvider($userInfos);
-
-                try {
-
-                    $user = User::create($infos);
-                    $token = $this->jwt->fromUser($user);
-                    return response()->json(compact('token'));
-
-                } catch (\Exception $ex) {
-
-                    return response($ex->getMessage(),500);
-
-                }
-
-            } else {
-
-                /**
-                 * search existent user in database and generate your personal token access
-                 */
-                // $existsUser = User::where('email',$user->email)->first();
-                $token = $this->jwt->fromUser($existsUser);
-
-            }
-
-            return response()->json(compact('token'));
-        } catch (\Exception $ex) {
-            return response($ex->getMessage(),500);
+        if (!$request->has('code')) {
+            return response([
+                'status' => 'success',
+                'msg' => 'Successfully fetched token url.',
+                'data' => [
+                    'url' => Socialite::with($provider)->stateless()->redirect()->getTargetUrl()
+                ]
+            ], 200);
         }
+
+        Log::info('MMMMMM Callback: '.$provider);
+
+        Log::info('xxxxxxxx');
+
+        $providerUser = Socialite::driver($provider)
+            ->stateless()
+            ->user();
+
+        Log::info('yyyyyyyy');
+
+        Log::info('MMMMMM Callback Provider Email: '.$providerUser->getEmail());
+        Log::info('MMMMMM Callback Provider Email d: '.$providerUser->getEmail());
+        Log::info('MMMMMM Callback Provider Name d: '.$providerUser->getName());
+
+        $user = User::query()->firstOrNew(['email' => $providerUser->getEmail()]);
+
+        if(!$user->exists) {
+
+            Log::info('MMMMMM Callback Provider USER NO EXIST');
+
+            /**
+            $table->string('provider')->nullable();
+            $table->string('provider_id',60)->unique()->nullable();
+            $table->string('avatar_url')->nullable();
+             */
+            $user->email = $providerUser->getEmail();
+            $user->name = $providerUser->getName();
+
+            // All Providers
+            //$user->getId();
+            //$user->getNickname();
+            //$user->getAvatar();
+
+            $user->remember_token = str_random(10);
+            $user->save();
+
+            Log::info('MMMMMM Callback Created User: '.$user->name);
+        }
+
+        if ( ! $token = $this->jwt->fromUser($user)) {
+            throw new AuthorizationException;
+        }
+
+        Log::info('MMMMMM Callback Created JWT TOKEN: '.$token);
+
+        //return redirect('/search');
+        //return response()->json(compact('token'));
+
+        return response([
+            'status' => 'success',
+            'msg' => 'Successfully logged in via ' . $provider . '.'
+        ])->header('Authorization', $token);
     }
 
 

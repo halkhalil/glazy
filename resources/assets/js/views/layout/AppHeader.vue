@@ -28,7 +28,7 @@
                         <a class="nav-link" @click="logout">Logout</a>
                     </li>
                     <li class="nav-item" v-if="$auth.check()">
-                        <a class="nav-link" >{{ $auth.user().first_name + ' ' + $auth.user().last_name }}</a>
+                        <a class="nav-link" >{{ $auth.user().name }}</a>
                     </li>
                 </ul>
             </div>
@@ -40,7 +40,7 @@
                 <a href="#" class="btn btn-facebook btn-block">
                     <i class="fa fa-facebook-square"></i> Login with Facebook
                 </a>
-                <a @click="loginGoogle()" class="btn btn-google btn-block">
+                <a @click="loginSocial('google')" class="btn btn-google btn-block">
                     <i class="fa fa-google-plus"></i> Login with Google
                 </a>
                 <b-form-group
@@ -95,16 +95,60 @@
           rememberMe: false,
           fetchUser: false
         },
-
+        code: this.$route.query.code,
+        type: this.$route.params.type,
         error: null
-      };
+      }
+    },
+    mounted () {
+      /*
+      if (this.code) {
+        this.$auth.oauth2 ({
+          code: true,
+          provider: this.type,
+          data: {
+            code: this.code,
+          },
+          success: function(res) {
+            console.log('social success ' + this.context);
+          },
+          error: function (res) {
+            console.log('social error ' + this.context);
+          }
+        })
+      }
+
+      if (this.$auth.check()) {
+        console.log('333333 TRYING TO FETCH USER...')
+        this.fetchUser()
+      }
+      else {
+        console.log('333333 NOT AUTH')
+      }
+      */
     },
     methods: {
+
+      fetchUser () {
+        console.log('AM I LOGGED IN? ' + this.$auth.check())
+        this.$auth.fetch({
+          success(res) {
+            console.log('success ' + this.context);
+            console.log('user')
+            console.log(this.$auth.user())
+            console.log('user id: ' + this.$auth.user().id)
+          },
+          error() {
+            console.log('error ' + this.context);
+          }
+        });
+      },
+
       showLoginModal: function () {
-        this.$refs.loginModal.show();
+        this.$refs.loginModal.show()
       },
       hideLoginModal: function () {
-        this.$refs.loginModal.hide();
+        this.$refs.loginModal.hide()
       },
       login () {
 
@@ -129,25 +173,10 @@
           }
         })
       },
-      loginGoogle () {
-        if (this.$route.query.code) {
-          this.$auth.oauth2({
-            code: true,
-            provider: 'google',
-            data: {
-              code: this.code
-            },
-            success: function(res) {},
-            error: function (res) {},
-            redirect: {path: '/search'},
-            // etc
-          });
-        }
-        else {
-          this.$auth.oauth2({
-            provider: 'google',
-          });
-        }
+      loginSocial(type) {
+        this.$auth.oauth2({
+          provider: type || this.type
+        })
       },
       logout () {
         this.$auth.logout({
@@ -156,7 +185,7 @@
           success: function () {},
           error: function () {},
           redirect: '/search',
-        });
+        })
       }
     }
   }

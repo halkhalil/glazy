@@ -5,6 +5,7 @@ import AppLayoutFull from '../views/layout/AppLayoutFull'
 
 import Home from '../views/Home'
 import Search from '../views/Search'
+import Login from '../views/Login'
 import Calculator from '../views/Calculator'
 import Recipe from '../views/Recipe'
 
@@ -34,6 +35,11 @@ export default new Router({
           path: 'home',
           name: 'home',
           component: Home
+        },
+        {
+          path: '/login/:type?',
+          name: 'login',
+          component: Login
         },
         {
           path: '/calculator',

@@ -379,9 +379,6 @@
 
     mounted() {
       this.fetchRecipe()
-      // if ($auth.check()) {
-        this.fetchUser()
-      // }
     },
 
     computed : {
@@ -398,21 +395,6 @@
     },
 
     methods : {
-
-      fetchUser() {
-        console.log('AM I LOGGED IN? ' + this.$auth.check())
-        this.$auth.fetch({
-          success(res) {
-            console.log('success ' + this.context);
-            console.log('user')
-            console.log(this.$auth.user())
-            console.log('user id: ' + this.$auth.user().id)
-          },
-          error() {
-            console.log('error ' + this.context);
-          }
-        });
-      },
 
       fetchRecipe : function(){
         console.log('Fetching recipe ID: ' + this.$route.params.id)

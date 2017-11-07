@@ -25,6 +25,8 @@ class CreateSocialLoginsTable extends Migration
             $table->string('token')->nullable();
             $table->string('avatar')->nullable();
             $table->timestamps();
+
+            $table->unique([ 'provider_id','provider' ]);
         });
     }
 

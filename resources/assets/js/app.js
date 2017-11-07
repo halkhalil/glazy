@@ -40,8 +40,22 @@ Vue.router=router
 Vue.use(VueAuth, {
   auth: require('@websanova/vue-auth/drivers/auth/bearer.js'),
   http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
-  router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js')
+  router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
+  rolesVar: 'role',
+  facebookData: {url: 'http://homestead.app/api/auth/login/facebook/callback', method: 'POST', redirect: '/'},
+  facebookOauth2Data: {
+    clientId: '186121775282852',
+    redirect: function () { return this.options.getUrl() + '/login/facebook'; },
+    scope: 'public_profile email'
+  },
+  googleData: {url: 'http://homestead.app/api/auth/login/google/callback', method: 'POST', redirect: '/'},
+  googleOauth2Data: {
+    clientId: '927001342736-522sp5s40ecildcdmeq08njcb250o7t0.apps.googleusercontent.com',
+    redirect: function () { return this.options.getUrl() + '/login/google'; },
+    scope: 'profile email'
+  }
 });
+
 
 Vue.config.productionTip = false
 
