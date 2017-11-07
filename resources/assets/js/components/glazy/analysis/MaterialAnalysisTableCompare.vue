@@ -1,0 +1,300 @@
+<template>
+    <table v-if="isLoaded" class="table table-sm analysis-table" v-bind:class="tableClass">
+        <thead>
+        <tr class="oxide-types" v-if="showHeadings">
+            <th v-if="hasNewAnalysis"></th>
+            <th :colspan="presentROR2OOXIDES.length">Fluxes</th>
+            <th :colspan="presentR2O3OXIDES.length">Stabilizers</th>
+            <th :colspan="presentRO2OXIDES.length">Glass-formers</th>
+            <th :colspan="presentOTHEROXIDES.length">Other</th>
+        </tr>
+        <tr>
+            <th v-if="hasNewAnalysis"></th>
+            <th v-for="i in presentROR2OOXIDES.length"
+                v-html="OXIDE_NAME_DISPLAY[presentROR2OOXIDES[i-1]]">
+            </th>
+            <th v-for="i in presentR2O3OXIDES.length"
+                v-html="OXIDE_NAME_DISPLAY[presentR2O3OXIDES[i-1]]">
+            </th>
+            <th v-for="i in presentRO2OXIDES.length"
+                v-html="OXIDE_NAME_DISPLAY[presentRO2OXIDES[i-1]]">
+            </th>
+            <th v-for="i in presentOTHEROXIDES.length"
+                v-html="OXIDE_NAME_DISPLAY[presentOTHEROXIDES[i-1]]">
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="old-analysis">
+            <th v-if="hasNewAnalysis">Old</th>
+            <td v-for="i in presentROR2OOXIDES.length">
+                <span v-if="originalAnalysis.getOxide(presentROR2OOXIDES[i-1]) > 0">
+                    {{ Number(originalAnalysis.getOxide(presentROR2OOXIDES[i-1])).toFixed(precision) }}
+                </span>
+            </td>
+            <td v-for="i in presentR2O3OXIDES.length">
+                <span v-if="originalAnalysis.getOxide(presentR2O3OXIDES[i-1]) > 0">
+                    {{ Number(originalAnalysis.getOxide(presentR2O3OXIDES[i-1])).toFixed(precision) }}
+                </span>
+            </td>
+            <td v-for="i in presentRO2OXIDES.length">
+                <span v-if="originalAnalysis.getOxide(presentRO2OXIDES[i-1]) > 0">
+                    {{ Number(originalAnalysis.getOxide(presentRO2OXIDES[i-1])).toFixed(precision) }}
+                </span>
+            </td>
+            <td v-for="i in presentOTHEROXIDES.length">
+                <span v-if="round(originalAnalysis.getOxide(presentOTHEROXIDES[i-1]), precision) > 0">
+                    {{ Number(originalAnalysis.getOxide(presentOTHEROXIDES[i-1])).toFixed(precision) }}
+                </span>
+            </td>
+        </tr>
+        <tr class="new-analysis" v-if="hasNewAnalysis">
+            <th>New</th>
+            <td v-for="i in presentROR2OOXIDES.length">
+                <span v-if="newAnalysis.getOxide(presentROR2OOXIDES[i-1]) > 0">
+                    <strong>{{ Number(newAnalysis.getOxide(presentROR2OOXIDES[i-1])).toFixed(precision) }}</strong>
+                </span>
+            </td>
+            <td v-for="i in presentR2O3OXIDES.length">
+                <span v-if="newAnalysis.getOxide(presentR2O3OXIDES[i-1]) > 0">
+                    <strong>{{ Number(newAnalysis.getOxide(presentR2O3OXIDES[i-1])).toFixed(precision) }}</strong>
+                </span>
+            </td>
+            <td v-for="i in presentRO2OXIDES.length">
+                <span v-if="newAnalysis.getOxide(presentRO2OXIDES[i-1]) > 0">
+                    <strong>{{ Number(newAnalysis.getOxide(presentRO2OXIDES[i-1])).toFixed(precision) }}</strong>
+                </span>
+            </td>
+            <td v-for="i in presentOTHEROXIDES.length">
+                <span v-if="round(newAnalysis.getOxide(presentOTHEROXIDES[i-1]), 2) > 0">
+                    <strong>{{ Number(newAnalysis.getOxide(presentOTHEROXIDES[i-1])).toFixed(precision) }}</strong>
+                </span>
+            </td>
+        </tr>
+        <tr class="diff-analysis" v-if="hasNewAnalysis">
+            <th>Diff</th>
+            <td v-for="i in presentROR2OOXIDES.length">
+                <span v-if="Math.abs(newAnalysis.getOxide(presentROR2OOXIDES[i-1]) - originalAnalysis.getOxide(presentROR2OOXIDES[i-1])) > 0.004">
+                    {{ Number(newAnalysis.getOxide(presentROR2OOXIDES[i-1]) - originalAnalysis.getOxide(presentROR2OOXIDES[i-1])).toFixed(precision) }}
+                </span>
+            </td>
+            <td v-for="i in presentR2O3OXIDES.length">
+                <span v-if="Math.abs(newAnalysis.getOxide(presentR2O3OXIDES[i-1]) - originalAnalysis.getOxide(presentR2O3OXIDES[i-1])) > 0.004">
+                    {{ Number(newAnalysis.getOxide(presentR2O3OXIDES[i-1]) - originalAnalysis.getOxide(presentR2O3OXIDES[i-1])).toFixed(precision) }}
+                </span>
+            </td>
+            <td v-for="i in presentRO2OXIDES.length">
+                <span v-if="Math.abs(newAnalysis.getOxide(presentRO2OXIDES[i-1]) - originalAnalysis.getOxide(presentRO2OXIDES[i-1])) > 0.004">
+                    {{ Number(newAnalysis.getOxide(presentRO2OXIDES[i-1]) - originalAnalysis.getOxide(presentRO2OXIDES[i-1])).toFixed(precision) }}
+                </span>
+            </td>
+            <td v-for="i in presentOTHEROXIDES.length">
+                <span v-if="Math.abs(newAnalysis.getOxide(presentOTHEROXIDES[i-1]) - originalAnalysis.getOxide(presentOTHEROXIDES[i-1])) > 0.004">
+                    {{ Number(newAnalysis.getOxide(presentOTHEROXIDES[i-1]) - originalAnalysis.getOxide(presentOTHEROXIDES[i-1])).toFixed(precision) }}
+                </span>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+</template>
+
+
+<script>
+  import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
+  import PercentageAnalysis from 'ceramicscalc-js/src/analysis/PercentageAnalysis'
+  import Material from 'ceramicscalc-js/src/material/Material'
+
+  export default {
+
+    props: {
+      originalMaterial: {
+        type: Object,
+        default: null
+      },
+      newMaterial: {
+        type: Object,
+        default: null
+      },
+      tableClass: {
+        type: String,
+        default: null
+      },
+      showHeadings: {
+        type: Boolean,
+        default: true
+      },
+      precision: {
+        type: Number,
+        default: 2
+      }
+
+    },
+
+    data() {
+      return {
+        isMounted: false,
+        OXIDE_NAME_DISPLAY: Analysis.OXIDE_NAME_DISPLAY
+      }
+    },
+
+    computed: {
+
+      originalAnalysis: function () {
+        if (this.originalMaterial) {
+          return this.originalMaterial.getROR2OUnityFormulaAnalysis();
+        }
+      },
+
+      newAnalysis: function () {
+        if (this.newMaterial) {
+          return this.newMaterial.getROR2OUnityFormulaAnalysis();
+        }
+      },
+
+      presentROR2OOXIDES: function () {
+        var present = [];
+        if (this.isLoaded) {
+          if (this.hasNewAnalysis) {
+            for (var i = 0; i < Analysis.RO_R2O_OXIDES.length; i++) {
+              if (this.round(this.originalAnalysis.getOxide(Analysis.RO_R2O_OXIDES[i]), this.precision) > 0 ||
+                this.round(this.newAnalysis.getOxide(Analysis.RO_R2O_OXIDES[i]), this.precision) > 0) {
+                present.push(Analysis.RO_R2O_OXIDES[i]);
+              }
+            }
+          }
+          else {
+            for (var i = 0; i < Analysis.RO_R2O_OXIDES.length; i++) {
+              if (this.round(this.originalAnalysis.getOxide(Analysis.RO_R2O_OXIDES[i]), this.precision) > 0) {
+                present.push(Analysis.RO_R2O_OXIDES[i]);
+              }
+            }
+          }
+        }
+        return present;
+      },
+
+      presentR2O3OXIDES: function () {
+        var present = [];
+        if (this.isLoaded) {
+          if (this.hasNewAnalysis) {
+            for (var i = 0; i < Analysis.R2O3_OXIDES.length; i++) {
+              if (this.round(this.originalAnalysis.getOxide(Analysis.R2O3_OXIDES[i]), this.precision) > 0 ||
+                this.newAnalysis.getOxide(Analysis.R2O3_OXIDES[i]) > 0) {
+                present.push(Analysis.R2O3_OXIDES[i]);
+              }
+            }
+          }
+          else {
+            for (var i = 0; i < Analysis.R2O3_OXIDES.length; i++) {
+              if (this.round(this.originalAnalysis.getOxide(Analysis.R2O3_OXIDES[i]), this.precision) > 0) {
+                present.push(Analysis.R2O3_OXIDES[i]);
+              }
+            }
+          }
+        }
+        return present;
+      },
+
+      presentRO2OXIDES: function () {
+        var present = [];
+        if (this.isLoaded) {
+          if (this.hasNewAnalysis) {
+            for (var i = 0; i < Analysis.RO2_OXIDES.length; i++) {
+              if (this.round(this.originalAnalysis.getOxide(Analysis.RO2_OXIDES[i]), this.precision) > 0 ||
+                  this.round(this.newAnalysis.getOxide(Analysis.RO2_OXIDES[i]), this.precision) > 0) {
+                present.push(Analysis.RO2_OXIDES[i]);
+              }
+            }
+          }
+          else {
+            for (var i = 0; i < Analysis.RO2_OXIDES.length; i++) {
+              if (this.round(this.originalAnalysis.getOxide(Analysis.RO2_OXIDES[i]), this.precision) > 0) {
+                present.push(Analysis.RO2_OXIDES[i]);
+              }
+            }
+          }
+        }
+        return present;
+      },
+
+      presentOTHEROXIDES: function () {
+        var present = [];
+        if (this.isLoaded) {
+          if (this.hasNewAnalysis) {
+            for (var i = 0; i < Analysis.OTHER_OXIDES.length; i++) {
+              if (this.round(this.originalAnalysis.getOxide(Analysis.OTHER_OXIDES[i]), this.precision) > 0 ||
+                this.round(this.newAnalysis.getOxide(Analysis.OTHER_OXIDES[i]), this.precision) > 0) {
+                present.push(Analysis.OTHER_OXIDES[i]);
+              }
+            }
+          }
+          else {
+            for (var i = 0; i < Analysis.OTHER_OXIDES.length; i++) {
+              if (this.round(this.originalAnalysis.getOxide(Analysis.OTHER_OXIDES[i]), this.precision) > 0) {
+                present.push(Analysis.OTHER_OXIDES[i]);
+              }
+            }
+          }
+        }
+        return present;
+      },
+
+      isLoaded: function () {
+        if (
+          this.isMounted
+        ) {
+          return true;
+        }
+        return false;
+      },
+
+      hasNewAnalysis: function () {
+        if (this.newAnalysis) {
+          return true;
+        }
+        return false;
+      }
+    },
+
+    mounted() {
+      this.isMounted = true;
+    },
+
+    methods: {
+      arrayUnique: function (array) {
+        var a = array.concat();
+        for (var i = 0; i < a.length; ++i) {
+          for (var j = i + 1; j < a.length; ++j) {
+            if (a[i] === a[j])
+              a.splice(j--, 1);
+          }
+        }
+        return a;
+      },
+      round: function (number, precision) {
+        var factor = Math.pow(10, precision);
+        var tempNumber = number * factor;
+        var roundedTempNumber = Math.round(tempNumber);
+        return roundedTempNumber / factor;
+      }
+    }
+
+  }
+
+</script>
+
+<style>
+    .analysis-table {
+        margin-top: 0;
+    }
+
+    .analysis-table tr th {
+        opacity: 0.5;
+    }
+
+    .diff-analysis {
+        opacity: 0.5;
+    }
+
+</style>

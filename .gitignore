@@ -1,0 +1,11 @@
+/node_modules
+/public/storage
+/storage/*.key
+/vendor
+/.idea
+Homestead.json
+Homestead.yaml
+.env
+/.vagrant
+/database/seeds/Glazy/glaze_data_seeder.sql
+/database/seeds/Glazy/glaze_data_seeder_no_create.sql

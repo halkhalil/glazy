@@ -1,0 +1,293 @@
+<template>
+    <nav class="level is-light has-shadow">
+            <div class="navbar-brand">
+                <div class="navbar-burger burger" data-target="navMenu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <div id="searchNavMenu" class="navbar-menu">
+                <div class="navbar-start">
+
+                    <div class="navbar-item">
+                        <b-field>
+                            <b-input placeholder="Search Term" v-model="query.keywords"></b-input>
+                        </b-field>
+                    </div>
+
+                    <b-dropdown>
+                        <a class="navbar-item" slot="trigger">
+                            <span>{{ typeTitle }}</span>
+                            <b-icon icon="arrow_drop_down"></b-icon>
+                        </a>
+                        <b-dropdown-item custom>
+                            <b-field label="Recipe Type">
+                                <b-select placeholder="Type" v-model.number="query.base_type_id">
+                                    <option
+                                            v-for="option in base_type_options"
+                                            :value="option.value"
+                                            :key="option.value">
+                                        {{ option.text }}
+                                    </option>
+                                </b-select>
+                            </b-field>
+
+                            <b-field label="Sub-type" v-if="subtype_options">
+                                <b-select placeholder="Subtype" v-model.number="query.subtype_id">
+                                    <option
+                                            v-for="option in subtype_options"
+                                            :value="option.value"
+                                            :key="option.value">
+                                        {{ option.text }}
+                                    </option>
+                                </b-select>
+                            </b-field>
+                        </b-dropdown-item>
+                    </b-dropdown>
+
+                    <b-dropdown position="is-bottom-left">
+                        <a class="navbar-item" slot="trigger">
+                            <span>{{ firingTitle }}</span>
+                            <b-icon icon="arrow_drop_down"></b-icon>
+                        </a>
+                        <b-dropdown-item custom>
+                            <b-field label="Temperature">
+                                <b-select placeholder="Temp" v-model.number="query.cone_id">
+                                    <option
+                                            v-for="option in constants.TEMPERATURE_TYPES"
+                                            :value="option.value"
+                                            :key="option.value"
+                                    >
+                                        {{ option.text }}
+                                    </option>
+                                </b-select>
+                            </b-field>
+
+                            <b-field label="Atmosphere">
+                                <b-select placeholder="Atmosphere" v-model.number="query.atmosphere_id">
+                                    <option
+                                            v-for="option in constants.ATMOSPHERE_TYPES"
+                                            :value="option.value"
+                                            :key="option.value"
+                                    >
+                                        {{ option.text }}
+                                    </option>
+                                </b-select>
+                            </b-field>
+                        </b-dropdown-item>
+                    </b-dropdown>
+
+
+                    <b-dropdown position="is-bottom-left">
+                        <a class="navbar-item" slot="trigger">
+                            <span>{{ characteristicsTitle }}</span>
+                            <b-icon icon="arrow_drop_down"></b-icon>
+                        </a>
+                        <b-dropdown-item custom>
+                            <b-field label="Surface">
+                                <b-select placeholder="Surface" v-model.number="query.surface_type_id">
+                                    <option
+                                            v-for="option in constants.SURFACE_TYPES"
+                                            :value="option.value"
+                                            :key="option.value"
+                                    >
+                                        {{ option.text }}
+                                    </option>
+                                </b-select>
+                            </b-field>
+
+                            <b-field label="Transparency">
+                                <b-select placeholder="Transparency" v-model.number="query.transparency_type_id">
+                                    <option
+                                            v-for="option in constants.TRANSPARENCY_TYPES"
+                                            :value="option.value"
+                                            :key="option.value"
+                                    >
+                                        {{ option.text }}
+                                    </option>
+                                </b-select>
+                            </b-field>
+                        </b-dropdown-item>
+                    </b-dropdown>
+
+                    <b-dropdown position="is-bottom-left">
+                        <a class="navbar-item" slot="trigger">
+                            <span>Color</span>
+                            <b-icon icon="arrow_drop_down"></b-icon>
+                        </a>
+                            <chrome-picker v-model="colors" :disableAlpha="true" />
+
+                    </b-dropdown>
+
+                    <div class="navbar-item">
+                        <a @click.prevent="resetSearch" class="button">Clear</a>
+                    </div>
+                </div>
+                <div class="navbar-end">
+
+                </div>
+            </div>
+    </nav>
+
+</template>
+
+
+<script>
+
+import SearchQuery from './search-query'
+import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
+import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
+//import MaterialTypes from '../../../ceramicscalc/material/material-types';
+
+import { Chrome } from 'vue-color'
+
+export default {
+  name: 'SearchNavbar',
+
+  props: [
+    'query'
+  ],
+
+  data() {
+    return {
+      materialTypes: new MaterialTypes(),
+      previousBaseTypeId: 0,
+      constants: new GlazyConstants(),
+      colors: {
+        hex: '#194d33',
+        hsl: {
+          h: 150,
+          s: 0.5,
+          l: 0.2,
+          a: 1
+        },
+        hsv: {
+          h: 150,
+          s: 0.66,
+          v: 0.30,
+          a: 1
+        },
+        rgba: {
+          r: 25,
+          g: 77,
+          b: 51,
+          a: 1
+        },
+        a: 1
+      }
+    }
+  },
+
+  components: {
+    'chrome-picker': Chrome
+  },
+
+  computed: {
+
+    base_type_options: function () {
+      return this.materialTypes.getParentTypes();
+    },
+
+    calc_base_type_id: function () {
+      return this.query.base_type_id;
+    },
+
+    subtype_options: function () {
+      if (this.calc_base_type_id && this.calc_base_type_id != 0) {
+        if (this.previousBaseTypeId != 0) {
+          // we're switching base types.. set subtype to zero
+          this.query.subtype_id = 0;
+        }
+        this.previousBaseTypeId = this.calc_base_type_id;
+        switch (this.calc_base_type_id) {
+          case this.materialTypes.GLAZE_TYPE_ID:
+            return this.materialTypes.getGlazeTypes();
+          case this.materialTypes.CLAYS_TYPE_ID:
+            return this.materialTypes.getClayTypes();
+          case this.materialTypes.SLIPS_TYPE_ID:
+            return this.materialTypes.getSlipTypes();
+        }
+      }
+      return null;
+    },
+    typeTitle: function () {
+      if (this.query.subtype_id) {
+        return this.query.subtype_id
+      } else if (this.query.base_type_id) {
+        return this.query.base_type_id
+      }
+      return 'Type'
+    },
+    firingTitle: function () {
+      if (this.query.cone_id && this.query.atmosphere_id) {
+        return this.query.cone_id + ', ' + this.query.atmosphere_id
+      } else if (this.query.cone_id) {
+        return this.query.cone_id
+      } else if (this.query.atmosphere_id) {
+        return this.query.atmosphere_id
+      }
+      return 'Firing'
+    },
+    characteristicsTitle: function () {
+      if (this.query.surface_type_id && this.query.transparency_type_id) {
+        return this.query.surface_type_id + ', ' + this.query.transparency_type_id
+      } else if (this.query.surface_type_id) {
+        return this.query.surface_type_id
+      } else if (this.query.transparency_type_id) {
+        return this.query.transparency_type_id
+      }
+      return 'Characteristics'
+    }
+
+
+  },
+
+  mounted() {
+  },
+
+  methods: {
+    search: function () {
+      this.$emit('searchrequest', this.query);
+    },
+
+//        resetFields: function()
+    resetSearch: function () {
+//            var emptyQuery = new SearchQuery();
+      this.query.keywords = '';
+      this.query.user_id = 0;
+      this.query.base_type_id = 0;
+      this.query.subtype_id = 0;
+      this.query.cone_id = 0;
+      this.query.atmosphere_id = 0;
+      this.query.surface_type_id = 0;
+      this.query.transparency_type_id = 0;
+      this.query.hex_color = '';
+
+
+//            this.query = emptyQuery.search_params;
+      this.$emit('searchrequest', this.query);
+    }
+  }
+
+}
+
+</script>
+
+<style>
+    .search-navbar-fixed-topx {
+        position: fixed;
+        top: 54;
+        right: 0;
+        left: 0;
+        z-index: 1025;
+    }
+
+
+    .vc-chrome-fields-wrap {
+        display: none;
+    }
+
+
+</style>

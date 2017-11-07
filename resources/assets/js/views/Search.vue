@@ -1,0 +1,562 @@
+<template>
+  <div class="row search-row" v-cloak>
+    <nav v-bind:class="sidebarClass" class="sidebar d-none d-md-block">
+
+      <h5 class="search-title" v-html="searchTitle"></h5>
+      <h6 class="search-subtitle" v-if="searchSubtitle" v-html="searchSubtitle"></h6>
+
+      <b-button
+              size="sm"
+              type="reset"
+              variant="secondary"
+              @click.prevent="toggleExpandMap"
+              class="btn-sm expand-button"
+              v-html="expandButtonText">
+      </b-button>
+
+      <div id="stull-chart-d3" v-if="hasResults">
+        <umf-plotly
+                :recipeData="itemlist"
+                :oxide1="query.oxide1"
+                :oxide2="query.oxide2"
+                :oxide3="query.oxide3"
+                :baseTypeId="query.base_type_id"
+                :noZeros="false"
+                :isThreeAxes="query.isThreeAxes"
+                :showStullChart="true"
+                :chartHeight="chartHeight"
+                :chartWidth="chartWidth"
+                :axesColor="'#aaaaaa'"
+                :gridColor="'#aaaaaa'"
+                :highlightedRecipeId="highlightedRecipeId"
+                :showModeBar="false"
+                v-on:clickedUmfPlotly="clickedChart"
+        >
+        </umf-plotly>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <search-form
+                  :query="query"
+                  v-on:searchrequest="search"
+                  :isLarge="isMapExpanded">
+          </search-form>
+        </div>
+      </div>
+    </nav>
+
+    <main v-bind:class="mainClass" role="main" class="ml-sm-auto pt-3 search-results">
+
+      <div class="row">
+
+        <div class="col-sm-12 d-xl-none d-lg-none d-md-none">
+
+          <h5 class="search-title" v-html="searchTitle"></h5>
+          <h6 class="search-subtitle" v-if="searchSubtitle" v-html="searchSubtitle"></h6>
+
+          <search-form
+                  :query="query"
+                  v-on:searchrequest="search">
+          </search-form>
+
+        </div>
+
+      </div>
+
+      <filter-paginator
+              v-if="hasResults && hasPagination"
+              :pagination="pagination"
+              :view="view"
+              :order="order"
+              :item_type_name="'recipes'"
+              v-on:pagerequest="pageRequest"
+              v-on:orderrequest="orderRequest"
+              v-on:viewrequest="viewRequest">
+      </filter-paginator>
+
+
+      <div class="row">
+
+        <div class="col-sm-12" v-if="isProcessing">
+          <div class="load-container load7">
+            <div class="loader">Searching...</div>
+          </div>
+        </div>
+
+        <div
+                class="alert alert-warning col-sm-12"
+                role="alert"
+                v-if="(!itemlist || itemlist.length <= 0) && !isProcessing">
+          <div class="container">
+            <div class="alert-icon">
+              <i class="fa fa-bell"></i>
+            </div>
+            <strong>No recipes found.</strong>
+            Please try a broader search, or reset the search form.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">
+                                <i class="fa fa-remove"></i>
+                            </span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+
+      <section class="row" v-if="(view === 'cards') && !isProcessing">
+        <div v-bind:class="recipeCardClass" class=""
+             v-for="(recipe, index) in itemlist">
+          <RecipeCardThumb
+                  :recipe="recipe"
+                  v-on:highlightRecipe="highlightRecipe"
+                  v-on:unhighlightRecipe="unhighlightRecipe"
+          ></RecipeCardThumb>
+        </div>
+      </section>
+      <section class="row" v-else-if="!isProcessing">
+        <table class="table recipe-detail-table">
+          <tbody>
+            <tr is="RecipeCardRow" v-for="(recipe, index) in itemlist" :recipe="recipe">
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <filter-paginator
+              v-if="hasResults && hasPagination && !isProcessing"
+              :pagination="pagination"
+              :view="view"
+              :order="order"
+              :item_type_name="'recipes'"
+              v-on:pagerequest="pageRequest"
+              v-on:orderrequest="orderRequest"
+              v-on:viewrequest="viewRequest">
+      </filter-paginator>
+
+    </main>
+  </div>
+</template>
+
+<script>
+  import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
+  import PercentageAnalysis from 'ceramicscalc-js/src/analysis/PercentageAnalysis'
+  import Material from 'ceramicscalc-js/src/material/Material'
+  import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
+  import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
+
+  import StaticMaterialList from '../../static/data/material-list.json'
+
+  import UmfPlotly from 'vue-plotly-umf-charts/src/components/UmfPlotly.vue'
+
+  import MaterialAnalysisTableCompare from '../components/glazy/analysis/MaterialAnalysisTableCompare.vue';
+  import MaterialAnalysisUmfSpark2Single from '../components/glazy/analysis/MaterialAnalysisUmfSpark2Single.vue';
+  import MaterialAnalysisPercentTableCompare from '../components/glazy/analysis/MaterialAnalysisPercentTableCompare.vue';
+
+  import RecipeCardThumb from '../components/glazy/search/RecipeCardThumb.vue'
+  import RecipeCardRow from '../components/glazy/search/RecipeCardRow.vue'
+
+  import SearchForm from '../components/glazy/search/SearchForm.vue'
+  import SearchQuery from '../components/glazy/search/search-query'
+  import FilterPaginator from '../components/glazy/search/FilterPaginator.vue'
+
+  import Vue from 'vue'
+
+  export default {
+    name: 'Search',
+    components: {
+      FilterPaginator,
+      RecipeCardThumb,
+      RecipeCardRow,
+      UmfPlotly,
+      SearchForm
+    },
+    props: {
+      isembedded: {
+        type: Boolean,
+        default: false
+      },
+
+      current_user: {
+        type: Object,
+        default: null
+      },
+
+      user_id: {
+        type: Number,
+        default: null
+      },
+
+      collection: {
+        type: Object,
+        default: null
+      },
+
+      is_primitive: {
+        type: Number,
+        default: 0
+      }
+    },
+    data() {
+      return {
+        oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
+        recipes: null,
+        searchQuery: new SearchQuery(),
+        query: {},
+        routerQuery: this.$route.query,
+        itemlist: [],
+        pagination: null,
+        isProcessing: false,
+        materialTypes: new MaterialTypes(),
+        constants: new GlazyConstants(),
+        chartHeight: 200,
+        chartWidth: 300,
+        isMapExpanded: false,
+        expandButtonText: '<i class="fa fa-angle-double-right"></i>',
+        expandbuttonTooltip: 'Show More Map',
+        sidebarClass: 'col-md-3',
+        mainClass: 'col-md-9',
+        recipeCardClass: 'col-lg-3 col-md-4 col-sm-6',
+        currentPage: null,
+        isThumbnailView: true,
+        highlightedRecipeId: 0
+      }
+    },
+    computed: {
+      isLoaded () {
+        return true;
+      },
+
+      hasResults () {
+        if (this.itemlist
+          && this.itemlist.length > 0) {
+          return true;
+        }
+        return false;
+      },
+
+      hasPagination () {
+        if (this.pagination) {
+          return true;
+        }
+        return false;
+      },
+
+      view () {
+        if (this.searchQuery.getParam('view')) {
+          return this.searchQuery.getParam('view');
+        }
+        // default view is cards
+        return 'cards';
+      },
+
+      order () {
+        return this.searchQuery.getParam('order');
+      },
+
+      searchTitle () {
+        var title = ''
+        var hasTitle = false
+
+        if (this.searchQuery.search_params.keywords) {
+          title += '"' + this.searchQuery.search_params.keywords + '"'
+          hasTitle = true
+        }
+
+        if (this.searchQuery.search_params.base_type_id
+          && this.materialTypes.LOOKUP[this.searchQuery.search_params.base_type_id]) {
+          if (hasTitle) {
+            title += ', '
+          }
+          var type = this.materialTypes.LOOKUP[this.searchQuery.search_params.base_type_id]
+          if (this.searchQuery.search_params.type_id
+            && this.materialTypes.LOOKUP[this.searchQuery.search_params.type_id]) {
+            type = this.materialTypes.LOOKUP[this.searchQuery.search_params.type_id]
+          }
+          title += type
+        }
+
+        if (!title) {
+          title = 'Search'
+        }
+
+        return title
+      },
+
+      searchSubtitle () {
+        var subtitle = ''
+        var hasSubtitle = false
+
+        if (this.searchQuery.search_params.cone_id
+          && this.constants.ORTON_CONES_LOOKUP[this.searchQuery.search_params.cone_id]) {
+          subtitle += '△' + this.constants.ORTON_CONES_LOOKUP[this.searchQuery.search_params.cone_id]
+          hasSubtitle = true
+        }
+
+        if (this.searchQuery.search_params.atmosphere_id
+          && this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.search_params.atmosphere_id]) {
+          if (hasSubtitle) {
+            subtitle += ', '
+          }
+          subtitle += this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.search_params.atmosphere_id]
+          hasSubtitle = true
+        }
+
+        if (this.searchQuery.search_params.surface_type_id
+          && this.constants.SURFACE_LOOKUP[this.searchQuery.search_params.surface_type_id]) {
+          if (hasSubtitle) {
+            subtitle += ', '
+          }
+          subtitle += this.constants.SURFACE_LOOKUP[this.searchQuery.search_params.surface_type_id]
+          hasSubtitle = true
+        }
+
+        if (this.searchQuery.search_params.transparency_type_id
+          && this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.search_params.transparency_type_id]) {
+          if (hasSubtitle) {
+            subtitle += ', '
+          }
+          subtitle += this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.search_params.transparency_type_id]
+          hasSubtitle = true
+        }
+
+        return subtitle
+      }
+
+    },
+
+    mounted() {
+      this.requery();
+
+      setTimeout(() => {
+        this.handleResize()
+      }, 300);
+      window.addEventListener('resize', this.handleResize)
+
+    },
+    watch: {
+      routerQuery () {
+        //this.requery()
+      }
+    },
+    methods: {
+
+      requery () {
+        this.searchQuery.setFromRouterQuery(this.$router.query);
+
+        if (this.user_id) {
+          this.searchQuery.setParam('user_id', this.user_id);
+        }
+        if (this.collection && this.collection.id) {
+          this.searchQuery.setParam('collection_id', this.collection.id);
+        }
+        if (this.is_primitive) {
+          this.searchQuery.setParam('is_primitive', this.is_primitive);
+        }
+
+        if (this.searchQuery.getParam('type_id')
+          && !this.searchQuery.getParam('base_type_id')) {
+          // A type was given but no base type.
+          var baseType = this.materialTypes.getParentType(this.searchQuery.getParam('type_id'))
+          if (baseType) {
+            this.searchQuery.setParam('base_type_id', baseType)
+          }
+          else {
+            this.searchQuery.setParam('base_type_id', this.materialTypes.GLAZE_TYPE_ID)
+          }
+        }
+
+        if (!this.searchQuery.getParam('base_type_id')) {
+          // TODO: If no base type given, automatically default to Glaze type
+//                    this.searchQuery.setParam('base_type_id', this.materialTypes.GLAZE_TYPE_ID);
+        }
+
+        this.query = this.searchQuery.search_params;
+        this.fetchitemlist();
+      },
+
+      fetchitemlist () {
+        var querystring = this.searchQuery.toQuerystring();
+        this.isProcessing = true;
+        console.log('SEARCH: ' + querystring);
+
+        Vue.axios.get(Vue.axios.defaults.baseURL + '/search?' + querystring)
+          .then((response) => {
+
+            this.itemlist = response.data.data;
+
+            if (!this.itemlist) {
+              // Make sure itemlist is always defined, and an array
+              this.itemlist = [];
+            }
+
+            this.pagination = response.data.meta.pagination;
+
+            this.$router.push({path: 'search', query: this.searchQuery.getMinimalQuery()})
+
+            this.isProcessing = false;
+          })
+          .catch(response => {
+            // Error Handling
+            this.isProcessing = false;
+          })
+      },
+
+      search (query) {
+        this.searchQuery.setParams(query);
+        // New search, so reset the page number
+        this.searchQuery.setParam('page_num', null);
+
+        // Add back in all parent component-defined parameters
+        if (this.user_id) {
+          this.searchQuery.setParam('user_id', this.user_id);
+        }
+        if (this.collection && this.collection.id) {
+          this.searchQuery.setParam('collection_id', this.collection.id);
+        }
+        if (this.is_primitive) {
+          this.searchQuery.setParam('is_primitive', this.is_primitive);
+        }
+
+        //this.$router.query = this.searchQuery.getMinimalQuery()
+        this.fetchitemlist();
+      },
+
+      pageRequest (page_num) {
+
+        this.searchQuery.setParam('page_num', page_num);
+        this.fetchitemlist();
+      },
+
+      orderRequest (order) {
+        this.searchQuery.setParam('order', order);
+        this.fetchitemlist();
+      },
+
+      viewRequest (view) {
+        this.searchQuery.setParam('view', view);
+      },
+
+      toggleExpandMap () {
+        if (this.isMapExpanded) {
+          this.expandButtonText = '<i class="fa fa-angle-double-right"></i>'
+          this.expandbuttonTooltip = 'Show More Map'
+          this.sidebarClass = 'col-md-3'
+          this.mainClass = 'col-md-9'
+          this.recipeCardClass = 'col-lg-3 col-md-4 col-sm-6'
+          this.chartHeight = 200
+        } else {
+          this.expandButtonText = '<i class="fa fa-angle-double-left"></i>'
+          this.expandbuttonTooltip = 'Show Less Map'
+          this.sidebarClass = 'col-md-6'
+          this.mainClass = 'col-md-6'
+          this.recipeCardClass = 'col-lg-4 col-md-6 col-sm-6'
+          this.chartHeight = 300
+        }
+        this.isMapExpanded = !this.isMapExpanded
+        setTimeout(() => {
+          this.handleResize()
+        }, 300);
+
+      },
+
+      thumbnailView () {
+        this.isThumbnailView = true
+      },
+      listView () {
+        this.isThumbnailView = false
+      },
+      handleResize: function () {
+        if (document.getElementById('stull-chart-d3')) {
+          console.log('old width: ' + this.chartWidth)
+          this.chartHeight = document.getElementById('stull-chart-d3').clientHeight
+          this.chartWidth = document.getElementById('stull-chart-d3').clientWidth
+          console.log('new width: ' + this.chartWidth)
+        }
+      },
+
+      clickedChart (data) {
+        Vue.router.push('#recipe-card-' + data.customdata)
+      },
+
+      highlightRecipe: function (id) {
+        this.highlightedRecipeId = id
+      },
+
+      unhighlightRecipe: function (id) {
+        this.highlightedRecipeId = 0
+      }
+
+
+    }
+  }
+</script>
+
+<style>
+
+  .search-row {
+    background-color: #dedede;
+  }
+
+  .sidebar {
+    background-color: #efefef;
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    padding: 20px 10px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    // border-right: 1px solid #888888;
+  }
+
+  .expand-button {
+    position: absolute;
+    top: 84px;
+    right: -4px;
+    z-index: 1001;
+    font-size: 1.25rem;
+    line-height: 1;
+//    background-color: #dedede;
+//    padding-right: 0.4rem;
+  }
+
+  .chart-form {
+    padding: 0 15px;
+  }
+
+  .search-results {
+    background-color: #dedede;
+  }
+
+  .search-pagination {
+    margin-bottom: 10px;
+    margin-top: 5px;
+  }
+
+  .search-buttons {
+    margin-bottom: 10px;
+    margin-top: 5px;
+  }
+
+  .search-buttons .btn {
+    margin-bottom: 0px;
+    margin-top: 0px;
+  }
+
+  .recipe-detail-table {
+    border-top-style: hidden;
+    border-bottom-style: hidden;
+  }
+
+  .search-title {
+    margin-bottom: 5px;
+  }
+
+  .search-subtitle {
+    margin-bottom: 5px;
+  }
+
+</style>
