@@ -1,20 +1,46 @@
 <template>
 
-    <div>
-        <h1>Oauth2</h1>
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3 col-sm-12">
+            <h3>Login to Glazy</h3>
 
-        My type: {{ type }}
-
-        <div v-show="!code || !type">
-            <a @click="loginSocial('facebook')" href="#" class="btn btn-facebook btn-block">
-                <i class="fa fa-facebook-square"></i> Login with Facebook
-            </a>
-            <a @click="loginSocial('google')" class="btn btn-google btn-block">
-                <i class="fa fa-google-plus"></i> Login with Google
-            </a>
-        </div>
-        <div v-show="code && type">
-            Verifying {{ type }} code...
+            <div v-show="!code || !type">
+                <a @click="loginSocial('facebook')" href="#" class="btn btn-facebook btn-block btn-sm">
+                    <i class="fa fa-facebook-square"></i> Login with Facebook
+                </a>
+                <a @click="loginSocial('google')" class="btn btn-google btn-block btn-sm">
+                    <i class="fa fa-google-plus"></i> Login with Google
+                </a>
+                <b-form-group
+                        id="email"
+                        label="Email Address">
+                    <b-form-input
+                            id="login-form-email"
+                            v-model.trim="data.body.email"
+                            type="email"
+                    ></b-form-input>
+                </b-form-group>
+                <b-form-group
+                        id="password"
+                        label="Password">
+                    <b-form-input
+                            id="login-form-password"
+                            v-model.trim="data.body.password"
+                            type="password"
+                    ></b-form-input>
+                </b-form-group>
+                <div>
+                    <b-btn size="sm" class="float-left" variant="secondary" @click="cancelLogin()">
+                        Cancel
+                    </b-btn>
+                    <b-btn size="sm" class="float-right" variant="info" @click="login()">
+                        Login
+                    </b-btn>
+                </div>
+            </div>
+            <div v-show="code && type">
+                Logging you in via {{ type }}...
+            </div>
         </div>
     </div>
 
@@ -33,11 +59,11 @@
 
         data: {
           body: {
-            email: 'derek@derekau.net',
+            email: '',
             password: ''
           },
           rememberMe: false,
-          fetchUser: false
+          fetchUser: true
         },
         code: this.$route.query.code,
         type: this.$route.params.type,
@@ -60,24 +86,37 @@
           }
         })
       }
-      /*
-      if (this.$auth.check()) {
-        console.log('333333 TRYING TO FETCH USER...')
-        this.fetchUser()
-      }
-      else {
-        console.log('333333 NOT AUTH')
-      }
-      */
-
     },
     methods: {
 
+      login () {
+        var redirect = this.$auth.redirect()
+        this.$auth.login({
+          data: this.data.body,
+          rememberMe: this.data.rememberMe,
+          redirect: {
+            name: redirect ? redirect.from.name : 'search'
+          },
+          fetchUser: this.data.fetchUser,
+          success (res) {
+            console.log('success ' + this.context)
+            this.$router.push('home')
+          },
+          error (res) {
+            console.log('error ' + this.context)
+            this.error = res.data;
+          }
+        })
+      },
 
       loginSocial(type) {
         this.$auth.oauth2({
           provider: type || this.type
         })
+      },
+
+      cancelLogin() {
+        this.$router.push('home')
       }
 
     }

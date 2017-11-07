@@ -14,9 +14,9 @@ $api->version('v1', function (Router $api) {
         $api->post('signup', 'App\\Api\\V1\\Controllers\\SignUpController@signUp');
 
         // DAU
-        $api->get('login/{provider}',   'App\\Api\\V1\\Controllers\\LoginController@redirectToProvider');
-        $api->post('login/{provider}/callback', 'App\\Api\\V1\\Controllers\\LoginController@handleProviderCallback');
-        //$api->post('login', 'App\\Api\\V1\\Controllers\\LoginController@login');
+        // $api->get('login/{provider}',   'App\\Api\\V1\\Controllers\\LoginController@redirectToProvider');
+        $api->post('login/{provider}/callback', 'App\\Api\\V1\\Controllers\\LoginController@loginSocial');
+        $api->post('login', 'App\\Api\\V1\\Controllers\\LoginController@login');
         // $app->post('login/credentials', 'App\\Api\\V1\\Controllers\\LoginController@login');
 
         $api->post('recovery', 'App\\Api\\V1\\Controllers\\ForgotPasswordController@sendResetEmail');
