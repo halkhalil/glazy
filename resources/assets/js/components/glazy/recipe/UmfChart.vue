@@ -14,12 +14,12 @@
         </div>
         <div class="row">
             <div class="col-md-6 col-sm-12 mb-2">
-                <img src="/static/img/charts/recipe.png" height="12"/> Recipe &nbsp;
-                <img src="/static/img/charts/analysis.png" height="14"/> Analysis &nbsp;
-                <img src="/static/img/charts/current.png" height="15"/> Current Recipe
+                <img src="/img/charts/recipe.png" height="12"/> Recipe &nbsp;
+                <img src="/img/charts/analysis.png" height="14"/> Analysis &nbsp;
+                <img src="/img/charts/current.png" height="15"/> Current Recipe
             </div>
             <div class="col-md-6 col-sm-12 mb-2 text-right">
-                R<sub>2</sub>O:RO Scale <img src="/static/img/charts/ror2oscale.png" height="35" width="366"/>
+                R<sub>2</sub>O:RO Scale <img src="/img/charts/ror2oscale.png" height="35" width="366"/>
             </div>
             <div class="col-md-12">
                 <div class="row">

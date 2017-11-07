@@ -1,20 +1,31 @@
 <template>
     <form class="search-form">
         <div class="form-row">
+
+
+            <div v-if="collections && collections.length > 0"
+                 v-bind:class="sizeMedium" class="form-group">
+                <b-form-select
+                        size="sm"
+                        v-model="query.collection_id"
+                        :options="collections"
+                        @change="search">
+                </b-form-select>
+            </div>
             <div v-bind:class="sizeLarge" class="form-group">
                 <b-form-input
                         size="sm"
                         v-model="query.keywords"
                         type="text"
                         placeholder="Search Term"
-                        @input="search"></b-form-input>
+                        @change="search"></b-form-input>
             </div>
             <div v-bind:class="sizeMedium" class="form-group">
                 <b-form-select
                         size="sm"
                         v-model="query.base_type_id"
                         :options="base_type_options"
-                        @input="search">
+                        @change="search">
                     <template slot="first">
                         <option :value="null">Type</option>
                     </template>
@@ -26,7 +37,7 @@
                         v-if="subtype_options"
                         v-model="query.type_id"
                         :options="subtype_options"
-                        @input="search">
+                        @change="search">
                     <template slot="first">
                         <option :value="null">Subtype</option>
                     </template>
@@ -39,7 +50,7 @@
                         size="sm"
                         v-model="query.cone_id"
                         :options="constants.ORTON_CONES_SELECT"
-                        @input="search">
+                        @change="search">
                     <template slot="first">
                         <option :value="null">Temp</option>
                     </template>
@@ -50,7 +61,7 @@
                         size="sm"
                         v-model="query.atmosphere_id"
                         :options="constants.ATMOSPHERE_SELECT"
-                        @input="search">
+                        @change="search">
                     <template slot="first">
                         <option :value="null">Atmosphere</option>
                     </template>
@@ -63,7 +74,7 @@
                         size="sm"
                         v-model="query.surface_type_id"
                         :options="constants.SURFACE_SELECT"
-                        @input="search">
+                        @change="search">
                     <template slot="first">
                         <option :value="null">Surface</option>
                     </template>
@@ -74,7 +85,7 @@
                         size="sm"
                         v-model="query.transparency_type_id"
                         :options="constants.TRANSPARENCY_SELECT"
-                        @input="search">
+                        @change="search">
                     <template slot="first">
                         <option :value="null">Transparency</option>
                     </template>
@@ -90,7 +101,7 @@
                         size="sm"
                         v-model="query.oxide1"
                         :options="oxides"
-                        @input="search"
+                        @change="search"
                         class="col">
                     <template slot="first">
                         <option :value="null">Oxide 1</option>
@@ -102,7 +113,7 @@
                         size="sm"
                         v-model="query.oxide2"
                         :options="oxides"
-                        @input="search"
+                        @change="search"
                         class="col">
                     <template slot="first">
                         <option :value="null">Oxide 2</option>
@@ -115,7 +126,7 @@
                         size="sm"
                         v-model="query.oxide3"
                         :options="oxides"
-                        @input="search"
+                        @change="search"
                         class="col">
                     <template slot="first">
                         <option :value="null">Oxide 3</option>
@@ -265,7 +276,23 @@ export default {
         }
       }
       return null;
+    },
+
+    collections () {
+      var collections = []
+      if (this.$auth.check()) {
+        var user = this.$auth.user()
+        collections.push({ text: 'All Recipes', value: 0 })
+        collections.push({ text: 'Your Recipes', value: -1 })
+        if (user && user.collections && user.collections.length > 0) {
+          user.collections.forEach((collection) => {
+            collections.push({ text: collection.name, value: collection.id })
+          })
+        }
+      }
+      return collections
     }
+
   },
 
   mounted() {

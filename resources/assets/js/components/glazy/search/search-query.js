@@ -54,7 +54,8 @@ export default class SearchQuery {
       if (this.getParam('user_id')) {
         minimalQuery.u = this.getParam('user_id')
       }
-      if (this.getParam('collection_id')) {
+      if (this.getParam('collection_id') !== 0) {
+        // DAU special case, -1 signifies user searching for own recipes
         minimalQuery.collection = this.getParam('collection_id')
       }
       if (this.getParam('is_primitive')) {
@@ -94,14 +95,14 @@ export default class SearchQuery {
         minimalQuery.order = this.getParam('order')
       }
       if (this.getParam('oxide1')) {
-        minimalQuery.order = this.getParam('oxide1')
+        minimalQuery.oxide1 = this.getParam('oxide1')
       }
       if (this.getParam('oxide2')) {
-        minimalQuery.order = this.getParam('oxide2')
+        minimalQuery.oxide2 = this.getParam('oxide2')
       }
       if (this.getParam('isThreeAxes')) {
         if (this.getParam('oxide3')) {
-          minimalQuery.order = this.getParam('oxide3')
+          minimalQuery.oxide3 = this.getParam('oxide3')
         }
       }
 

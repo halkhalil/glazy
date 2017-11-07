@@ -47,57 +47,35 @@
               {{ recipe.description }}
             </p>
 
-            <div class="row" v-if="current_user">
+            <div class="row" v-if="$auth.check()">
 
               <div class="col-md-12">
 
-                <button type="button" class="btn btn-primary" v-on:click="collectionAdd()">
-                  <i class="fa fa-bookmark"></i>
-                  Collect
-                </button>
+                <b-button-group>
+                  <b-dropdown left>
+                    <span slot=text><i class="fa fa-bookmark" aria-hidden="true"></i> Collect</span>
+                    <b-dropdown-item>Item 1</b-dropdown-item>
+                    <b-dropdown-item>Item 2</b-dropdown-item>
+                    <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-item>Item 3</b-dropdown-item>
+                  </b-dropdown>
+                  <b-dropdown left>
+                    <span slot=text><i class="fa fa-cloud-download" aria-hidden="true"></i> Export</span>
+                    <b-dropdown-item>Item 1</b-dropdown-item>
+                    <b-dropdown-item>Item 2</b-dropdown-item>
+                    <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-item>Item 3</b-dropdown-item>
+                  </b-dropdown>
+                  <b-button><i class="fa fa-copy"></i> Duplicate</b-button>
+                </b-button-group>
 
-                <div class="btn-group btn-group-recipe-action">
-                  <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <i class="fa fa-cloud-download"></i> Export
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      <a class="dropdown-item" href="https://glazy.org/recipes/export/3308?type=Card" target="_blank">Recipe Card</a>
-                      <a class="dropdown-item" href="https://glazy.org/recipes/export/3308?type=Insight">Insight</a>
-                      <a class="dropdown-item" href="https://glazy.org/recipes/export/3308?type=GlazeChem">GlazeChem</a>
-                    </div>
-                  </div>
-                </div>
-
-                <a class="btn btn-primary" :href="'/recipes/' + recipe.id + '/copy'" role="button">
-                  <i class="fa fa-copy"></i>
-                  Duplicate
-                </a>
-
-                <button v-if="recipe.isPrivate" type="button" class="btn btn-info" v-on:click="publishRecipe()">
-                  <i class="fa fa-unlock"></i>
-                  Publish
-                </button>
-
-                <button v-if="!recipe.isPrivate" type="button" class="btn btn-info" v-on:click="unpublishRecipe()">
-                  <i class="fa fa-lock"></i>
-                  Unpublish
-                </button>
-
-                <button type="button" class="btn btn-info" v-on:click="recipeEdit()">
-                  <i class="fa fa-edit"></i>
-                  Edit Info
-                </button>
-
-                <a v-if="!recipe.is_analysis" class="btn btn-info" :href="'/recipematerials/' + recipe.id + '/edit'" role="button">
-                  <i class="fa fa-list"></i>
-                  Edit Recipe
-                </a>
-
-                <button class="btn btn-danger" v-on:click="confirmDeleteRecipe()">
-                  <i class="fa fa-times"></i>
-                  Delete
-                </button>
+                <b-button-group>
+                  <b-button class="btn-info" v-if="recipe.is_private" v-on:click="publishRecipe()"><i class="fa fa-unlock"></i> Publish</b-button>
+                  <b-button class="btn-info" v-if="!recipe.is_private" v-on:click="unpublishRecipe()"><i class="fa fa-lock"></i> Unpublish</b-button>
+                  <b-button class="btn-info" v-on:click="recipeEdit()"><i class="fa fa-edit"></i> Edit Info</b-button>
+                  <b-button class="btn-info" :href="'/recipematerials/' + recipe.id + '/edit'"><i class="fa fa-list"></i> Edit Recipe</b-button>
+                  <b-button class="btn-danger" v-on:click="confirmDeleteRecipe()"><i class="fa fa-times"></i> Delete</b-button>
+                </b-button-group>
 
               </div>
 

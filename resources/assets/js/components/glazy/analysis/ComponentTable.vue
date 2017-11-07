@@ -39,7 +39,7 @@
                 </td>
                 <td>
                     <span v-if="material.componentsTotalPercentage">
-                        {{ material.componentsTotalPercentage }}
+                        {{ parseFloat(material.componentsTotalPercentage).toFixed(2) }}
                     </span>
                 </td>
                 <td v-for="oxideName in presentOxides">

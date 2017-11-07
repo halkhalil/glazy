@@ -1,7 +1,7 @@
 <template>
     <header>
         <nav class="navbar navbar-expand-md fixed-top navbar-light bg-white">
-            <a class="navbar-brand" href="#"><img src="/static/img/logo.png" height="26" alt="Glazy"></a>
+            <a class="navbar-brand" href="#"><img src="/img/logo.png" height="26" alt="Glazy"></a>
             <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>

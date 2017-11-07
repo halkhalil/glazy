@@ -2,7 +2,7 @@
   <div class="row search-row" v-cloak>
     <nav v-bind:class="sidebarClass" class="sidebar d-none d-md-block">
 
-      <h5 class="search-title" v-html="searchTitle"></h5>
+      <h4 class="search-title" v-html="searchTitle"></h4>
       <h6 class="search-subtitle" v-if="searchSubtitle" v-html="searchSubtitle"></h6>
 
       <b-button
@@ -343,6 +343,7 @@
     methods: {
 
       requery () {
+        console.log('############ REQUERY')
         this.searchQuery.setFromRouterQuery(this.$router.query);
 
         if (this.user_id) {
@@ -377,12 +378,24 @@
       },
 
       fetchitemlist () {
+        console.log('############ FETCHITEMLIST')
+
+        var myQuery = this.searchQuery.getMinimalQuery()
+
+        if (myQuery.collection === -1 && this.$auth.check()) {
+          // DAU special case, collection == -1 signifies search for own recipes..
+          myQuery.u = this.$auth.user().id
+        }
+
+        this.$router.push({path: 'search', query: myQuery})
+
         var querystring = this.searchQuery.toQuerystring();
         this.isProcessing = true;
         console.log('SEARCH: ' + querystring);
 
         Vue.axios.get(Vue.axios.defaults.baseURL + '/search?' + querystring)
           .then((response) => {
+            console.log('############ GOT RESPONSE')
 
             this.itemlist = response.data.data;
 
@@ -391,9 +404,7 @@
               this.itemlist = [];
             }
 
-            this.pagination = response.data.meta.pagination;
-
-            this.$router.push({path: 'search', query: this.searchQuery.getMinimalQuery()})
+            this.pagination = response.data.meta.pagination
 
             this.isProcessing = false;
           })
@@ -404,6 +415,7 @@
       },
 
       search (query) {
+        console.log('############ SEARCH')
         this.searchQuery.setParams(query);
         // New search, so reset the page number
         this.searchQuery.setParam('page_num', null);
@@ -424,12 +436,13 @@
       },
 
       pageRequest (page_num) {
-
+        console.log('############ PAGE')
         this.searchQuery.setParam('page_num', page_num);
         this.fetchitemlist();
       },
 
       orderRequest (order) {
+        console.log('############ ORDER')
         this.searchQuery.setParam('order', order);
         this.fetchitemlist();
       },
@@ -487,7 +500,6 @@
       unhighlightRecipe: function (id) {
         this.highlightedRecipeId = 0
       }
-
 
     }
   }
@@ -552,6 +564,7 @@
   }
 
   .search-title {
+    margin-top: 0;
     margin-bottom: 5px;
   }
 

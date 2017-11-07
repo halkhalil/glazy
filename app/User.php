@@ -59,4 +59,13 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    /**
+     * DAU
+     */
+    public function collections()
+    {
+        return $this->hasMany('App\Models\Glazy\Material\Collection', 'created_by_user_id');
+    }
+
 }

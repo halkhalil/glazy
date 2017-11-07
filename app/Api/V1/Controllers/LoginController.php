@@ -132,20 +132,14 @@ class LoginController extends Controller
             throw new HttpException(500);
         }
 
+        $user = Auth::guard()->user();
+        $user->load('collections');
+
         return response([
                 'status' => 'success',
                 'token' => $token,
                 'expires_in' => Auth::guard()->factory()->getTTL() * 60,
-                'data' => Auth::guard()->user()
+                'data' => $user
         ])->header('Authorization', $token);
-        /*
-        return response()
-            ->json([
-                'status' => 'success',
-                'token' => $token,
-                'expires_in' => Auth::guard()->factory()->getTTL() * 60,
-                'data' => Auth::guard()->user()
-            ]);
-        */
     }
 }
