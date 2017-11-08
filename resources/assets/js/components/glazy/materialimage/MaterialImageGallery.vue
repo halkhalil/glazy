@@ -88,12 +88,6 @@
             </div>
         </div>
 
-        <div class="row mt-2">
-            <div class="col-md-12">
-                <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions"></vue-dropzone>
-            </div>
-        </div>
-
         <div v-if="$auth.check()" class="row">
             <div class="col-sm-12">
                 <button type="button" class="btn btn-info btn-block btn-sm"  v-on:click="imageUpload()">

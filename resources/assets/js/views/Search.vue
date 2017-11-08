@@ -17,12 +17,12 @@
       <div id="stull-chart-d3" v-if="hasResults">
         <umf-plotly
                 :recipeData="itemlist"
-                :oxide1="query.oxide1"
-                :oxide2="query.oxide2"
-                :oxide3="query.oxide3"
-                :baseTypeId="query.base_type_id"
+                :oxide1="searchQuery.params.oxide1"
+                :oxide2="searchQuery.params.oxide2"
+                :oxide3="searchQuery.params.oxide3"
+                :baseTypeId="searchQuery.params.base_type"
+                :isThreeAxes="searchQuery.params.isThreeAxes"
                 :noZeros="false"
-                :isThreeAxes="query.isThreeAxes"
                 :showStullChart="true"
                 :chartHeight="chartHeight"
                 :chartWidth="chartWidth"
@@ -38,7 +38,7 @@
       <div class="row">
         <div class="col-md-12">
           <search-form
-                  :query="query"
+                  :query="searchQuery"
                   v-on:searchrequest="search"
                   :isLarge="isMapExpanded">
           </search-form>
@@ -56,7 +56,7 @@
           <h6 class="search-subtitle" v-if="searchSubtitle" v-html="searchSubtitle"></h6>
 
           <search-form
-                  :query="query"
+                  :query="searchQuery"
                   v-on:searchrequest="search">
           </search-form>
 
@@ -178,22 +178,17 @@
         default: false
       },
 
-      current_user: {
-        type: Object,
-        default: null
-      },
-
-      user_id: {
+      userId: {
         type: Number,
         default: null
       },
 
-      collection: {
+      selectedCollection: {
         type: Object,
         default: null
       },
 
-      is_primitive: {
+      isPrimitive: {
         type: Number,
         default: 0
       }
@@ -203,7 +198,9 @@
         oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
         recipes: null,
         searchQuery: new SearchQuery(),
-        query: {},
+        formQuery: {},
+        //searchQuery: new SearchQuery(),
+        //query: {},
         routerQuery: this.$route.query,
         itemlist: [],
         pagination: null,
@@ -244,35 +241,35 @@
       },
 
       view () {
-        if (this.searchQuery.getParam('view')) {
-          return this.searchQuery.getParam('view');
+        if (this.searchQuery.params.view) {
+          return this.searchQuery.params.view
         }
         // default view is cards
         return 'cards';
       },
 
       order () {
-        return this.searchQuery.getParam('order');
+        return this.searchQuery.params.order;
       },
 
       searchTitle () {
         var title = ''
         var hasTitle = false
 
-        if (this.searchQuery.search_params.keywords) {
-          title += '"' + this.searchQuery.search_params.keywords + '"'
+        if (this.searchQuery.params.keywords) {
+          title += '"' + this.searchQuery.params.keywords + '"'
           hasTitle = true
         }
 
-        if (this.searchQuery.search_params.base_type_id
-          && this.materialTypes.LOOKUP[this.searchQuery.search_params.base_type_id]) {
+        if (this.searchQuery.params.base_type
+          && this.materialTypes.LOOKUP[this.searchQuery.params.base_type]) {
           if (hasTitle) {
             title += ', '
           }
-          var type = this.materialTypes.LOOKUP[this.searchQuery.search_params.base_type_id]
-          if (this.searchQuery.search_params.type_id
-            && this.materialTypes.LOOKUP[this.searchQuery.search_params.type_id]) {
-            type = this.materialTypes.LOOKUP[this.searchQuery.search_params.type_id]
+          var type = this.materialTypes.LOOKUP[this.searchQuery.params.base_type]
+          if (this.searchQuery.params.type
+            && this.materialTypes.LOOKUP[this.searchQuery.params.type]) {
+            type = this.materialTypes.LOOKUP[this.searchQuery.params.type]
           }
           title += type
         }
@@ -288,36 +285,36 @@
         var subtitle = ''
         var hasSubtitle = false
 
-        if (this.searchQuery.search_params.cone_id
-          && this.constants.ORTON_CONES_LOOKUP[this.searchQuery.search_params.cone_id]) {
-          subtitle += '△' + this.constants.ORTON_CONES_LOOKUP[this.searchQuery.search_params.cone_id]
+        if (this.searchQuery.params.cone_id
+          && this.constants.ORTON_CONES_LOOKUP[this.searchQuery.params.cone_id]) {
+          subtitle += '△' + this.constants.ORTON_CONES_LOOKUP[this.searchQuery.params.cone_id]
           hasSubtitle = true
         }
 
-        if (this.searchQuery.search_params.atmosphere_id
-          && this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.search_params.atmosphere_id]) {
+        if (this.searchQuery.params.atmosphere_id
+          && this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere_id]) {
           if (hasSubtitle) {
             subtitle += ', '
           }
-          subtitle += this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.search_params.atmosphere_id]
+          subtitle += this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere_id]
           hasSubtitle = true
         }
 
-        if (this.searchQuery.search_params.surface_type_id
-          && this.constants.SURFACE_LOOKUP[this.searchQuery.search_params.surface_type_id]) {
+        if (this.searchQuery.params.surface_type
+          && this.constants.SURFACE_LOOKUP[this.searchQuery.params.surface_type]) {
           if (hasSubtitle) {
             subtitle += ', '
           }
-          subtitle += this.constants.SURFACE_LOOKUP[this.searchQuery.search_params.surface_type_id]
+          subtitle += this.constants.SURFACE_LOOKUP[this.searchQuery.params.surface_type]
           hasSubtitle = true
         }
 
-        if (this.searchQuery.search_params.transparency_type_id
-          && this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.search_params.transparency_type_id]) {
+        if (this.searchQuery.params.transparency_type
+          && this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency_type]) {
           if (hasSubtitle) {
             subtitle += ', '
           }
-          subtitle += this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.search_params.transparency_type_id]
+          subtitle += this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency_type]
           hasSubtitle = true
         }
 
@@ -346,34 +343,36 @@
         console.log('############ REQUERY')
         this.searchQuery.setFromRouterQuery(this.$router.query);
 
-        if (this.user_id) {
-          this.searchQuery.setParam('user_id', this.user_id);
+        this.formQuery = Object.assign({}, this.searchQuery.params)
+
+        if (this.userId) {
+          this.searchQuery.params.u = this.userId
         }
-        if (this.collection && this.collection.id) {
-          this.searchQuery.setParam('collection_id', this.collection.id);
+        if (this.selectedCollection && this.selectedCollection.id) {
+          this.searchQuery.params.collection = this.selectedCollection.id
         }
-        if (this.is_primitive) {
-          this.searchQuery.setParam('is_primitive', this.is_primitive);
+        if (this.isPrimitive) {
+          this.searchQuery.params.primitive = this.isPrimitive
         }
 
-        if (this.searchQuery.getParam('type_id')
-          && !this.searchQuery.getParam('base_type_id')) {
+        if (this.searchQuery.params.type && !this.searchQuery.params.base_type) {
           // A type was given but no base type.
-          var baseType = this.materialTypes.getParentType(this.searchQuery.getParam('type_id'))
+          var baseType = this.materialTypes.getParentType(this.searchQuery.params.type)
           if (baseType) {
-            this.searchQuery.setParam('base_type_id', baseType)
+            this.searchQuery.params.base_type = baseType
           }
           else {
-            this.searchQuery.setParam('base_type_id', this.materialTypes.GLAZE_TYPE_ID)
+            this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
           }
         }
 
-        if (!this.searchQuery.getParam('base_type_id')) {
+        if (!this.searchQuery.params.base_type) {
           // TODO: If no base type given, automatically default to Glaze type
-//                    this.searchQuery.setParam('base_type_id', this.materialTypes.GLAZE_TYPE_ID);
+          this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
         }
 
-        this.query = this.searchQuery.search_params;
+        //this.query = this.searchQuery.params.search_params;
+        this.query = this.searchQuery
         this.fetchitemlist();
       },
 
@@ -381,15 +380,17 @@
         console.log('############ FETCHITEMLIST')
 
         var myQuery = this.searchQuery.getMinimalQuery()
-
+        console.log('searchQuery:')
+        console.log(this.searchQuery)
+        console.log('minimal query:')
+        console.log(myQuery)
         if (myQuery.collection === -1 && this.$auth.check()) {
           // DAU special case, collection == -1 signifies search for own recipes..
           myQuery.u = this.$auth.user().id
+          delete myQuery.collection
         }
 
-        this.$router.push({path: 'search', query: myQuery})
-
-        var querystring = this.searchQuery.toQuerystring();
+        var querystring = this.searchQuery.toQuerystring(myQuery);
         this.isProcessing = true;
         console.log('SEARCH: ' + querystring);
 
@@ -406,6 +407,9 @@
 
             this.pagination = response.data.meta.pagination
 
+            this.$router.push({path: 'search', query: myQuery})
+            console.log(this.searchQuery)
+
             this.isProcessing = false;
           })
           .catch(response => {
@@ -415,40 +419,53 @@
       },
 
       search (query) {
+        console.log('about to call routerquery')
+        console.log('searchquery')
+        console.log(this.searchQuery)
+        console.log('form query')
+        console.log(query)
+
+        this.searchQuery.setParams(query)
+        // New search, so reset the page number
+        this.searchQuery.params.p = null
+
+        //this.searchQuery.setFromRouterQuery(query);
         console.log('############ SEARCH')
+        console.log(this.searchQuery)
+        /*
         this.searchQuery.setParams(query);
         // New search, so reset the page number
-        this.searchQuery.setParam('page_num', null);
+        this.searchQuery.setParam('p', null);
 
         // Add back in all parent component-defined parameters
-        if (this.user_id) {
-          this.searchQuery.setParam('user_id', this.user_id);
+        if (this.u) {
+          this.searchQuery.u = this.u;
         }
         if (this.collection && this.collection.id) {
-          this.searchQuery.setParam('collection_id', this.collection.id);
+          this.searchQuery.setParam('collection', this.collection.id);
         }
-        if (this.is_primitive) {
-          this.searchQuery.setParam('is_primitive', this.is_primitive);
+        if (this.primitive) {
+          this.searchQuery.setParam('primitive', this.primitive);
         }
-
+        */
         //this.$router.query = this.searchQuery.getMinimalQuery()
         this.fetchitemlist();
       },
 
-      pageRequest (page_num) {
+      pageRequest (p) {
         console.log('############ PAGE')
-        this.searchQuery.setParam('page_num', page_num);
+        this.searchQuery.params.p = p;
         this.fetchitemlist();
       },
 
       orderRequest (order) {
         console.log('############ ORDER')
-        this.searchQuery.setParam('order', order);
+        this.searchQuery.params.order = order;
         this.fetchitemlist();
       },
 
       viewRequest (view) {
-        this.searchQuery.setParam('view', view);
+        this.searchQuery.params.view = view;
       },
 
       toggleExpandMap () {
@@ -482,10 +499,10 @@
       },
       handleResize: function () {
         if (document.getElementById('stull-chart-d3')) {
-          console.log('old width: ' + this.chartWidth)
+          // console.log('old width: ' + this.chartWidth)
           this.chartHeight = document.getElementById('stull-chart-d3').clientHeight
           this.chartWidth = document.getElementById('stull-chart-d3').clientWidth
-          console.log('new width: ' + this.chartWidth)
+          // console.log('new width: ' + this.chartWidth)
         }
       },
 

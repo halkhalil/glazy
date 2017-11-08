@@ -31,6 +31,8 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueAuth from '@websanova/vue-auth'
 
+require('vue-multiselect/dist/vue-multiselect.min.css')
+
 Vue.use(VueAxios, axios)
 //Vue.axios = axios
 Vue.axios.defaults.baseURL = 'http://homestead.app/api';

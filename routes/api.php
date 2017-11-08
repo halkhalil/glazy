@@ -28,7 +28,11 @@ $api->version('v1', function (Router $api) {
     });
 
     $api->group(['prefix' => 'recipes'], function(Router $api) {
-        $api->get('/{recipe}', 'App\\Api\\V1\\Controllers\\Glazy\\RecipeController@show')->name('show');
+        $api->get('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\RecipeController@show')->name('show');
+
+        $api->patch('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\RecipeController@update')->name('update');
+        $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
+        });
     });
 
     $api->group(['prefix' => 'search'], function(Router $api) {

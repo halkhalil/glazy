@@ -1,7 +1,7 @@
 <template>
-    <div class="card firing-card">
+    <div class="card firing-card card-plain">
         <div class="card-body text-center">
-            <h2 class="card-title">△{{ coneString }}</h2>
+            <h2 class="card-title" v-html="'&#9651;' + coneString"></h2>
             <p class="firing-cone-type">Orton Cone</p>
             <p class="card-description">
                 {{ atmospheres }}
@@ -34,6 +34,7 @@
     computed: {
 
             coneString: function() {
+              // TODO: Move to util class
                 var coneString = '?';
                 if (this.recipe.fromOrtonConeName
                     && this.recipe.toOrtonConeName

@@ -15,6 +15,7 @@ use App\Api\V1\Requests\Recipe\UpdateRecipeRequest;
 
 use App\Models\Glazy\Material\MaterialImage;
 
+use Illuminate\Support\Facades\Log;
 use League\Fractal\Resource\Item as FractalItem;
 use League\Fractal\Manager as FractalManager;
 
@@ -60,7 +61,7 @@ class RecipeController extends ApiBaseController
             if (!Auth::guard()->user()) {
                 return $this->respondUnauthorized('Recipe is private. Please login.');
             } else if (!Auth::guard()->user()->can('view', $recipe)) {
-                return $this->respondUnauthorized('Recipe is private.'.Auth::guard()->user());
+                return $this->respondUnauthorized('Recipe is private.');
             }
         }
 
@@ -97,27 +98,30 @@ class RecipeController extends ApiBaseController
 
     public function update($recipeId, UpdateRecipeRequest $request)
     {
+        if (!Auth::guard()->user()) {
+            return $this->respondUnauthorized('You must login to edit recipes.');
+        }
+
+        Log::info('Arrived update method');
         //$data = $request->get('form', []);
         $data = $request->all();
 
-        $material = $this->recipeRepository->get($recipeId);
+        $recipe = $this->recipeRepository->get($recipeId);
 
-        if (! $material)
+        if (! $recipe)
         {
             return $this->respondNotFound('Recipe does not exist');
         }
 
-        $this->authorize('update', $material);
+        if (!Auth::guard()->user()->can('update', $recipe)) {
+            return $this->respondUnauthorized('This recipe does not belong to you.');
+        }
 
-        $recipe = $this->recipeRepository->update($material, $data);
+        $recipe = $this->recipeRepository->update($recipe, $data);
 
-        return $this->respond([
-            'data' => [
-                'material' => $this->materialTransformer->transform($recipe)
-            ]
-        ]);
+        $resource = new FractalItem($recipe, new MaterialTransformer());
 
-
+        return $this->manager->createData($resource)->toArray();
     }
 
     public function destroy($recipeId)

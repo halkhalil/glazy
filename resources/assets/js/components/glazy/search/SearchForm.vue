@@ -1,15 +1,13 @@
 <template>
     <form class="search-form">
         <div class="form-row">
-
-
             <div v-if="collections && collections.length > 0"
-                 v-bind:class="sizeMedium" class="form-group">
+                 v-bind:class="sizeLarge" class="form-group">
                 <b-form-select
                         size="sm"
-                        v-model="query.collection_id"
+                        v-model="query.collection"
                         :options="collections"
-                        @change="search">
+                        @change.native="search">
                 </b-form-select>
             </div>
             <div v-bind:class="sizeLarge" class="form-group">
@@ -18,78 +16,79 @@
                         v-model="query.keywords"
                         type="text"
                         placeholder="Search Term"
-                        @change="search"></b-form-input>
+                        @change.native="search"></b-form-input>
             </div>
             <div v-bind:class="sizeMedium" class="form-group">
-                <b-form-select
-                        size="sm"
-                        v-model="query.base_type_id"
+                <multiselect
                         :options="base_type_options"
-                        @change="search">
-                    <template slot="first">
-                        <option :value="null">Type</option>
-                    </template>
-                </b-form-select>
+                        v-model="formParams.base_type"
+                        @input="searchBaseType"
+                        placeholder="Type"
+                        :allow-empty="false"
+                        key="value"
+                        label="text"
+                        track-by="value"
+                ></multiselect>
             </div>
             <div v-bind:class="sizeMedium" v-if="subtype_options" class="form-group">
-                <b-form-select
-                        size="sm"
+                <multiselect
                         v-if="subtype_options"
-                        v-model="query.type_id"
                         :options="subtype_options"
-                        @change="search">
-                    <template slot="first">
-                        <option :value="null">Subtype</option>
-                    </template>
-                </b-form-select>
+                        v-model="formParams.type"
+                        @input="search"
+                        placeholder="Subtype"
+                        key="value"
+                        label="text"
+                        track-by="value"
+                ></multiselect>
             </div>
         </div>
         <div class="form-row">
             <div v-bind:class="sizeMedium" class="form-group">
-                <b-form-select
-                        size="sm"
-                        v-model="query.cone_id"
-                        :options="constants.ORTON_CONES_SELECT"
-                        @change="search">
-                    <template slot="first">
-                        <option :value="null">Temp</option>
-                    </template>
-                </b-form-select>
+                <multiselect
+                        :options="constants.ORTON_CONES_SELECT_TEXT"
+                        v-model="formParams.cone"
+                        @input="search"
+                        placeholder="Temp"
+                        key="value"
+                        label="text"
+                        track-by="value"
+                ></multiselect>
             </div>
             <div v-bind:class="sizeMedium" class="form-group">
-                <b-form-select
-                        size="sm"
-                        v-model="query.atmosphere_id"
+                <multiselect
                         :options="constants.ATMOSPHERE_SELECT"
-                        @change="search">
-                    <template slot="first">
-                        <option :value="null">Atmosphere</option>
-                    </template>
-                </b-form-select>
+                        v-model="formParams.atmosphere"
+                        @input="search"
+                        placeholder="Atmosphere"
+                        key="value"
+                        label="text"
+                        track-by="value"
+                ></multiselect>
             </div>
         </div>
         <div v-if="isAdvanced" class="form-row">
             <div v-bind:class="sizeMedium" class="form-group">
-                <b-form-select
-                        size="sm"
-                        v-model="query.surface_type_id"
+                <multiselect
                         :options="constants.SURFACE_SELECT"
-                        @change="search">
-                    <template slot="first">
-                        <option :value="null">Surface</option>
-                    </template>
-                </b-form-select>
+                        v-model="formParams.surface"
+                        @input="search"
+                        placeholder="Surface"
+                        key="value"
+                        label="text"
+                        track-by="value"
+                ></multiselect>
             </div>
             <div v-bind:class="sizeMedium" class="form-group">
-                <b-form-select
-                        size="sm"
-                        v-model="query.transparency_type_id"
+                <multiselect
                         :options="constants.TRANSPARENCY_SELECT"
-                        @change="search">
-                    <template slot="first">
-                        <option :value="null">Transparency</option>
-                    </template>
-                </b-form-select>
+                        v-model="formParams.transparency"
+                        @input="search"
+                        placeholder="Transparency"
+                        key="value"
+                        label="text"
+                        track-by="value"
+                ></multiselect>
             </div>
         </div>
         <div v-if="isAdvanced" class="form-row">
@@ -97,41 +96,37 @@
                 <b-checkbox v-model="query.isThreeAxes">3 Axis</b-checkbox>
             </div>
             <div class="form-group col">
-                <b-form-select
-                        size="sm"
-                        v-model="query.oxide1"
+                <multiselect
                         :options="oxides"
-                        @change="search"
-                        class="col">
-                    <template slot="first">
-                        <option :value="null">Oxide 1</option>
-                    </template>
-                </b-form-select>
+                        v-model="formParams.oxide1"
+                        @input="search"
+                        placeholder="Oxide"
+                        key="value"
+                        label="text"
+                        track-by="value"
+                ></multiselect>
             </div>
             <div class="form-group col">
-                <b-form-select
-                        size="sm"
-                        v-model="query.oxide2"
+                <multiselect
                         :options="oxides"
-                        @change="search"
-                        class="col">
-                    <template slot="first">
-                        <option :value="null">Oxide 2</option>
-                    </template>
-                </b-form-select>
+                        v-model="formParams.oxide2"
+                        @input="search"
+                        placeholder="Oxide"
+                        key="value"
+                        label="text"
+                        track-by="value"
+                ></multiselect>
             </div>
             <div class="form-group col">
-                <b-form-select
-                        v-if="query.isThreeAxes"
-                        size="sm"
-                        v-model="query.oxide3"
+                <multiselect
                         :options="oxides"
-                        @change="search"
-                        class="col">
-                    <template slot="first">
-                        <option :value="null">Oxide 3</option>
-                    </template>
-                </b-form-select>
+                        v-model="formParams.oxide3"
+                        @input="search"
+                        placeholder="Oxide"
+                        key="value"
+                        label="text"
+                        track-by="value"
+                ></multiselect>
             </div>
         </div>
         <div class="form-row">
@@ -159,6 +154,7 @@
 
 
 <script>
+  import Multiselect from 'vue-multiselect'
 
 import SearchQuery from './search-query'
 import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
@@ -170,6 +166,11 @@ import { Chrome } from 'vue-color'
 
 export default {
   name: 'SearchForm',
+
+  components: {
+    'chrome-picker': Chrome,
+    Multiselect
+  },
 
   props: {
       isLarge: {
@@ -224,10 +225,6 @@ export default {
     }
   },
 
-  components: {
-    'chrome-picker': Chrome
-  },
-
   computed: {
 
     sizeSmall: function () {
@@ -255,18 +252,18 @@ export default {
       return this.materialTypes.getParentTypes();
     },
 
-    calc_base_type_id: function () {
-      return this.query.base_type_id;
+    calc_base_type: function () {
+      return this.query.params.base_type;
     },
 
     subtype_options: function () {
-      if (this.calc_base_type_id) {
+      if (this.calc_base_type) {
         if (this.previousBaseTypeId != 0) {
           // we're switching base types.. set type to null
-          this.query.type_id = null;
+          this.query.type = null;
         }
-        this.previousBaseTypeId = this.calc_base_type_id;
-        switch (this.calc_base_type_id) {
+        this.previousBaseTypeId = this.calc_base_type;
+        switch (this.calc_base_type) {
           case this.materialTypes.GLAZE_TYPE_ID:
             return this.materialTypes.getGlazeTypes();
           case this.materialTypes.CLAYS_TYPE_ID:
@@ -291,6 +288,70 @@ export default {
         }
       }
       return collections
+    },
+
+
+    formParams() {
+      var params = {}
+      params.keywords = this.query.params.keywords
+
+      params.collection = {}
+      if (this.collections && this.query.params.collection in this.collections) {
+        params.collection = {
+          value: this.query.params.collection,
+          label: this.collections[this.query.params.collection]
+        }
+      }
+      params.base_type = {}
+      var x = this.base_type_options.find(item => item.value === this.query.params.base_type);
+      if (x && x.text) {
+        params.base_type = { value: x.value, text: x.text }
+      }
+      params.type = {}
+      if (this.subtype_options) {
+        var x = this.subtype_options.find(item => item.value === this.query.params.type);
+        if (x && x.text) {
+          params.type = { value: x.value, text: x.text }
+        }
+      }
+      params.cone = {}
+      var x = this.constants.ORTON_CONES_SELECT_TEXT.find(item => item.value === this.query.params.cone);
+      if (x && x.text) {
+        params.cone = { value: x.value, text: x.text }
+      }
+      params.atmosphere = {}
+      var x = this.constants.ATMOSPHERE_SELECT.find(item => item.value === this.query.params.atmosphere);
+      if (x && x.text) {
+        params.atmosphere = { value: x.value, text: x.text }
+      }
+      params.surface = {}
+      var x = this.constants.SURFACE_SELECT.find(item => item.value === this.query.params.surface);
+      if (x && x.text) {
+        params.surface = { value: x.value, text: x.text }
+      }
+      params.transparency = {}
+      var x = this.constants.TRANSPARENCY_SELECT.find(item => item.value === this.query.params.transparency);
+      if (x && x.text) {
+        params.transparency = { value: x.value, text: x.text }
+      }
+      params.oxide1 = {}
+      var x = this.oxides.find(item => item.value === this.query.params.oxide1);
+      if (x && x.text) {
+        params.oxide1 = { value: x.value, text: x.text }
+      }
+      params.oxide2 = {}
+      var x = this.oxides.find(item => item.value === this.query.params.oxide2);
+      if (x && x.text) {
+        params.oxide2 = { value: x.value, text: x.text }
+      }
+      params.oxide3 = {}
+      var x = this.oxides.find(item => item.value === this.query.params.oxide3);
+      if (x && x.text) {
+        params.oxide3 = { value: x.value, text: x.text }
+      }
+      params.isThreeAxes = this.query.params.isThreeAxes
+
+      return params
     }
 
   },
@@ -300,7 +361,21 @@ export default {
 
   methods: {
     search: function () {
-      this.$emit('searchrequest', this.query);
+      console.log('FORM SEARCH')
+      console.log(this.query.base_type)
+      if (this.query.base_type) {
+        this.query.base_type = this.query.base_type.value
+      }
+      if (this.query.type) {
+        this.query.type = this.query.type.value
+      }
+      var x = Object.assign({}, this.query)
+      this.$emit('searchrequest', this.getFormParams());
+    },
+
+    searchBaseType: function () {
+      this.query.type = null
+      this.search()
     },
 
 //        resetFields: function()
@@ -322,6 +397,45 @@ export default {
         this.isAdvanced = true
         this.advancedButtonText = this.hideAdvancedText
       }
+    },
+
+    getFormParams() {
+      var params = {}
+      params.keywords = this.formParams.keywords
+      if (this.formParams.collection && this.formParams.collection.value) {
+        params.collection = this.formParams.collection.value
+      }
+      if (this.formParams.base_type && this.formParams.base_type.value) {
+        params.base_type = this.formParams.base_type.value
+      }
+      if (this.formParams.type && this.formParams.type.value) {
+        params.type = this.formParams.type.value
+      }
+      if (this.formParams.cone && this.formParams.cone.value) {
+        params.cone = this.formParams.cone.value
+      }
+      if (this.formParams.atmosphere && this.formParams.atmosphere.value) {
+        params.atmosphere = this.formParams.atmosphere.value
+      }
+      if (this.formParams.surface && this.formParams.surface.value) {
+        params.surface = this.formParams.surface.value
+      }
+      if (this.formParams.transparency && this.formParams.transparency.value) {
+        params.transparency = this.formParams.transparency.value
+      }
+      if (this.formParams.oxide1 && this.formParams.oxide1.value) {
+        params.oxide1 = this.formParams.oxide1.value
+      }
+      if (this.formParams.oxide2 && this.formParams.oxide2.value) {
+        params.oxide2 = this.formParams.oxide2.value
+      }
+      if (this.formParams.oxide3 && this.formParams.oxide3.value) {
+        params.oxide3 = this.formParams.oxide3.value
+      }
+      params.isThreeAxes = this.formParams.isThreeAxes
+      console.log('search form sending params:')
+      console.log(params)
+      return params
     }
   }
 

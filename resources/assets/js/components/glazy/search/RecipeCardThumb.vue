@@ -24,7 +24,7 @@
     </div>
 
     <ul class="list-group list-group-flush list-group-cone">
-      <li class="list-group-item">△10 Red., Ox.</li>
+      <li class="list-group-item" v-html="'&#9651;' + coneString + ' ' + atmospheresString"></li>
     </ul>
     <div class="card-body">
       <h6 class="category text-primary">{{ materialTypes.LOOKUP[recipe.materialTypeId] }}</h6>
@@ -62,6 +62,7 @@
     data() {
       return {
         STORAGE_BASE_URL: 'http://homestead.app',
+        constants: new GlazyConstants(),
         oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
         materialTypes: new MaterialTypes()
       };
@@ -83,6 +84,40 @@
         }
         return '/static/img/recipes/black.png';
       },
+
+      coneString: function() {
+        // TODO: Move to util class
+        var coneString = '?'
+        if (this.recipe.fromOrtonConeId
+          && this.recipe.toOrtonConeId
+          && this.recipe.fromOrtonConeId != this.recipe.toOrtonConeId) {
+          return this.constants.ORTON_CONES_LOOKUP[this.recipe.fromOrtonConeId] +
+            "-" + this.constants.ORTON_CONES_LOOKUP[this.recipe.toOrtonConeId]
+        }
+
+        if (this.recipe.fromOrtonConeId) {
+          return coneString = this.constants.ORTON_CONES_LOOKUP[this.recipe.fromOrtonConeId]
+        }
+
+        if (this.recipe.toOrtonConeId) {
+          coneString = this.constants.ORTON_CONES_LOOKUP[this.recipe.toOrtonConeId]
+        }
+        return coneString
+      },
+
+      atmospheresString: function() {
+        var str = '';
+        if (this.recipe.atmospheres) {
+          this.recipe.atmospheres.forEach((atmosphere) => {
+            if (str.length) {
+              str += ', '
+            }
+            str += this.constants.ATMOSPHERE_SHORT_LOOKUP[atmosphere.id]
+          })
+        }
+        return str
+      }
+
 
     },
     methods: {

@@ -8,6 +8,7 @@ import Search from '../views/Search'
 import Login from '../views/Login'
 import Calculator from '../views/Calculator'
 import Recipe from '../views/Recipe'
+// import RecipeEdit from '../views/RecipeEdit'
 
 import Error404 from '../views/error/404'
 import Error403 from '../views/error/403'
@@ -56,6 +57,13 @@ export default new Router({
           name: 'recipes',
           component: Recipe
         },
+        /*
+        {
+          path: '/recipes/:id/edit',
+          name: 'recipeedit',
+          component: RecipeEdit
+        },
+        */
         {
           path: '/404',
           name: 'error-404',
