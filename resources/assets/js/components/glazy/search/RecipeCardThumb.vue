@@ -28,7 +28,11 @@
     </ul>
     <div class="card-body">
       <h6 class="category text-primary">{{ materialTypes.LOOKUP[recipe.materialTypeId] }}</h6>
-      <h5 class="card-title">{{ recipe.name }}</h5>
+      <h5 class="card-title">
+        <router-link :to="{ name: 'recipes', params: { id: recipe.id }}">
+          {{ recipe.name }}
+        </router-link>
+      </h5>
       <p class="card-text">{{ recipe.description }}</p>
       <div class="card-footer">
         <div class="author">
@@ -37,6 +41,14 @@
         </div>
       </div>
     </div>
+
+    <div class="card-footer" v-if="$auth.check()">
+
+      <a class="btn btn-icon btn-neutral"><i class="fa fa-bookmark"></i></a>
+      <a class="btn btn-icon btn-neutral"><i class="fa fa-copy"></i></a>
+      <a v-if="canEdit()" class="btn btn-icon btn-neutral"><i class="fa fa-trash"></i></a>
+    </div>
+
   </div>
 
 </template>
@@ -142,6 +154,15 @@
 
       unhighlightRecipe: function (id) {
         this.$emit('unhighlightRecipe', id);
+      },
+
+      canEdit: function () {
+        // Only the creator of a recipe can edit it
+        if (this.$auth.check() &&
+          this.$auth.user().id === this.recipe.createdByUserId) {
+          return true
+        }
+        return false
       }
     }
   }
@@ -176,5 +197,14 @@
     margin: 0;
   }
 
+  .recipe-card .card-footer  {
+    text-align: center;
+    margin-top: 0;
+  }
+
+  .recipe-card .card-footer .btn {
+    color: #999999;
+    margin: 5px 0;
+  }
 
 </style>

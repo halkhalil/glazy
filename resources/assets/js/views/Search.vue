@@ -133,6 +133,8 @@
               v-on:viewrequest="viewRequest">
       </filter-paginator>
 
+      <AppFooter/>
+
     </main>
   </div>
 </template>
@@ -159,11 +161,14 @@
   import SearchQuery from '../components/glazy/search/search-query'
   import FilterPaginator from '../components/glazy/search/FilterPaginator.vue'
 
+  import AppFooter from './layout/AppFooter.vue'
+
   import Vue from 'vue'
 
   export default {
     name: 'Search',
     components: {
+      AppFooter,
       FilterPaginator,
       RecipeCardThumb,
       RecipeCardRow,
@@ -196,10 +201,6 @@
         oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
         recipes: null,
         searchQuery: new SearchQuery(),
-        formQuery: {},
-        //searchQuery: new SearchQuery(),
-        //query: {},
-        routerQuery: this.$route.query,
         itemlist: [],
         pagination: null,
         isProcessing: false,
@@ -322,26 +323,24 @@
     },
 
     mounted() {
-      this.requery();
+      console.log('SETTING SEARCH QUERY')
+      this.searchQuery.setFromRouterQuery(this.$router.query)
+      console.log(this.searchQuery)
+      
+      this.fetchitemlist()
+      //this.requery()
 
       setTimeout(() => {
         this.handleResize()
-      }, 300);
+      }, 300)
       window.addEventListener('resize', this.handleResize)
 
-    },
-    watch: {
-      routerQuery () {
-        //this.requery()
-      }
     },
     methods: {
 
       requery () {
         console.log('############ REQUERY')
-        this.searchQuery.setFromRouterQuery(this.$router.query);
-
-        this.formQuery = Object.assign({}, this.searchQuery.params)
+        this.searchQuery.setFromRouterQuery(this.$router.query)
 
         if (this.userId) {
           this.searchQuery.params.u = this.userId
@@ -369,9 +368,9 @@
           this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
         }
 
-        //this.query = this.searchQuery.params.search_params;
+        //this.query = this.searchQuery.params.search_params
         this.query = this.searchQuery
-        this.fetchitemlist();
+        this.fetchitemlist()
       },
 
       fetchitemlist () {
@@ -388,19 +387,19 @@
           delete myQuery.collection
         }
 
-        var querystring = this.searchQuery.toQuerystring(myQuery);
-        this.isProcessing = true;
-        console.log('SEARCH: ' + querystring);
+        var querystring = this.searchQuery.toQuerystring(myQuery)
+        this.isProcessing = true
+        console.log('SEARCH: ' + querystring)
 
         Vue.axios.get(Vue.axios.defaults.baseURL + '/search?' + querystring)
           .then((response) => {
             console.log('############ GOT RESPONSE')
 
-            this.itemlist = response.data.data;
+            this.itemlist = response.data.data
 
             if (!this.itemlist) {
               // Make sure itemlist is always defined, and an array
-              this.itemlist = [];
+              this.itemlist = []
             }
 
             this.pagination = response.data.meta.pagination
@@ -408,11 +407,11 @@
             this.$router.push({path: 'search', query: myQuery})
             console.log(this.searchQuery)
 
-            this.isProcessing = false;
+            this.isProcessing = false
           })
           .catch(response => {
             // Error Handling
-            this.isProcessing = false;
+            this.isProcessing = false
           })
       },
 
@@ -427,43 +426,43 @@
         // New search, so reset the page number
         this.searchQuery.params.p = null
 
-        //this.searchQuery.setFromRouterQuery(query);
+        //this.searchQuery.setFromRouterQuery(query)
         console.log('############ SEARCH')
         console.log(this.searchQuery)
         /*
-        this.searchQuery.setParams(query);
+        this.searchQuery.setParams(query)
         // New search, so reset the page number
-        this.searchQuery.setParam('p', null);
+        this.searchQuery.setParam('p', null)
 
         // Add back in all parent component-defined parameters
         if (this.u) {
-          this.searchQuery.u = this.u;
+          this.searchQuery.u = this.u
         }
         if (this.collection && this.collection.id) {
-          this.searchQuery.setParam('collection', this.collection.id);
+          this.searchQuery.setParam('collection', this.collection.id)
         }
         if (this.primitive) {
-          this.searchQuery.setParam('primitive', this.primitive);
+          this.searchQuery.setParam('primitive', this.primitive)
         }
         */
         //this.$router.query = this.searchQuery.getMinimalQuery()
-        this.fetchitemlist();
+        this.fetchitemlist()
       },
 
       pageRequest (p) {
         console.log('############ PAGE')
-        this.searchQuery.params.p = p;
-        this.fetchitemlist();
+        this.searchQuery.params.p = p
+        this.fetchitemlist()
       },
 
       orderRequest (order) {
         console.log('############ ORDER')
-        this.searchQuery.params.order = order;
-        this.fetchitemlist();
+        this.searchQuery.params.order = order
+        this.fetchitemlist()
       },
 
       viewRequest (view) {
-        this.searchQuery.params.view = view;
+        this.searchQuery.params.view = view
       },
 
       toggleExpandMap () {
@@ -485,7 +484,7 @@
         this.isMapExpanded = !this.isMapExpanded
         setTimeout(() => {
           this.handleResize()
-        }, 300);
+        }, 300)
 
       },
 
@@ -556,6 +555,7 @@
 
   .search-results {
     background-color: #dedede;
+    padding-bottom: 64px;
   }
 
   .search-pagination {

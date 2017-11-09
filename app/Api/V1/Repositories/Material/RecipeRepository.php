@@ -4,10 +4,12 @@ namespace App\Api\V1\Repositories\Material;
 
 use App\Api\V1\Repositories\Repository;
 
+use App\Models\Glazy\Material\CollectionMaterial;
 use App\Models\Glazy\Material\Material;
 use App\Models\Glazy\Material\MaterialAtmosphere;
 use App\Models\Glazy\Material\MaterialImage;
 use App\Models\Glazy\Material\MaterialMaterial;
+use App\Models\Glazy\Material\MaterialReview;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -123,9 +125,12 @@ class RecipeRepository extends Repository
 
         $material->thumbnail_id = null;
         $material->save();
+
         $deletedRows = MaterialMaterial::where('parent_material_id', $id)->delete();
         $deletedRows = MaterialAtmosphere::where('material_id', $id)->delete();
         $deletedRows = MaterialImage::where('material_id', $id)->delete();
+        $deletedRows = MaterialReview::where('material_id', $id)->delete();
+        $deletedRows = CollectionMaterial::where('material_id', $id)->delete();
 
         $material->delete();
 

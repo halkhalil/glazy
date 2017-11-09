@@ -1,13 +1,17 @@
 <template>
     <nav aria-label="breadcrumb" role="navigation" id="material-type-breadcrumbs">
-
         <ol class="breadcrumb">
             <li class="breadcrumb-item" v-for="type in types" :class="{ active: type.isActive }">
-                <a v-if="type.isBaseType" :href="'/search?base_type=' + type.id">{{ materialTypes.LOOKUP[type.id] }}</a>
-                <a v-else :href="'/search?type=' + type.id">{{ materialTypes.LOOKUP[type.id] }}</a>
+                <router-link v-if="type.isBaseType"
+                             :to="{ path: '/search', query: { base_type: type.id }}">
+                    {{ materialTypes.LOOKUP[type.id] }}
+                </router-link>
+                <router-link v-else
+                             :to="{ path: '/search', query: { type: type.id }}">
+                    {{ materialTypes.LOOKUP[type.id] }}
+                </router-link>
             </li>
         </ol>
-
     </nav>
 </template>
 <script>

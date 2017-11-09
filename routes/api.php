@@ -32,6 +32,7 @@ $api->version('v1', function (Router $api) {
 
         $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
             $api->patch('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\RecipeController@update')->name('update');
+            $api->delete('{id}', 'App\\Api\\V1\\Controllers\\Glazy\\RecipeController@destroy')->name('destroy');
             $api->get('/{id}/copy', 'App\\Api\\V1\\Controllers\\Glazy\\RecipeController@copy')->name('copy');
             $api->get('/{id}/publish', 'App\\Api\\V1\\Controllers\\Glazy\\RecipeController@publish')->name('publish');
             $api->get('/{id}/unpublish', 'App\\Api\\V1\\Controllers\\Glazy\\RecipeController@unpublish')->name('unpublish');

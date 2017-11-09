@@ -133,7 +133,9 @@ class RecipeController extends ApiBaseController
             return $this->respondNotFound('Recipe does not exist');
         }
 
-        $this->authorize('delete', $material);
+        if (!Auth::guard()->user()->can('delete', $material)) {
+            return $this->respondUnauthorized('This recipe does not belong to you.');
+        }
 
         $result = $this->recipeRepository->destroy($id);
 

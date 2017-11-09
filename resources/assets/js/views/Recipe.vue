@@ -92,8 +92,17 @@
                       <b-button class="btn-info" v-if="!(recipe.isPrivate)" v-on:click="unpublishRecipe()"><i class="fa fa-lock"></i> Unpublish</b-button>
                       <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
                       <b-button class="btn-info" :href="'/recipematerials/' + recipe.id + '/edit'"><i class="fa fa-list"></i> Edit Recipe</b-button>
-                      <b-button class="btn-danger" v-on:click="confirmDeleteRecipe()"><i class="fa fa-trash"></i></b-button>
+                      <b-button class="btn-danger"  v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
                     </b-button-group>
+
+                    <!-- Modal Component -->
+                    <b-modal v-if="canEdit"
+                             id="deleteConfirmModal"
+                             title="Delete Recipe?"
+                             v-on:ok="deleteRecipe"
+                    >
+                      <p>Once deleted, you will not be able to retrieve this recipe!</p>
+                    </b-modal>
 
                   </div>
 
@@ -251,28 +260,6 @@
                       :current_user="current_user"
                       v-on:collectionaddrecipe="collectionaddrecipe"
               ></collection-add-recipe-form>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="modal fade" id="deleteMaterialModal" tabindex="-1" role="dialog" aria-labelledby="delete recipe" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Are you sure?</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p>Once deleted, you will not be able to retrieve this recipe!</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger"
-                      @click.stop.prevent="deleteRecipe()">Confirm Delete</button>
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
           </div>
         </div>
@@ -486,56 +473,22 @@
         this.fetchRecipe();
       },
 
-      /*
-       confirmDeleteRecipe: function() {
-       swal({
-       title: "Are you sure?",
-       text: "You will not be able to recover this recipe!",
-       type: "warning",
-       showCancelButton: true,
-       confirmButtonColor: "#DD6B55",
-       confirmButtonText: "Yes, delete it!",
-       closeOnConfirm: false,
-       html: false
-       }, function(){
-       this.deleteRecipe();
-       }.bind(this));
-       },
-       */
-      confirmDeleteRecipe: function() {
-        $('#deleteMaterialModal').modal('show');
-      },
-      /*
-       deleteRecipe: function() {
-       this.$http.delete('/api/v1/recipes/' + this.recipe_id)
-       .then((response) => {
-       this.isDeleted = true;
-       swal({
-       title: "Deleted!",
-       text: "Your recipe has been deleted.",
-       type: "success"
-       }, function(){
-       window.location = '/recipes';
-       }.bind(this));
-       })
-       .catch(response => {
-       // Error Handling
-       });
-       }
-       */
       deleteRecipe: function() {
-        $('#deleteMaterialModal').modal('hide');
-        axios.delete('http://homestead.app/api/recipes/' + this.recipe_id)
+        Vue.axios.delete(Vue.axios.defaults.baseURL + '/recipes/' + this.recipe.id)
           .then((response) => {
-          $('#materialDeletedModal').modal('show');
-        window.setTimeout(function () {
-          this.isDeleted = true;
-          window.location = '/search';
-        }, 2000);
-      })
+          if (response.data.error) {
+          this.apiError = response.data.error
+          console.log(this.apiError)
+          this.isProcessing = false
+        } else {
+          this.isProcessing = false
+          this.$router.push({ name: 'search' })
+        }
+        })
         .catch(response => {
-          // Error Handling
-        });
+          this.serverError = response;
+          this.isProcessing = false
+        })
       },
 
       sendRecipeGetRequest: function(url) {
