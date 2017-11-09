@@ -9,3 +9,4 @@ Homestead.yaml
 /.vagrant
 /database/seeds/Glazy/glaze_data_seeder.sql
 /database/seeds/Glazy/glaze_data_seeder_no_create.sql
+/resources/assets/sass/glazy/nowui
