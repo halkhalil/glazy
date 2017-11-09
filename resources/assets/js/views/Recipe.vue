@@ -81,10 +81,9 @@
                       <b-button><i class="fa fa-copy"></i> Duplicate</b-button>
                     </b-button-group>
 
-
                     <b-button-group v-if="canEdit">
-                      <b-button class="btn-info" v-if="recipe.is_private" v-on:click="publishRecipe()"><i class="fa fa-unlock"></i> Publish</b-button>
-                      <b-button class="btn-info" v-if="!recipe.is_private" v-on:click="unpublishRecipe()"><i class="fa fa-lock"></i> Unpublish</b-button>
+                      <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-unlock"></i> Publish</b-button>
+                      <b-button class="btn-info" v-if="!(recipe.isPrivate)" v-on:click="unpublishRecipe()"><i class="fa fa-lock"></i> Unpublish</b-button>
                       <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
                       <b-button class="btn-info" :href="'/recipematerials/' + recipe.id + '/edit'"><i class="fa fa-list"></i> Edit Recipe</b-button>
                       <b-button class="btn-danger" v-on:click="confirmDeleteRecipe()"><i class="fa fa-times"></i> Delete</b-button>
@@ -96,7 +95,7 @@
 
                 <div v-if="!recipe.is_analysis" class="row">
 
-                  <div class="col-md-12">
+                  <div class="col-md-12 mt-4">
                     <material-recipe-calculator
                             :materialComponents="recipe.materialComponents"></material-recipe-calculator>
                   </div>

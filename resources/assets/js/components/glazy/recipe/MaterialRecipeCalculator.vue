@@ -22,8 +22,8 @@
             <td class="batch" :id="'batch_' + materialComponent.material.id">{{ batch_rows[index] }}</td>
             <td class="subtotal" :id="'subtotal_' + materialComponent.material.id">{{ subtotal_rows[index] }}</td>
         </tr>
-        <tr>
-            <td></td>
+        <tr class="subtotal">
+            <td>Total</td>
             <td>{{ totalAmount }}</td>
             <td></td>
             <td></td>
@@ -32,7 +32,7 @@
             <td colspan="4">
                 <form class="form-inline pull-right" id="batch_form" v-on:submit.prevent @keydown.enter="calculateBatch">
                     <div class="form-group">
-                        <label for="batch_size">Batch:</label>
+                        <label for="batch_size">Batch:&nbsp;</label>
                         <input type="number" inputmode="numeric" size="10" class="form-control" placeholder="0.00" id="batch_size" v-model.number="batch_size">
                         <button type="button" v-on:click="calculateBatch" id="batch_calculate" class="btn btn-primary btn-icon">
                             <i class="fa fa-calculator"></i>
@@ -123,8 +123,8 @@ export default {
         color: #666666;
     }
 
-    .material-recipe-calculator-table tr td.subtotal {
-        color: #888888;
+    .material-recipe-calculator-table tr.subtotal {
+        background-color: #efefef;
     }
 
     .material-recipe-calculator-table tr.batch_form {

@@ -86,8 +86,13 @@
         this.$auth.logout({
           makeRequest: true,
           data: {}, // data: {} in axios
-          success: function () {},
-          error: function () {},
+          success: function () {
+            this.$router.push('home')
+          },
+          error: function () {
+            console.log('ERROR IN LOGOUT')
+            this.$router.push('login')
+          },
           redirect: '/search?logout=true'
         })
       }

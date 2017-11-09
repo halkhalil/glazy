@@ -57,8 +57,30 @@ class RecipeRepository extends Repository
         return $material;
     }
 
-    public function update(Model $material, array $data)
+    public function update(Model $material, array $jsonData)
     {
+        $data = [];
+        $data['id'] = $jsonData['id'];
+        $data['name'] = $jsonData['name'];
+        if (array_key_exists('description', $jsonData)) {
+            $data['description'] = $jsonData['description'];
+        }
+        if (array_key_exists('baseTypeId', $jsonData)) {
+            $data['base_type_id'] = $jsonData['baseTypeId'];
+        }
+        if (array_key_exists('materialTypeId', $jsonData)) {
+            $data['material_type_id'] = $jsonData['materialTypeId'];
+        }
+        if (array_key_exists('fromOrtonConeId', $jsonData)) {
+            $data['from_orton_cone_id'] = $jsonData['fromOrtonConeId'];
+        }
+        if (array_key_exists('toOrtonConeId', $jsonData)) {
+            $data['to_orton_cone_id'] = $jsonData['toOrtonConeId'];
+        }
+        if (array_key_exists('atmospheres', $jsonData)) {
+            $data['atmospheres'] = $jsonData['atmospheres'];
+        }
+
         $material->fill($data);
         if (isset($data['hex_color'])) {
 //            Log::error("HEX COLOR: ".$data['hex_color']);
@@ -72,8 +94,8 @@ class RecipeRepository extends Repository
         $deletedRows = MaterialAtmosphere::where('material_id', $material->id)->delete();
 
         // Now add atmospheres
-        if (isset($data['atmosphere_ids'])) {
-            foreach ($data['atmosphere_ids'] as $atmosphere_id)
+        if (isset($data['atmospheres'])) {
+            foreach ($data['atmospheres'] as $atmosphere_id)
             {
                 $atmosphere = new MaterialAtmosphere();
                 $atmosphere->material_id = $material->id;

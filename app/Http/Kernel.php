@@ -38,6 +38,7 @@ class Kernel extends HttpKernel
             // DAU \App\Http\Middleware\CorsMiddleware::class,
             'throttle:60,1',
             'bindings',
+            \App\Http\Middleware\RefreshTokenMiddleware::class
             // DAU \Barryvdh\Cors\HandleCors::class,
         ],
     ];

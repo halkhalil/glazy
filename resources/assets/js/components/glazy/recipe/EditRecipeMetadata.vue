@@ -7,10 +7,10 @@
         <div class="load-container load7" v-if="isProcessing">
             <div class="loader">Loading...</div>
         </div>
-        <form class="form-horizontal" role="form" method="POST" v-if="isLoaded && !isProcessing">
+        <form  role="form" method="POST" v-if="isLoaded && !isProcessing">
             <div>
                 <h3 class="card-title">
-                    Edit {{ recipe.name }}
+                    Edit {{ form.name }}
                 </h3>
             </div>
 
@@ -18,160 +18,95 @@
                 <i class="fa fa-warning mr-2"></i> Errors were found in the form below.
             </div>
 
-            <input type="hidden" name="_method" value="PATCH">
 
-            <div class="form-group" :class="{'has-danger': errors.name}">
+            <b-form-group
+                    id="groupName"
+                    description="No need to add the cone temp here!"
+                    label="Recipe Name"
+                    :feedback="feedbackName"
+                    :state="stateName"
+            >
+                <b-form-input id="name" :state="stateName" v-model.trim="form.name"></b-form-input>
+            </b-form-group>
 
-                <label for="name" class="control-label">Name</label>
-                <b-form-input id="name"
-                              v-model="recipe.name"
-                              type="text"
-                              placeholder="Recipe Title"></b-form-input>
 
-                <span class="help-block" v-if="errors.name">
-                    <div v-for="error in errors.name">
-                        {{ error }}
-                    </div>
-                </span>
-            </div>
-
-            <div class="form-group" :class="{'has-danger': errors.description}">
-                <label for="description" class="control-label">Description</label>
-
+            <b-form-group
+                    id="groupDescription"
+                    description="Here you can add glaze preparation, firing notes, etc."
+                    label="Description (Optional)"
+            >
                 <b-form-textarea id="description"
-                                 v-model="recipe.description"
-                                 placeholder="Recipe description (optional)"
+                                 v-model="form.description"
+                                 placeholder="Type description here.."
                                  :rows="6"
                                  :max-rows="10">
                 </b-form-textarea>
-                <span class="help-block" v-if="errors.description">
-                    <div v-for="error in errors.description">
-                        {{ error }}
-                    </div>
-                </span>
-            </div>
+            </b-form-group>
 
-            <div class="form-group" :class="{'has-danger': errors.material_type}">
-                <label for="material_type" class="control-label">Recipe Type</label>
+            <b-row class="mt-2">
+                <b-col md="6">
+                    <label for="baseTypeId">Recipe Type</label>
+                    <b-form-select
+                            class="col"
+                            id="baseTypeId"
+                            v-model="form.baseTypeId"
+                            :options="baseTypeOptions"
+                            @input="updateBaseType"
+                    >
+                    </b-form-select>
+                </b-col>
+                <b-col md="6" v-if="subTypeOptions && subTypeOptions.length > 0">
+                    <label for="materialTypeId">Subtype</label>
+                    <b-form-select
+                            class="col"
+                            id="materialTypeId"
+                            v-model="form.materialTypeId"
+                            :options="subTypeOptions">
+                    </b-form-select>
+                </b-col>
+            </b-row>
 
-                <div class="row" id="recipe-type-select">
-                    <div class="col-md-4">
-                        <b-form-select
-                                v-model="recipe.baseTypeId"
-                                :options="baseTypeOptions"
-                                @input="updateBaseType">
-                        </b-form-select>
-                    </div>
-                    <div class="col-md-8">
-                        <b-form-select
-                                v-if="subTypeOptions && subTypeOptions.length > 0"
-                                v-model="recipe.materialTypeId"
-                                :options="subTypeOptions">
-                        </b-form-select>
-                    </div>
-                </div>
-            </div>
 
-            <div class="form-group" :class="{'has-danger': errors.from_orton_cone_id}">
-                <label for="from_orton_cone_id" class="control-label">Temperature Range</label>
+            <b-row class="mt-4">
+                <b-col md="4" sm="6">
+                    <label for="fromOrtonConeId">Lowest Cone</label>
+                    <b-form-select
+                            v-model="form.fromOrtonConeId"
+                            :options="constants.ORTON_CONES_SELECT_TEXT"
+                            @input="updateFromCone">
+                    </b-form-select>
+                </b-col>
+                <b-col md="4" sm="6" v-if="subTypeOptions && subTypeOptions.length > 0">
+                    <label for="toOrtonConeId">Highest Cone</label>
+                    <b-form-select
+                            v-model="form.toOrtonConeId"
+                            :options="constants.ORTON_CONES_SELECT_TEXT"
+                            @input="updateToCone">
+                    </b-form-select>
+                </b-col>
+            </b-row>
 
-                <div class="row" id="orton-cone-select">
-                    <div class="col-md-4">
-                        <b-form-select
-                                v-model="recipe.fromOrtonConeId"
-                                :options="constants.ORTON_CONES_SELECT_TEXT"
-                                @input="updateFromCone">
-                        </b-form-select>
-                    </div>
-                    <div class="col-md-4">
-                        <b-form-select
-                                v-model="recipe.toOrtonConeId"
-                                :options="constants.ORTON_CONES_SELECT_TEXT"
-                                @input="updateToCone">
-                        </b-form-select>
-                    </div>
-                </div>
-            </div>
+            <b-form-group
+                    id="groupAtmospheres"
+                    label="Atmospheres (Optional)"
+            >
+                <b-form-checkbox-group id="atmospheres"
+                                       v-model="form.atmospheres"
+                                       :options="atmospheres">
+                </b-form-checkbox-group>
+            </b-form-group>
 
-            <div class="form-group" :class="{'has-danger': errors.atmospheres}">
 
-                <label for="atmospheres" class="control-label">Firing Atmospheres</label>
-
-                <label class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input"
-                           id="atmosphere_1" value="1" v-model.number="atmospheres">
-                    <span class="custom-control-indicator"></span>
-                    <span class="custom-control-description">
-                        Oxidation
-                    </span>
-                </label>
-
-                <label class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input"
-                           id="atmosphere_2" value="2" v-model.number="atmospheres">
-                    <span class="custom-control-indicator"></span>
-                    <span class="custom-control-description">
-                        Neutral
-                    </span>
-                </label>
-
-                <label class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input"
-                           id="atmosphere_3" value="3" v-model.number="atmospheres">
-                    <span class="custom-control-indicator"></span>
-                    <span class="custom-control-description">
-                        Reduction
-                    </span>
-                </label>
-
-                <label class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input"
-                           id="atmosphere_4" value="4" v-model.number="atmospheres">
-                    <span class="custom-control-indicator"></span>
-                    <span class="custom-control-description">
-                        Salt & Soda
-                    </span>
-                </label>
-
-                <label class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input"
-                           id="atmosphere_5" value="5" v-model.number="atmospheres">
-                    <span class="custom-control-indicator"></span>
-                    <span class="custom-control-description">
-                        Wood
-                    </span>
-                </label>
-
-                <label class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input"
-                           id="atmosphere_6" value="6" v-model.number="atmospheres">
-                    <span class="custom-control-indicator"></span>
-                    <span class="custom-control-description">
-                        Raku
-                    </span>
-                </label>
-
-                <label class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input"
-                           id="atmosphere_7" value="7" v-model.number="atmospheres">
-                    <span class="custom-control-indicator"></span>
-                    <span class="custom-control-description">
-                        Luster
-                    </span>
-                </label>
-
-            </div>
-
-            <div class="form-group">
-                <b-button class="float-left"
-                          size="sm"
-                          variant="secondary"
-                          @click.prevent="cancelEdit()"><i class="fa fa-times"></i> Cancel</b-button>
+            <b-form-group id="groupButtons">
                 <b-button class="float-right"
                           size="sm"
                           variant="primary"
                           @click.prevent="update"><i class="fa fa-save"></i> Update</b-button>
-            </div>
+                <b-button class="float-right"
+                          size="sm"
+                          variant="secondary"
+                          @click.prevent="cancelEdit()"><i class="fa fa-times"></i> Cancel</b-button>
+            </b-form-group>
         </form>
 
     </div>
@@ -185,132 +120,84 @@
   import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
   import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
 
-  // import EditRecipeTypeSelect from './EditRecipeTypeSelect.vue'
-  // import EditRecipeOrtonConesSelect from './EditRecipeOrtonConesSelect.vue'
-  import Multiselect from 'vue-multiselect'
-
   export default {
-
-    props: ['recipe'],
-    components: {
-      // EditRecipeTypeSelect,
-      // EditRecipeOrtonConesSelect,
-      Multiselect
+    props: {
+      recipe: {
+        type: Object,
+        default: null
+      }
     },
-
+    components: {
+    },
     data() {
       return {
+        form: {},
         errors: [],
         error: null,
         constants: new GlazyConstants(),
         materialTypes: new MaterialTypes(),
+        atmospheres: new GlazyConstants().ATMOSPHERE_SELECT,
+        testsel: [],
         isProcessing: false,
         hasErrors: false
-//                submitted: false
-      };
+      }
     },
-
+    created() {
+      this.form = {
+        _method: 'PATCH',
+        id: this.recipe.id,
+        name: this.recipe.name,
+        description: this.recipe.description,
+        baseTypeId: this.recipe.baseTypeId,
+        materialTypeId: this.recipe.materialTypeId,
+        fromOrtonConeId: this.recipe.fromOrtonConeId,
+        toOrtonConeId: this.recipe.toOrtonConeId,
+        atmospheres: []
+      }
+      if (this.recipe.atmospheres) {
+        for (var i = 0; i < this.recipe.atmospheres.length; i++) {
+          this.form.atmospheres.push(this.recipe.atmospheres[i].id);
+        }
+      }
+    },
     computed: {
-
       isLoaded: function () {
         if (this.recipe) {
           return true;
         }
         return false;
       },
-
-      form: function () {
-
-        var form = {};
-
-        if (this.isLoaded) {
-          form = {
-            _method: 'PATCH',
-            id: this.recipe.id,
-            name: this.recipe.name,
-            description: this.recipe.description,
-            typeId: {
-              value: this.recipe.materialTypeId,
-              text: this.materialTypes.LOOKUP[this.recipe.materialTypeId]
-            },
-            baseTypeId: {
-              value: this.recipe.baseTypeId,
-              text: this.materialTypes.LOOKUP[this.recipe.baseTypeId]
-            },
-            orton_cone_range: {
-              from: this.recipe.from_orton_cone_id,
-              to: this.recipe.to_orton_cone_id
-            },
-            atmosphere_ids: []
-//                        hex_color: this.recipe.hex_color,
-          };
-
-          if (this.recipe.atmospheres) {
-            for (var i = 0; i < this.recipe.atmospheres.length; i++) {
-              form.atmosphere_ids.push(this.recipe.atmospheres[i].id);
-            }
-          }
-        }
-        return form;
+      feedbackName() {
+        return this.form.name.length > 0 ? 'Enter at least 3 characters' : 'Please enter a name';
       },
-
-      atmospheres: function() {
-        var atmospheres = []
-        if (this.recipe.atmospheres) {
-          this.recipe.atmospheres.forEach((atmosphere) => {
-            atmospheres.push(atmosphere.id)
-          })
-        }
-        return atmospheres
+      stateName() {
+        return this.form.name.length > 3 ? 'valid' : 'invalid';
       },
-
       baseTypeOptions: function () {
         return this.materialTypes.getParentTypes();
       },
-
       subTypeOptions: function () {
-          switch (this.recipe.baseTypeId) {
-            case this.materialTypes.GLAZE_TYPE_ID:
-              return this.materialTypes.getGlazeTypes()
-            case this.materialTypes.CLAYS_TYPE_ID:
-              return this.materialTypes.getClayTypes()
-            case this.materialTypes.SLIPS_TYPE_ID:
-              return this.materialTypes.getSlipTypes()
-          }
+        switch (this.form.baseTypeId) {
+          case this.materialTypes.GLAZE_TYPE_ID:
+            return this.materialTypes.getGlazeTypes()
+          case this.materialTypes.CLAYS_TYPE_ID:
+            return this.materialTypes.getClayTypes()
+          case this.materialTypes.SLIPS_TYPE_ID:
+            return this.materialTypes.getSlipTypes()
+        }
         return null
       }
     },
-
     methods: {
-
       update: function () {
         if (this.isLoaded) {
           this.isProcessing = true
 
-          var form = {
-            _method: 'PATCH',
-            id: this.recipe.id,
-            name: this.recipe.name,
-            description: this.recipe.description,
-            material_type_id: this.recipe.materialTypeId,
-            from_orton_cone_id: this.recipe.from_orton_cone_id,
-            to_orton_cone_id: this.recipe.to_orton_cone_id
+          if (!this.form.materialTypeId && this.form.baseTypeId) {
+            this.form.materialTypeId = this.form.baseTypeId
           }
 
-          if (!form.material_type_id && this.recipe.baseTypeId) {
-            form.material_type_id = this.recipe.baseTypeId
-          }
-
-          console.log('UPDATE: ')
-          console.log('UPDATE: RECIPE: ')
-          console.log(this.recipe)
-          console.log('UPDATE: ')
-          console.log('UPDATE FORM: ')
-          console.log(form)
-          console.log('UPDATE: ATMOSPHERES')
-          console.log(this.atmospheres)
-
-          Vue.axios.post(Vue.axios.defaults.baseURL + '/recipes/' + this.recipe.id, form)
+          Vue.axios.post(Vue.axios.defaults.baseURL + '/recipes/' + this.recipe.id, this.form)
             .then((response) => {
               console.log('got response:')
               console.log(response)
@@ -339,18 +226,18 @@
       },
 
       updateBaseType () {
-        this.recipe.typeId = 0
+        this.form.materialTypeId = 0
       },
 
       updateFromCone () {
-        if (this.recipe.toOrtonConeId && this.recipe.toOrtonConeId < this.recipe.fromOrtonConeId) {
-          this.recipe.toOrtonConeId = this.recipe.fromOrtonConeId
+        if (this.form.toOrtonConeId && this.form.toOrtonConeId < this.form.fromOrtonConeId) {
+          this.form.toOrtonConeId = this.form.fromOrtonConeId
         }
       },
 
       updateToCone () {
-        if (this.recipe.fromOrtonConeId && this.recipe.fromOrtonConeId > this.recipe.toOrtonConeId) {
-          this.recipe.fromOrtonConeId = this.recipe.toOrtonConeId
+        if (this.form.fromOrtonConeId && this.form.fromOrtonConeId > this.form.toOrtonConeId) {
+          this.form.fromOrtonConeId = this.form.toOrtonConeId
         }
       }
 
