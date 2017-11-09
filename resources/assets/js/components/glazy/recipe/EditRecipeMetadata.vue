@@ -1,23 +1,18 @@
 <template>
 <div class="row" id="edit-recipe-form">
     <div class="col-md-12">
-        <b-alert v-if="error" show variant="danger">
-            {{ error.message }}
+        <b-alert v-if="apiError" show variant="danger">
+            API Error: {{ apiError.message }}
         </b-alert>
-        <div class="load-container load7" v-if="isProcessing">
-            <div class="loader">Loading...</div>
-        </div>
-        <form  role="form" method="POST" v-if="isLoaded && !isProcessing">
+        <b-alert v-if="serverError" show variant="danger">
+            Server Error: {{ serverError }}
+        </b-alert>
+        <form  role="form" method="POST" v-if="isLoaded">
             <div>
                 <h3 class="card-title">
                     Edit {{ form.name }}
                 </h3>
             </div>
-
-            <div class="col-md-12 alert alert-danger" v-if="hasErrors">
-                <i class="fa fa-warning mr-2"></i> Errors were found in the form below.
-            </div>
-
 
             <b-form-group
                     id="groupName"
@@ -133,13 +128,12 @@
       return {
         form: {},
         errors: [],
-        error: null,
+        apiError: null,
+        serverError: null,
         constants: new GlazyConstants(),
         materialTypes: new MaterialTypes(),
         atmospheres: new GlazyConstants().ATMOSPHERE_SELECT,
-        testsel: [],
-        isProcessing: false,
-        hasErrors: false
+        testsel: []
       }
     },
     created() {
@@ -191,7 +185,7 @@
     methods: {
       update: function () {
         if (this.isLoaded) {
-          this.isProcessing = true
+          this.$emit('isProcessing');
 
           if (!this.form.materialTypeId && this.form.baseTypeId) {
             this.form.materialTypeId = this.form.baseTypeId
@@ -203,20 +197,17 @@
               console.log(response)
               if (response.data.error) {
                 // error
-                this.error = response.data.error
-                console.log(this.error)
+                this.apiError = response.data.error
+                console.log(this.apiError)
               } else {
                 console.log('emit recipeUpdated')
                 this.$emit('recipeupdated')
               }
-              this.isProcessing = false
             })
             .catch(response => {
-              this.errors = response.data;
+              this.serverError = response;
               console.log('UPDATE ERROR')
               console.log(response.data)
-              this.hasErrors = true
-              this.isProcessing = false
             })
         }
       },

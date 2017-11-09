@@ -50,22 +50,22 @@ class RecipeController extends ApiBaseController
 
     public function show($id)
     {
-        $recipe = $this->recipeRepository->getWithDetails($id);
+        $material = $this->recipeRepository->getWithDetails($id);
 
-        if (!$recipe)
+        if (!$material)
         {
             return $this->respondNotFound('Recipe does not exist');
         }
 
-        if ($recipe->is_private) {
+        if ($material->is_private) {
             if (!Auth::guard()->user()) {
                 return $this->respondUnauthorized('Recipe is private. Please login.');
-            } else if (!Auth::guard()->user()->can('view', $recipe)) {
+            } else if (!Auth::guard()->user()->can('view', $material)) {
                 return $this->respondUnauthorized('Recipe is private.');
             }
         }
 
-        $resource = new FractalItem($recipe, new MaterialTransformer());
+        $resource = new FractalItem($material, new MaterialTransformer());
 
         return $this->manager->createData($resource)->toArray();
     }
@@ -96,7 +96,7 @@ class RecipeController extends ApiBaseController
         return $this->respondCreated('Recipe successfully created');
     }
 
-    public function update($recipeId, UpdateRecipeRequest $request)
+    public function update($id, UpdateRecipeRequest $request)
     {
         if (!Auth::guard()->user()) {
             return $this->respondUnauthorized('You must login to edit recipes.');
@@ -106,27 +106,27 @@ class RecipeController extends ApiBaseController
         //$data = $request->get('form', []);
         $data = $request->all();
 
-        $recipe = $this->recipeRepository->get($recipeId);
+        $material = $this->recipeRepository->get($id);
 
-        if (! $recipe)
+        if (! $material)
         {
             return $this->respondNotFound('Recipe does not exist');
         }
 
-        if (!Auth::guard()->user()->can('update', $recipe)) {
+        if (!Auth::guard()->user()->can('update', $material)) {
             return $this->respondUnauthorized('This recipe does not belong to you.');
         }
 
-        $recipe = $this->recipeRepository->update($recipe, $data);
+        $material = $this->recipeRepository->update($material, $data);
 
-        $resource = new FractalItem($recipe, new MaterialTransformer());
+        $resource = new FractalItem($material, new MaterialTransformer());
 
         return $this->manager->createData($resource)->toArray();
     }
 
-    public function destroy($recipeId)
+    public function destroy($id)
     {
-        $material = $this->recipeRepository->get($recipeId);
+        $material = $this->recipeRepository->get($id);
 
         if (! $material)
         {
@@ -135,15 +135,15 @@ class RecipeController extends ApiBaseController
 
         $this->authorize('delete', $material);
 
-        $result = $this->recipeRepository->destroy($recipeId);
+        $result = $this->recipeRepository->destroy($id);
 
         return $this->respondDeleted('Recipe deleted');
     }
 
 
-    public function copy($recipeId)
+    public function copy($id)
     {
-        $material = $this->recipeRepository->get($recipeId);
+        $material = $this->recipeRepository->get($id);
 
         if (! $material)
         {
@@ -151,60 +151,61 @@ class RecipeController extends ApiBaseController
         }
 
         if ($material->is_private) {
-            $this->authorize('view', $material);
+            if (!Auth::guard()->user()) {
+                return $this->respondUnauthorized('Recipe is private. Please login.');
+            } else if (!Auth::guard()->user()->can('view', $material)) {
+                return $this->respondUnauthorized('Recipe is private.');
+            }
         }
 
         $copiedMaterial = $this->recipeRepository->copy($material);
 
-        return $this->respond([
-            'data' => [
-                'material' => $this->materialTransformer->transform($copiedMaterial)
-            ]
-        ]);
+        $resource = new FractalItem($copiedMaterial, new MaterialTransformer());
 
+        return $this->manager->createData($resource)->toArray();
     }
 
 
-    public function publish($recipeId)
+    public function publish($id)
     {
-        $material = $this->recipeRepository->getWithDetails($recipeId);
+        $material = $this->recipeRepository->getWithDetails($id);
 
         if (! $material)
         {
             return $this->respondNotFound('Recipe does not exist');
         }
 
-        $this->authorize('update', $material);
+        if (!Auth::guard()->user()->can('update', $material)) {
+            return $this->respondUnauthorized('This recipe does not belong to you.');
+        }
 
         $material->is_private = false;
         $material->save();
 
-        return $this->respond([
-            'data' => [
-                'material' => $this->materialTransformer->transform($material)
-            ]
-        ]);
+        $resource = new FractalItem($material, new MaterialTransformer());
+
+        return $this->manager->createData($resource)->toArray();
     }
 
-    public function unpublish($recipeId)
+    public function unpublish($id)
     {
-        $material = $this->recipeRepository->getWithDetails($recipeId);
+        $material = $this->recipeRepository->getWithDetails($id);
 
         if (! $material)
         {
             return $this->respondNotFound('Recipe does not exist');
         }
 
-        $this->authorize('update', $material);
+        if (!Auth::guard()->user()->can('update', $material)) {
+            return $this->respondUnauthorized('This recipe does not belong to you.');
+        }
 
         $material->is_private = true;
         $material->save();
 
-        return $this->respond([
-            'data' => [
-                'material' => $this->materialTransformer->transform($material)
-            ]
-        ]);
+        $resource = new FractalItem($material, new MaterialTransformer());
+
+        return $this->manager->createData($resource)->toArray();
     }
 
 

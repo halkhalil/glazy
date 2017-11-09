@@ -1,5 +1,10 @@
 <template>
   <div class="row search-row" v-cloak>
+
+    <div class="load-container load7 fullscreen" v-if="isProcessing">
+      <div class="loader">Searching...</div>
+    </div>
+
     <nav v-bind:class="sidebarClass" class="sidebar d-none d-md-block">
 
       <h4 class="search-title" v-html="searchTitle"></h4>
@@ -77,13 +82,6 @@
 
 
       <div class="row">
-
-        <div class="col-sm-12" v-if="isProcessing">
-          <div class="load-container load7">
-            <div class="loader">Searching...</div>
-          </div>
-        </div>
-
         <div
                 class="alert alert-warning col-sm-12"
                 role="alert"

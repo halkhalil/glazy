@@ -1,24 +1,23 @@
 // https://github.com/lukehaas/css-loaders
+// https://projects.lukehaas.me/css-loaders/
 $loader-color:            $brand-info;
-$loader-background-color: #cccccc;
-
-
+$loader-background-color: rgba(255,255,255,0.5);
 
 .load-container.fullscreen {
   position: fixed;
   display: block;
-  z-index: 999;
+  z-index: 1001;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  padding-top: 100px;
   background-color: $loader-background-color;
 }
 
 .load-container.fullscreen .loader {
-  z-index: 1001;
+  z-index: 1003;
 }
-
 
 .load7 .loader,
 .load7 .loader:before,

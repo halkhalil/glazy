@@ -138,7 +138,7 @@ class RecipeRepository extends Repository
         $copiedMaterial = $material->replicate();
 
         // Give this duplicate a new name
-        $copiedMaterial->name = $copiedMaterial->name.' ('.trans('glazy/common.duplicate').')';
+        $copiedMaterial->name = $copiedMaterial->name.' (Copy)';
 
         // Set this recipe's owner
         $copiedMaterial->created_by_user_id = Auth::user()->id;

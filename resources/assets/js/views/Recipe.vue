@@ -1,8 +1,14 @@
 <template>
   <div>
-    <b-alert v-if="error" show variant="danger">
-      {{ error.message }}
+    <b-alert v-if="apiError" show variant="danger">
+      API Error: {{ apiError.message }}
     </b-alert>
+    <b-alert v-if="serverError" show variant="danger">
+      Server Error: {{ serverError }}
+    </b-alert>
+    <div class="load-container load7 fullscreen" v-if="isProcessing">
+      <div class="loader">Loading...</div>
+    </div>
 
 
     <div v-if="isLoaded && !isDeleted" v-cloak>
@@ -24,7 +30,8 @@
               <div v-if="isEdit">
                 <edit-recipe-metadata :recipe="recipe"
                                       v-on:recipeupdated="recipeUpdated"
-                                      v-on:editMetaCancel="editMetaCancel"></edit-recipe-metadata>
+                                      v-on:editMetaCancel="editMetaCancel"
+                                      v-on:isProcessing="isProcessingRecipe"></edit-recipe-metadata>
               </div>
               <div v-show="!(isEdit)">
                 <div class="row">
@@ -78,15 +85,14 @@
                         <b-dropdown-divider></b-dropdown-divider>
                         <b-dropdown-item>Item 3</b-dropdown-item>
                       </b-dropdown>
-                      <b-button><i class="fa fa-copy"></i> Duplicate</b-button>
+                      <b-button v-on:click="copyRecipe()"><i class="fa fa-copy"></i> Duplicate</b-button>
                     </b-button-group>
-
                     <b-button-group v-if="canEdit">
                       <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-unlock"></i> Publish</b-button>
                       <b-button class="btn-info" v-if="!(recipe.isPrivate)" v-on:click="unpublishRecipe()"><i class="fa fa-lock"></i> Unpublish</b-button>
                       <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
                       <b-button class="btn-info" :href="'/recipematerials/' + recipe.id + '/edit'"><i class="fa fa-list"></i> Edit Recipe</b-button>
-                      <b-button class="btn-danger" v-on:click="confirmDeleteRecipe()"><i class="fa fa-times"></i> Delete</b-button>
+                      <b-button class="btn-danger" v-on:click="confirmDeleteRecipe()"><i class="fa fa-trash"></i></b-button>
                     </b-button-group>
 
                   </div>
@@ -351,7 +357,9 @@
         isRecipeUpdated: false,
         isEdit: false,
         showRecipeUpdatedSeconds: 0,
-        error: null
+        isProcessing: false,
+        apiError: null,
+        serverError: null
       }
     },
 
@@ -379,35 +387,50 @@
         return false
       }
     },
-
+    beforeRouteUpdate (to, from, next) {
+      // Ensure that the back/forward buttons work within this component/route
+      this.sendRecipeGetRequest('/recipes/' + to.params.id)
+      next()
+    },
     methods : {
 
-      fetchRecipe : function(){
-        console.log('Fetching recipe ID: ' + this.$route.params.id)
-        Vue.axios.get(Vue.axios.defaults.baseURL + '/recipes/' + this.$route.params.id)
-          .then((response) => {
-            console.log('FETCHED RECIPE GOT RESPONSE');
-            if (response.data.error) {
-              this.error = response.data.error
-              console.log('FETCH ERROR!!!!!!!!!!!!')
-              console.log(this.error)
-            } else {
-              this.recipe = response.data.data;
-              document.title = document.title + " - " + this.recipe.name;
-              //TODO this.setMaterial();
-              console.log(this.recipe);
-              var materialObj = new Material();
-              this.material = Material.createFromJson(this.recipe);
-              console.log(this.material);
-              console.log('YYYY MATERIAL');
-            }
-          })
-        .catch(response => {
-          // Error Handling
-        });
+      fetchRecipe: function (){
+        this.sendRecipeGetRequest('/recipes/' + this.$route.params.id)
       },
 
-      fetchRecipeStatic () {
+      publishRecipe: function () {
+        if (this.recipe) {
+          this.sendRecipeGetRequest('/recipes/' + this.recipe.id + '/publish')
+        }
+      },
+
+      unpublishRecipe: function () {
+        if (this.recipe) {
+          this.sendRecipeGetRequest('/recipes/' + this.recipe.id + '/unpublish')
+        }
+      },
+
+      copyRecipe: function () {
+        if (!this.recipe) {
+          return
+        }
+        this.isProcessing = true
+        Vue.axios.get(Vue.axios.defaults.baseURL + '/recipes/' + this.recipe.id + '/copy')
+          .then((response) => {
+          if (response.data.error) {
+            this.apiError = response.data.error
+            console.log(this.apiError)
+            this.isProcessing = false
+          } else {
+            this.isProcessing = false
+            var recipeCopy = response.data.data;
+            this.$router.push({ name: 'recipes', params: { id: recipeCopy.id }})
+          }
+        })
+        .catch(response => {
+          this.serverError = response;
+          this.isProcessing = false
+        })
       },
 
       setMaterial: function() {
@@ -427,7 +450,7 @@
       },
 
       imageUpdated: function() {
-        this.fetchRecipe();
+        this.fetchRecipe()
       },
 
       editMeta: function () {
@@ -436,6 +459,10 @@
 
       editMetaCancel: function() {
         this.isEdit = false
+      },
+
+      isProcessingRecipe: function () {
+        this.isProcessing = true
       },
 
       collectionAdd: function(material) {
@@ -511,30 +538,27 @@
         });
       },
 
-      publishRecipe: function() {
-        var publishUrl = '/api/v1/recipes/' + this.recipe_id + '/publish';
-        axios.get(publishUrl)
+      sendRecipeGetRequest: function(url) {
+        this.isProcessing = true
+        Vue.axios.get(Vue.axios.defaults.baseURL + url)
           .then((response) => {
-          this.recipe = response.data.data.material;
-        var materialObj = new Material();
-        this.material = materialObj.createFromJson(this.recipe);
-      })
+          if (response.data.error) {
+            this.apiError = response.data.error
+            console.log(this.apiError)
+          } else {
+            this.recipe = response.data.data;
+            document.title = document.title + " - " + this.recipe.name;
+            //TODO this.setMaterial();
+            console.log(this.recipe);
+            var materialObj = new Material();
+            this.material = Material.createFromJson(this.recipe);
+          }
+          this.isProcessing = false
+        })
         .catch(response => {
-          // Error Handling
-        });
-      },
-
-      unpublishRecipe: function() {
-        var unpublishUrl = '/api/v1/recipes/' + this.recipe_id + '/unpublish';
-        axios.get(unpublishUrl)
-          .then((response) => {
-          this.recipe = response.data.data.material;
-        var materialObj = new Material();
-        this.material = materialObj.createFromJson(this.recipe);
-      })
-        .catch(response => {
-          // Error Handling
-        });
+          this.serverError = response;
+          this.isProcessing = false
+        })
       },
 
       getUserProfileUrl: function(recipe) {
