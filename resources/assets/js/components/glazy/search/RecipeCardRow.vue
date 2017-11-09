@@ -1,21 +1,33 @@
 <template>
   <tr class="recipe-tr">
     <td class="recipe-td">
-      <img class="rounded img-raised" width="120" height="120" src="/static/img/glazes/g4.jpg">
+      <router-link :to="{ name: 'recipes', params: { id: recipe.id }}">
+        <img :src="imageUrl"
+             :alt="recipe.name"
+             width="120" height="120" >
+      </router-link>
     </td>
     <td class="recipe-td">
-      <div class="card card-recipe-detail">
-        <div class="card-body">
-          <h4 class="card-title">{{ recipe.name }}</h4>
-          <h6 class="category text-primary">Blue Celadon</h6>
-          <p class="card-description">
-            {{ recipe.description }}
-          </p>
-        </div>
-      </div>
+      <router-link :to="{ name: 'recipes', params: { id: recipe.id }}">
+        {{ recipe.name }}
+      </router-link>
     </td>
     <td class="recipe-td">
         <p>adfasdf</p>
+    </td>
+    <td>
+      <table class="umf-spark-table">
+        <JsonUmfSparkSvg
+                :material="recipe"
+                :showOxideList="false"
+                :squareSize="24"
+        >
+        </JsonUmfSparkSvg>
+
+
+
+
+      </table>
     </td>
   </tr>
 </template>
@@ -26,8 +38,13 @@
   import Material from 'ceramicscalc-js/src/material/Material'
   import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
 
+  import JsonUmfSparkSvg from '../analysis/JsonUmfSparkSvg.vue'
+
   export default {
     name: 'RecipeCardThumb',
+    components: {
+      JsonUmfSparkSvg
+    },
     props: {
       recipe: {
         type: Object,

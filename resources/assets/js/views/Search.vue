@@ -72,7 +72,7 @@
       <filter-paginator
               v-if="hasResults && hasPagination"
               :pagination="pagination"
-              :view="view"
+              :view="searchQuery.params.view"
               :order="order"
               :item_type_name="'recipes'"
               v-on:pagerequest="pageRequest"
@@ -103,7 +103,7 @@
       </div>
 
 
-      <section class="row" v-if="(view === 'cards') && !isProcessing">
+      <section class="row" v-if="(searchQuery.params.view === 'cards') && !isProcessing">
         <div v-bind:class="recipeCardClass" class=""
              v-for="(recipe, index) in itemlist">
           <RecipeCardThumb
@@ -114,7 +114,7 @@
         </div>
       </section>
       <section class="row" v-else-if="!isProcessing">
-        <table class="table recipe-detail-table">
+        <table class="table table-hover recipe-detail-table">
           <tbody>
             <tr is="RecipeCardRow" v-for="(recipe, index) in itemlist" :recipe="recipe">
             </tr>
@@ -125,7 +125,7 @@
       <filter-paginator
               v-if="hasResults && hasPagination && !isProcessing"
               :pagination="pagination"
-              :view="view"
+              :view="searchQuery.params.view"
               :order="order"
               :item_type_name="'recipes'"
               v-on:pagerequest="pageRequest"
@@ -239,14 +239,6 @@
         return false;
       },
 
-      view () {
-        if (this.searchQuery.params.view) {
-          return this.searchQuery.params.view
-        }
-        // default view is cards
-        return 'cards';
-      },
-
       order () {
         return this.searchQuery.params.order;
       },
@@ -326,7 +318,7 @@
       console.log('SETTING SEARCH QUERY')
       this.searchQuery.setFromRouterQuery(this.$router.query)
       console.log(this.searchQuery)
-      
+
       this.fetchitemlist()
       //this.requery()
 

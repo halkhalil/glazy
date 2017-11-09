@@ -40,6 +40,14 @@
                           :material="newMaterial"
                   >
                   </MaterialAnalysisUmfSpark2Single>
+
+                  <JsonUmfSparkSvg
+                          :material="newMaterial"
+                          :showOxideList="false"
+                          :squareSize="30"
+                  >
+                  </JsonUmfSparkSvg>
+
                 </table>
               </div>
             </b-tab>
@@ -151,6 +159,7 @@
   import MaterialAnalysisTableCompare from '../components/glazy/analysis/MaterialAnalysisTableCompare.vue';
   import MaterialAnalysisUmfSpark2Single from '../components/glazy/analysis/MaterialAnalysisUmfSpark2Single.vue';
   import MaterialAnalysisPercentTableCompare from '../components/glazy/analysis/MaterialAnalysisPercentTableCompare.vue';
+  import JsonUmfSparkSvg from '../components/glazy/analysis/JsonUmfSparkSvg.vue'
 
   export default {
     name: 'Calculator',
@@ -159,7 +168,8 @@
       UmfPlotly,
       MaterialAnalysisTableCompare,
       MaterialAnalysisUmfSpark2Single,
-      MaterialAnalysisPercentTableCompare
+      MaterialAnalysisPercentTableCompare,
+      JsonUmfSparkSvg
     },
     props: {
 //      originalMaterial: {

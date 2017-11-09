@@ -15,7 +15,7 @@ export default class SearchQuery {
       transparency: null,
       hex_color: '',
       p: 0,
-      view: '',
+      view: 'cards',
       order: '',
       oxide1: 'Al2O3',
       oxide2: 'SiO2',
