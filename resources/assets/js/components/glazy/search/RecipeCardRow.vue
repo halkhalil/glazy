@@ -21,6 +21,7 @@
                 :material="recipe"
                 :showOxideList="false"
                 :squareSize="24"
+                :showOxideTitle="true"
         >
         </JsonUmfSparkSvg>
 
