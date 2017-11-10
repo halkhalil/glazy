@@ -148,19 +148,17 @@
                   </umf-traditional-notation>
                 </div>
                 <div class="col-md-6">
-                  <div class="table-responsive">
-                    <table class="umf-spark-table">
-                      <MaterialAnalysisUmfSpark2Single
-                              :material="material"
-                              :showOxideList="false"
-                              :squareSize="60"
+                  <h2>HI</h2>
+                      <JsonUmfSparkSvg
+                              :material="recipe"
+                              :squareSize="56"
+                              :fontSize="12"
+                              :showOxideTitle="true"
+                              :showOxideList="true"
                       >
-                      </MaterialAnalysisUmfSpark2Single>
-                    </table>
-                  </div>
+                      </JsonUmfSparkSvg>
                 </div>
               </div>
-
               <div class="row mt-4">
                 <div class="col-md-12">
                   <b-tabs class="analysis-tabs" active>
@@ -296,6 +294,7 @@
   import MaterialRecipeCalculator from '../components/glazy/recipe/MaterialRecipeCalculator.vue'
   import MaterialImageGallery from '../components/glazy/materialimage/MaterialImageGallery.vue'
 
+  import JsonUmfSparkSvg from '../components/glazy/analysis/JsonUmfSparkSvg.vue'
   import MaterialAnalysisUmfSpark2Single from '../components/glazy/analysis/MaterialAnalysisUmfSpark2Single.vue';
   import UmfTraditionalNotation from '../components/glazy/analysis/UmfTraditionalNotation.vue';
   import ComponentTable from '../components/glazy/analysis/ComponentTable.vue'
@@ -318,6 +317,7 @@
       MaterialImageGallery,
       UmfChart,
       MaterialAnalysisUmfSpark2Single,
+      JsonUmfSparkSvg,
       UmfTraditionalNotation,
       ComponentTable,
       SimilarBaseComponents,

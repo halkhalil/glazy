@@ -5,8 +5,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <meta name="author" content="Anindya Dhruba">
-        <meta name="description" content="Laravel Vue SPA">
+        <meta name="author" content="Derek Au">
+        <meta name="description" content="Glazy">
 
         <title>{{ config('app.name') }}</title>
 
@@ -29,6 +29,8 @@
             <app></app>
         </div>
 
+        <script src="{{ elixir('/js/manifest.js') }}"></script>
+        <script src="{{ elixir('/js/vendor.js') }}"></script>
         <script src="{{ elixir('/js/app.js') }}"></script>
     </body>
 </html>

@@ -47,6 +47,6 @@
     "vue-multiselect": "^2.0.3",
     "vue-star-rating": "^1.4.0",
     "vue-template-compiler": "^2.5.2",
-    "webpack-bundle-analyzer": "^2.9.0"
+    "webpack-bundle-analyzer": "^2.9.1"
   }
 }

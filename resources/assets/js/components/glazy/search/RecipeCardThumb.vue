@@ -1,7 +1,6 @@
 <template>
   <div
           class="card recipe-card"
-          v-bind:id="'recipe-card-' + recipe.id"
           @mouseover="highlightRecipe(recipe.id)"
           @mouseleave="unhighlightRecipe(recipe.id)">
     <router-link :to="{ name: 'recipes', params: { id: recipe.id }}">
@@ -9,7 +8,8 @@
            :src="imageUrl"
            :alt="recipe.name">
     </router-link>
-
+    <span v-bind:id="'recipe-card-' + recipe.id"
+          class="recipe-anchor"></span>
     <div class="swatches" v-if="recipe.thumbnail">
       <a v-if="recipe.thumbnail.dominantHexColor"
          role="button" class="btn"
@@ -206,5 +206,13 @@
     color: #999999;
     margin: 5px 0;
   }
+
+  .recipe-anchor {
+    display: block;
+    position: relative;
+    top: -240px;
+    visibility: hidden;
+  }
+
 
 </style>

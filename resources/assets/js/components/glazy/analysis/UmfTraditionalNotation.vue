@@ -31,7 +31,7 @@
                 <div v-for="oxide in fluxes" v-html="oxide"></div>
             </td>
             <td>
-                <img v-bind:src="'/static/img/brackets/r' + fluxes.length + '.png'"
+                <img v-bind:src="'/img/brackets/r' + fluxes.length + '.png'"
                      v-bind:height="fluxes.length * 26"
                      width="13"/>
             </td>
@@ -39,7 +39,7 @@
                 <div v-for="oxide in r2o3" v-html="oxide"></div>
             </td>
             <td>
-                <img v-bind:src="'/static/img/brackets/l' + sio2.length + '.png'"
+                <img v-bind:src="'/img/brackets/l' + sio2.length + '.png'"
                      v-bind:height="sio2.length * 26"
                      width="13"/>
             </td>
@@ -47,7 +47,7 @@
                 <div v-for="oxide in sio2" v-html="oxide"></div>
             </td>
             <td v-if="other.length">
-                <img v-bind:src="'/static/img/brackets/l' + other.length + '.png'"
+                <img v-bind:src="'/img/brackets/l' + other.length + '.png'"
                      v-bind:height="other.length * 26"
                      width="13"/>
             </td>

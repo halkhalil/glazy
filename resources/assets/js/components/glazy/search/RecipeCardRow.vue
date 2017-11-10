@@ -1,6 +1,10 @@
 <template>
-  <tr class="recipe-tr">
+  <tr class="recipe-tr"
+      @mouseover="highlightRecipe(recipe.id)"
+      @mouseleave="unhighlightRecipe(recipe.id)">
     <td class="recipe-td">
+      <span v-bind:id="'recipe-card-' + recipe.id"
+        class="recipe-anchor"></span>
       <router-link :to="{ name: 'recipes', params: { id: recipe.id }}">
         <img :src="imageUrl"
              :alt="recipe.name"
@@ -12,23 +16,24 @@
         {{ recipe.name }}
       </router-link>
     </td>
+    <td nowrap class="recipe-td">
+      <span class="badge badge-default"
+            v-html="getR2ORORatioString(recipe)">
+      </span>
+    </td>
     <td class="recipe-td">
-        <p>adfasdf</p>
+      <span class="badge badge-info"
+            v-html="Number(recipe.analysis.umfAnalysis.SiO2Al2O3Ratio).toFixed(2)">
+      </span>
     </td>
     <td>
-      <table class="umf-spark-table">
-        <JsonUmfSparkSvg
-                :material="recipe"
-                :showOxideList="false"
-                :squareSize="24"
-                :showOxideTitle="true"
-        >
-        </JsonUmfSparkSvg>
-
-
-
-
-      </table>
+      <JsonUmfSparkSvg
+              :material="recipe"
+              :showOxideList="false"
+              :squareSize="24"
+              :showOxideTitle="true"
+      >
+      </JsonUmfSparkSvg>
     </td>
   </tr>
 </template>
@@ -63,10 +68,26 @@
       }
     },
     methods: {
+      getR2ORORatioString (recipe) {
+        if (recipe.analysis &&
+          recipe.analysis.umfAnalysis &&
+          recipe.analysis.umfAnalysis.R2OTotal &&
+          recipe.analysis.umfAnalysis.ROTotal) {
+          return (Number(recipe.analysis.umfAnalysis.R2OTotal).toFixed(1) + '').substr(1)
+            + ' : ' +
+            (Number(recipe.analysis.umfAnalysis.ROTotal).toFixed(1) + '').substr(1)
+        }
+        return ''
+      },
 
-      setLeach () {
-        return true
+      highlightRecipe: function (id) {
+        this.$emit('highlightRecipe', id);
+      },
+
+      unhighlightRecipe: function (id) {
+        this.$emit('unhighlightRecipe', id);
       }
+
 
     }
   }
@@ -78,7 +99,6 @@
   }
 
   .recipe-td {
-    border-bottom-style: hidden;
   }
 
   .card-recipe-detail {
@@ -88,6 +108,13 @@
 
   .card-recipe-detail .card-body .card-title {
     margin-top: 0;
+  }
+
+  .recipe-anchor {
+    display: block;
+    position: relative;
+    top: -78px;
+    visibility: hidden;
   }
 
 </style>

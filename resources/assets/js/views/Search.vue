@@ -116,7 +116,11 @@
       <section class="row" v-else-if="!isProcessing">
         <table class="table table-hover recipe-detail-table">
           <tbody>
-            <tr is="RecipeCardRow" v-for="(recipe, index) in itemlist" :recipe="recipe">
+            <tr is="RecipeCardRow"
+                v-for="(recipe, index) in itemlist"
+                :recipe="recipe"
+                v-on:highlightRecipe="highlightRecipe"
+                v-on:unhighlightRecipe="unhighlightRecipe">
             </tr>
           </tbody>
         </table>
