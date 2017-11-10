@@ -18,11 +18,14 @@ if (mix.inProduction()) {
     'vform',
     'axios',
     'vuex',
+    'jquery',
+    'popper.js',
     'vue-i18n',
     'vue-meta',
     'js-cookie',
     'bootstrap',
     'vue-router',
+    'sweetalert2',
     'vuex-router-sync'
   ])
 }

@@ -95,11 +95,11 @@
                       <b-button class="btn-danger"  v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
                     </b-button-group>
 
-                    <!-- Modal Component -->
                     <b-modal v-if="canEdit"
                              id="deleteConfirmModal"
                              title="Delete Recipe?"
                              v-on:ok="deleteRecipe"
+                             ok-title="Delete Forever"
                     >
                       <p>Once deleted, you will not be able to retrieve this recipe!</p>
                     </b-modal>
@@ -148,7 +148,6 @@
                   </umf-traditional-notation>
                 </div>
                 <div class="col-md-6">
-                  <h2>HI</h2>
                       <JsonUmfSparkSvg
                               :material="recipe"
                               :squareSize="56"

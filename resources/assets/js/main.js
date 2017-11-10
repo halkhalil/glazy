@@ -13,6 +13,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueAuth from '@websanova/vue-auth'
 
+
 Vue.use(VueAxios, axios)
 //Vue.axios = axios
 Vue.axios.defaults.baseURL = 'http://homestead.app/api';

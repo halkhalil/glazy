@@ -44,9 +44,12 @@
 
     <div class="card-footer" v-if="$auth.check()">
 
-      <a class="btn btn-icon btn-neutral"><i class="fa fa-bookmark"></i></a>
-      <a class="btn btn-icon btn-neutral"><i class="fa fa-copy"></i></a>
-      <a v-if="canEdit()" class="btn btn-icon btn-neutral"><i class="fa fa-trash"></i></a>
+      <a @click="collectRecipeRequest(recipe.id)" class="btn btn-icon btn-neutral"><i class="fa fa-bookmark"></i></a>
+      <a class="btn btn-icon btn-neutral"
+         @click="copyRecipeRequest(recipe.id)"><i class="fa fa-copy"></i></a>
+      <a v-if="canEdit()"
+         @click="deleteRecipeRequest(recipe.id)"
+         class="btn btn-icon btn-neutral"><i class="fa fa-trash"></i></a>
     </div>
 
   </div>
@@ -154,6 +157,18 @@
 
       unhighlightRecipe: function (id) {
         this.$emit('unhighlightRecipe', id);
+      },
+
+      collectRecipeRequest: function (id) {
+        this.$emit('collectRecipeRequest', id);
+      },
+
+      copyRecipeRequest: function (id) {
+        this.$emit('copyRecipeRequest', id);
+      },
+
+      deleteRecipeRequest: function (id) {
+        this.$emit('deleteRecipeRequest', id);
       },
 
       canEdit: function () {

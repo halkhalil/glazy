@@ -53,6 +53,14 @@
 
     <main v-bind:class="mainClass" role="main" class="ml-sm-auto pt-3 search-results">
 
+
+      <b-alert v-if="apiError" show variant="danger">
+        API Error: {{ apiError.message }}
+      </b-alert>
+      <b-alert v-if="serverError" show variant="danger">
+        Server Error: {{ serverError }}
+      </b-alert>
+
       <div class="row">
 
         <div class="col-sm-12 d-xl-none d-lg-none d-md-none">
@@ -110,6 +118,9 @@
                   :recipe="recipe"
                   v-on:highlightRecipe="highlightRecipe"
                   v-on:unhighlightRecipe="unhighlightRecipe"
+                  v-on:copyRecipeRequest="copyRecipe"
+                  v-on:deleteRecipeRequest="confirmDeleteRecipe"
+                  v-on:collectRecipeRequest="collectRecipeSelect"
           ></RecipeCardThumb>
         </div>
       </section>
@@ -140,6 +151,47 @@
       <AppFooter/>
 
     </main>
+
+    <b-modal id="deleteConfirmModal"
+             ref="deleteConfirmModal"
+             title="Delete Recipe?"
+             v-on:ok="deleteRecipe"
+             ok-title="Delete Forever"
+    >
+      <p>Once deleted, you will not be able to retrieve this recipe!</p>
+    </b-modal>
+
+    <b-modal id="collectModal"
+             ref="collectModal"
+             title="Collect Recipe"
+             v-on:ok="collectRecipe"
+             ok-title="Add"
+    >
+      <p>Collect in:</p>
+      <div v-if="collections && collections.length > 0">
+        <b-form-select v-model="selectedCollectionId"
+                       :options="collections"
+                       text-field="name"
+                       value-field="id">
+          <template slot="first">
+            <option :value="0">-- Select a collection --</option>
+          </template>
+        </b-form-select>
+      </div>
+
+      <b-form-group
+              id="groupName"
+              label="Create a New Collection:"
+              :feedback="feedbackCollectionName"
+              :state="stateCollectionName"
+      >
+        <b-form-input id="name"
+                      :state="stateCollectionName"
+                      v-model.trim="newCollectionName"
+                      placeholder="Collection Name"></b-form-input>
+      </b-form-group>
+    </b-modal>
+
   </div>
 </template>
 
@@ -170,6 +222,7 @@
   import Vue from 'vue'
 
   export default {
+
     name: 'Search',
     components: {
       AppFooter,
@@ -199,6 +252,7 @@
         type: Number,
         default: 0
       }
+
     },
     data() {
       return {
@@ -220,7 +274,12 @@
         recipeCardClass: 'col-lg-3 col-md-4 col-sm-6',
         currentPage: null,
         isThumbnailView: true,
-        highlightedRecipeId: 0
+        highlightedRecipeId: 0,
+        selectedCollectionId: 0,
+        toDeleteRecipeId: 0,
+        newCollectionName: '',
+        apiError: null,
+        serverError: null
       }
     },
     computed: {
@@ -314,7 +373,24 @@
         }
 
         return subtitle
+      },
+
+      collections () {
+        var user = this.$auth.user()
+        if (user && user.collections && user.collections.length > 0) {
+          return user.collections
+        }
+        return null
+      },
+
+      feedbackCollectionName() {
+        return this.newCollectionName.length > 0 ? 'Enter at least 3 characters' : 'Please enter a name';
+      },
+
+      stateCollectionName() {
+        return this.newCollectionName.length > 2 ? 'valid' : 'invalid';
       }
+
 
     },
 
@@ -390,23 +466,28 @@
         Vue.axios.get(Vue.axios.defaults.baseURL + '/search?' + querystring)
           .then((response) => {
             console.log('############ GOT RESPONSE')
+            if (response.data.error) {
+              this.apiError = response.data.error
+              console.log(this.apiError)
+              this.isProcessing = false
+            } else {
+              this.itemlist = response.data.data
 
-            this.itemlist = response.data.data
+              if (!this.itemlist) {
+                // Make sure itemlist is always defined, and an array
+                this.itemlist = []
+              }
 
-            if (!this.itemlist) {
-              // Make sure itemlist is always defined, and an array
-              this.itemlist = []
+              this.pagination = response.data.meta.pagination
+
+              this.$router.push({path: 'search', query: myQuery})
+              console.log(this.searchQuery)
+
+              this.isProcessing = false
             }
-
-            this.pagination = response.data.meta.pagination
-
-            this.$router.push({path: 'search', query: myQuery})
-            console.log(this.searchQuery)
-
-            this.isProcessing = false
           })
           .catch(response => {
-            // Error Handling
+            this.serverError = response;
             this.isProcessing = false
           })
       },
@@ -509,6 +590,65 @@
 
       unhighlightRecipe: function (id) {
         this.highlightedRecipeId = 0
+      },
+
+      collectRecipeSelect(id) {
+        if (id) {
+          this.$refs.collectModal.show();
+        }
+      },
+
+      copyRecipe: function (id) {
+        console.log('search copy recipe : ' + id)
+        if (!id) {
+          return
+        }
+        this.isProcessing = true
+        Vue.axios.get(Vue.axios.defaults.baseURL + '/recipes/' + id + '/copy')
+          .then((response) => {
+          if (response.data.error) {
+            this.apiError = response.data.error
+            console.log(this.apiError)
+            this.isProcessing = false
+          } else {
+            this.isProcessing = false
+            var recipeCopy = response.data.data;
+            this.$router.push({ name: 'recipes', params: { id: recipeCopy.id }})
+          }
+        })
+        .catch(response => {
+          this.serverError = response;
+          this.isProcessing = false
+        })
+      },
+
+      confirmDeleteRecipe: function(id) {
+        if (id) {
+          this.toDeleteRecipeId = id
+          this.$refs.deleteConfirmModal.show();
+        }
+      },
+
+      deleteRecipe: function() {
+        if (this.toDeleteRecipeId) {
+          Vue.axios.delete(Vue.axios.defaults.baseURL + '/recipes/' + this.toDeleteRecipeId)
+            .then((response) => {
+            if (response.data.error) {
+              this.apiError = response.data.error
+              console.log(this.apiError)
+              this.isProcessing = false
+            } else {
+              this.toDeleteRecipeId = 0
+              this.isProcessing = false
+              this.fetchitemlist()
+            }
+          })
+          .catch(response => {
+            this.toDeleteRecipeId = 0
+            this.serverError = response;
+            this.isProcessing = false
+          })
+        }
       }
 
     }

@@ -165,7 +165,7 @@
         return this.form.name.length > 0 ? 'Enter at least 3 characters' : 'Please enter a name';
       },
       stateName() {
-        return this.form.name.length > 3 ? 'valid' : 'invalid';
+        return this.form.name.length > 2 ? 'valid' : 'invalid';
       },
       baseTypeOptions: function () {
         return this.materialTypes.getParentTypes();

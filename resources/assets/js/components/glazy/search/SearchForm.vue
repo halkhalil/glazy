@@ -290,7 +290,6 @@ export default {
       return collections
     },
 
-
     formParams() {
       var params = {}
       params.keywords = this.query.params.keywords
