@@ -22,6 +22,7 @@ if (mix.inProduction()) {
     'vue-meta',
     'js-cookie',
     'bootstrap',
+    'popper.js',
     'vue-router',
     'vuex-router-sync'
   ])
