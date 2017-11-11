@@ -1,12 +1,14 @@
 <template>
     <form class="search-form">
         <div class="form-row">
-            <div v-if="collections && collections.length > 0"
+            <div v-if="collectionsSelect && collectionsSelect.length > 0"
                  v-bind:class="sizeLarge" class="form-group">
                 <b-form-select
                         size="sm"
                         v-model="query.collection"
                         :options="collections"
+                        value-field="id"
+                        text-field="name"
                         @change.native="search">
                 </b-form-select>
             </div>
@@ -180,6 +182,10 @@ export default {
     query: {
       type: Object,
       default: null
+    },
+    collections: {
+      type: Object,
+      default: null
     }
   },
 
@@ -275,19 +281,18 @@ export default {
       return null;
     },
 
-    collections () {
-      var collections = []
+    collectionsSelect () {
       if (this.$auth.check()) {
-        var user = this.$auth.user()
-        collections.push({ text: 'All Recipes', value: 0 })
-        collections.push({ text: 'Your Recipes', value: -1 })
-        if (user && user.collections && user.collections.length > 0) {
-          user.collections.forEach((collection) => {
-            collections.push({ text: collection.name, value: collection.id })
-          })
+        var collectionsSelect = [
+          { name: 'All Recipes', id: 0 },
+          { name: 'Your Recipes', id: -1 }
+        ]
+        if (this.collections) {
+          collectionsSelect = collectionsSelect.concat(this.collections)
         }
+        return collectionsSelect
       }
-      return collections
+      return null
     },
 
     formParams() {
@@ -297,8 +302,8 @@ export default {
       params.collection = {}
       if (this.collections && this.query.params.collection in this.collections) {
         params.collection = {
-          value: this.query.params.collection,
-          label: this.collections[this.query.params.collection]
+          id: this.query.params.collection,
+          name: this.collections[this.query.params.collection]
         }
       }
       params.base_type = {}

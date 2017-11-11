@@ -19,31 +19,37 @@
               v-html="expandButtonText">
       </b-button>
 
-      <div id="stull-chart-d3" v-if="hasResults">
-        <umf-plotly
+      <div v-if="hasResults" id="umf-d3-chart-container" class="w-100">
+        <umf-d3-chart
                 :recipeData="itemlist"
-                :oxide1="searchQuery.params.oxide1"
-                :oxide2="searchQuery.params.oxide2"
-                :oxide3="searchQuery.params.oxide3"
+                :width="chartWidth"
+                :height="chartHeight"
+                :margin="chartMargin"
+                :axisLabelFontSize="'0.75rem'"
+                :stullLabelsFontSize="'0.5rem'"
+                :chartDivId="'umf-d3-chart-container'"
                 :baseTypeId="searchQuery.params.base_type"
-                :isThreeAxes="searchQuery.params.isThreeAxes"
-                :noZeros="false"
+                :colortype="'r2o'"
+                :showRecipes="true"
+                :showCones="false"
                 :showStullChart="true"
-                :chartHeight="chartHeight"
-                :chartWidth="chartWidth"
-                :axesColor="'#aaaaaa'"
-                :gridColor="'#aaaaaa'"
-                :highlightedRecipeId="highlightedRecipeId"
-                :showModeBar="false"
-                v-on:clickedUmfPlotly="clickedChart"
+                :showStullLabels="false"
+                :showZoomButtons="false"
+                :showAxesLabels="true"
+                :highlightedRecipeId="{highlightedRecipeId}"
+                :unHighlightedRecipeId="{unHighlightedRecipeId}"
+                :xoxide="searchQuery.params.oxide2"
+                :yoxide="searchQuery.params.oxide1"
+                v-on:clickedUmfD3Recipe="clickedD3Chart"
         >
-        </umf-plotly>
+        </umf-d3-chart>
       </div>
 
       <div class="row">
         <div class="col-md-12">
           <search-form
                   :query="searchQuery"
+                  :collections="collections"
                   v-on:searchrequest="search"
                   :isLarge="isMapExpanded">
           </search-form>
@@ -70,7 +76,9 @@
 
           <search-form
                   :query="searchQuery"
-                  v-on:searchrequest="search">
+                  :collections="collections"
+                  v-on:searchrequest="search"
+                  :isLarge="false">
           </search-form>
 
         </div>
@@ -204,7 +212,7 @@
 
   import StaticMaterialList from '../../static/data/material-list.json'
 
-  import UmfPlotly from 'vue-plotly-umf-charts/src/components/UmfPlotly.vue'
+  import UmfD3Chart from 'vue-d3-stull-charts/src/components/UmfD3Chart.vue'
 
   import MaterialAnalysisTableCompare from '../components/glazy/analysis/MaterialAnalysisTableCompare.vue';
   import MaterialAnalysisUmfSpark2Single from '../components/glazy/analysis/MaterialAnalysisUmfSpark2Single.vue';
@@ -229,7 +237,7 @@
       FilterPaginator,
       RecipeCardThumb,
       RecipeCardRow,
-      UmfPlotly,
+      UmfD3Chart,
       SearchForm
     },
     props: {
@@ -266,6 +274,12 @@
         constants: new GlazyConstants(),
         chartHeight: 200,
         chartWidth: 300,
+        chartMargin: {
+          left: 24,
+          right: 10,
+          top: 0,
+          bottom: 12
+        },
         isMapExpanded: false,
         expandButtonText: '<i class="fa fa-angle-double-right"></i>',
         expandbuttonTooltip: 'Show More Map',
@@ -275,6 +289,7 @@
         currentPage: null,
         isThumbnailView: true,
         highlightedRecipeId: 0,
+        unHighlightedRecipeId: 0,
         selectedCollectionId: 0,
         toDeleteRecipeId: 0,
         newCollectionName: '',
@@ -446,6 +461,9 @@
       },
 
       fetchitemlist () {
+        this.serverError = null
+        this.apiError = null
+
         console.log('############ FETCHITEMLIST')
 
         var myQuery = this.searchQuery.getMinimalQuery()
@@ -469,6 +487,7 @@
             if (response.data.error) {
               this.apiError = response.data.error
               console.log(this.apiError)
+              this.itemlist = null
               this.isProcessing = false
             } else {
               this.itemlist = response.data.data
@@ -477,17 +496,15 @@
                 // Make sure itemlist is always defined, and an array
                 this.itemlist = []
               }
-
               this.pagination = response.data.meta.pagination
-
               this.$router.push({path: 'search', query: myQuery})
               console.log(this.searchQuery)
-
               this.isProcessing = false
             }
           })
           .catch(response => {
-            this.serverError = response;
+            this.itemlist = null
+            this.serverError = response
             this.isProcessing = false
           })
       },
@@ -572,16 +589,19 @@
         this.isThumbnailView = false
       },
       handleResize: function () {
-        if (document.getElementById('stull-chart-d3')) {
-          // console.log('old width: ' + this.chartWidth)
-          this.chartHeight = document.getElementById('stull-chart-d3').clientHeight
-          this.chartWidth = document.getElementById('stull-chart-d3').clientWidth
-          // console.log('new width: ' + this.chartWidth)
+        if (document.getElementById('umf-d3-chart-container')) {
+          this.chartHeight = document.getElementById('umf-d3-chart-container').clientHeight
+          this.chartWidth = document.getElementById('umf-d3-chart-container').clientWidth
         }
       },
 
       clickedChart (data) {
+        document.getElementById('d3-tooltip-div').setAttribute('style', 'opacity: 0')
         Vue.router.push('#recipe-card-' + data.customdata)
+      },
+
+      clickedD3Chart (data) {
+        Vue.router.push('#recipe-card-' + data.id)
       },
 
       highlightRecipe: function (id) {
@@ -589,7 +609,7 @@
       },
 
       unhighlightRecipe: function (id) {
-        this.highlightedRecipeId = 0
+        this.unHighlightedRecipeId = id
       },
 
       collectRecipeSelect(id) {
@@ -685,6 +705,10 @@
 //    padding-right: 0.4rem;
   }
 
+  #umf-d3-chart-container {
+    /* need fix tip bug position: relative; */
+  }
+
   .chart-form {
     padding: 0 15px;
   }
@@ -723,4 +747,17 @@
     margin-bottom: 5px;
   }
 
+
+  .d3-tip {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    font-size: .875rem;
+    line-height: 1.125rem;
+    font-weight: normal;
+    padding: .75rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    border-radius: 2px;
+    z-index: 999999;
+    position: relative;
+  }
 </style>

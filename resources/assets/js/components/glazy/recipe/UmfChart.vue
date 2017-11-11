@@ -23,13 +23,8 @@
             </div>
             <div class="col-md-12">
                 <div class="row">
-                    <div v-show="!isLoaded || isProcessing" class="col-md-12">
-                        <div class="load-container load7">
-                            <div class="loader">Loading...</div>
-                        </div>
-                    </div>
                     <div v-if="isLoaded" class="col-sm-12">
-                        <div v-show="!isProcessing" id="umf-d3-chart-container" class="w-100">
+                        <div id="umf-d3-chart-container" class="w-100">
                             <umf-d3-chart
                                     :recipeData="recipeList"
                                     :width="chartWidth"

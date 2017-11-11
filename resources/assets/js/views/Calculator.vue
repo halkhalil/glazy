@@ -2,21 +2,24 @@
   <div class="calc-container" v-if="isLoaded">
     <div class="row calc-row">
       <div class="col-md-4 chart-col">
-        <div id="stull-chart-d3">
-          <umf-plotly
+        <div id="umf-d3-chart-container">
+          <umf-d3-chart
                   :recipeData="[originalMaterial, newMaterial]"
-                  :oxide1="'Al2O3'"
-                  :oxide2="'SiO2'"
-                  :noZeros="false"
-                  :isThreeAxes="false"
-                  :showStullChart="true"
-                  :chartHeight="chartHeight"
-                  :chartWidth="chartWidth"
-                  :axesColor="'#aaaaaa'"
-                  :gridColor="'#efefef'"
+                  :width="chartWidth"
+                  :height="chartHeight"
+                  :chartDivId="'umf-d3-chart-container'"
                   :baseTypeId="baseTypeId"
+                  :colortype="'r2o'"
+                  :showRecipes="true"
+                  :showCones="false"
+                  :showStullChart="true"
+                  :showStullLabels="true"
+                  :showZoomButtons="false"
+                  :showAxesLabels="true"
+                  :xoxide="'SiO2'"
+                  :yoxide="'Al2O3'"
           >
-          </umf-plotly>
+          </umf-d3-chart>
         </div>
       </div>
       <div class="col-md-8">
@@ -30,25 +33,18 @@
                         :showHeadings="false"
                 >
                 </MaterialAnalysisTableCompare>
-                <table class="umf-spark-table">
-                  <MaterialAnalysisUmfSpark2Single
-                          :material="originalMaterial"
-                          :showOxideList="true"
-                  >
-                  </MaterialAnalysisUmfSpark2Single>
-                  <MaterialAnalysisUmfSpark2Single
-                          :material="newMaterial"
-                  >
-                  </MaterialAnalysisUmfSpark2Single>
-
-                  <JsonUmfSparkSvg
-                          :material="newMaterial"
-                          :showOxideList="false"
-                          :squareSize="30"
-                  >
-                  </JsonUmfSparkSvg>
-
-                </table>
+                <JsonUmfSparkSvg
+                        :material="newMaterial"
+                        :showOxideList="false"
+                        :squareSize="30"
+                >
+                </JsonUmfSparkSvg>
+                <JsonUmfSparkSvg
+                        :material="originalMaterial"
+                        :showOxideList="false"
+                        :squareSize="30"
+                >
+                </JsonUmfSparkSvg>
               </div>
             </b-tab>
             <b-tab title="% Mol">
@@ -111,7 +107,6 @@
                       v-model="materialFieldsAmount[index]"
                       type="number"
                       min="0"
-                      max="100"
                       placeholder="%"
                       @input="updateSelected"></b-form-input>
       </div>
@@ -154,7 +149,7 @@
 
   import StaticMaterialList from '../../static/data/material-list.json'
 
-  import UmfPlotly from 'vue-plotly-umf-charts/src/components/UmfPlotly.vue'
+  import UmfD3Chart from 'vue-d3-stull-charts/src/components/UmfD3Chart.vue'
 
   import MaterialAnalysisTableCompare from '../components/glazy/analysis/MaterialAnalysisTableCompare.vue';
   import MaterialAnalysisUmfSpark2Single from '../components/glazy/analysis/MaterialAnalysisUmfSpark2Single.vue';
@@ -165,9 +160,8 @@
     name: 'Calculator',
     components: {
       Multiselect,
-      UmfPlotly,
+      UmfD3Chart,
       MaterialAnalysisTableCompare,
-      MaterialAnalysisUmfSpark2Single,
       MaterialAnalysisPercentTableCompare,
       JsonUmfSparkSvg
     },

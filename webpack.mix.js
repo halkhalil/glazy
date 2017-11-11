@@ -24,7 +24,9 @@ if (mix.inProduction()) {
     'bootstrap',
     'popper.js',
     'vue-router',
-    'vuex-router-sync'
+    'vuex-router-sync',
+    'd3',
+    'bootstrap-vue'
   ])
 }
 
