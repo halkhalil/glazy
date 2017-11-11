@@ -28,27 +28,30 @@
                             <div class="loader">Loading...</div>
                         </div>
                     </div>
-                    <div v-show="isLoaded && !isProcessing" class="col-sm-12">
-                        <div id="stull-chart-d3">
-                            <umf-plotly
+                    <div v-if="isLoaded" class="col-sm-12">
+                        <div v-show="!isProcessing" id="umf-d3-chart-container" class="w-100">
+                            <umf-d3-chart
                                     :recipeData="recipeList"
-                                    :oxide1="oxide1"
-                                    :oxide2="oxide2"
-                                    :oxide3="oxide3"
-                                    :baseTypeId="baseTypeId"
-                                    :noZeros="false"
-                                    :isThreeAxes="isThreeAxes"
-                                    :showStullChart="true"
-                                    :chartHeight="chartHeight"
-                                    :chartWidth="chartWidth"
-                                    :axesColor="'#aaaaaa'"
-                                    :gridColor="'#aaaaaa'"
-                                    :highlightedRecipeId="highlightedRecipeId"
-                                    :showModeBar="true"
+                                    :width="chartWidth"
+                                    :height="chartHeight"
+                                    :margin="chartMargin"
+                                    :chartDivId="'umf-d3-chart-container'"
                                     :currentRecipeId="material.id"
-                                    v-on:clickedUmfPlotly="clickedChart"
+                                    :baseTypeId="baseTypeId"
+                                    :colortype="'r2o'"
+                                    :showRecipes="true"
+                                    :showCones="false"
+                                    :showStullChart="true"
+                                    :showStullLabels="true"
+                                    :showZoomButtons="false"
+                                    :showAxesLabels="true"
+                                    :highlightedRecipeId="{highlightedRecipeId}"
+                                    :unHighlightedRecipeId="{unHighlightedRecipeId}"
+                                    :xoxide="oxide2"
+                                    :yoxide="oxide1"
+                                    v-on:clickedUmfD3Recipe="clickedD3Chart"
                             >
-                            </umf-plotly>
+                            </umf-d3-chart>
                         </div>
                     </div>
                     <div class="col-md-8 col-sm-12">
@@ -156,14 +159,14 @@
   import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
   import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
   import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
-  import UmfPlotly from 'vue-plotly-umf-charts/src/components/UmfPlotly.vue'
+  import UmfD3Chart from 'vue-d3-stull-charts/src/components/UmfD3Chart.vue'
   import Vue from 'vue'
 
   export default {
 
     name: 'UmfChart',
     components: {
-      UmfPlotly
+      UmfD3Chart
     },
 
     props: ['current_user', 'material'],
@@ -187,15 +190,21 @@
         isThreeAxes: false,
         showStullChart: true,
         chartHeight: 300,
-        chartWidth: 400,
+        chartWidth: 0,
+        chartMargin: {
+          left: 24,
+          right: 10,
+          top: 0,
+          bottom: 12
+        },
         axesColor: '#aaaaaa',
         gridColor: '#aaaaaa',
         highlightedRecipeId: 0,
+        unHighlightedRecipeId: 0,
         showModeBar: 'false',
         clickedRecipe: null
       }
     },
-
     computed: {
       isLoaded: function () {
         if (this.recipeList && this.recipeList.length > 0) {
@@ -249,6 +258,9 @@
         this.fetchRecipeList();
       }
 
+      //this.chartHeight = document.getElementById('umf-d3-chart-container').clientHeight
+      //this.chartWidth = document.getElementById('umf-d3-chart-container').clientWidth
+
       setTimeout(() => {
         this.handleResize()
       }, 300);
@@ -300,17 +312,19 @@
         this.clickedRecipe = data
       },
 
-      handleResize: function () {
-        if (document.getElementById('stull-chart-d3')) {
-          console.log('old width: ' + this.chartWidth)
-          this.chartHeight = document.getElementById('stull-chart-d3').clientHeight
-          this.chartWidth = document.getElementById('stull-chart-d3').clientWidth
-          console.log('new width: ' + this.chartWidth)
-        }
+      clickedD3Chart: function(data) {
+        alert(data)
       },
 
+      handleResize: function () {
+        if (document.getElementById('umf-d3-chart-container')) {
+          console.log('old width: ' + this.chartWidth)
+          // this.chartHeight = document.getElementById('umf-d3-chart-container').clientHeight
+          this.chartWidth = document.getElementById('umf-d3-chart-container').clientWidth
+          console.log('new width: ' + this.chartWidth)
+        }
+      }
     }
-
 }
 
 </script>
