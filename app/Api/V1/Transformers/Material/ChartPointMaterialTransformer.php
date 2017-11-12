@@ -7,11 +7,11 @@ use App\Api\V1\Transformers\MaterialAnalysis\MaterialAnalysisTransformer;
 use App\Api\V1\Transformers\MaterialComponent\ShallowMaterialComponentTransformer;
 use App\Api\V1\Transformers\MaterialImage\MaterialImageTransformer;
 use App\Api\V1\Transformers\User\UserTransformer;
-use App\Models\Glazy\Material\Material;
-use App\Models\Glazy\Material\MaterialType;
-use App\Models\Glazy\Material\OrtonCone;
-use App\Models\Glazy\Material\SurfaceType;
-use App\Models\Glazy\Material\TransparencyType;
+use App\Models\Material;
+use App\Models\MaterialType;
+use App\Models\OrtonCone;
+use App\Models\SurfaceType;
+use App\Models\TransparencyType;
 use Illuminate\Support\Facades\Log;
 
 use League\Fractal;

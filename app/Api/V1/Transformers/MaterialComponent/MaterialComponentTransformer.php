@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Transformers\MaterialComponent;
 
-use App\Models\Glazy\Material\MaterialMaterial;
+use App\Models\MaterialMaterial;
 
 use League\Fractal;
 

@@ -3,7 +3,7 @@
 namespace App\Api\V1\Transformers\MaterialReview;
 
 use App\Api\V1\Transformers\User\UserTransformer;
-use App\Models\Glazy\Material\MaterialReview;
+use App\Models\MaterialReview;
 use League\Fractal;
 
 class MaterialReviewTransformer extends Fractal\TransformerAbstract

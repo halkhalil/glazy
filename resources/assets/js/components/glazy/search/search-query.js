@@ -19,7 +19,7 @@ export default class SearchQuery {
       transparency: 0,
       hex_color: '',
       p: 0,
-      view: 'cards',
+      view: this.defaultView,
       order: '',
       x: this.defaultX,
       y: this.defaultY
@@ -103,7 +103,7 @@ export default class SearchQuery {
         this.params.u = Number(routerQuery.u)
       }
       if ('collection' in routerQuery && routerQuery.collection) {
-        this.params.collection = Number('' in collection && routerQuery.collection)
+        this.params.collection = Number(routerQuery.collection)
       }
       if ('primitive' in routerQuery && routerQuery.primitive) {
         this.params.primitive = Number(routerQuery.primitive)
@@ -148,6 +148,23 @@ export default class SearchQuery {
       if ('x' in routerQuery && routerQuery.x) {
         this.params.x = routerQuery.x
       }
+    }
+  }
+
+  setFromSearchForm(params) {
+    if (params) {
+      this.params.u = Number(params.u)
+      this.params.collection = Number(params.collection)
+      this.params.keywords = params.keywords
+      this.params.base_type = Number(params.base_type)
+      this.params.type = Number(params.type)
+      this.params.cone = params.cone
+      this.params.atmosphere = Number(params.atmosphere)
+      this.params.surface = Number(params.surface)
+      this.params.transparency = Number(params.transparency)
+      this.params.hex_color = params.hex_color
+      this.params.y = params.y
+      this.params.x = params.x
     }
   }
 

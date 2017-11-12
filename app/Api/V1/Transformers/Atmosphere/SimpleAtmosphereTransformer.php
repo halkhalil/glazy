@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Transformers\Atmosphere;
 
-use App\Models\Glazy\Material\Atmosphere;
+use App\Models\Atmosphere;
 
 use League\Fractal;
 

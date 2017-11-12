@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Transformers\UserProfile;
 
-use App\Models\Glazy\Material\UserProfile;
+use App\Models\UserProfile;
 
 use League\Fractal;
 

@@ -2,10 +2,10 @@
 
 namespace App\Api\V1\Transformers\MaterialImage;
 
-use App\Models\Glazy\Material\Atmosphere;
-use App\Models\Glazy\Material\OrtonCone;
-use App\Models\Glazy\Material\Material;
-use App\Models\Glazy\Material\MaterialImage;
+use App\Models\Atmosphere;
+use App\Models\OrtonCone;
+use App\Models\Material;
+use App\Models\MaterialImage;
 
 use League\Fractal;
 

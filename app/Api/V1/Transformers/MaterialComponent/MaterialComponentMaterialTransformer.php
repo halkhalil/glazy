@@ -4,7 +4,7 @@ namespace App\Api\V1\Transformers\MaterialComponent;
 
 use App\Api\V1\Transformers\MaterialAnalysis\MaterialAnalysisTransformer;
 
-use App\Models\Glazy\Material\Material;
+use App\Models\Material;
 
 use League\Fractal;
 

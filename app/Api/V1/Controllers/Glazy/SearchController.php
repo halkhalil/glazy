@@ -11,12 +11,12 @@ use App\Api\V1\Transformers\NoComponentsMaterialTransformer;
 use App\Api\V1\Transformers\Material\ShallowMaterialFromMaterialImageTransformer;
 use App\Api\V1\Transformers\Material\ShallowMaterialTransformer;
 
-use App\Api\V1\Repositories\Material\RecipeRepository;
+use App\Api\V1\Repositories\MaterialRepository;
 
-use App\Models\Glazy\Material\Material;
+use App\Models\Material;
 
-use App\Models\Glazy\Material\MaterialAnalysis;
-use App\Models\Glazy\Material\MaterialImage;
+use App\Models\MaterialAnalysis;
+use App\Models\MaterialImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -43,17 +43,17 @@ class SearchController extends ApiBaseController
 //    const DEFAULT_ITEMS_PER_PAGE = 1000;
 
     /**
-     * @var RecipeRepository
+     * @var MaterialRepository
      */
-	protected $recipeRepository;
+	protected $materialRepository;
 
     public function __construct(
-        RecipeRepository $recipeRepository,
+        MaterialRepository $materialRepository,
         FractalManager $manager,
         GlazySerializer $serializer)
     {
         parent::__construct($manager, $serializer);
-        $this->recipeRepository = $recipeRepository;
+        $this->materialRepository = $materialRepository;
     }
 
     public function index(Request $request)
@@ -170,6 +170,8 @@ class SearchController extends ApiBaseController
         {
             return $this->respondNotFound('No recipes found.');
         }
+
+        $this->manager->parseIncludes(['atmospheres', 'thumbnail', 'createdByUser']);
 
         if ($isColorQuery) {
             $resource = new FractalCollection($recipes, new ShallowMaterialFromMaterialImageTransformer());
@@ -518,7 +520,7 @@ class SearchController extends ApiBaseController
     {
         $data = $request->all();
 
-        $materials = $this->recipeRepository->similarRecipes($data);
+        $materials = $this->materialRepository->similarRecipes($data);
 
         if (!$materials)
         {
@@ -532,7 +534,7 @@ class SearchController extends ApiBaseController
 
     public function similarUnityFormula($material_id)
     {
-        $materials = $this->recipeRepository->similarUnityFormula($material_id);
+        $materials = $this->materialRepository->similarUnityFormula($material_id);
 
         if (!$materials)
         {
@@ -547,12 +549,14 @@ class SearchController extends ApiBaseController
 
     public function similarBaseComponents($material_id)
     {
-        $materials = $this->recipeRepository->similarBaseComponents($material_id);
+        $materials = $this->materialRepository->similarBaseComponents($material_id);
 
         if (!$materials)
         {
             return $this->respondNotFound('No materials found.');
         }
+
+        $this->manager->parseIncludes(['atmospheres', 'thumbnail', 'createdByUser']);
 
         $resource = new FractalCollection($materials, new ShallowMaterialTransformer());
         return $this->manager->createData($resource)->toArray();

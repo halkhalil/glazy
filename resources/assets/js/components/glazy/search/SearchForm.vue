@@ -330,9 +330,10 @@ export default {
       this.search()
     },
     resetSearch: function () {
-      this.query = new SearchQuery();
-      this.$emit('searchrequest', this.query);
+      //this.query = new SearchQuery();
+      this.$emit('searchrequest', new SearchQuery());
     },
+
     toggleAdvanced () {
       if (this.isAdvanced) {
         this.isAdvanced = false

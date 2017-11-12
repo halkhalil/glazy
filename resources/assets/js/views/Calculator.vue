@@ -1,10 +1,17 @@
 <template>
   <div class="calc-container" v-if="isLoaded">
     <div class="row calc-row">
+      <b-alert v-if="apiError" show variant="danger">
+        API Error: {{ apiError.message }}
+      </b-alert>
+      <b-alert v-if="serverError" show variant="danger">
+        Server Error: {{ serverError }}
+      </b-alert>
       <div class="col-md-4 chart-col">
         <div id="umf-d3-chart-container">
           <umf-d3-chart
-                  :recipeData="[originalMaterial, newMaterial]"
+                  v-if="chartmaterials"
+                  :recipeData="chartmaterials"
                   :width="chartWidth"
                   :height="chartHeight"
                   :chartDivId="'umf-d3-chart-container'"
@@ -40,6 +47,7 @@
                 >
                 </JsonUmfSparkSvg>
                 <JsonUmfSparkSvg
+                        v-if="originalMaterial"
                         :material="originalMaterial"
                         :showOxideList="false"
                         :squareSize="30"
@@ -147,8 +155,6 @@
   import Material from 'ceramicscalc-js/src/material/Material'
   import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
 
-  import StaticMaterialList from '../../static/data/material-list.json'
-
   import UmfD3Chart from 'vue-d3-stull-charts/src/components/UmfD3Chart.vue'
 
   import MaterialAnalysisTableCompare from '../components/glazy/analysis/MaterialAnalysisTableCompare.vue';
@@ -156,6 +162,7 @@
   import MaterialAnalysisPercentTableCompare from '../components/glazy/analysis/MaterialAnalysisPercentTableCompare.vue';
   import JsonUmfSparkSvg from '../components/glazy/analysis/JsonUmfSparkSvg.vue'
 
+  
   export default {
     name: 'Calculator',
     components: {
@@ -177,7 +184,7 @@
         glazetypes: new GlazyConstants().GLAZE_TYPES_SELECT,
         colortype: {value:'r2o'},
         originalMaterial: null,
-        materialLibrary: StaticMaterialList.data.materials,
+        materialLibrary: null,
         lookupMaterialLibrary: {},
         selectMaterials: [],
         materialFieldsId: [],
@@ -192,7 +199,9 @@
         similarMaterials: null,
         loadingSimilarMaterials: false,
         chartHeight: 300,
-        chartWidth: 300
+        chartWidth: 300,
+        apiError: null,
+        serverError: null
       };
     },
     computed : {
@@ -266,9 +275,7 @@
 
     mounted() {
 
-      this.staticFetchMaterials(); // Load materials from json file
-
-      this.setLeach();
+      this.fetchMaterials();
 
       if (this.originalMaterial) {
         this.newMaterial = this.originalMaterial.clone();
@@ -277,8 +284,6 @@
         this.newMaterial = new Material();
         this.newMaterial.setName('New Recipe');
       }
-
-      //this.fetchMaterials();  // Not live
 
       this.resetMaterialFields();
 
@@ -294,27 +299,6 @@
 
     methods: {
 
-      setLeach () {
-
-        this.originalMaterial = new Material();
-
-        this.originalMaterial.setName('Leach 4321');
-
-        var materialObj = Material.createFromJson(this.lookupMaterialLibrary['12131']);
-        this.originalMaterial.addMaterialComponent(materialObj, 40, false);
-
-        console.log(materialObj);
-
-        materialObj = Material.createFromJson(this.lookupMaterialLibrary['12400']);
-        this.originalMaterial.addMaterialComponent(materialObj, 30, false);
-        materialObj = Material.createFromJson(this.lookupMaterialLibrary['12457']);
-        this.originalMaterial.addMaterialComponent(materialObj, 20, false);
-        materialObj = Material.createFromJson(this.lookupMaterialLibrary['12288']);
-        this.originalMaterial.addMaterialComponent(materialObj, 10, false);
-
-        console.log(this.originalMaterial);
-
-      },
       updateSelected (newSelected) {
         this.newMaterial.removeAllMaterialComponents();
 
@@ -337,23 +321,22 @@
         //this.checkForDuplicates();
       },
 
-      staticFetchMaterials : function() {
-        this.lookupMaterialLibrary = {};
-        this.selectMaterials = [];
-        for (var i = 0; i < this.materialLibrary.length; i++) {
-          this.lookupMaterialLibrary[this.materialLibrary[i].id] = this.materialLibrary[i];
-          this.selectMaterials.push({value: this.materialLibrary[i].id, label: this.materialLibrary[i].name});
-        }
-      },
-
       fetchMaterials : function(){
-        var materialsListUrl = '/api/v1/materials/editRecipeMaterialList/';
+        var materialsListUrl = '/materials/editRecipeMaterialList/';
         if (this.originalMaterial) {
           materialsListUrl += this.newMaterial.id;
         }
-        axios.get(materialsListUrl)
+        console.log('FETCHING: ' + Vue.axios.defaults.baseURL + materialsListUrl)
+        Vue.axios.get(Vue.axios.defaults.baseURL + materialsListUrl)
           .then((response) => {
-            this.materialLibrary = response.data.data.materials;
+          if (response.data.error) {
+            this.apiError = response.data.error
+            console.log(this.apiError)
+            this.isProcessing = false
+          } else {
+
+            this.isProcessing = false
+            this.materialLibrary = response.data.data;
             console.log('GOT MATERIALS LIST LEN: ' + this.materialLibrary.length);
             this.lookupMaterialLibrary = {};
             this.selectMaterials = [];
@@ -361,10 +344,12 @@
               this.lookupMaterialLibrary[this.materialLibrary[i].id] = this.materialLibrary[i];
               this.selectMaterials.push({value: this.materialLibrary[i].id, label: this.materialLibrary[i].name});
             }
-          })
-          .catch(response => {
-            // Error Handling
-          });
+          }
+        })
+        .catch(response => {
+          this.serverError = response;
+          this.isProcessing = false
+        })
       },
 
       resetMaterialFields: function() {
@@ -556,14 +541,13 @@
       },
 
       handleResize: function () {
-        console.log('old width: ' + this.chartWidth)
-        this.chartHeight = document.getElementById('stull-chart-d3').clientHeight
-        this.chartWidth = document.getElementById('stull-chart-d3').clientWidth
-        console.log('new width: ' + this.chartWidth)
+        if (this.isLoaded) {
+          console.log('old width: ' + this.chartWidth)
+          this.chartHeight = document.getElementById('umf-d3-chart-container').clientHeight
+          this.chartWidth = document.getElementById('umf-d3-chart-container').clientWidth
+          console.log('new width: ' + this.chartWidth)
+        }
       }
-
-
-
 
     }
   }

@@ -2,10 +2,10 @@
 
 namespace App\Api\V1\Transformers;
 
-use App\Models\Glazy\Material\MaterialType;
-use App\Models\Glazy\Material\OrtonCone;
-use App\Models\Glazy\Material\SurfaceType;
-use App\Models\Glazy\Material\TransparencyType;
+use App\Models\MaterialType;
+use App\Models\OrtonCone;
+use App\Models\SurfaceType;
+use App\Models\TransparencyType;
 use Illuminate\Support\Facades\Log;
 
 class ChartMaterialTransformer extends Transformer

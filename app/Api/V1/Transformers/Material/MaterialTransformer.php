@@ -2,11 +2,11 @@
 
 namespace App\Api\V1\Transformers\Material;
 
-use App\Models\Glazy\Material\Material;
-use App\Models\Glazy\Material\MaterialType;
-use App\Models\Glazy\Material\OrtonCone;
-use App\Models\Glazy\Material\SurfaceType;
-use App\Models\Glazy\Material\TransparencyType;
+use App\Models\Material;
+use App\Models\MaterialType;
+use App\Models\OrtonCone;
+use App\Models\SurfaceType;
+use App\Models\TransparencyType;
 
 use App\Api\V1\Transformers\Atmosphere\SimpleAtmosphereTransformer;
 use App\Api\V1\Transformers\MaterialImage\MaterialImageTransformer;

@@ -482,7 +482,10 @@
         console.log('form query')
         console.log(query)
 
-        this.searchQuery.setParams(query)
+        // this.searchQuery = new SearchQuery(query.params)
+        // this.searchQuery.setParams(query)
+        // this.searchQuery.setFromRouterQuery(query.params)
+        this.searchQuery.setFromSearchForm(query.params)
         // New search, so reset the page number
         this.searchQuery.params.p = null
 
@@ -491,23 +494,19 @@
 
         this.fetchitemlist()
       },
-
       pageRequest (p) {
         console.log('############ PAGE')
         this.searchQuery.params.p = p
         this.fetchitemlist()
       },
-
       orderRequest (order) {
         console.log('############ ORDER')
         this.searchQuery.params.order = order
         this.fetchitemlist()
       },
-
       viewRequest (view) {
         this.searchQuery.params.view = view
       },
-
       toggleExpandMap () {
         if (this.isMapExpanded) {
           this.expandButtonText = '<i class="fa fa-angle-double-right"></i>'

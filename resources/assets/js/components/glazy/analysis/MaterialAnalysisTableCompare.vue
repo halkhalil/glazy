@@ -2,14 +2,14 @@
     <table v-if="isLoaded" class="table table-sm analysis-table" v-bind:class="tableClass">
         <thead>
         <tr class="oxide-types" v-if="showHeadings">
-            <th v-if="hasNewAnalysis"></th>
+            <th v-if="this.originalAnalysis && this.newAnalysis"></th>
             <th :colspan="presentROR2OOXIDES.length">Fluxes</th>
             <th :colspan="presentR2O3OXIDES.length">Stabilizers</th>
             <th :colspan="presentRO2OXIDES.length">Glass-formers</th>
             <th :colspan="presentOTHEROXIDES.length">Other</th>
         </tr>
         <tr>
-            <th v-if="hasNewAnalysis"></th>
+            <th v-if="this.originalAnalysis && this.newAnalysis"></th>
             <th v-for="i in presentROR2OOXIDES.length"
                 v-html="OXIDE_NAME_DISPLAY[presentROR2OOXIDES[i-1]]">
             </th>
@@ -25,8 +25,8 @@
         </tr>
         </thead>
         <tbody>
-        <tr class="old-analysis">
-            <th v-if="hasNewAnalysis">Old</th>
+        <tr class="old-analysis" v-if="this.originalAnalysis">
+            <th v-if="this.originalAnalysis && this.newAnalysis">Old</th>
             <td v-for="i in presentROR2OOXIDES.length">
                 <span v-if="originalAnalysis.getOxide(presentROR2OOXIDES[i-1]) > 0">
                     {{ Number(originalAnalysis.getOxide(presentROR2OOXIDES[i-1])).toFixed(precision) }}
@@ -48,8 +48,8 @@
                 </span>
             </td>
         </tr>
-        <tr class="new-analysis" v-if="hasNewAnalysis">
-            <th>New</th>
+        <tr class="new-analysis" v-if="this.newAnalysis">
+            <th v-if="this.originalAnalysis && this.newAnalysis">New</th>
             <td v-for="i in presentROR2OOXIDES.length">
                 <span v-if="newAnalysis.getOxide(presentROR2OOXIDES[i-1]) > 0">
                     <strong>{{ Number(newAnalysis.getOxide(presentROR2OOXIDES[i-1])).toFixed(precision) }}</strong>
@@ -71,7 +71,7 @@
                 </span>
             </td>
         </tr>
-        <tr class="diff-analysis" v-if="hasNewAnalysis">
+        <tr class="diff-analysis" v-if="this.originalAnalysis && this.newAnalysis">
             <th>Diff</th>
             <td v-for="i in presentROR2OOXIDES.length">
                 <span v-if="Math.abs(newAnalysis.getOxide(presentROR2OOXIDES[i-1]) - originalAnalysis.getOxide(presentROR2OOXIDES[i-1])) > 0.004">
@@ -133,7 +133,6 @@
 
     data() {
       return {
-        isMounted: false,
         OXIDE_NAME_DISPLAY: Analysis.OXIDE_NAME_DISPLAY
       }
     },
@@ -142,76 +141,58 @@
 
       originalAnalysis: function () {
         if (this.originalMaterial) {
+          console.log("UUUU original analysis: ")
+          console.log(this.originalMaterial.getROR2OUnityFormulaAnalysis())
           return this.originalMaterial.getROR2OUnityFormulaAnalysis();
         }
+        return null
       },
 
       newAnalysis: function () {
         if (this.newMaterial) {
+          console.log("UUUU new analysis: ")
+          console.log(this.newMaterial.getROR2OUnityFormulaAnalysis())
           return this.newMaterial.getROR2OUnityFormulaAnalysis();
         }
+        return null
       },
-
       presentROR2OOXIDES: function () {
         var present = [];
         if (this.isLoaded) {
-          if (this.hasNewAnalysis) {
-            for (var i = 0; i < Analysis.RO_R2O_OXIDES.length; i++) {
-              if (this.round(this.originalAnalysis.getOxide(Analysis.RO_R2O_OXIDES[i]), this.precision) > 0 ||
-                this.round(this.newAnalysis.getOxide(Analysis.RO_R2O_OXIDES[i]), this.precision) > 0) {
-                present.push(Analysis.RO_R2O_OXIDES[i]);
-              }
-            }
-          }
-          else {
-            for (var i = 0; i < Analysis.RO_R2O_OXIDES.length; i++) {
-              if (this.round(this.originalAnalysis.getOxide(Analysis.RO_R2O_OXIDES[i]), this.precision) > 0) {
-                present.push(Analysis.RO_R2O_OXIDES[i]);
-              }
+          for (var i = 0; i < Analysis.RO_R2O_OXIDES.length; i++) {
+            if ((this.originalAnalysis &&
+              this.round(this.originalAnalysis.getOxide(Analysis.RO_R2O_OXIDES[i]), this.precision) > 0) ||
+              (this.newAnalysis &&
+              this.round(this.newAnalysis.getOxide(Analysis.RO_R2O_OXIDES[i]), this.precision) > 0)) {
+              present.push(Analysis.RO_R2O_OXIDES[i]);
             }
           }
         }
         return present;
       },
-
       presentR2O3OXIDES: function () {
         var present = [];
         if (this.isLoaded) {
-          if (this.hasNewAnalysis) {
-            for (var i = 0; i < Analysis.R2O3_OXIDES.length; i++) {
-              if (this.round(this.originalAnalysis.getOxide(Analysis.R2O3_OXIDES[i]), this.precision) > 0 ||
-                this.newAnalysis.getOxide(Analysis.R2O3_OXIDES[i]) > 0) {
-                present.push(Analysis.R2O3_OXIDES[i]);
-              }
-            }
-          }
-          else {
-            for (var i = 0; i < Analysis.R2O3_OXIDES.length; i++) {
-              if (this.round(this.originalAnalysis.getOxide(Analysis.R2O3_OXIDES[i]), this.precision) > 0) {
-                present.push(Analysis.R2O3_OXIDES[i]);
-              }
+          for (var i = 0; i < Analysis.R2O3_OXIDES.length; i++) {
+            if ((this.originalAnalysis &&
+              this.round(this.originalAnalysis.getOxide(Analysis.R2O3_OXIDES[i]), this.precision) > 0) ||
+              (this.newAnalysis &&
+              this.newAnalysis.getOxide(Analysis.R2O3_OXIDES[i]) > 0)) {
+              present.push(Analysis.R2O3_OXIDES[i]);
             }
           }
         }
         return present;
       },
-
       presentRO2OXIDES: function () {
         var present = [];
         if (this.isLoaded) {
-          if (this.hasNewAnalysis) {
-            for (var i = 0; i < Analysis.RO2_OXIDES.length; i++) {
-              if (this.round(this.originalAnalysis.getOxide(Analysis.RO2_OXIDES[i]), this.precision) > 0 ||
-                  this.round(this.newAnalysis.getOxide(Analysis.RO2_OXIDES[i]), this.precision) > 0) {
-                present.push(Analysis.RO2_OXIDES[i]);
-              }
-            }
-          }
-          else {
-            for (var i = 0; i < Analysis.RO2_OXIDES.length; i++) {
-              if (this.round(this.originalAnalysis.getOxide(Analysis.RO2_OXIDES[i]), this.precision) > 0) {
-                present.push(Analysis.RO2_OXIDES[i]);
-              }
+          for (var i = 0; i < Analysis.RO2_OXIDES.length; i++) {
+            if ((this.originalAnalysis &&
+              this.round(this.originalAnalysis.getOxide(Analysis.RO2_OXIDES[i]), this.precision) > 0) ||
+              (this.newAnalysis &&
+              this.round(this.newAnalysis.getOxide(Analysis.RO2_OXIDES[i]), this.precision) > 0)) {
+              present.push(Analysis.RO2_OXIDES[i]);
             }
           }
         }
@@ -221,57 +202,25 @@
       presentOTHEROXIDES: function () {
         var present = [];
         if (this.isLoaded) {
-          if (this.hasNewAnalysis) {
-            for (var i = 0; i < Analysis.OTHER_OXIDES.length; i++) {
-              if (this.round(this.originalAnalysis.getOxide(Analysis.OTHER_OXIDES[i]), this.precision) > 0 ||
-                this.round(this.newAnalysis.getOxide(Analysis.OTHER_OXIDES[i]), this.precision) > 0) {
-                present.push(Analysis.OTHER_OXIDES[i]);
-              }
-            }
-          }
-          else {
-            for (var i = 0; i < Analysis.OTHER_OXIDES.length; i++) {
-              if (this.round(this.originalAnalysis.getOxide(Analysis.OTHER_OXIDES[i]), this.precision) > 0) {
-                present.push(Analysis.OTHER_OXIDES[i]);
-              }
+          for (var i = 0; i < Analysis.OTHER_OXIDES.length; i++) {
+            if ((this.originalAnalysis &&
+              this.round(this.originalAnalysis.getOxide(Analysis.OTHER_OXIDES[i]), this.precision) > 0) ||
+              (this.newAnalysis &&
+              this.round(this.newAnalysis.getOxide(Analysis.OTHER_OXIDES[i]), this.precision) > 0)) {
+              present.push(Analysis.OTHER_OXIDES[i]);
             }
           }
         }
         return present;
       },
-
       isLoaded: function () {
-        if (
-          this.isMounted
-        ) {
-          return true;
-        }
-        return false;
-      },
-
-      hasNewAnalysis: function () {
-        if (this.newAnalysis) {
+        if (this.originalAnalysis || this.newAnalysis) {
           return true;
         }
         return false;
       }
     },
-
-    mounted() {
-      this.isMounted = true;
-    },
-
     methods: {
-      arrayUnique: function (array) {
-        var a = array.concat();
-        for (var i = 0; i < a.length; ++i) {
-          for (var j = i + 1; j < a.length; ++j) {
-            if (a[i] === a[j])
-              a.splice(j--, 1);
-          }
-        }
-        return a;
-      },
       round: function (number, precision) {
         var factor = Math.pow(10, precision);
         var tempNumber = number * factor;
