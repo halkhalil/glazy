@@ -3,7 +3,9 @@
 namespace App\Api\V1\Controllers\Glazy;
 
 use App\Api\V1\Repositories\UserMaterialRepository;
+use App\Api\V1\Transformers\Material\ShallowMaterialTransformer;
 use App\Api\V1\Transformers\UserMaterial\UserMaterialTransformer;
+use App\Models\Material;
 use Illuminate\Http\Request;
 use League\Fractal\Resource\Collection as FractalCollection;
 use League\Fractal\Resource\Item as FractalItem;
@@ -33,7 +35,7 @@ class UserMaterialController extends ApiBaseController
         $this->userMaterialRepository = $userMaterialRepository;
     }
 
-    public function index(Request $request)
+    public function index()
     {
         if (!Auth::guard()->user()) {
             return $this->respondUnauthorized('You must login to do this.');
@@ -41,7 +43,22 @@ class UserMaterialController extends ApiBaseController
 
         $userMaterials = $this->userMaterialRepository->getByUserId();
 
+        //$this->manager->parseIncludes(['user']); // Unneeded
+
         $resource = new FractalCollection($userMaterials, new UserMaterialTransformer());
+
+        return $this->manager->createData($resource)->toArray();
+    }
+
+    public function editMaterialList($id = null)
+    {
+        if (!Auth::guard()->user()) {
+            return $this->respondUnauthorized('You must login to do this.');
+        }
+
+        $userMaterials = $this->userMaterialRepository->getEditMaterialList($id);
+
+        $resource = new FractalCollection($userMaterials, new ShallowMaterialTransformer());
 
         return $this->manager->createData($resource)->toArray();
     }

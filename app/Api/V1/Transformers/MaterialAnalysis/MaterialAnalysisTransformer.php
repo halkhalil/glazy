@@ -24,9 +24,7 @@ class MaterialAnalysisTransformer extends Fractal\TransformerAbstract
                     $percent_analysis[$oxide_name] = $analysis[$percent_oxide_name];
                 }
             }
-
             $percent_analysis['loi'] = $analysis['loi'];
-
             $analysis_data['percentageAnalysis'] = $percent_analysis;
 
             $umf_analysis = [];
@@ -38,13 +36,10 @@ class MaterialAnalysisTransformer extends Fractal\TransformerAbstract
                 {
                     $umf_analysis[$oxide_name] = $analysis[$umf_oxide_name];
                 }
-
-                $umf_analysis['SiO2Al2O3Ratio'] = $analysis['SiO2_Al2O3_ratio_umf'];
-                $umf_analysis['R2OTotal'] = $analysis['R2O_umf'];
-                $umf_analysis['ROTotal'] = $analysis['RO_umf'];
-
             }
-
+            $umf_analysis['SiO2Al2O3Ratio'] = $analysis['SiO2_Al2O3_ratio_umf'];
+            $umf_analysis['R2OTotal'] = $analysis['R2O_umf'];
+            $umf_analysis['ROTotal'] = $analysis['RO_umf'];
             $analysis_data['umfAnalysis'] = $umf_analysis;
 
 

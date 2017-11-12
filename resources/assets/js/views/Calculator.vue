@@ -322,7 +322,7 @@
       },
 
       fetchMaterials : function(){
-        var materialsListUrl = '/materials/editRecipeMaterialList/';
+        var materialsListUrl = '/usermaterials/editList/';
         if (this.originalMaterial) {
           materialsListUrl += this.newMaterial.id;
         }

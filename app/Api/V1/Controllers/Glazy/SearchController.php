@@ -238,7 +238,6 @@ class SearchController extends ApiBaseController
     */
     public function nearestSiAl(Request $request)
     {
-        DB::enableQueryLog();
 
         $material_id = (int)$request->input('material_id');
         $material_type_id = (int)$request->input('material_type_id');
@@ -369,8 +368,6 @@ class SearchController extends ApiBaseController
         $query->limit(100);
 
         $materials = $query->get();
-
-        Log::info(DB::getQueryLog());
 
         if (!$materials)
         {

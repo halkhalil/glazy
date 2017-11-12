@@ -21,7 +21,7 @@ class CreateUserMaterialsTable extends Migration
             $table->integer('user_id')->unsigned()->index();
             $table->integer('material_id')->unsigned()->index();
 
-            $table->integer('stock_amount')->unsigned();
+            $table->integer('stock_amount')->unsigned()->default(0);
             $table->decimal('price', 15,2)->default(0);
             $table->string('vendor')->nullable();
             $table->string('vendor_code')->nullable();

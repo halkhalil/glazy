@@ -9,8 +9,12 @@ use League\Fractal;
 
 class UserMaterialTransformer extends Fractal\TransformerAbstract
 {
+
+    protected $availableIncludes = [
+        'user'
+    ];
+
     protected $defaultIncludes = [
-        'user',
         'material'
     ];
 
