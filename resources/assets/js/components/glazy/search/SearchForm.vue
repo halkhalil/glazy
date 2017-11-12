@@ -176,7 +176,7 @@ export default {
   },
   data() {
     return {
-      query: new SearchQuery(),
+      // query: new SearchQuery(),
       materialTypes: new MaterialTypes(),
       previousBaseTypeId: null,
       constants: new GlazyConstants(),
@@ -219,6 +219,23 @@ export default {
 
   computed: {
 
+    query: function () {
+      var query = new SearchQuery()
+      if (this.searchQuery) {
+        // var myParams = this.searchQuery.params
+        // query.setParams(myParams)
+        console.log('SEARCH FORM UPDAATE SEARCH QUERY:')
+        console.log(this.searchQuery)
+        query.setParams(this.searchQuery.params)
+        if (query.params.collection && this.$auth.check()) {
+          if (this.$auth.user().id === query.params.u) {
+            query.params.collection = query.userSelfSearchString
+          }
+        }
+      }
+
+      return query
+    },
     sizeSmall: function () {
       if (this.isLarge) {
         return this.largeSmall
@@ -290,17 +307,17 @@ export default {
     */
   },
   created() {
+    /*
     //this.query = new SearchQuery()
-    console.log('CREATED: QUERY')
-    console.log(this.query.params)
     this.query.setParams(this.searchQuery.params)
-    if (this.query.collection && this.$auth.check()) {
+    if (this.query.params.collection && this.$auth.check()) {
       if (this.$auth.user().id === this.query.params.u) {
         this.query.params.collection = this.query.userSelfSearchString
       }
     }
     console.log('AFTER')
     console.log(this.query.params)
+    */
   },
   methods: {
     search: function () {
@@ -308,17 +325,14 @@ export default {
       console.log(this.query.params.base_type)
       this.$emit('searchrequest', this.query.params);
     },
-
     searchBaseType: function () {
       this.query.params.type = 0
       this.search()
     },
-
     resetSearch: function () {
       this.query = new SearchQuery();
       this.$emit('searchrequest', this.query);
     },
-
     toggleAdvanced () {
       if (this.isAdvanced) {
         this.isAdvanced = false

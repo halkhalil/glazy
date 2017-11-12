@@ -3,7 +3,8 @@
           class="card recipe-card"
           @mouseover="highlightRecipe(recipe.id)"
           @mouseleave="unhighlightRecipe(recipe.id)">
-    <router-link :to="{ name: 'recipes', params: { id: recipe.id }}">
+    <router-link :to="{ name: 'recipes', params: { id: recipe.id }}"
+      class="recipe-card-img-link">
       <img class="card-img-top img-fluid w-100"
            :src="imageUrl"
            :alt="recipe.name">
@@ -36,14 +37,13 @@
       <p class="card-text">{{ recipe.description }}</p>
       <div class="card-footer">
         <div class="author">
-          <img src="/static/img/profile.jpg" alt="..." class="avatar img-raised">
+          <img src="/img/profile.jpg" alt="..." class="avatar img-raised">
           <span>{{ recipe.createdByUser.name }}</span>
         </div>
       </div>
     </div>
 
     <div class="card-footer" v-if="$auth.check()">
-
       <a @click="collectRecipeRequest(recipe.id)" class="btn btn-icon btn-neutral"><i class="fa fa-bookmark"></i></a>
       <a class="btn btn-icon btn-neutral"
          @click="copyRecipeRequest(recipe.id)"><i class="fa fa-copy"></i></a>
@@ -51,7 +51,6 @@
          @click="deleteRecipeRequest(recipe.id)"
          class="btn btn-icon btn-neutral"><i class="fa fa-trash"></i></a>
     </div>
-
   </div>
 
 </template>
@@ -97,7 +96,7 @@
             '/storage/uploads/recipes/' +
             bin + '/s_' + this.recipe.thumbnail.filename;
         }
-        return '/static/img/recipes/black.png';
+        return '/img/recipes/black.png';
       },
 
       coneString: function() {
@@ -199,6 +198,10 @@
     right: 5px;
     padding: 0;
     margin: 0;
+  }
+
+  .recipe-card .recipe-card-img-link {
+    border-bottom: none !important;
   }
 
   .recipe-card .swatches .btn {

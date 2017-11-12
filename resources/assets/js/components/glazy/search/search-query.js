@@ -1,6 +1,6 @@
 export default class SearchQuery {
 
-  constructor () {
+  constructor ( params ) {
     this.defaultX = 'SiO2'
     this.defaultY = 'Al2O3'
     this.defaultView = 'cards'
@@ -23,6 +23,15 @@ export default class SearchQuery {
       order: '',
       x: this.defaultX,
       y: this.defaultY
+    }
+
+    console.log('query: params in construtor:')
+    console.log(params)
+
+    if (params) {
+      console.log('query setting from params:')
+      console.log(params)
+      this.setFromRouterQuery(params)
     }
   }
 

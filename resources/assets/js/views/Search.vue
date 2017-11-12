@@ -48,7 +48,8 @@
       <div class="row">
         <div class="col-md-12">
           <search-form
-                  :query="searchQuery"
+                  v-if="searchQuery"
+                  :searchQuery="searchQuery"
                   v-on:searchrequest="search"
                   :isLarge="isMapExpanded">
           </search-form>
@@ -74,7 +75,8 @@
           <h6 class="search-subtitle" v-if="searchSubtitle" v-html="searchSubtitle"></h6>
 
           <search-form
-                  :query="searchQuery"
+                  v-if="searchQuery"
+                  :searchQuery="searchQuery"
                   v-on:searchrequest="search"
                   :isLarge="false">
           </search-form>
@@ -228,7 +230,6 @@
   import Vue from 'vue'
 
   export default {
-
     name: 'Search',
     components: {
       AppFooter,
@@ -264,7 +265,8 @@
       return {
         oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
         recipes: null,
-        searchQuery: new SearchQuery(),
+        // searchQuery: new SearchQuery(),
+        searchQuery: null,
         itemlist: [],
         pagination: null,
         isProcessing: false,
@@ -404,16 +406,11 @@
         return this.newCollectionName.length > 2 ? 'valid' : 'invalid';
       }
 
-
     },
 
     created() {
-      console.log('SETTING SEARCH QUERY')
-      this.searchQuery.setFromRouterQuery(this.$router.query)
-      console.log(this.searchQuery)
-
+      this.searchQuery = new SearchQuery(this.$route.query)
       this.fetchitemlist()
-      //this.initialSearch()
 
       setTimeout(() => {
         this.handleResize()
@@ -546,24 +543,19 @@
           this.chartWidth = document.getElementById('umf-d3-chart-container').clientWidth
         }
       },
-
       clickedChart (data) {
         document.getElementById('d3-tooltip-div').setAttribute('style', 'opacity: 0')
         Vue.router.push('#recipe-card-' + data.customdata)
       },
-
       clickedD3Chart (data) {
-        Vue.router.push('#recipe-card-' + data.id)
+        this.$router.push({ path: '/search#recipe-card-' + data.id, query: this.$route.query })
       },
-
       highlightRecipe: function (id) {
         this.highlightedRecipeId = id
       },
-
       unhighlightRecipe: function (id) {
         this.unHighlightedRecipeId = id
       },
-
       collectRecipeSelect(id) {
         if (id) {
           this.$refs.collectModal.show();
