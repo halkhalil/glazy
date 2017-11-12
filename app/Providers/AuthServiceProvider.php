@@ -5,7 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
-use App\Models\Glazy\Material\Material;
+use App\Models\Material;
 use App\Policies\MaterialPolicy;
 
 

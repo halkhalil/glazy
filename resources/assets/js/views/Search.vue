@@ -210,8 +210,6 @@
   import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
   import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
 
-  import StaticMaterialList from '../../static/data/material-list.json'
-
   import UmfD3Chart from 'vue-d3-stull-charts/src/components/UmfD3Chart.vue'
 
   import MaterialAnalysisTableCompare from '../components/glazy/analysis/MaterialAnalysisTableCompare.vue';

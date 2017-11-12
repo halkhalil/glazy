@@ -162,7 +162,7 @@
   import MaterialAnalysisPercentTableCompare from '../components/glazy/analysis/MaterialAnalysisPercentTableCompare.vue';
   import JsonUmfSparkSvg from '../components/glazy/analysis/JsonUmfSparkSvg.vue'
 
-  
+
   export default {
     name: 'Calculator',
     components: {

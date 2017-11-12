@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\User;
-use App\Models\Glazy\Material\Material;
+use App\Models\Material;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 

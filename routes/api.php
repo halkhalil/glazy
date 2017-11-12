@@ -43,6 +43,10 @@ $api->version('v1', function (Router $api) {
         $api->get('/editRecipeMaterialList/{id?}', 'App\\Api\\V1\\Controllers\\Glazy\\PrimitiveMaterialController@editRecipeMaterialList')->name('editRecipeMaterialList');
     });
 
+    $api->group(['prefix' => 'usermaterials'], function(Router $api) {
+        $api->get('/', 'App\\Api\\V1\\Controllers\\Glazy\\UserMaterialController@index')->name('index');
+    });
+
     $api->group(['prefix' => 'search'], function(Router $api) {
         $api->get('/', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@index')->name('index');
         $api->get('/nearestSiAl', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@nearestSiAl')->name('nearestSiAl');
