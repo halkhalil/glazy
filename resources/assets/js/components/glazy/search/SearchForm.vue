@@ -5,130 +5,128 @@
                  v-bind:class="sizeLarge" class="form-group">
                 <b-form-select
                         size="sm"
-                        v-model="query.collection"
-                        :options="collections"
+                        v-model="query.params.collection"
+                        :options="collectionsSelect"
                         value-field="id"
                         text-field="name"
-                        @change.native="search">
+                        @input="search">
+                    <template slot="first">
+                        <option :value="0">All Collections</option>
+                    </template>
                 </b-form-select>
             </div>
             <div v-bind:class="sizeLarge" class="form-group">
                 <b-form-input
                         size="sm"
-                        v-model="query.keywords"
+                        v-model="query.params.keywords"
                         type="text"
                         placeholder="Search Term"
-                        @change.native="search"></b-form-input>
+                        @input="search"></b-form-input>
             </div>
             <div v-bind:class="sizeMedium" class="form-group">
-                <multiselect
-                        :options="base_type_options"
-                        v-model="formParams.base_type"
-                        @input="searchBaseType"
+                <b-form-select
+                        size="sm"
+                        id="baseTypeId"
                         placeholder="Type"
-                        :allow-empty="false"
-                        key="value"
-                        label="text"
-                        track-by="value"
-                ></multiselect>
+                        v-model="query.params.base_type"
+                        :options="baseTypeOptions"
+                        @input="searchBaseType">
+                    <template slot="first">
+                        <option :value="0">All Types</option>
+                    </template>
+                </b-form-select>
             </div>
             <div v-bind:class="sizeMedium" v-if="subtype_options" class="form-group">
-                <multiselect
+                <b-form-select
+                        size="sm"
                         v-if="subtype_options"
-                        :options="subtype_options"
-                        v-model="formParams.type"
-                        @input="search"
+                        id="typeId"
                         placeholder="Subtype"
-                        key="value"
-                        label="text"
-                        track-by="value"
-                ></multiselect>
+                        v-model="query.params.type"
+                        :options="subtype_options"
+                        @input="search">
+                    <template slot="first">
+                        <option :value="0">All Subtypes</option>
+                    </template>
+                </b-form-select>
             </div>
         </div>
         <div class="form-row">
             <div v-bind:class="sizeMedium" class="form-group">
-                <multiselect
-                        :options="constants.ORTON_CONES_SELECT_TEXT"
-                        v-model="formParams.cone"
-                        @input="search"
+                <b-form-select
+                        size="sm"
+                        id="coneId"
                         placeholder="Temp"
-                        key="value"
-                        label="text"
-                        track-by="value"
-                ></multiselect>
+                        v-model="query.params.cone"
+                        :options="constants.ORTON_CONES_SELECT_TEXT"
+                        @input="search">
+                    <template slot="first">
+                        <option :value="0">All Temps</option>
+                    </template>
+                </b-form-select>
             </div>
             <div v-bind:class="sizeMedium" class="form-group">
-                <multiselect
-                        :options="constants.ATMOSPHERE_SELECT"
-                        v-model="formParams.atmosphere"
-                        @input="search"
+                <b-form-select
+                        size="sm"
+                        id="atmosphereId"
                         placeholder="Atmosphere"
-                        key="value"
-                        label="text"
-                        track-by="value"
-                ></multiselect>
+                        v-model="query.params.atmosphere"
+                        :options="constants.ATMOSPHERE_SELECT"
+                        @input="search">
+                    <template slot="first">
+                        <option :value="0">All Atmospheres</option>
+                    </template>
+                </b-form-select>
             </div>
         </div>
         <div v-if="isAdvanced" class="form-row">
             <div v-bind:class="sizeMedium" class="form-group">
-                <multiselect
-                        :options="constants.SURFACE_SELECT"
-                        v-model="formParams.surface"
-                        @input="search"
+                <b-form-select
+                        size="sm"
+                        id="surfaceId"
                         placeholder="Surface"
-                        key="value"
-                        label="text"
-                        track-by="value"
-                ></multiselect>
+                        v-model="query.params.surface"
+                        :options="constants.SURFACE_SELECT"
+                        @input="search">
+                    <template slot="first">
+                        <option :value="0">All Surfaces</option>
+                    </template>
+                </b-form-select>
             </div>
             <div v-bind:class="sizeMedium" class="form-group">
-                <multiselect
-                        :options="constants.TRANSPARENCY_SELECT"
-                        v-model="formParams.transparency"
-                        @input="search"
+                <b-form-select
+                        size="sm"
+                        id="transparencyId"
                         placeholder="Transparency"
-                        key="value"
-                        label="text"
-                        track-by="value"
-                ></multiselect>
+                        v-model="query.params.transparency"
+                        :options="constants.TRANSPARENCY_SELECT"
+                        @input="search">
+                    <template slot="first">
+                        <option :value="0">All Transparencies</option>
+                    </template>
+                </b-form-select>
             </div>
         </div>
         <div v-if="isAdvanced" class="form-row">
             <div class="form-group col">
-                <b-checkbox v-model="query.isThreeAxes">3 Axis</b-checkbox>
+                <b-form-select
+                        size="sm"
+                        id="yId"
+                        placeholder="Y Oxide"
+                        v-model="query.params.y"
+                        :options="oxides"
+                        @input="search">
+                </b-form-select>
             </div>
             <div class="form-group col">
-                <multiselect
+                <b-form-select
+                        size="sm"
+                        id="xId"
+                        placeholder="X Oxide"
+                        v-model="query.params.x"
                         :options="oxides"
-                        v-model="formParams.oxide1"
-                        @input="search"
-                        placeholder="Oxide"
-                        key="value"
-                        label="text"
-                        track-by="value"
-                ></multiselect>
-            </div>
-            <div class="form-group col">
-                <multiselect
-                        :options="oxides"
-                        v-model="formParams.oxide2"
-                        @input="search"
-                        placeholder="Oxide"
-                        key="value"
-                        label="text"
-                        track-by="value"
-                ></multiselect>
-            </div>
-            <div class="form-group col">
-                <multiselect
-                        :options="oxides"
-                        v-model="formParams.oxide3"
-                        @input="search"
-                        placeholder="Oxide"
-                        key="value"
-                        label="text"
-                        track-by="value"
-                ></multiselect>
+                        @input="search">
+                </b-form-select>
             </div>
         </div>
         <div class="form-row">
@@ -151,46 +149,34 @@
             </div>
         </div>
     </form>
-
 </template>
 
-
 <script>
-  import Multiselect from 'vue-multiselect'
-
 import SearchQuery from './search-query'
 import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
 import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
 import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
-//import MaterialTypes from '../../../ceramicscalc/material/material-types';
 
 import { Chrome } from 'vue-color'
 
 export default {
   name: 'SearchForm',
-
   components: {
-    'chrome-picker': Chrome,
-    Multiselect
+    'chrome-picker': Chrome
   },
-
   props: {
       isLarge: {
         type: Boolean,
         default: false
       },
-    query: {
-      type: Object,
-      default: null
-    },
-    collections: {
+    searchQuery: {
       type: Object,
       default: null
     }
   },
-
   data() {
     return {
+      query: new SearchQuery(),
       materialTypes: new MaterialTypes(),
       previousBaseTypeId: null,
       constants: new GlazyConstants(),
@@ -254,22 +240,18 @@ export default {
       return this.smallLarge
     },
 
-    base_type_options: function () {
+    baseTypeOptions: function () {
       return this.materialTypes.getParentTypes();
     },
 
-    calc_base_type: function () {
-      return this.query.params.base_type;
-    },
-
     subtype_options: function () {
-      if (this.calc_base_type) {
+      if (this.query.params.base_type) {
         if (this.previousBaseTypeId != 0) {
           // we're switching base types.. set type to null
-          this.query.type = null;
+          this.query.params.type = 0;
         }
-        this.previousBaseTypeId = this.calc_base_type;
-        switch (this.calc_base_type) {
+        this.previousBaseTypeId = this.query.params.base_type;
+        switch (this.query.params.base_type) {
           case this.materialTypes.GLAZE_TYPE_ID:
             return this.materialTypes.getGlazeTypes();
           case this.materialTypes.CLAYS_TYPE_ID:
@@ -284,111 +266,56 @@ export default {
     collectionsSelect () {
       if (this.$auth.check()) {
         var collectionsSelect = [
-          { name: 'All Recipes', id: 0 },
-          { name: 'Your Recipes', id: -1 }
+          { name: 'Your Recipes', id: 'user' }
         ]
-        if (this.collections) {
-          collectionsSelect = collectionsSelect.concat(this.collections)
+        var user = this.$auth.user()
+        if (user && user.collections && user.collections.length > 0) {
+          collectionsSelect = collectionsSelect.concat(user.collections)
         }
         return collectionsSelect
       }
       return null
-    },
-
-    formParams() {
-      var params = {}
-      params.keywords = this.query.params.keywords
-
-      params.collection = {}
-      if (this.collections && this.query.params.collection in this.collections) {
-        params.collection = {
-          id: this.query.params.collection,
-          name: this.collections[this.query.params.collection]
-        }
-      }
-      params.base_type = {}
-      var x = this.base_type_options.find(item => item.value === this.query.params.base_type);
-      if (x && x.text) {
-        params.base_type = { value: x.value, text: x.text }
-      }
-      params.type = {}
-      if (this.subtype_options) {
-        var x = this.subtype_options.find(item => item.value === this.query.params.type);
-        if (x && x.text) {
-          params.type = { value: x.value, text: x.text }
-        }
-      }
-      params.cone = {}
-      var x = this.constants.ORTON_CONES_SELECT_TEXT.find(item => item.value === this.query.params.cone);
-      if (x && x.text) {
-        params.cone = { value: x.value, text: x.text }
-      }
-      params.atmosphere = {}
-      var x = this.constants.ATMOSPHERE_SELECT.find(item => item.value === this.query.params.atmosphere);
-      if (x && x.text) {
-        params.atmosphere = { value: x.value, text: x.text }
-      }
-      params.surface = {}
-      var x = this.constants.SURFACE_SELECT.find(item => item.value === this.query.params.surface);
-      if (x && x.text) {
-        params.surface = { value: x.value, text: x.text }
-      }
-      params.transparency = {}
-      var x = this.constants.TRANSPARENCY_SELECT.find(item => item.value === this.query.params.transparency);
-      if (x && x.text) {
-        params.transparency = { value: x.value, text: x.text }
-      }
-      params.oxide1 = {}
-      var x = this.oxides.find(item => item.value === this.query.params.oxide1);
-      if (x && x.text) {
-        params.oxide1 = { value: x.value, text: x.text }
-      }
-      params.oxide2 = {}
-      var x = this.oxides.find(item => item.value === this.query.params.oxide2);
-      if (x && x.text) {
-        params.oxide2 = { value: x.value, text: x.text }
-      }
-      params.oxide3 = {}
-      var x = this.oxides.find(item => item.value === this.query.params.oxide3);
-      if (x && x.text) {
-        params.oxide3 = { value: x.value, text: x.text }
-      }
-      params.isThreeAxes = this.query.params.isThreeAxes
-
-      return params
     }
-
   },
-
-  mounted() {
+  watch: {
+    /*
+    searchQuery: function (val) {
+      this.query.setParams(this.searchQuery.params)
+      if (this.query.collection && this.$auth.check()) {
+        if (this.$auth.user().id === this.query.params.u) {
+          this.query.params.collection = this.query.userSelfSearchString
+        }
+      }
+    }
+    */
   },
-
+  created() {
+    //this.query = new SearchQuery()
+    console.log('CREATED: QUERY')
+    console.log(this.query.params)
+    this.query.setParams(this.searchQuery.params)
+    if (this.query.collection && this.$auth.check()) {
+      if (this.$auth.user().id === this.query.params.u) {
+        this.query.params.collection = this.query.userSelfSearchString
+      }
+    }
+    console.log('AFTER')
+    console.log(this.query.params)
+  },
   methods: {
     search: function () {
       console.log('FORM SEARCH')
-      console.log(this.query.base_type)
-      if (this.query.base_type) {
-        this.query.base_type = this.query.base_type.value
-      }
-      if (this.query.type) {
-        this.query.type = this.query.type.value
-      }
-      var x = Object.assign({}, this.query)
-      this.$emit('searchrequest', this.getFormParams());
+      console.log(this.query.params.base_type)
+      this.$emit('searchrequest', this.query.params);
     },
 
     searchBaseType: function () {
-      this.query.type = null
+      this.query.params.type = 0
       this.search()
     },
 
-//        resetFields: function()
     resetSearch: function () {
-//            var emptyQuery = new SearchQuery();
-
       this.query = new SearchQuery();
-
-//            this.query = emptyQuery.search_params;
       this.$emit('searchrequest', this.query);
     },
 
@@ -401,45 +328,6 @@ export default {
         this.isAdvanced = true
         this.advancedButtonText = this.hideAdvancedText
       }
-    },
-
-    getFormParams() {
-      var params = {}
-      params.keywords = this.formParams.keywords
-      if (this.formParams.collection && this.formParams.collection.value) {
-        params.collection = this.formParams.collection.value
-      }
-      if (this.formParams.base_type && this.formParams.base_type.value) {
-        params.base_type = this.formParams.base_type.value
-      }
-      if (this.formParams.type && this.formParams.type.value) {
-        params.type = this.formParams.type.value
-      }
-      if (this.formParams.cone && this.formParams.cone.value) {
-        params.cone = this.formParams.cone.value
-      }
-      if (this.formParams.atmosphere && this.formParams.atmosphere.value) {
-        params.atmosphere = this.formParams.atmosphere.value
-      }
-      if (this.formParams.surface && this.formParams.surface.value) {
-        params.surface = this.formParams.surface.value
-      }
-      if (this.formParams.transparency && this.formParams.transparency.value) {
-        params.transparency = this.formParams.transparency.value
-      }
-      if (this.formParams.oxide1 && this.formParams.oxide1.value) {
-        params.oxide1 = this.formParams.oxide1.value
-      }
-      if (this.formParams.oxide2 && this.formParams.oxide2.value) {
-        params.oxide2 = this.formParams.oxide2.value
-      }
-      if (this.formParams.oxide3 && this.formParams.oxide3.value) {
-        params.oxide3 = this.formParams.oxide3.value
-      }
-      params.isThreeAxes = this.formParams.isThreeAxes
-      console.log('search form sending params:')
-      console.log(params)
-      return params
     }
   }
 

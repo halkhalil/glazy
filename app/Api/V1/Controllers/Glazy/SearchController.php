@@ -242,8 +242,8 @@ class SearchController extends ApiBaseController
         $material_type_id = (int)$request->input('material_type_id');
         $orton_cone_id = $request->input('cone');
 
-        $oxide1 = $request->input('oxide1');
-        $oxide2 = $request->input('oxide2');
+        $oxide1 = $request->input('y');
+        $oxide2 = $request->input('x');
         $oxide3 = $request->input('oxide3');
 
         Log::info('OXIDE 1: '.$oxide1);

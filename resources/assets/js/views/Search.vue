@@ -38,8 +38,8 @@
                 :showAxesLabels="true"
                 :highlightedRecipeId="{highlightedRecipeId}"
                 :unHighlightedRecipeId="{unHighlightedRecipeId}"
-                :xoxide="searchQuery.params.oxide2"
-                :yoxide="searchQuery.params.oxide1"
+                :xoxide="searchQuery.params.x"
+                :yoxide="searchQuery.params.y"
                 v-on:clickedUmfD3Recipe="clickedD3Chart"
         >
         </umf-d3-chart>
@@ -49,7 +49,6 @@
         <div class="col-md-12">
           <search-form
                   :query="searchQuery"
-                  :collections="collections"
                   v-on:searchrequest="search"
                   :isLarge="isMapExpanded">
           </search-form>
@@ -76,7 +75,6 @@
 
           <search-form
                   :query="searchQuery"
-                  :collections="collections"
                   v-on:searchrequest="search"
                   :isLarge="false">
           </search-form>
@@ -409,13 +407,13 @@
 
     },
 
-    mounted() {
+    created() {
       console.log('SETTING SEARCH QUERY')
       this.searchQuery.setFromRouterQuery(this.$router.query)
       console.log(this.searchQuery)
 
       this.fetchitemlist()
-      //this.requery()
+      //this.initialSearch()
 
       setTimeout(() => {
         this.handleResize()
@@ -425,57 +423,29 @@
     },
     methods: {
 
-      requery () {
-        console.log('############ REQUERY')
-        this.searchQuery.setFromRouterQuery(this.$router.query)
+      initialSearch () {
+        // direct link into search, get search params from query string & search
 
-        if (this.userId) {
-          this.searchQuery.params.u = this.userId
-        }
-        if (this.selectedCollection && this.selectedCollection.id) {
-          this.searchQuery.params.collection = this.selectedCollection.id
-        }
-        if (this.isPrimitive) {
-          this.searchQuery.params.primitive = this.isPrimitive
-        }
-
-        if (this.searchQuery.params.type && !this.searchQuery.params.base_type) {
-          // A type was given but no base type.
-          var baseType = this.materialTypes.getParentType(this.searchQuery.params.type)
-          if (baseType) {
-            this.searchQuery.params.base_type = baseType
-          }
-          else {
-            this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
-          }
-        }
-
-        if (!this.searchQuery.params.base_type) {
-          // TODO: If no base type given, automatically default to Glaze type
-          this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
-        }
-
-        //this.query = this.searchQuery.params.search_params
-        this.query = this.searchQuery
-        this.fetchitemlist()
+        //this.fetchitemlist()
       },
 
       fetchitemlist () {
+        // New Search, reset all errors
         this.serverError = null
         this.apiError = null
 
         console.log('############ FETCHITEMLIST')
+        if (this.searchQuery.params.collection === 'user' && this.$auth.check()) {
+          // DAU special case, collection === 'user' signifies search for own recipes..
+          this.searchQuery.params.u = this.$auth.user().id
+          this.searchQuery.params.collection = 0
+        }
 
         var myQuery = this.searchQuery.getMinimalQuery()
         console.log('searchQuery:')
         console.log(this.searchQuery)
         console.log('minimal query:')
         console.log(myQuery)
-        if (myQuery.collection === -1 && this.$auth.check()) {
-          // DAU special case, collection == -1 signifies search for own recipes..
-          myQuery.u = this.$auth.user().id
-          delete myQuery.collection
-        }
 
         var querystring = this.searchQuery.toQuerystring(myQuery)
         this.isProcessing = true
@@ -508,7 +478,6 @@
             this.isProcessing = false
           })
       },
-
       search (query) {
         console.log('about to call routerquery')
         console.log('searchquery')
@@ -520,26 +489,9 @@
         // New search, so reset the page number
         this.searchQuery.params.p = null
 
-        //this.searchQuery.setFromRouterQuery(query)
         console.log('############ SEARCH')
         console.log(this.searchQuery)
-        /*
-        this.searchQuery.setParams(query)
-        // New search, so reset the page number
-        this.searchQuery.setParam('p', null)
 
-        // Add back in all parent component-defined parameters
-        if (this.u) {
-          this.searchQuery.u = this.u
-        }
-        if (this.collection && this.collection.id) {
-          this.searchQuery.setParam('collection', this.collection.id)
-        }
-        if (this.primitive) {
-          this.searchQuery.setParam('primitive', this.primitive)
-        }
-        */
-        //this.$router.query = this.searchQuery.getMinimalQuery()
         this.fetchitemlist()
       },
 
@@ -616,6 +568,10 @@
         if (id) {
           this.$refs.collectModal.show();
         }
+      },
+
+      collectRecipe(id) {
+
       },
 
       copyRecipe: function (id) {

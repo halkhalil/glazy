@@ -1,33 +1,37 @@
 export default class SearchQuery {
 
   constructor () {
+    this.defaultX = 'SiO2'
+    this.defaultY = 'Al2O3'
+    this.defaultView = 'cards'
+    this.userSelfSearchString = 'user'
 
     this.params = {
       u: 0,
-      collection: null,
+      collection: 0,
       primitive: null,
       keywords: '',
-      base_type: null,
-      type: null,
-      cone: null,
-      atmosphere: null,
-      surface: null,
-      transparency: null,
+      base_type: 0,
+      type: 0,
+      cone: 0,
+      atmosphere: 0,
+      surface: 0,
+      transparency: 0,
       hex_color: '',
       p: 0,
       view: 'cards',
       order: '',
-      oxide1: 'Al2O3',
-      oxide2: 'SiO2',
-      oxide3: 'Fe2O3',
-      isThreeAxes: false
+      x: this.defaultX,
+      y: this.defaultY
     }
   }
 
   setParams(params) {
     this.params = params
-//    this.params = Object.assign({}, params)
-    //this.params = params;
+  }
+
+  copyParams(params) {
+    this.params = Object.assign({}, params)
   }
 
   getMinimalQuery() {
@@ -35,8 +39,7 @@ export default class SearchQuery {
     if (this.params.u) {
       minimalQuery.u = this.params.u
     }
-    if (this.params.collection !== 0) {
-      // DAU special case, -1 signifies user searching for own recipes
+    if (this.params.collection) {
       minimalQuery.collection = this.params.collection
     }
     if (this.params.primitive) {
@@ -69,24 +72,17 @@ export default class SearchQuery {
     if (this.params.p) {
       minimalQuery.p = this.params.p
     }
-    if (this.params.view) {
+    if (this.params.view && this.params.view !== this.defaultView) {
       minimalQuery.view = this.params.view
     }
     if (this.params.order) {
       minimalQuery.order = this.params.order
     }
-    if (this.params.oxide1) {
-      minimalQuery.oxide1 = this.params.oxide1
+    if (this.params.y && this.params.x &&
+      this.params.y !== this.defaultY && this.params.x !== this.defaultX) {
+      minimalQuery.y = this.params.y
+      minimalQuery.x = this.params.x
     }
-    if (this.params.oxide2) {
-      minimalQuery.oxide2 = this.params.oxide2
-    }
-    if (this.params.isThreeAxes) {
-      if (this.params.oxide3) {
-        minimalQuery.oxide3 = this.params.oxide3
-      }
-    }
-
     return minimalQuery;
   }
 
@@ -137,20 +133,11 @@ export default class SearchQuery {
       if ('order' in routerQuery && routerQuery.order) {
         this.params.order = routerQuery.order
       }
-      if ('oxide1' in routerQuery && routerQuery.oxide1) {
-        this.params.oxide1 = routerQuery.oxide1
+      if ('oxide1' in routerQuery && routerQuery.y) {
+        this.params.y = routerQuery.y
       }
-      if ('oxide2' in routerQuery && routerQuery.oxide2) {
-        this.params.oxide2 = routerQuery.oxide2
-      }
-      if ('oxide3' in routerQuery && routerQuery.oxide3) {
-        this.params.oxide3 = routerQuery.oxide3
-      }
-      if (this.params.oxide3) {
-        this.params.isThreeAxes = true
-      } else {
-        this.params.oxide3 = 'Fe2O3'
-        this.params.isThreeAxes = false
+      if ('x' in routerQuery && routerQuery.x) {
+        this.params.x = routerQuery.x
       }
     }
   }
@@ -166,10 +153,8 @@ export default class SearchQuery {
       surface: { value: this.params.surface},
       transparency: { value: this.params.transparency},
       hex_color: this.params.hex_color,
-      oxide1: { value: this.params.oxide1},
-      oxide2: { value: this.params.oxide2},
-      oxide3: { value: this.params.oxide3},
-      isThreeAxes: this.params.isThreeAxes
+      y: { value: this.params.y},
+      x: { value: this.params.x}
     }
   }
 
@@ -183,10 +168,8 @@ export default class SearchQuery {
     this.params.surface = params.surface.value
     this.params.transparency = params.transparency.value
     this.params.hex_color = params.hex_color
-    this.params.oxide1 = params.oxide1.value
-    this.params.oxide2 = params.oxide2.value
-    this.params.oxide3 = params.oxide3.value
-    this.params.isThreeAxes = params.isThreeAxes
+    this.params.y = params.y.value
+    this.params.x = params.x.value
   }
 
   // https://stackoverflow.com/questions/1714786/query-string-encoding-of-a-javascript-object
