@@ -10,9 +10,11 @@
       <div class="loader">Loading...</div>
     </div>
 
-
-    <div v-if="isLoaded && !isDeleted" v-cloak>
-
+    <div v-if="isEditComponents && isLoaded && !isDeleted">
+      <edit-recipe-components :originalMaterial="material">
+      </edit-recipe-components>
+    </div>
+    <div v-if="!isEditComponents && isLoaded && !isDeleted" v-cloak>
 
       <div id="addCollectionAlert" class="alert alert-success fade show" style="display: none;">
         <i class="fa fa-check"></i> Recipe added to collection!
@@ -27,22 +29,23 @@
                 Recipe successfully updated.
               </b-alert>
 
-              <div v-if="isEdit">
+              <div v-if="isEditMeta">
                 <edit-recipe-metadata :recipe="recipe"
                                       v-on:recipeupdated="recipeUpdated"
                                       v-on:editMetaCancel="editMetaCancel"
                                       v-on:isProcessing="isProcessingRecipe"></edit-recipe-metadata>
               </div>
-              <div v-show="!(isEdit)">
+              <div v-show="!(isEditMeta)">
                 <div class="row">
-                  <div class="col-md-9 col-sm-8">
-                    <material-type-breadcrumbs :recipe="recipe"></material-type-breadcrumbs>
+                  <div class="col">
+                    <material-type-breadcrumbs v-if="!recipe.isPrimitive"
+                                               :recipe="recipe"></material-type-breadcrumbs>
                     <h1 class="card-title">
                       <i v-if="recipe.isPrivate" class="fa fa-lock"></i>
                       {{ recipe.name }}
                     </h1>
                   </div>
-                  <div class="col-md-3 col-sm-4">
+                  <div class="col-md-3 col-sm-4" v-if="!recipe.isPrimitive">
                     <firing-card :recipe="recipe"></firing-card>
                   </div>
                 </div>
@@ -91,7 +94,7 @@
                       <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-unlock"></i> Publish</b-button>
                       <b-button class="btn-info" v-if="!(recipe.isPrivate)" v-on:click="unpublishRecipe()"><i class="fa fa-lock"></i> Unpublish</b-button>
                       <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
-                      <b-button class="btn-info" :href="'/recipematerials/' + recipe.id + '/edit'"><i class="fa fa-list"></i> Edit Recipe</b-button>
+                      <b-button class="btn-info" v-on:click="editComponents()"><i class="fa fa-list"></i> Edit Recipe</b-button>
                       <b-button class="btn-danger"  v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
                     </b-button-group>
 
@@ -108,7 +111,7 @@
 
                 </div>
 
-                <div v-if="!recipe.is_analysis" class="row">
+                <div v-if="!recipe.isPrimitive" class="row">
 
                   <div class="col-md-12 mt-4">
                     <material-recipe-calculator
@@ -139,7 +142,7 @@
               <view-recipe-materials-analysis
                       :recipe="recipe"></view-recipe-materials-analysis>
               -->
-              <div class="row">
+              <div class="row" v-if="!recipe.isPrimitive && recipe.baseTypeId == glazeTypeId">
                 <div class="col-md-6">
                   <umf-traditional-notation
                           :material="material"
@@ -186,7 +189,7 @@
       </div>
 
 
-      <div class="row">
+      <div class="row" v-if="!recipe.isPrimitive">
         <div class="col-md-12">
           <umf-chart
                   :current_user="null"
@@ -197,7 +200,7 @@
 
 
 
-      <div v-if="!recipe.is_analysis" class="row">
+      <div v-if="!recipe.isPrimitive" class="row">
         <div class="col-md-12">
           <div class="card"> <!-- BEGIN Similar Base Components -->
             <div class="card-body">
@@ -212,7 +215,7 @@
         </div>
       </div>
 
-      <div v-if="!recipe.is_analysis" class="row">
+      <div v-if="!recipe.isPrimitive" class="row">
         <div class="col-md-12">
           <div class="card"> <!-- BEGIN Similar Unity Formula -->
             <div class="card-block">
@@ -288,6 +291,8 @@
 
   import Material from 'ceramicscalc-js/src/material/Material'
 
+  import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
+
   import MaterialTypeBreadcrumbs from '../components/glazy/materialtypes/MaterialTypeBreadcrumbs.vue'
   import FiringCard from '../components/glazy/recipe/FiringCard.vue'
   import MaterialRecipeCalculator from '../components/glazy/recipe/MaterialRecipeCalculator.vue'
@@ -302,6 +307,7 @@
   import SimilarBaseComponents from '../components/glazy/recipe/SimilarBaseComponents.vue'
 
   import EditRecipeMetadata from '../components/glazy/recipe/EditRecipeMetadata.vue'
+  import EditRecipeComponents from '../components/glazy/recipe/EditRecipeComponents.vue'
 
   import Vue from 'vue'
 
@@ -320,9 +326,9 @@
       UmfTraditionalNotation,
       ComponentTable,
       SimilarBaseComponents,
-      EditRecipeMetadata
+      EditRecipeMetadata,
+      EditRecipeComponents
     },
-
     props: {
       recipe_id: {
         type: Number,
@@ -341,11 +347,13 @@
         material: null,
         isDeleted: false,
         isRecipeUpdated: false,
-        isEdit: false,
+        isEditMeta: false,
+        isEditComponents: false,
         showRecipeUpdatedSeconds: 0,
         isProcessing: false,
         apiError: null,
-        serverError: null
+        serverError: null,
+        glazeTypeId: new MaterialTypes().GLAZE_TYPE_ID
       }
     },
 
@@ -381,6 +389,7 @@
     methods : {
 
       fetchRecipe: function (){
+        console.log('--- FETCH: /recipes/' + this.$route.params.id)
         this.sendRecipeGetRequest('/recipes/' + this.$route.params.id)
       },
 
@@ -410,7 +419,7 @@
           } else {
             this.isProcessing = false
             var recipeCopy = response.data.data;
-            this.$router.push({ name: 'recipes', params: { id: recipeCopy.id }})
+            this.$router.push({ name: this.$route.name, params: { id: recipeCopy.id }})
           }
         })
         .catch(response => {
@@ -432,7 +441,7 @@
         this.fetchRecipe()
         this.showRecipeUpdatedSeconds = 5
         this.isRecipeUpdated = true
-        this.isEdit = false
+        this.isEditMeta = false
       },
 
       imageUpdated: function() {
@@ -440,11 +449,19 @@
       },
 
       editMeta: function () {
-        this.isEdit = true
+        this.isEditMeta = true
       },
 
       editMetaCancel: function() {
-        this.isEdit = false
+        this.isEditMeta = false
+      },
+
+      editComponents: function () {
+        this.isEditComponents = true
+      },
+
+      editComponentsCancel: function() {
+        this.isEditComponents = false
       },
 
       isProcessingRecipe: function () {

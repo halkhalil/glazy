@@ -57,6 +57,11 @@ export default new Router({
           name: 'recipes',
           component: Recipe
         },
+        {
+          path: '/materials/:id',
+          name: 'material',
+          component: Recipe
+        },
         /*
         {
           path: '/recipes/:id/edit',

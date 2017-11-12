@@ -25,8 +25,9 @@ class MaterialRepository extends Repository
 
     public function get($id)
     {
-        return Material::with('analysis')
-            ->where('is_primitive', false)->find($id);
+        // return Material::with('analysis')
+        //     ->where('is_primitive', false)->find($id);
+        return Material::with('analysis')->find($id);
     }
 
     public function getWithDetails($id)
@@ -37,7 +38,7 @@ class MaterialRepository extends Repository
             ->with('images')
             ->with('reviews')
             ->with('created_by_user')
-            ->where('is_primitive', false)
+            // ->where('is_primitive', false)
             ->find($id);
     }
 
@@ -171,12 +172,14 @@ class MaterialRepository extends Repository
         $copiedAnalysis->material_id = $copiedMaterial->id;
         $copiedAnalysis->save();
 
-        $componentMaterials = MaterialMaterial::where('parent_material_id', $material->id)->get();
-        foreach ($componentMaterials as $componentMaterial)
-        {
-            $copiedComponent = $componentMaterial->replicate();
-            $copiedComponent->parent_material_id = $copiedMaterial->id;
-            $copiedComponent->save();
+        if (!$copiedMaterial->is_primitive) {
+            $componentMaterials = MaterialMaterial::where('parent_material_id', $material->id)->get();
+            foreach ($componentMaterials as $componentMaterial)
+            {
+                $copiedComponent = $componentMaterial->replicate();
+                $copiedComponent->parent_material_id = $copiedMaterial->id;
+                $copiedComponent->save();
+            }
         }
 
         $materialAtmospheres = MaterialAtmosphere::where('material_id', $material->id)->get();
