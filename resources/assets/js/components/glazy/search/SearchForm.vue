@@ -301,12 +301,13 @@ export default {
       console.log(this.query.params.base_type)
       this.$emit('searchrequest', this.query.params);
     },
+
     updateKeywords: _.debounce(function (e) {
       if (this.query.params.keywords.length >= this.minSearchTextLength) {
         this.query.params.keywords = e.target.value
         this.search()
       }
-    }, 400),
+    }, 1000),
     searchBaseType: function () {
       this.query.params.type = 0
       this.search()

@@ -495,3 +495,9 @@ phpseclib/phpseclib suggests installing ext-libsodium (SSH2/SFTP can make use of
 phpseclib/phpseclib suggests installing ext-gmp (Install the GMP (GNU Multiple Precision) extension in order to speed up arbitrary precision integer arithmetic operations.)
 lcobucci/jwt suggests installing mdanter/ecc (Required to use Elliptic Curves based algorithms.)
 league/oauth2-server suggests installing indigophp/hash-compat (Polyfill for hash_equals function for PHP 5.5)
+
+
+#################################
+INSTALL IMAGE MAGICK
+https://laracasts.com/discuss/channels/general-discussion/vagrant-imagick
+For now with php7 the following should work: sudo apt-get update && sudo apt-get install -y imagemagick php-imagick && sudo service php7.0-fpm restart
