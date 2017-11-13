@@ -16,12 +16,11 @@
                 </b-form-select>
             </div>
             <div v-bind:class="sizeLarge" class="form-group">
-                <b-form-input
-                        size="sm"
-                        v-model="query.params.keywords"
-                        type="text"
-                        placeholder="Search Term"
-                        @input="search"></b-form-input>
+                <input type="text"
+                       class="form-control form-control-sm"
+                       v-model="query.params.keywords"
+                       placeholder="Search Term"
+                       @input="updateKeywords">
             </div>
             <div v-bind:class="sizeMedium" class="form-group">
                 <b-form-select
@@ -157,6 +156,8 @@ import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
 import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
 import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
 
+import _ from 'lodash'
+
 // import { Chrome } from 'vue-color'
 
 export default {
@@ -181,6 +182,7 @@ export default {
       previousBaseTypeId: null,
       constants: new GlazyConstants(),
       oxides: Analysis.OXIDE_NAME_UNICODE_SELECT,
+      minSearchTextLength: 3,
       showAdvancedText: '<i class="fa fa-plus"></i> Show Advanced',
       hideAdvancedText: '<i class="fa fa-minus"></i> Hide Advanced',
       advancedButtonText: '<i class="fa fa-plus"></i> Show Advanced',
@@ -216,7 +218,6 @@ export default {
       }
     }
   },
-
   computed: {
 
     query: function () {
@@ -294,37 +295,18 @@ export default {
       return null
     }
   },
-  watch: {
-    /*
-    searchQuery: function (val) {
-      this.query.setParams(this.searchQuery.params)
-      if (this.query.collection && this.$auth.check()) {
-        if (this.$auth.user().id === this.query.params.u) {
-          this.query.params.collection = this.query.userSelfSearchString
-        }
-      }
-    }
-    */
-  },
-  created() {
-    /*
-    //this.query = new SearchQuery()
-    this.query.setParams(this.searchQuery.params)
-    if (this.query.params.collection && this.$auth.check()) {
-      if (this.$auth.user().id === this.query.params.u) {
-        this.query.params.collection = this.query.userSelfSearchString
-      }
-    }
-    console.log('AFTER')
-    console.log(this.query.params)
-    */
-  },
   methods: {
     search: function () {
       console.log('FORM SEARCH')
       console.log(this.query.params.base_type)
       this.$emit('searchrequest', this.query.params);
     },
+    updateKeywords: _.debounce(function (e) {
+      if (this.query.params.keywords.length >= this.minSearchTextLength) {
+        this.query.params.keywords = e.target.value
+        this.search()
+      }
+    }, 400),
     searchBaseType: function () {
       this.query.params.type = 0
       this.search()
@@ -333,7 +315,6 @@ export default {
       //this.query = new SearchQuery();
       this.$emit('searchrequest', new SearchQuery());
     },
-
     toggleAdvanced () {
       if (this.isAdvanced) {
         this.isAdvanced = false

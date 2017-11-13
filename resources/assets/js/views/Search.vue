@@ -291,6 +291,7 @@
         selectedCollectionId: 0,
         toDeleteRecipeId: 0,
         newCollectionName: '',
+        minSearchTextLength: 3,
         apiError: null,
         serverError: null
       }
@@ -323,7 +324,8 @@
         var title = ''
         var hasTitle = false
 
-        if (this.searchQuery.params.keywords) {
+        if (this.searchQuery.params.keywords &&
+          this.searchQuery.params.keywords.length >= this.minSearchTextLength) {
           title += '"' + this.searchQuery.params.keywords + '"'
           hasTitle = true
         }
