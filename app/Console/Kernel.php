@@ -13,7 +13,10 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        // DAU
+        Commands\UpdateRecipeAnalyses::class,
+        Commands\UpdateMaterialHashes::class,
+        Commands\DeletePrivateMaterials::class
     ];
 
     /**

@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Api\V1\Repositories\Material\MaterialMaterialRepository;
-use App\Models\Glazy\Material\Material;
-use App\Models\Glazy\Material\MaterialAnalysis;
+use App\Api\V1\Repositories\MaterialMaterialRepository;
+use App\Models\Material;
+use App\Models\MaterialAnalysis;
 use Illuminate\Console\Command;
 
 class UpdateRecipeAnalyses extends Command

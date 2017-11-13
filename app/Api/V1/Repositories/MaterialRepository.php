@@ -5,6 +5,7 @@ namespace App\Api\V1\Repositories;
 use App\Api\V1\Repositories\Repository;
 
 use App\Models\CollectionMaterial;
+use App\Models\Collection;
 use App\Models\Material;
 use App\Models\MaterialAtmosphere;
 use App\Models\MaterialImage;
@@ -114,7 +115,7 @@ class MaterialRepository extends Repository
 
     public function destroy($id)
     {
-        $material = Material::find($id);
+        $material = Material::with('analysis')->with('thumbnail')->find($id);
 
         if (!$material) {
             return false;
@@ -122,6 +123,20 @@ class MaterialRepository extends Repository
 
         if ($material->analysis) {
             $material->analysis->delete();
+        }
+
+        // This material's images may also be referenced in the collections as
+        // the collection thumbnail_id.  Set these to null, first..
+        $collectionsQuery = Collection::query();
+        $collectionsQuery->whereIn('thumbnail_id', function($query) use ($id) {
+            $query->selectRaw('id')
+                ->from('material_images')
+                ->where('material_id', $id);
+        });
+        $collections = $collectionsQuery->get();
+        foreach ($collections as $collection) {
+            $collection->thumbnail_id = null;
+            $collection->save();
         }
 
         $material->thumbnail_id = null;

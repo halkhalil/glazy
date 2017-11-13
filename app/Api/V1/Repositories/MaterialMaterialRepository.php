@@ -195,8 +195,9 @@ class MaterialMaterialRepository extends Repository
                     }
                 }
             }
-            $material->base_composite_hash = $hash;
-            $material->additive_composite_hash = $additive_hash;
+            // Unfortunately hash fields only 255 characters long
+            $material->base_composite_hash = substr($hash,0,255);
+            $material->additive_composite_hash = substr($additive_hash,0,255);
         }
         else
         {

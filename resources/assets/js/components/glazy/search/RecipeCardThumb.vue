@@ -31,6 +31,7 @@
       <h6 class="category text-primary">{{ materialTypes.LOOKUP[recipe.materialTypeId] }}</h6>
       <h5 class="card-title">
         <router-link :to="{ name: 'recipes', params: { id: recipe.id }}">
+          <i v-if="recipe.isPrivate" class="fa fa-lock"></i>
           {{ recipe.name }}
         </router-link>
       </h5>
