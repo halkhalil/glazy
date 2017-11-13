@@ -1,5 +1,18 @@
 <template>
   <div class="calc-container" v-if="isLoaded">
+    <div class="row edit-recipe-title-row" v-if="originalMaterial">
+      <div class="col-md-12">
+          <b-button class="cancel-edit-btn float-right"
+                    size="sm"
+                    variant="secondary"
+                    @click.prevent="editComponentsCancel"><i class="fa fa-times"></i> Cancel</b-button>
+        <h4 class="edit-recipe-title">
+          <i v-if="originalMaterial.isPrivate" class="fa fa-lock"></i>
+          Edit {{ originalMaterial.name }}
+        </h4>
+      </div>
+    </div>
+
     <div class="row calc-row">
       <b-alert v-if="apiError" show variant="danger">
         API Error: {{ apiError.message }}
@@ -7,11 +20,14 @@
       <b-alert v-if="serverError" show variant="danger">
         Server Error: {{ serverError }}
       </b-alert>
+      <div class="load-container load7 fullscreen" v-if="isProcessing">
+        <div class="loader">Loading...</div>
+      </div>
+
       <div class="col-md-4 chart-col">
-        <div id="umf-d3-chart-container">
+        <div v-if="chartMaterials && isLoaded" id="umf-d3-chart-container" class="w-100">
           <umf-d3-chart
-                  v-if="chartmaterials"
-                  :recipeData="chartmaterials"
+                  :recipeData="chartMaterials"
                   :width="chartWidth"
                   :height="chartHeight"
                   :chartDivId="'umf-d3-chart-container'"
@@ -21,6 +37,8 @@
                   :showCones="false"
                   :showStullChart="true"
                   :showStullLabels="true"
+                  :axisLabelFontSize="'1rem'"
+                  :stullLabelsFontSize="'0.75rem'"
                   :showZoomButtons="false"
                   :showAxesLabels="true"
                   :xoxide="'SiO2'"
@@ -82,24 +100,24 @@
       </div>
     </div>
 
-
-    <div class="row is-mobile">
-      <div class="col-sm-7">
-        Material
+    <b-card>
+      <div class="row">
+        <div class="col-sm-7">
+          Material
+        </div>
+        <div class="col-sm-3">
+          Amount
+        </div>
+        <div class="col-sm-2">
+          Additive
+        </div>
       </div>
-      <div class="col-sm-3">
-        Amount
-      </div>
-      <div class="col-sm-2">
-        Additive
-      </div>
-    </div>
 
-    <div class="row is-mobile"
-         v-for="(fieldArray, index) in materialFieldsId"
-         v-if="index < numVisibleRows">
+      <div class="row"
+           v-for="(fieldArray, index) in materialFieldsId"
+           v-if="index < numVisibleRows">
 
-      <div class="col-sm-7">
+        <div class="col-sm-7">
           <multiselect
                   :id="index + '_name'"
                   :options="selectMaterials"
@@ -108,41 +126,49 @@
                   key="value"
                   label="label"
           ></multiselect>
-      </div>
+        </div>
 
-      <div class="col-sm-3">
-        <b-form-input :id="index + '_amount'"
-                      v-model="materialFieldsAmount[index]"
-                      type="number"
-                      min="0"
-                      placeholder="%"
-                      @input="updateSelected"></b-form-input>
+        <div class="col-sm-3">
+          <b-form-input :id="index + '_amount'"
+                        v-model="materialFieldsAmount[index]"
+                        type="number"
+                        min="0"
+                        placeholder="%"
+                        @input="updateSelected"></b-form-input>
+        </div>
+        <div class="col-sm-2">
+          <b-form-checkbox id="index + '_add'"
+                           v-model="materialFieldsIsAdditional[index]"
+                           @input="updateSelected">
+          </b-form-checkbox>
+        </div>
       </div>
-
-      <div class="col-sm-2">
-        <b-form-checkbox id="index + '_add'"
-                         v-model="materialFieldsIsAdditional[index]"
-                         @input="updateSelected">
-        </b-form-checkbox>
+      <div class="row">
+        <div class="col-sm-7">
+          <b-button size="sm"
+                    variant="secondary"
+                    @click.prevent="resetRecipe"><i class="fa fa-refresh"></i> Reset</b-button>
+        </div>
+        <div class="col-sm-3">
+          <b-form-input v-model="subtotal"
+                        placeholder="Total"
+                        type="number"
+                        disabled></b-form-input>
+          <b-button size="sm"
+                    variant="secondary"
+                    @click.prevent="setTo100">Set 100%</b-button>
+        </div>
+        <div class="col-sm-2">
+        </div>
       </div>
-
-    </div>
-
-    <div class="row is-mobile">
-      <div class="col-sm-7">
-        <button class="btn" @click="resetRecipe">Reset</button>
+      <div class="row">
+        <div class="col-md-12">
+          <b-button size="sm"
+                    variant="info"
+                    @click.prevent="update"><i class="fa fa-save"></i> Save Changes</b-button>
+        </div>
       </div>
-      <div class="col-sm-3">
-        <b-form-input v-model="subtotal"
-                      placeholder="Total"
-                      type="number"
-                      disabled></b-form-input>
-        <button class="btn" @click="setTo100">Set 100%</button>
-      </div>
-      <div class="col-sm-2">
-      </div>
-    </div>
-
+    </b-card>
   </div>
 </template>
 
@@ -162,9 +188,10 @@
   import MaterialAnalysisPercentTableCompare from '../analysis/MaterialAnalysisPercentTableCompare.vue';
   import JsonUmfSparkSvg from '../analysis/JsonUmfSparkSvg.vue'
 
+  import qs from 'qs'
 
   export default {
-    name: 'Calculator',
+    name: 'EditRecipeComponents',
     components: {
       Multiselect,
       UmfD3Chart,
@@ -177,13 +204,13 @@
         type: Object,
         default: null
       }
+
     },
     data() {
       return {
         oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
         glazetypes: new GlazyConstants().GLAZE_TYPES_SELECT,
         colortype: {value:'r2o'},
-        originalMaterial: null,
         materialLibrary: null,
         lookupMaterialLibrary: {},
         selectMaterials: [],
@@ -199,7 +226,7 @@
         similarMaterials: null,
         loadingSimilarMaterials: false,
         chartHeight: 300,
-        chartWidth: 300,
+        chartWidth: 0,
         apiError: null,
         serverError: null
       };
@@ -238,28 +265,26 @@
         return numVisibleRows;
       },
 
-      chartmaterials: function() {
-        var chartmaterials = [];
+      chartMaterials: function() {
+        var chartMaterials = [];
         if (this.originalMaterial && this.newMaterial) {
-          chartmaterials = [ this.originalMaterial, this.newMaterial ];
+          chartMaterials.push(this.originalMaterial)
+          chartMaterials.push(this.newMaterial)
         }
         else {
-          chartmaterials = [this.newMaterial];
+          chartMaterials.push(this.newMaterial)
         }
-        return chartmaterials;
+        return chartMaterials;
       },
-
       originalUMFAnalysis: function() {
         if (this.originalMaterial) {
           return this.originalMaterial.getROR2OUnityFormulaAnalysis();
         }
         return null;
       },
-
       newUMFAnalysis: function() {
         return this.newMaterial.getROR2OUnityFormulaAnalysis();
       },
-
       originalMolAnalysis: function() {
         if (this.originalMaterial) {
           return this.originalMaterial.getMolePercentageFormula();
@@ -274,7 +299,6 @@
     },
 
     mounted() {
-
       this.fetchMaterials();
 
       if (this.originalMaterial) {
@@ -286,7 +310,6 @@
       }
 
       this.resetMaterialFields();
-
       this.setSubtotal();
 
       setTimeout(() => {
@@ -315,16 +338,15 @@
             );
           }
         }
-
         this.setSubtotal();
-
         //this.checkForDuplicates();
       },
 
-      fetchMaterials : function(){
+      fetchMaterials : function() {
+        this.isProcessing = true
         var materialsListUrl = '/usermaterials/editList/';
         if (this.originalMaterial) {
-          materialsListUrl += this.newMaterial.id;
+          materialsListUrl += this.originalMaterial.id;
         }
         console.log('FETCHING: ' + Vue.axios.defaults.baseURL + materialsListUrl)
         Vue.axios.get(Vue.axios.defaults.baseURL + materialsListUrl)
@@ -334,7 +356,6 @@
             console.log(this.apiError)
             this.isProcessing = false
           } else {
-
             this.isProcessing = false
             this.materialLibrary = response.data.data;
             console.log('GOT MATERIALS LIST LEN: ' + this.materialLibrary.length);
@@ -374,10 +395,9 @@
       setTo100: function() {
         if (this.isLoaded) {
           var subtotal = 0.0;
-
           for (var i = 0; i < this.materialFieldsId.length; i++) {
             if (!isNaN(this.materialFieldsAmount[i])
-              && this.materialFieldsAmount[i] > 0
+              && Number(this.materialFieldsAmount[i]) > 0
               && !this.materialFieldsIsAdditional[i]) {
               subtotal += parseFloat(this.materialFieldsAmount[i]);
             }
@@ -419,11 +439,12 @@
 
       update: function () {
         if (this.isLoaded) {
-          this.isProcessing = true;
+          this.$emit('isProcessing')
+          this.isProcessing = true
 
           var form = {
             materialComponents: []
-          };
+          }
 
           for (var i = 0; i < this.materialFieldsId.length; i++) {
             if (this.materialFieldsId[i] && this.materialFieldsId[i].value
@@ -431,51 +452,62 @@
                 && this.materialFieldsAmount[i] > 0)
             ) {
               form.materialComponents.push({
-                componentMaterialId: this.materialFieldsId[i].value,
-                percentageAmount: this.materialFieldsAmount[i],
-                isAdditional: this.materialFieldsIsAdditional[i],
-              });
+                componentMaterialId: Number(this.materialFieldsId[i].value),
+                percentageAmount: Number(this.materialFieldsAmount[i]),
+                isAdditional: Boolean(this.materialFieldsIsAdditional[i])
+              })
             }
           }
 
           if (this.newMaterial) {
             form._method = 'PATCH';
-            form.id = this.newMaterial.id;
-            axios.post('/api/v1/recipematerials/' + this.newMaterial.id, form)
-              .then(function (response) {
-                this.$emit('recipematerialsupdated');
-                this.recipeUpdated();
-              }.bind(this), function (response) {
-                this.errors = response.data;
-                this.hasErrors = true;
-                this.isProcessing = false;
-              }.bind(this));
-          }
-          else
-          {
-            // This is a new material
-            axios.post('/api/v1/recipematerials', form)
-              .then(function (response) {
-                this.material = response.data.data.material;
-                console.log('CREATED NEW MATERIAL');
-                console.log(this.material);
-                this.$emit('recipematerialsupdated');
-                this.recipeUpdated();
-              }.bind(this), function (response) {
-                this.errors = response.data;
-                this.hasErrors = true;
-                this.isProcessing = false;
-              }.bind(this));
+            // form.materialComponents = JSON.stringify(form.materialComponents)
+            console.log('updating: form:')
+            console.log(form)
+            console.log('url: ' + Vue.axios.defaults.baseURL + '/materialmaterials/' + this.originalMaterial.id)
+            Vue.axios.post(Vue.axios.defaults.baseURL + '/materialmaterials/' + this.originalMaterial.id, form)
+              .then((response) => {
+              console.log('got response:')
+              console.log(response)
+              if (response.data.error) {
+                // error
+                this.apiError = response.data.error
+                console.log(this.apiError)
+              } else {
+                console.log('emit updatedRecipeComponents')
+                this.$emit('updatedRecipeComponents');
+              }
+            })
+            .catch(response => {
+              this.serverError = response;
+              console.log('UPDATE ERROR')
+              console.log(response.data)
+            })
+          } else {
+            Vue.axios.post(Vue.axios.defaults.baseURL + '/materialmaterials/', form)
+              .then((response) => {
+              console.log('got response:')
+              console.log(response)
+              if (response.data.error) {
+                // error
+                this.apiError = response.data.error
+                console.log(this.apiError)
+              } else {
+                console.log('emit updatedRecipeComponents')
+                this.$emit('updatedRecipeComponents')
+                // TODO:
+              }
+            })
+            .catch(response => {
+              this.serverError = response;
+              console.log('UPDATE ERROR')
+              console.log(response.data)
+            })
           }
         }
       },
 
-      recipeUpdated: function() {
-        window.location = '/recipes/' + this.newMaterial.id;
-      },
-
       checkForDuplicates: function() {
-
         this.loadingSimilarMaterials = true;
         this.similarMaterials = null;
 
@@ -517,7 +549,6 @@
           this.loadingSimilarMaterials = false;
         }
       },
-
       getImageBin: function(id) {
         id = '' + id;
         return id.substr(id.length - 2);
@@ -542,11 +573,13 @@
 
       handleResize: function () {
         if (this.isLoaded) {
-          console.log('old width: ' + this.chartWidth)
-          this.chartHeight = document.getElementById('umf-d3-chart-container').clientHeight
+          // this.chartHeight = document.getElementById('umf-d3-chart-container').clientHeight
           this.chartWidth = document.getElementById('umf-d3-chart-container').clientWidth
-          console.log('new width: ' + this.chartWidth)
         }
+      },
+
+      editComponentsCancel: function() {
+        this.$emit('editComponentsCancel');
       }
 
     }
@@ -556,6 +589,19 @@
 <style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 
 <style>
+
+  .edit-recipe-title-row {
+    margin-top: 1rem;
+  }
+
+  .edit-recipe-title {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  .cancel-edit-btn {
+    margin: 0;
+  }
 
   .calc-container {
 //    background-color: #efefef;

@@ -21,7 +21,6 @@ if (mix.inProduction()) {
     'vue-i18n',
     'vue-meta',
     'js-cookie',
-    'bootstrap',
     'popper.js',
     'vue-router',
     'vuex-router-sync',

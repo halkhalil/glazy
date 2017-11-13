@@ -19,7 +19,7 @@
               v-html="expandButtonText">
       </b-button>
 
-      <div v-if="hasResults" id="umf-d3-chart-container" class="w-100">
+      <div v-if="hasResults" id="umf-d3-chart-container">
         <umf-d3-chart
                 :recipeData="itemlist"
                 :width="chartWidth"
@@ -271,7 +271,7 @@
         materialTypes: new MaterialTypes(),
         constants: new GlazyConstants(),
         chartHeight: 200,
-        chartWidth: 300,
+        chartWidth: 0,
         chartMargin: {
           left: 24,
           right: 10,
@@ -409,12 +409,13 @@
     created() {
       this.searchQuery = new SearchQuery(this.$route.query)
       this.fetchitemlist()
+    },
 
+    mounted() {
       setTimeout(() => {
-        this.handleResize()
-      }, 300)
+          this.handleResize()
+        }, 2000)
       window.addEventListener('resize', this.handleResize)
-
     },
     methods: {
 
@@ -536,7 +537,7 @@
       },
       handleResize: function () {
         if (document.getElementById('umf-d3-chart-container')) {
-          this.chartHeight = document.getElementById('umf-d3-chart-container').clientHeight
+          // this.chartHeight = document.getElementById('umf-d3-chart-container').clientHeight
           this.chartWidth = document.getElementById('umf-d3-chart-container').clientWidth
         }
       },

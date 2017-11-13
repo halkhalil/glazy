@@ -200,8 +200,8 @@
                 this.apiError = response.data.error
                 console.log(this.apiError)
               } else {
-                console.log('emit recipeUpdated')
-                this.$emit('recipeupdated')
+                console.log('emit updatedRecipeMeta')
+                this.$emit('updatedRecipeMeta')
               }
             })
             .catch(response => {

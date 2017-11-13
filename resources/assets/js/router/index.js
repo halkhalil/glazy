@@ -62,13 +62,6 @@ export default new Router({
           name: 'material',
           component: Recipe
         },
-        /*
-        {
-          path: '/recipes/:id/edit',
-          name: 'recipeedit',
-          component: RecipeEdit
-        },
-        */
         {
           path: '/404',
           name: 'error-404',

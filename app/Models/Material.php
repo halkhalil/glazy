@@ -247,7 +247,11 @@ class Material extends Model
         if ($existingAnalysis) {
             foreach (Analysis::OXIDE_NAMES as $oxide_name) {
                 $property_name = $oxide_name . '_percent';
-                $percentageAnalysis->setOxide($oxide_name, $existingAnalysis->$property_name);
+                $oxide_amount = $existingAnalysis->$property_name;
+                if ($oxide_amount === null) {
+                    $oxide_amount = 0;
+                }
+                $percentageAnalysis->setOxide($oxide_name, $oxide_amount);
             }
             $percentageAnalysis->setLOI($existingAnalysis->loi);
         }

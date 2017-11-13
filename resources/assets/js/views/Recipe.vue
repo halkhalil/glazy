@@ -11,7 +11,10 @@
     </div>
 
     <div v-if="isEditComponents && isLoaded && !isDeleted">
-      <edit-recipe-components :originalMaterial="material">
+      <edit-recipe-components :originalMaterial="material"
+                              v-on:isProcessing="isProcessingRecipe"
+                              v-on:updatedRecipeComponents="updatedRecipeComponents"
+                              v-on:editComponentsCancel="editComponentsCancel">
       </edit-recipe-components>
     </div>
     <div v-if="!isEditComponents && isLoaded && !isDeleted" v-cloak>
@@ -31,7 +34,7 @@
 
               <div v-if="isEditMeta">
                 <edit-recipe-metadata :recipe="recipe"
-                                      v-on:recipeupdated="recipeUpdated"
+                                      v-on:updatedRecipeMeta="updatedRecipeMeta"
                                       v-on:editMetaCancel="editMetaCancel"
                                       v-on:isProcessing="isProcessingRecipe"></edit-recipe-metadata>
               </div>
@@ -73,7 +76,7 @@
 
                   <div class="col-md-12">
 
-                    <b-button-group>
+                    <b-button-group class="recipe-action-group">
                       <b-dropdown left>
                         <span slot=text><i class="fa fa-bookmark" aria-hidden="true"></i> Collect</span>
                         <b-dropdown-item>Item 1</b-dropdown-item>
@@ -88,9 +91,9 @@
                         <b-dropdown-divider></b-dropdown-divider>
                         <b-dropdown-item>Item 3</b-dropdown-item>
                       </b-dropdown>
-                      <b-button v-on:click="copyRecipe()"><i class="fa fa-copy"></i> Duplicate</b-button>
+                      <b-button v-on:click="copyRecipe()"><i class="fa fa-copy"></i> Copy</b-button>
                     </b-button-group>
-                    <b-button-group v-if="canEdit">
+                    <b-button-group class="recipe-action-group" v-if="canEdit">
                       <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-unlock"></i> Publish</b-button>
                       <b-button class="btn-info" v-if="!(recipe.isPrivate)" v-on:click="unpublishRecipe()"><i class="fa fa-lock"></i> Unpublish</b-button>
                       <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
@@ -428,7 +431,7 @@
         })
       },
 
-      setMaterial: function() {
+      setMaterial: function () {
         console.log('YYYY');
         var materialObj = new Material();
         console.log('YYYY MATERIAL');
@@ -436,15 +439,23 @@
         console.log('XXXX MATERIAL');
       },
 
-      recipeUpdated: function() {
-        console.log("calling recipeUpdated")
+      updatedRecipeMeta: function () {
+        console.log("calling updatedRecipeMeta")
         this.fetchRecipe()
         this.showRecipeUpdatedSeconds = 5
         this.isRecipeUpdated = true
         this.isEditMeta = false
       },
 
-      imageUpdated: function() {
+      updatedRecipeComponents: function () {
+        console.log("calling updatedRecipeComponents")
+        this.fetchRecipe()
+        this.showRecipeUpdatedSeconds = 5
+        this.isRecipeUpdated = true
+        this.isEditComponents = false
+      },
+
+      imageUpdated: function () {
         this.fetchRecipe()
       },
 
@@ -452,7 +463,7 @@
         this.isEditMeta = true
       },
 
-      editMetaCancel: function() {
+      editMetaCancel: function () {
         this.isEditMeta = false
       },
 
@@ -460,7 +471,7 @@
         this.isEditComponents = true
       },
 
-      editComponentsCancel: function() {
+      editComponentsCancel: function () {
         this.isEditComponents = false
       },
 
@@ -468,28 +479,26 @@
         this.isProcessing = true
       },
 
-      collectionAdd: function(material) {
+      collectionAdd: function (material) {
         $('#addToCollectionModal').modal('show');
       },
 
-      collectionaddrecipe: function() {
+      collectionaddrecipe: function () {
         $("#addCollectionAlert").show();
         $('#addToCollectionModal').modal('hide');
         window.setTimeout(function () {
-          //$("#recipeUpdatedAlert").hide();
           $("#addCollectionAlert").slideUp(500, function() {
-            //$(this).remove();
             $("#addCollectionAlert").hide();
           });
         }, 5000);
         this.fetchRecipe();
       },
 
-      reviewsmodified: function() {
+      reviewsmodified: function () {
         this.fetchRecipe();
       },
 
-      deleteRecipe: function() {
+      deleteRecipe: function () {
         Vue.axios.delete(Vue.axios.defaults.baseURL + '/recipes/' + this.recipe.id)
           .then((response) => {
           if (response.data.error) {
@@ -507,7 +516,7 @@
         })
       },
 
-      sendRecipeGetRequest: function(url) {
+      sendRecipeGetRequest: function (url) {
         this.isProcessing = true
         Vue.axios.get(Vue.axios.defaults.baseURL + url)
           .then((response) => {
@@ -571,6 +580,10 @@
 
   .recipe-info-card .card-description {
     margin-top: 20px;
+  }
+
+  .recipe-action-group .btn {
+    padding: 11px 16px;
   }
 
   .analysis-tabs .nav-tabs {

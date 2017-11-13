@@ -141,8 +141,6 @@
 
       originalAnalysis: function () {
         if (this.originalMaterial) {
-          console.log("UUUU original analysis: ")
-          console.log(this.originalMaterial.getROR2OUnityFormulaAnalysis())
           return this.originalMaterial.getROR2OUnityFormulaAnalysis();
         }
         return null
@@ -150,8 +148,6 @@
 
       newAnalysis: function () {
         if (this.newMaterial) {
-          console.log("UUUU new analysis: ")
-          console.log(this.newMaterial.getROR2OUnityFormulaAnalysis())
           return this.newMaterial.getROR2OUnityFormulaAnalysis();
         }
         return null

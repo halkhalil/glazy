@@ -39,6 +39,13 @@ $api->version('v1', function (Router $api) {
         });
     });
 
+    $api->group(['prefix' => 'materialmaterials'], function(Router $api) {
+        $api->patch('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialMaterialController@update')->name('update');
+        $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
+            $api->post('/', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialMaterialController@store')->name('store');
+        });
+    });
+
     $api->group(['prefix' => 'materials'], function(Router $api) {
         $api->get('/editRecipeMaterialList/{id?}', 'App\\Api\\V1\\Controllers\\Glazy\\PrimitiveMaterialController@editRecipeMaterialList')->name('editRecipeMaterialList');
     });

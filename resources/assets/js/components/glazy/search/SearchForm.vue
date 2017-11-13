@@ -157,12 +157,12 @@ import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
 import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
 import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
 
-import { Chrome } from 'vue-color'
+// import { Chrome } from 'vue-color'
 
 export default {
   name: 'SearchForm',
   components: {
-    'chrome-picker': Chrome
+    // 'chrome-picker': Chrome
   },
   props: {
       isLarge: {

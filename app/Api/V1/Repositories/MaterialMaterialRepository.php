@@ -34,7 +34,7 @@ class MaterialMaterialRepository extends Repository
     public function updateAll($parentId, array $data)
     {
 
-        $componentData = $data['material_components'];
+        $componentData = $data['materialComponents'];
 
         // First, remove existing child materials
         $deletedRows = MaterialMaterial::where('parent_material_id', $parentId)->delete();
@@ -45,30 +45,30 @@ class MaterialMaterialRepository extends Repository
         // Entries without amounts are removed
         $compactedData = [];
         foreach ($componentData as $componentMaterialData) {
-            if (isset($componentMaterialData['component_material_id'])
-                && isset($componentMaterialData['percentage_amount'])
-                && $componentMaterialData['percentage_amount'] > 0)
+            if (isset($componentMaterialData['componentMaterialId'])
+                && isset($componentMaterialData['percentageAmount'])
+                && $componentMaterialData['percentageAmount'] > 0)
             {
-                $componentId = $componentMaterialData['component_material_id'];
+                $componentId = $componentMaterialData['componentMaterialId'];
 
                 if (isset($compactedData[$componentId]))
                 {
                     // The material component was listed twice, add the amounts
                     // to a single row
-                    $compactedData[$componentId]['percentage_amount'] +=
-                        $componentMaterialData['percentage_amount'];
+                    $compactedData[$componentId]['percentageAmount'] +=
+                        $componentMaterialData['percentageAmount'];
                     // TODO: Not much we can do about the is_additional flag in this case
                 }
                 else
                 {
                     $compactedData[$componentId] = [
-                        'component_material_id' => $componentId,
-                        'percentage_amount' => $componentMaterialData['percentage_amount'],
-                        'is_additional' => false
+                        'componentMaterialId' => $componentId,
+                        'percentageAmount' => $componentMaterialData['percentageAmount'],
+                        'isAdditional' => false
                     ];
-                    if (isset($componentMaterialData['is_additional'])
-                        && $componentMaterialData['is_additional'] == true) {
-                        $compactedData[$componentId]['is_additional'] = true;
+                    if (isset($componentMaterialData['isAdditional'])
+                        && $componentMaterialData['isAdditional'] == true) {
+                        $compactedData[$componentId]['isAdditional'] = true;
                     }
                 }
             }
@@ -81,16 +81,16 @@ class MaterialMaterialRepository extends Repository
         {
             $componentMaterial = new MaterialMaterial();
             $componentMaterial->parent_material_id = $parentId;
-            $componentMaterial->component_material_id = $componentMaterialData['component_material_id'];
-            $componentMaterial->percentage_amount = $componentMaterialData['percentage_amount'];
-            $componentMaterial->is_additional = $componentMaterialData['is_additional'];
+            $componentMaterial->component_material_id = $componentMaterialData['componentMaterialId'];
+            $componentMaterial->percentage_amount = $componentMaterialData['percentageAmount'];
+            $componentMaterial->is_additional = $componentMaterialData['isAdditional'];
             $componentMaterial->save();
             $componentMaterials[] = $componentMaterial;
         }
 
         // We have modified the materials, now need to re-calculate total analysis
         // Also note that the components we retrieve will be correctly ordered for hash
-        $materialRepository = new RecipeRepository();
+        $materialRepository = new MaterialRepository();
         $material = $materialRepository->getWithDetails($parentId);
         if (!$material)
         {
