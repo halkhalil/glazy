@@ -4,6 +4,10 @@
         <div class="col-md-6 offset-md-3 col-sm-12">
             <h3>Login to Glazy</h3>
 
+            <b-alert v-if="error" show variant="danger">
+                {{ error }}
+            </b-alert>
+
             <div v-show="!code || !type">
                 <a @click="loginSocial('facebook')" href="#" class="btn btn-facebook btn-block btn-sm">
                     <i class="fa fa-facebook-square"></i> Login with Facebook
@@ -86,6 +90,13 @@
           }
         })
       }
+
+      if (this.$route.query && this.$route.query.error) {
+        if (Number(this.$route.query.error) === 401) {
+          this.error = 'Unauthorized, please login to perform this function.'
+        }
+      }
+
     },
     methods: {
 

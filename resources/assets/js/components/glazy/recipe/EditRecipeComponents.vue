@@ -204,7 +204,6 @@
         type: Object,
         default: null
       }
-
     },
     data() {
       return {
@@ -368,7 +367,13 @@
           }
         })
         .catch(response => {
-          this.serverError = response;
+          if (response.response && response.response.status) {
+            if (response.response.status === 401) {
+              this.$router.push({ path: 'login', query: { error: 401 }})
+            } else {
+              this.serverError = response.response.message;
+            }
+          }
           this.isProcessing = false
         })
       },

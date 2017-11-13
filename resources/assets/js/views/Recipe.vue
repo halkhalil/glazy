@@ -205,7 +205,7 @@
 
       <div v-if="!recipe.isPrimitive" class="row">
         <div class="col-md-12">
-          <div class="card"> <!-- BEGIN Similar Base Components -->
+          <div class="card">
             <div class="card-body">
               <h2 class="card-title">Similar Base Recipes</h2>
               <div class="row">
@@ -214,22 +214,22 @@
                 </div>
               </div>
             </div>
-          </div> <!-- END Similar Base Components -->
+          </div>
         </div>
       </div>
 
       <div v-if="!recipe.isPrimitive" class="row">
         <div class="col-md-12">
-          <div class="card"> <!-- BEGIN Similar Unity Formula -->
-            <div class="card-block">
-              <h2>Similar Unity Formula</h2>
+          <div class="card">
+            <div class="card-body">
+              <h2 class="card-title">Similar Unity Formula</h2>
               <div class="row">
                 <div class="col-sm-12">
                   <similar-unity-formula :material="recipe"></similar-unity-formula>
                 </div>
               </div>
             </div>
-          </div> <!-- END Similar Unity Formula -->
+          </div>
         </div>
       </div>
 
@@ -308,6 +308,7 @@
 
   import UmfChart from '../components/glazy/recipe/UmfChart.vue'
   import SimilarBaseComponents from '../components/glazy/recipe/SimilarBaseComponents.vue'
+  import SimilarUnityFormula from '../components/glazy/recipe/SimilarUnityFormula.vue'
 
   import EditRecipeMetadata from '../components/glazy/recipe/EditRecipeMetadata.vue'
   import EditRecipeComponents from '../components/glazy/recipe/EditRecipeComponents.vue'
@@ -329,6 +330,7 @@
       UmfTraditionalNotation,
       ComponentTable,
       SimilarBaseComponents,
+      SimilarUnityFormula,
       EditRecipeMetadata,
       EditRecipeComponents
     },
@@ -517,6 +519,7 @@
       },
 
       sendRecipeGetRequest: function (url) {
+        this.apiError = null
         this.isProcessing = true
         Vue.axios.get(Vue.axios.defaults.baseURL + url)
           .then((response) => {

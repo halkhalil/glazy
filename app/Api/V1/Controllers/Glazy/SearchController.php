@@ -236,28 +236,18 @@ class SearchController extends ApiBaseController
         order by
         st_distance(SiO2_Al2O3, ST_GeomFromText('POINT(2.90345711144 0.371202367614)')) ASC;
     */
-    public function nearestSiAl(Request $request)
+    public function nearestXY(Request $request)
     {
 
         $material_id = (int)$request->input('material_id');
         $material_type_id = (int)$request->input('material_type_id');
         $orton_cone_id = $request->input('cone');
 
-        $oxide1 = $request->input('y');
-        $oxide2 = $request->input('x');
-        $oxide3 = $request->input('oxide3');
+        $xOxide = $request->input('x');
+        $yOxide = $request->input('y');
 
-        Log::info('OXIDE 1: '.$oxide1);
-        Log::info('OXIDE 2: '.$oxide2);
-        Log::info('OXIDE 3: '.$oxide3);
-
-        $oxide1 = $this->getDBFieldFromJSONField($oxide1, Analysis::SiO2.'_umf');
-        $oxide2 = $this->getDBFieldFromJSONField($oxide2, Analysis::Al2O3.'_umf');
-        $oxide3 = $this->getDBFieldFromJSONField($oxide3);
-
-        Log::info('OXIDE 1: '.$oxide1);
-        Log::info('OXIDE 2: '.$oxide2);
-        Log::info('OXIDE 3: '.$oxide3);
+        $yOxide = $this->getDBFieldFromJSONField($yOxide, Analysis::SiO2.'_umf');
+        $xOxide = $this->getDBFieldFromJSONField($xOxide, Analysis::Al2O3.'_umf');
 
         $material = MaterialAnalysis::where('material_id', '=', $material_id)->first();
 
@@ -266,46 +256,31 @@ class SearchController extends ApiBaseController
             return $this->respondNotFound('Search material analysis not found.');
         }
 
-        $oxide1_umf = $material[$oxide1];
-        $oxide2_umf = $material[$oxide2];
-        $oxide3_umf = null;
-        if ($oxide3) {
-            $oxide3_umf = $material[$oxide3];
-        }
+        $yOxide_umf = $material[$yOxide];
+        $xOxide_umf = $material[$xOxide];
 
-        if ($oxide1_umf === null) {
-            $oxide1_umf = 0;
+        if ($yOxide_umf === null) {
+            $yOxide_umf = 0;
         }
-        if ($oxide2_umf === null) {
-            $oxide2_umf = 0;
+        if ($xOxide_umf === null) {
+            $xOxide_umf = 0;
         }
-        if ($oxide3_umf === null) {
-            $oxide3_umf = 0;
-        }
-
-        Log::info('OXIDE 1: '.$oxide1.' VAL: '.$oxide1_umf);
-        Log::info('OXIDE 2: '.$oxide2.' VAL: '.$oxide2_umf);
-        Log::info('OXIDE 3: '.$oxide3.' VAL: '.$oxide3_umf);
-
-        /*
-        if (!($oxide1_umf > 0) || !($oxide2_umf > 0))
-        {
-            return $this->respondNotFound('Search material analysis has neither '.$oxide1.' nor '.$oxide2);
-        }
-        */
 
         $query = Material::query();
 
         $distanceField =
-            '('.$oxide1_umf.' - analyses.'.$oxide1.') * ('.$oxide1_umf.' - analyses.'.$oxide1.') + '
-            . '('.$oxide2_umf.' - analyses.'.$oxide2.') * ('.$oxide2_umf.' - analyses.'.$oxide2.')';
+            '('.$yOxide_umf.' - analyses.'.$yOxide.') * ('.$yOxide_umf.' - analyses.'.$yOxide.') + '
+            . '('.$xOxide_umf.' - analyses.'.$xOxide.') * ('.$xOxide_umf.' - analyses.'.$xOxide.')';
 
+        /*
+         * 3-axis query:
         if ($oxide3) {
             $distanceField =
-                '('.$oxide1_umf.' - analyses.'.$oxide1.') * ('.$oxide1_umf.' - analyses.'.$oxide1.') + '
-                . '('.$oxide2_umf.' - analyses.'.$oxide2.') * ('.$oxide2_umf.' - analyses.'.$oxide2.') + '
+                '('.$yOxide_umf.' - analyses.'.$yOxide.') * ('.$yOxide_umf.' - analyses.'.$yOxide.') + '
+                . '('.$xOxide_umf.' - analyses.'.$xOxide.') * ('.$xOxide_umf.' - analyses.'.$xOxide.') + '
                 . '('.$oxide3_umf.' - analyses.'.$oxide3.') * ('.$oxide3_umf.' - analyses.'.$oxide3.')';
         }
+        */
 
         $selectFields = 'materials.id, materials.name, materials.is_primitive, materials.material_type_id, '
             .'materials.is_analysis, materials.is_theoretical, materials.from_orton_cone_id, '
@@ -325,18 +300,17 @@ class SearchController extends ApiBaseController
         $query->with('created_by_user');
 
         // Only search for recipes
-        $query->where('materials.is_primitive', false);
+        // TODO:  Why not also search for primitives?
+        // $query->where('materials.is_primitive', false);
+
         // Needs to have both oxides in order to be charted
         // Hmm, Does it need both oxides?
-        // $query->where('analyses.'.$oxide1.'_umf', '>', 0);
-        // $query->where('analyses.'.$oxide2.'_umf', '>', 0);
+        // $query->where('analyses.'.$yOxide.'_umf', '>', 0);
+        // $query->where('analyses.'.$xOxide.'_umf', '>', 0);
         // Unneeded $query->where('analyses.SiO2_Al2O3_ratio_umf', '>', 0);
 
-        $query->where('analyses.'.$oxide1, '<>', null);
-        $query->where('analyses.'.$oxide2, '<>', null);
-        if ($oxide3) {
-            $query->where('analyses.'.$oxide3, '<>', null);
-        }
+        //$query->where('analyses.'.$yOxide, '<>', null);
+        //$query->where('analyses.'.$xOxide, '<>', null);
 
         if ($material_type_id > 0) {
             // Search only within a type
@@ -356,14 +330,11 @@ class SearchController extends ApiBaseController
         // Exclude the original material id
         $query->where('materials.id', '<>', $material_id);
 
-        // $query->orderByRaw('st_distance(analyses.SiO2_Al2O3, ST_GeomFromText(\'POINT('.$oxide1_umf.' '.$oxide2_umf.')\')) ASC');
+        // $query->orderByRaw('st_distance(analyses.SiO2_Al2O3, ST_GeomFromText(\'POINT('.$yOxide_umf.' '.$xOxide_umf.')\')) ASC');
 
         $query->orderBy('distance', 'asc');
-        $query->orderBy('analyses.'.$oxide1, 'asc');
-        $query->orderBy('analyses.'.$oxide2, 'asc');
-        if ($oxide3) {
-            $query->orderBy('analyses.'.$oxide3, 'asc');
-        }
+        $query->orderBy('analyses.'.$yOxide, 'asc');
+        $query->orderBy('analyses.'.$xOxide, 'asc');
 
         $query->limit(100);
 
@@ -421,6 +392,7 @@ class SearchController extends ApiBaseController
     order by
     st_distance(SiO2_Al2O3, ST_GeomFromText('POINT(2.90345711144 0.371202367614)')) ASC;
      */
+    /*
     public function nearestSiAlOriginal(Request $request)
     {
         $material_id = (int)$request->input('material_id');
@@ -502,16 +474,8 @@ class SearchController extends ApiBaseController
 
         $resource = new FractalCollection($materials, new ShallowMaterialTransformer());
         return $this->manager->createData($resource)->toArray();
-        /*
-         * TODO
-
-        $chartMaterialTransformer = new ChartMaterialTransformer();
-
-        return $this->respond([
-            'data' => $chartMaterialTransformer->transformCollection($materials->all())
-        ]);
-        */
     }
+    */
 
     public function similarRecipes(SimilarRecipesRecipeRequest $request)
     {
@@ -538,10 +502,8 @@ class SearchController extends ApiBaseController
             return $this->respondNotFound('No materials found.');
         }
 
-        $transformer = new NoComponentsMaterialTransformer();
-        return $this->respond([
-            'data' => $transformer->transformCollection($materials->all())
-        ]);
+        $resource = new FractalCollection($materials, new ChartPointMaterialTransformer());
+        return $this->manager->createData($resource)->toArray();
     }
 
     public function similarBaseComponents($material_id)
@@ -553,7 +515,7 @@ class SearchController extends ApiBaseController
             return $this->respondNotFound('No materials found.');
         }
 
-        $this->manager->parseIncludes(['atmospheres', 'thumbnail', 'createdByUser']);
+        $this->manager->parseIncludes(['materialComponents', 'atmospheres', 'thumbnail', 'createdByUser']);
 
         $resource = new FractalCollection($materials, new ShallowMaterialTransformer());
         return $this->manager->createData($resource)->toArray();

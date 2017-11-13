@@ -40,8 +40,8 @@ $api->version('v1', function (Router $api) {
     });
 
     $api->group(['prefix' => 'materialmaterials'], function(Router $api) {
-        $api->patch('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialMaterialController@update')->name('update');
         $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
+            $api->patch('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialMaterialController@update')->name('update');
             $api->post('/', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialMaterialController@store')->name('store');
         });
     });
@@ -59,8 +59,9 @@ $api->version('v1', function (Router $api) {
 
     $api->group(['prefix' => 'search'], function(Router $api) {
         $api->get('/', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@index')->name('index');
-        $api->get('/nearestSiAl', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@nearestSiAl')->name('nearestSiAl');
+        $api->get('/nearestXY', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@nearestXY')->name('nearestXY');
         $api->get('/similarBaseComponents/{material_id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarBaseComponents')->name('similarBaseComponents');
+        $api->get('/similarUnityFormula/{material_id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarUnityFormula')->name('similarUnityFormula');
     });
 
     $api->group(['middleware' => 'jwt.auth'], function(Router $api) {

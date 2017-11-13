@@ -127,7 +127,7 @@
                     var bin = this.getImageBin(recipe.id);
                     return '/storage/uploads/recipes/' + bin + '/' + size + '_' + recipe.thumbnail.filename;
                 }
-                return '/static/img/recipes/black.png';
+                return '/img/recipes/black.png';
             },
 
           getAdditionalComponentsString: function (similar) {
@@ -141,8 +141,7 @@
                     }
                     tmp += component.material.name
                   }
-                });
-
+                })
               }
               return tmp
           }

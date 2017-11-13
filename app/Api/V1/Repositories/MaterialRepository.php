@@ -228,6 +228,8 @@ class MaterialRepository extends Repository
                             material_materials.percentage_amount = 16.7);
 
     */
+    /*
+     * DEPRECATED NOW USING MATERIAL HASHES
     public function similarRecipes(array $data) {
 
         $excludeMaterialId = null;
@@ -291,7 +293,7 @@ class MaterialRepository extends Repository
 
         return $query->limit(20)->get();
     }
-
+    */
 
     public function similarUnityFormula($material_id)
     {
@@ -317,23 +319,30 @@ class MaterialRepository extends Repository
 
         $query->join('material_analyses as analyses', 'analyses.material_id', '=', 'materials.id');
 
-        $query->select(
-            'materials.id', 'materials.name',
-            'materials.is_primitive', 'materials.material_type_id',
-            'materials.is_analysis', 'materials.is_theoretical',
-            'materials.from_orton_cone_id', 'materials.to_orton_cone_id',
-            'materials.surface_type_id', 'materials.transparency_type_id',
-            'materials.thumbnail_id',
-            'materials.is_private', 'materials.created_by_user_id',
-            'materials.created_at', 'materials.updated_at'
-        );
+        $Al2O3_umf = $material->analysis->Al2O3_umf;
+        $SiO2_umf = $material->analysis->SiO2_umf;
+        $R2O_umf = $material->analysis->R2O_umf;
 
-        $query->selectRaw('(ABS(analyses.SiO2_umf - '.$material->analysis->SiO2_umf.') + ABS(analyses.Al2O3_umf - '.$material->analysis->Al2O3_umf.')) as SiO2_Al2O3_diff');
-        $query->selectRaw('ABS(analyses.B2O3_umf - '.$material->analysis->B2O3_umf.') as B2O3_diff');
+        if ($Al2O3_umf === null) { $Al2O3_umf = 0; }
+        if ($SiO2_umf === null) { $SiO2_umf = 0; }
+        if ($R2O_umf === null) { $R2O_umf = 0; }
 
- //       (stock_bal.BAL_QTY - SUM(master_table.QTY)) AS NEW_BAL
- //   ->selectRaw('posts.*, sum(points.points) as points_sum')
+        $distanceField =
+            '('.$Al2O3_umf.' - analyses.Al2O3_umf) * ('.$Al2O3_umf.' - analyses.Al2O3_umf) + '
+            .'('.$SiO2_umf.' - analyses.SiO2_umf) * ('.$SiO2_umf.' - analyses.SiO2_umf) + '
+            .'('.$R2O_umf.' - analyses.R2O_umf) * ('.$R2O_umf.' - analyses.R2O_umf)';
 
+        $selectFields = 'materials.id, materials.name, materials.is_primitive, materials.material_type_id, '
+            .'materials.is_analysis, materials.is_theoretical, materials.from_orton_cone_id, '
+            .'materials.to_orton_cone_id, materials.surface_type_id, materials.transparency_type_id, '
+            .'materials.thumbnail_id, materials.is_private, materials.created_by_user_id, '
+            .'materials.created_at, materials.updated_at, '
+            .$distanceField.' as distance';
+
+        $query->select(DB::raw($selectFields));
+
+        $query->with('material_type');
+        $query->with('analysis');
         $query->with('thumbnail');
         $query->with('created_by_user');
 
@@ -360,10 +369,7 @@ class MaterialRepository extends Repository
         $query->whereRaw('SrO_umf BETWEEN ? AND ?', [$material->analysis->SrO_umf - $variance, $material->analysis->SrO_umf + $variance]);
         $query->whereRaw('BaO_umf BETWEEN ? AND ?', [$material->analysis->BaO_umf - $variance, $material->analysis->BaO_umf + $variance]);
 
-//        $query->orderBy('updated_at', 'DESC');
-
-        $query->orderBy('SiO2_Al2O3_diff', 'ASC');
-        $query->orderBy('B2O3_diff', 'ASC');
+        $query->orderBy('distance', 'ASC');
 
         return $query->limit(100)->get();
 

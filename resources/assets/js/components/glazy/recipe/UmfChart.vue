@@ -6,138 +6,100 @@
                 <h2 class="card-title">UMF Chart</h2>
             </div>
             <div class="col-md-8 text-right">
-                <span v-if="isLoaded && !isProcessing && recipeList && recipeList.length > 0">
+                <span v-if="isLoaded && !isProcessing && materialList && materialList.length > 0">
                     <em>Search for 100 closest recipes,
-                    {{ recipeList.length - 1 }} recipes found.</em>
+                    {{ materialList.length - 1 }} recipes found.</em>
                 </span>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-6 col-sm-12 mb-2">
+        <div v-if="isLoaded" class="row">
+            <div class="col-md-12 col-sm-12 mb-2">
                 <img src="/img/charts/recipe.png" height="12"/> Recipe &nbsp;
                 <img src="/img/charts/analysis.png" height="14"/> Analysis &nbsp;
-                <img src="/img/charts/current.png" height="15"/> Current Recipe
-            </div>
-            <div class="col-md-6 col-sm-12 mb-2 text-right">
+                <img src="/img/charts/current.png" height="15"/> Current Recipe &nbsp; &nbsp;
                 R<sub>2</sub>O:RO Scale <img src="/img/charts/ror2oscale.png" height="35" width="366"/>
             </div>
-            <div class="col-md-12">
-                <div class="row">
-                    <div v-if="isLoaded" class="col-sm-12">
-                        <div id="umf-d3-chart-container" class="w-100">
-                            <umf-d3-chart
-                                    :recipeData="recipeList"
-                                    :width="chartWidth"
-                                    :height="chartHeight"
-                                    :margin="chartMargin"
-                                    :chartDivId="'umf-d3-chart-container'"
-                                    :currentRecipeId="material.id"
-                                    :baseTypeId="baseTypeId"
-                                    :colortype="'r2o'"
-                                    :showRecipes="true"
-                                    :showCones="false"
-                                    :showStullChart="true"
-                                    :showStullLabels="true"
-                                    :showZoomButtons="false"
-                                    :showAxesLabels="true"
-                                    :highlightedRecipeId="{highlightedRecipeId}"
-                                    :unHighlightedRecipeId="{unHighlightedRecipeId}"
-                                    :xoxide="oxide2"
-                                    :yoxide="oxide1"
-                                    v-on:clickedUmfD3Recipe="clickedD3Chart"
-                            >
-                            </umf-d3-chart>
-                        </div>
+            <div class="col-md-8">
+                <div id="umf-d3-chart-container" class="w-100">
+                    <umf-d3-chart
+                            :recipeData="materialList"
+                            :width="chartWidth"
+                            :height="chartHeight"
+                            :margin="chartMargin"
+                            :chartDivId="'umf-d3-chart-container'"
+                            :currentRecipeId="material.id"
+                            :baseTypeId="baseTypeId"
+                            :colortype="'r2o'"
+                            :showRecipes="true"
+                            :showCones="false"
+                            :showStullChart="true"
+                            :showStullLabels="true"
+                            :showZoomButtons="false"
+                            :showAxesLabels="true"
+                            :highlightedRecipeId="{highlightedRecipeId}"
+                            :unHighlightedRecipeId="{unHighlightedRecipeId}"
+                            :xoxide="xOxide"
+                            :yoxide="yOxide"
+                            v-on:clickedUmfD3Recipe="clickedD3Chart"
+                    >
+                    </umf-d3-chart>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-row">
+                    <div class="col-md-12 form-group">
+                        <b-form-select
+                                id="typeId"
+                                size="sm"
+                                v-if="materialTypeOptions"
+                                v-model="materialTypeId"
+                                :options="materialTypeOptions"
+                                @input="fetchRecipeList">
+                            <template slot="first">
+                                <option :value="null">All Recipe Types</option>
+                            </template>
+                        </b-form-select>
                     </div>
-                    <div class="col-md-8 col-sm-12">
-                        <form class="search-form">
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="typeId">Type:</label>
-                                    <b-form-select
-                                            id="typeId"
-                                            size="sm"
-                                            v-if="materialTypeOptions"
-                                            v-model="materialTypeId"
-                                            :options="materialTypeOptions"
-                                            @input="fetchRecipeList">
-                                        <template slot="first">
-                                            <option :value="null">All Recipe Types</option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="coneId">Temperature:</label>
-                                    <b-form-select
-                                            id="coneId"
-                                            size="sm"
-                                            v-model="cone_id"
-                                            :options="constants.ORTON_CONES_SELECT"
-                                            @input="fetchRecipeList">
-                                        <template slot="first">
-                                            <option :value="null">All Temps</option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="axisToggle"></label>
-                                    <b-checkbox
-                                            id="axisToggle"
-                                            v-model="isThreeAxes">3 Axis</b-checkbox>
-                                </div>
-                                <div class="form-group">
-                                    <label for="oxide1">Oxide 1:</label>
-                                    <b-form-select
-                                            id="oxide1"
-                                            size="sm"
-                                            v-model="oxide1"
-                                            :options="oxides"
-                                            @input="fetchRecipeList"
-                                            class="col">
-                                    </b-form-select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="oxide2">Oxide 2:</label>
-                                    <b-form-select
-                                            id="oxide2"
-                                            size="sm"
-                                            v-model="oxide2"
-                                            :options="oxides"
-                                            @input="fetchRecipeList"
-                                            class="col">
-                                        <template slot="first">
-                                            <option :value="null">Oxide 2</option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                                <div v-show="isThreeAxes" class="form-group">
-                                    <label for="oxide3">Oxide 3:</label>
-                                    <b-form-select
-                                            id="oxide3"
-                                            size="sm"
-                                            v-model="oxide3"
-                                            :options="oxides"
-                                            @input="fetchRecipeList"
-                                            class="col">
-                                        <template slot="first">
-                                            <option :value="null">Oxide 3</option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-
-                            </div>
-                        </form>
+                    <div class="col-md-12 form-group">
+                        <b-form-select
+                                id="coneId"
+                                size="sm"
+                                v-model="cone_id"
+                                :options="constants.ORTON_CONES_SELECT"
+                                @input="fetchRecipeList">
+                            <template slot="first">
+                                <option :value="null">All Temps</option>
+                            </template>
+                        </b-form-select>
                     </div>
-                    <div class="col-md-4 col-sm-12">
-                        <div v-if="clickedRecipe"
-                             class="card chart-recipe-card">
-                            <div class="card-body">
-                                <p v-html="clickedRecipe.text"></p>
-                                <a v-bind:href="'https://glazy.org/recipes/' + clickedRecipe.customdata"
-                                   target="_blank" class="btn">View on Glazy</a>
-                            </div>
+                    <div class="form-group col-sm-6">
+                        <b-form-select
+                                id="xOxide"
+                                size="sm"
+                                v-model="xOxide"
+                                :options="oxides"
+                                @input="fetchRecipeList"
+                                class="col">
+                        </b-form-select>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <b-form-select
+                                id="yOxide"
+                                size="sm"
+                                v-model="yOxide"
+                                :options="oxides"
+                                @input="fetchRecipeList"
+                                class="col">
+                        </b-form-select>
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div v-if="clickedRecipe"
+                         class="card chart-recipe-card">
+                        <div class="card-body">
+                            <p v-html="clickedRecipe.name"></p>
+                            <a v-bind:href="'https://glazy.org/recipes/' + clickedRecipe.id"
+                               target="_blank" class="btn">View on Glazy</a>
                         </div>
                     </div>
                 </div>
@@ -147,7 +109,6 @@
 </div>
 
 </template>
-
 
 <script>
 
@@ -163,12 +124,15 @@
     components: {
       UmfD3Chart
     },
-
-    props: ['current_user', 'material'],
-
+    props: {
+      material: {
+        type: Object,
+        default: null
+      }
+    },
     data() {
       return {
-        recipeList: null,
+        materialList: null,
         chart: null,
         materialTypes: new MaterialTypes(),
         constants: new GlazyConstants(),
@@ -177,14 +141,14 @@
         cone_id: null,
         showConesString: 'Show Cones',
         isProcessing: true,
-        oxide1: 'Al2O3',
-        oxide2: 'SiO2',
+        yOxide: 'Al2O3',
+        xOxide: 'SiO2',
         oxide3: 'Fe2O3',
         baseTypeId: new MaterialTypes().GLAZE_TYPE_ID,
         noZeros: false,
         isThreeAxes: false,
         showStullChart: true,
-        chartHeight: 300,
+        chartHeight: 340,
         chartWidth: 0,
         chartMargin: {
           left: 24,
@@ -197,12 +161,14 @@
         highlightedRecipeId: 0,
         unHighlightedRecipeId: 0,
         showModeBar: 'false',
-        clickedRecipe: null
+        clickedRecipe: null,
+
+        currentPage: 1
       }
     },
     computed: {
       isLoaded: function () {
-        if (this.recipeList && this.recipeList.length > 0) {
+        if (this.materialList && this.materialList.length > 0) {
           return true;
         }
         return false;
@@ -211,6 +177,7 @@
       hasRecipeList: function () {
 
       },
+
 
       materialTypeOptions: function () {
         if (this.material.baseTypeId) {
@@ -264,14 +231,13 @@
 
     methods: {
 
-
       fetchRecipeList: function () {
 
         this.isProcessing = true;
 
-        var recipeUrl = Vue.axios.defaults.baseURL + '/search/nearestSiAl?material_id=' + this.material.id;
-        recipeUrl += '&oxide1=' + this.oxide1
-        recipeUrl += '&oxide2=' + this.oxide2
+        var recipeUrl = Vue.axios.defaults.baseURL + '/search/nearestXY?material_id=' + this.material.id;
+        recipeUrl += '&y=' + this.yOxide
+        recipeUrl += '&x=' + this.xOxide
         if (this.materialTypeId) {
           recipeUrl += '&material_type_id=' + this.materialTypeId;
         }
@@ -281,43 +247,74 @@
 
         Vue.axios.get(recipeUrl)
           .then(function (response) {
-            this.recipeList = response.data.data;
-            if (!this.recipeList) {
-              this.recipeList = [];
+            this.materialList = response.data.data;
+            if (!this.materialList) {
+              this.materialList = [];
             }
-            this.recipeList.push(this.material)
+            this.materialList.push(this.material)
 
+            /*
+            TODO:  Add ability to show or sort by current user
             var currentUserId = null;
             if (this.current_user && this.current_user.hasOwnProperty('id')) {
               currentUserId = this.current_user.id;
             }
-            if (this.recipeList) {
-
-            }
+            */
             this.isProcessing = false;
           }.bind(this), function (response) {
-//                .catch(response => {
-            // Error Handling
-//                });
             this.isProcessing = false;
           }.bind(this));
       },
 
-      clickedChart: function(data) {
+      clickedD3Chart (data) {
         this.clickedRecipe = data
-      },
-
-      clickedD3Chart: function(data) {
-        alert(data)
       },
 
       handleResize: function () {
         if (document.getElementById('umf-d3-chart-container')) {
-          console.log('old width: ' + this.chartWidth)
           // this.chartHeight = document.getElementById('umf-d3-chart-container').clientHeight
           this.chartWidth = document.getElementById('umf-d3-chart-container').clientWidth
-          console.log('new width: ' + this.chartWidth)
         }
+      },
+
+      coneString: function(fromOrtonConeName, toOrtonConeName) {
+        var coneString = '?';
+        if (fromOrtonConeName
+          && toOrtonConeName
+          && fromOrtonConeName != toOrtonConeName) {
+          return fromOrtonConeName + "-" + toOrtonConeName;
+        }
+
+        if (fromOrtonConeName) {
+          return coneString = fromOrtonConeName;
+        }
+
+        if (toOrtonConeName) {
+          coneString = toOrtonConeName;
+        }
+        return coneString;
+      },
+
+      getImageBin: function(id) {
+        id = '' + id;
+        return id.substr(id.length - 2);
+      },
+
+      hasThumbnail: function(recipe) {
+        if (recipe.hasOwnProperty('thumbnail')
+          && recipe.thumbnail.hasOwnProperty('filename')
+          && recipe.thumbnail.filename) {
+          return true;
+        }
+        return false;
+      },
+
+      getImageUrl: function(recipe, size) {
+        if (this.hasThumbnail(recipe)) {
+          var bin = this.getImageBin(recipe.id);
+          return '/storage/uploads/recipes/' + bin + '/' + size + '_' + recipe.thumbnail.filename;
+        }
+        return '/img/recipes/black.png';
       }
     }
 }
@@ -327,6 +324,11 @@
 <style>
     .chart-recipe-card {
         background-color: #cccccc;
+    }
+
+    .similar-table {
+        height: 200px !important;
+        overflow: auto;
     }
 
     .r2o-colors tr td {
