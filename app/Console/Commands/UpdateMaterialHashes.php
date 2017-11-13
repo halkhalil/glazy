@@ -77,6 +77,7 @@ class UpdateMaterialHashes extends Command
                 echo "Updating: ".$material->id." ".$material->name."\n";
                 echo "Old base_composite_hash: ".$material->base_composite_hash." additive: ".$material->additive_composite_hash."\n";
                 $materialMaterialRepository->setComponentHashes($material);
+                $material->timestamps = false;
                 $material->save();
                 echo "New base_composite_hash: ".$material->base_composite_hash." additive: ".$material->additive_composite_hash."\n";
             }

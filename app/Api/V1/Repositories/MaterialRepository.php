@@ -136,11 +136,15 @@ class MaterialRepository extends Repository
         $collections = $collectionsQuery->get();
         foreach ($collections as $collection) {
             $collection->thumbnail_id = null;
+            $collection->timestamps = false;
             $collection->save();
         }
 
-        $material->thumbnail_id = null;
-        $material->save();
+        if ($material->thumbnail_id) {
+            // Unset any reference to the material_images table:
+            $material->thumbnail_id = null;
+            $material->save();
+        }
 
         $deletedRows = MaterialMaterial::where('parent_material_id', $id)->delete();
         $deletedRows = MaterialAtmosphere::where('material_id', $id)->delete();
