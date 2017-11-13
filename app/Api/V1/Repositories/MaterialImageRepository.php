@@ -144,7 +144,7 @@ class MaterialImageRepository extends Repository
         $materialImage->created_by_user_id = $current_user_id;
         $materialImage->updated_by_user_id = $current_user_id;
 
-        if (!$data['imagefile']) {
+        if (!$data['imageFile']) {
             throw new Exception('Upload file not found');
         }
 
@@ -152,7 +152,7 @@ class MaterialImageRepository extends Repository
         $glazyImageFile = new GlazyImageFile(
             GlazyImageFile::MATERIALS_STORAGE_NAME,
             $material->id,
-            $data['imagefile']
+            $data['imageFile']
         );
 
         $glazyImageFile->store();

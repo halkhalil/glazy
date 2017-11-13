@@ -460,7 +460,7 @@
       imageUpdated: function () {
         this.fetchRecipe()
       },
-
+      
       editMeta: function () {
         this.isEditMeta = true
       },
@@ -525,6 +525,7 @@
           .then((response) => {
           if (response.data.error) {
             this.apiError = response.data.error
+            this.isProcessing = false
             console.log(this.apiError)
           } else {
             this.recipe = response.data.data;

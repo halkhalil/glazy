@@ -57,6 +57,14 @@ $api->version('v1', function (Router $api) {
         });
     });
 
+    $api->group(['prefix' => 'materialimages'], function(Router $api) {
+        $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
+            $api->post('/', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialImageController@store')->name('store');
+            $api->patch('/{materialimage}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialImageController@update')->name('update');
+            $api->delete('/{materialimage}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialImageController@destroy')->name('destroy');
+        });
+    });
+
     $api->group(['prefix' => 'search'], function(Router $api) {
         $api->get('/', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@index')->name('index');
         $api->get('/nearestXY', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@nearestXY')->name('nearestXY');

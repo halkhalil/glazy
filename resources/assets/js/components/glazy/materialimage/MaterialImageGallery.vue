@@ -269,7 +269,7 @@
       },
 
       imageUploaded: function () {
-        $('#addImageModal').modal('hide');
+        this.$refs.addImageModal.hide()
         this.$emit('imageupdated');
       },
 

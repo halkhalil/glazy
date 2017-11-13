@@ -79,141 +79,145 @@
 
 export default {
 
-    props: ['material'],
-
   name: 'UploadMaterialImageForm',
-
-    data() {
-        return {
-            errors: {},
-            hasErrors: false,
-            isProcessing: false,
-            files: null,
-            image: '',
-            max_upload_size_M: 6
-        };
+  props: {
+    material: {
+      type: Object,
+      default: null
     },
-
-
-    computed: {
-
-        isLoaded: function() {
-            if (this.material) {
-                return true;
-            }
-            return false;
-        },
-
-        form: function() {
-
-            var form = {};
-
-            if (this.isLoaded) {
-                form = {
-                    material_id: this.material.id,
-                    title: '',
-                    description: ''
-                };
-            }
-            return form;
-        }
-
-    },
-
-    methods: {
-
-        upload(e) {
-            e.preventDefault();
-
-            var self = this;
-
-            this.isProcessing = true;
-            var formData = new FormData();
-            formData.append('material_id', this.form.material_id);
-            formData.append('title', this.form.title);
-            formData.append('description', this.form.description);
-            formData.append('imagefile', this.files[0]);
-
-            axios.post('/api/v1/materialimages', formData)
-                .then(function (response) {
-                    this.$emit('imageuploaded');
-                    this.isProcessing = false;
-                    this.resetForm();
-                }.bind(this), function (response) {
-                    this.errors = response.data;
-                    this.hasErrors = true;
-                    this.isProcessing = false;
-                }.bind(this));
-        },
-
-        onFileChange(e) {
-            this.files = e.target.files || e.dataTransfer.files;
-            if (!this.files.length)
-                return;
-            if (!this.hasExtension(['.jpg', '.gif', '.png'])) {
-                this.files = null;
-                this.errors.imageFile = ['Image file type not supported.'];
-                this.hasErrors = true;
-            }
-            else if (!this.checkFileSize()) {
-                this.errors.imageFile = ['File size must be less than ' + this.max_upload_size_M + 'MB.'];
-                this.hasErrors = true;
-            }
-            else {
-                // TODO: Refactor errors handling
-                this.errors.imageFile = {};
-                this.hasErrors = false;
-                this.createImage(this.files[0]);
-            }
-        },
-
-        createImage: function(file) {
-            var image = new Image();
-            var reader = new FileReader();
-            var vm = this;
-
-            reader.onload = (e) => {
-                vm.image = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        },
-
-        resetForm: function() {
-            this.image = '';
-            this.files = null;
-            this.form.title = null;
-            this.form.description = null;
-        },
-
-        removeImage: function (e) {
-            this.image = '';
-            this.files = null;
-        },
-
-        cancelEdit: function() {
-            this.resetForm();
-            this.$emit('imageuploadcancel');
-        },
-
-        hasExtension: function(exts) {
-            // http://stackoverflow.com/questions/4234589/validation-of-file-extension-before-uploading-file
-            if (!this.files.length) {
-                return false;
-            }
-            return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$', "i")).test(this.files[0].name);
-        },
-
-        checkFileSize: function() {
-            console.log('FILE SIZE: ' + (this.files[0].size / 1048576));
-            if (!this.files.length) {
-                return false;
-            }
-            if ((this.files[0].size / 1048576) > this.max_upload_size_M) {
-                return false;
-            }
-            return true;
-        }
+  },
+  data() {
+    return {
+      errors: {},
+      hasErrors: false,
+      isProcessing: false,
+      files: null,
+      image: '',
+      maxUploadSizeMB: 6,
+      apiError: null,
+      serverError: null
     }
+  },
+  computed: {
+    isLoaded: function () {
+      if (this.material) {
+        return true;
+      }
+      return false;
+    },
+    form: function () {
+      var form = {};
+      if (this.isLoaded) {
+        form = {
+          materialId: this.material.id,
+          title: '',
+          description: ''
+        }
+      }
+      return form;
+    }
+  },
+
+  methods: {
+
+    upload: function (e) {
+      e.preventDefault();
+
+      var self = this;
+
+      this.isProcessing = true;
+      var formData = new FormData();
+      formData.append('materialId', this.form.materialId);
+      formData.append('title', this.form.title);
+      formData.append('description', this.form.description);
+      formData.append('imageFile', this.files[0]);
+
+      Vue.axios.post(Vue.axios.defaults.baseURL + '/materialimages', formData)
+        .then((response) => {
+        if (response.data.error) {
+          this.apiError = response.data.error
+          this.isProcessing = true
+          console.log(this.apiError)
+        }
+        else {
+          this.isProcessing = false;
+          this.resetForm();
+          this.$emit('imageuploaded');
+        }
+      }).catch(response => {
+        this.serverError = response;
+        this.isProcessing = false
+      })
+    },
+
+    onFileChange(e) {
+      this.files = e.target.files || e.dataTransfer.files;
+      if (!this.files.length)
+        return;
+      if (!this.hasExtension(['.jpg', '.gif', '.png'])) {
+        this.files = null;
+        this.errors.imageFile = ['Image file type not supported.'];
+        this.hasErrors = true;
+      }
+      else if (!this.checkFileSize()) {
+        this.errors.imageFile = ['File size must be less than ' + this.maxUploadSizeMB + 'MB.'];
+        this.hasErrors = true;
+      }
+      else {
+        // TODO: Refactor errors handling
+        this.errors.imageFile = {};
+        this.hasErrors = false;
+        this.createImage(this.files[0]);
+      }
+    },
+
+    createImage: function (file) {
+      var image = new Image();
+      var reader = new FileReader();
+      var vm = this;
+
+      reader.onload = (e) => {
+        vm.image = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    },
+
+    resetForm: function () {
+      this.image = '';
+      this.files = null;
+      this.form.title = null;
+      this.form.description = null;
+    },
+
+    removeImage: function (e) {
+      this.image = '';
+      this.files = null;
+    },
+
+    cancelEdit: function () {
+      this.resetForm();
+      this.$emit('imageuploadcancel');
+    },
+
+    hasExtension: function (exts) {
+      // http://stackoverflow.com/questions/4234589/validation-of-file-extension-before-uploading-file
+      if (!this.files.length) {
+        return false;
+      }
+      return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$', "i")).test(this.files[0].name);
+    },
+
+    checkFileSize: function () {
+      console.log('FILE SIZE: ' + (this.files[0].size / 1048576));
+      if (!this.files.length) {
+        return false;
+      }
+      if ((this.files[0].size / 1048576) > this.maxUploadSizeMB) {
+        return false;
+      }
+      return true;
+    }
+  }
 }
 
 </script>
