@@ -5,9 +5,12 @@ namespace App\Api\V1\Transformers\MaterialReview;
 use App\Api\V1\Transformers\User\UserTransformer;
 use App\Models\MaterialReview;
 use League\Fractal;
+use App\Api\V1\Transformers\JsonDateTransformer;
 
 class MaterialReviewTransformer extends Fractal\TransformerAbstract
 {
+    use JsonDateTransformer;
+
     protected $defaultIncludes = [
         'user'
     ];
@@ -19,13 +22,13 @@ class MaterialReviewTransformer extends Fractal\TransformerAbstract
         if ($materialReview)
         {
             $review_data['id'] = $materialReview['id'];
-            $review_data['material_id'] = $materialReview['material_id'];
-            $review_data['user_id'] = $materialReview['user_id'];
+            $review_data['materialId'] = $materialReview['material_id'];
+            $review_data['userId'] = $materialReview['user_id'];
             $review_data['title'] = $materialReview['title'];
             $review_data['description'] = $materialReview['description'];
             $review_data['rating'] = $materialReview['rating'];
-            $review_data['created_at'] = $materialReview['created_at'];
-            $review_data['updated_at'] = $materialReview['updated_at'];
+            $review_data['createdAt'] = $this->jsonDate($materialReview['created_at']);
+            $review_data['updatedAt'] = $this->jsonDate($materialReview['updated_at']);
         }
 
         return $review_data;

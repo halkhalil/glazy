@@ -6,11 +6,14 @@ use App\Models\Atmosphere;
 use App\Models\OrtonCone;
 use App\Models\Material;
 use App\Models\MaterialImage;
+use App\Api\V1\Transformers\JsonDateTransformer;
 
 use League\Fractal;
 
 class MaterialImageTransformer extends Fractal\TransformerAbstract
 {
+    use JsonDateTransformer;
+
     const ORTON_CONE_NAME = 'ortonConeName';
     const ATMOSPHERE_NAME = 'atmosphereName';
     const DOMINANT_HEX_COLOR = 'dominantHexColor';
@@ -101,8 +104,8 @@ class MaterialImageTransformer extends Fractal\TransformerAbstract
 
             $image_data[self::JSON_NAMES[MaterialImage::DB_IS_PRIVATE]] = (boolean) $materialImage[MaterialImage::DB_IS_PRIVATE];
             $image_data[self::JSON_NAMES[MaterialImage::DB_CREATED_BY_USER_ID]] = $materialImage[MaterialImage::DB_CREATED_BY_USER_ID];
-            $image_data[self::JSON_NAMES[MaterialImage::DB_CREATED_AT]] = $materialImage[MaterialImage::DB_CREATED_AT];
-            $image_data[self::JSON_NAMES[MaterialImage::DB_UPDATED_AT]] = $materialImage[MaterialImage::DB_UPDATED_AT];
+            $image_data[self::JSON_NAMES[MaterialImage::DB_CREATED_AT]] = $this->jsonDate($materialImage[MaterialImage::DB_CREATED_AT]);
+            $image_data[self::JSON_NAMES[MaterialImage::DB_UPDATED_AT]] = $this->jsonDate($materialImage[MaterialImage::DB_UPDATED_AT]);
         }
 
         return $image_data;

@@ -5,11 +5,14 @@ namespace App\Api\V1\Transformers\User;
 use App\User;
 
 use App\Api\V1\Transformers\UserProfile\UserProfileTransformer;
+use App\Api\V1\Transformers\JsonDateTransformer;
 
 use League\Fractal;
 
 class UserTransformer extends Fractal\TransformerAbstract
 {
+    use JsonDateTransformer;
+
     const DB_ID = 'id';
     const DB_EMAIL = 'email';
     const DB_NAME = 'name';
@@ -48,8 +51,8 @@ class UserTransformer extends Fractal\TransformerAbstract
         }
         */
 
-        $user_data[self::JSON_NAMES[self::DB_CREATED_AT]] = $user[self::DB_CREATED_AT];
-        $user_data[self::JSON_NAMES[self::DB_UPDATED_AT]] = $user[self::DB_UPDATED_AT];
+        $user_data[self::JSON_NAMES[self::DB_CREATED_AT]] = $this->jsonDate($user[self::DB_CREATED_AT]);
+        $user_data[self::JSON_NAMES[self::DB_UPDATED_AT]] = $this->jsonDate($user[self::DB_UPDATED_AT]);
 
         return $user_data;
     }

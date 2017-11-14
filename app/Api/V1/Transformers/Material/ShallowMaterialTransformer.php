@@ -13,11 +13,14 @@ use App\Models\OrtonCone;
 use App\Models\SurfaceType;
 use App\Models\TransparencyType;
 use Illuminate\Support\Facades\Log;
+use App\Api\V1\Transformers\JsonDateTransformer;
 
 use League\Fractal;
 
 class ShallowMaterialTransformer extends Fractal\TransformerAbstract
 {
+    use JsonDateTransformer;
+
     const DESCRIPTION_MAX_LENGTH = 200;
 
     const MATERIAL_TYPE = 'materialType';
@@ -138,8 +141,8 @@ class ShallowMaterialTransformer extends Fractal\TransformerAbstract
         $material_data[self::JSON_NAMES[Material::DB_RATING_AVERAGE]] = $material[Material::DB_RATING_AVERAGE];
         $material_data[self::JSON_NAMES[Material::DB_IS_PRIVATE]] = (boolean) $material[Material::DB_IS_PRIVATE];
         $material_data[self::JSON_NAMES[Material::DB_CREATED_BY_USER_ID]] = $material[Material::DB_CREATED_BY_USER_ID];
-        $material_data[self::JSON_NAMES[Material::DB_CREATED_AT]] = $material[Material::DB_CREATED_AT];
-        $material_data[self::JSON_NAMES[Material::DB_UPDATED_AT]] = $material[Material::DB_UPDATED_AT];
+        $material_data[self::JSON_NAMES[Material::DB_CREATED_AT]] = $this->jsonDate($material[Material::DB_CREATED_AT]);
+        $material_data[self::JSON_NAMES[Material::DB_UPDATED_AT]] = $this->jsonDate($material[Material::DB_UPDATED_AT]);
 
         $material_data[self::MATERIAL_COMPONENT_TOTAL_AMOUNT] =
             $this->getMaterialComponentTotalAmount($material->shallowComponents);

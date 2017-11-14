@@ -7,8 +7,11 @@ use App\Api\V1\Transformers\Material\MaterialTransformer;
 use App\Models\UserMaterial;
 use League\Fractal;
 
+use App\Api\V1\Transformers\JsonDateTransformer;
+
 class UserMaterialTransformer extends Fractal\TransformerAbstract
 {
+    use JsonDateTransformer;
 
     protected $availableIncludes = [
         'user'
@@ -27,12 +30,12 @@ class UserMaterialTransformer extends Fractal\TransformerAbstract
             $ldap_data['id'] = $userMaterial['id'];
             $ldap_data['userId'] = $userMaterial['user_id'];
             $ldap_data['materialId'] = $userMaterial['material_id'];
-            $ldap_data['stockAmount'] = $userMaterial['stockAmount'];
+            $ldap_data['stockAmount'] = $userMaterial['stock_amount'];
             $ldap_data['price'] = $userMaterial['price'];
             $ldap_data['vendor'] = $userMaterial['vendor'];
-            $ldap_data['vendor_code'] = $userMaterial['vendor_code'];
-            $ldap_data['created_at'] = $userMaterial['created_at'];
-            $ldap_data['updated_at'] = $userMaterial['updated_at'];
+            $ldap_data['vendorCode'] = $userMaterial['vendor_code'];
+            $ldap_data['createdAt'] = $this->jsonDate($userMaterial['created_at']);
+            $ldap_data['updatedAt'] = $this->jsonDate($userMaterial['updated_at']);
         }
 
         return $ldap_data;

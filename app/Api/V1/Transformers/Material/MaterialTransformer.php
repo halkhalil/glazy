@@ -18,8 +18,11 @@ use App\Api\V1\Transformers\User\UserTransformer;
 use Illuminate\Support\Collection;
 use League\Fractal;
 
+use App\Api\V1\Transformers\JsonDateTransformer;
+
 class MaterialTransformer extends Fractal\TransformerAbstract
 {
+    use JsonDateTransformer;
 
     const MATERIAL_TYPE = 'materialType';
     const BASE_TYPE_ID = 'baseTypeId';
@@ -135,8 +138,8 @@ class MaterialTransformer extends Fractal\TransformerAbstract
         $material_data[self::JSON_NAMES[Material::DB_RATING_AVERAGE]] = $material[Material::DB_RATING_AVERAGE];
         $material_data[self::JSON_NAMES[Material::DB_IS_PRIVATE]] = (boolean) $material[Material::DB_IS_PRIVATE];
         $material_data[self::JSON_NAMES[Material::DB_CREATED_BY_USER_ID]] = $material[Material::DB_CREATED_BY_USER_ID];
-        $material_data[self::JSON_NAMES[Material::DB_CREATED_AT]] = $material[Material::DB_CREATED_AT];
-        $material_data[self::JSON_NAMES[Material::DB_UPDATED_AT]] = $material[Material::DB_UPDATED_AT];
+        $material_data[self::JSON_NAMES[Material::DB_CREATED_AT]] = $this->jsonDate($material[Material::DB_CREATED_AT]);
+        $material_data[self::JSON_NAMES[Material::DB_UPDATED_AT]] = $this->jsonDate($material[Material::DB_UPDATED_AT]);
 
         $material_data[self::MATERIAL_COMPONENT_TOTAL_AMOUNT] =
             $this->getMaterialComponentTotalAmount($material->components);

@@ -7,9 +7,12 @@ use App\Models\OrtonCone;
 use App\Models\SurfaceType;
 use App\Models\TransparencyType;
 use Illuminate\Support\Facades\Log;
+use App\Api\V1\Transformers\JsonDateTransformer;
 
 class ChartMaterialTransformer extends Transformer
 {
+    use JsonDateTransformer;
+
     public function transform($material)
     {
         $ortonCones = new OrtonCone();
@@ -75,8 +78,8 @@ class ChartMaterialTransformer extends Transformer
             $material_data['created_by_user'] = $shallowUserTransformer->transform($material->created_by_user);
         }
 
-        $material_data['created_at'] = $material['created_at'];
-        $material_data['updated_at'] = $material['updated_at'];
+        $material_data['created_at'] = $this->jsonDate($material['created_at']);
+        $material_data['updated_at'] = $this->jsonDate($material['updated_at']);
 
         $materialAnalysisTransformer = new MaterialAnalysisTransformer();
         $analysis_data = $materialAnalysisTransformer->transform($material->analysis);

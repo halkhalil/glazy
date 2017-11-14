@@ -235,16 +235,20 @@
 
       <div class="row">
         <div class="col-md-12">
-          <div class="card"> <!-- BEGIN Reviews Card -->
-            <div class="card-block">
-              <h2>Reviews</h2>
-              <reviews-panel
-                      v-on:reviewsmodified="reviewsmodified"
-                      :current_user="current_user"
-                      :material="recipe"
-              ></reviews-panel>
+          <div class="card">
+            <div class="card-body">
+              <h2 class="card-title">Reviews</h2>
+              <div class="row">
+                <div class="col-sm-12">
+                <reviews-panel
+                        v-on:reviewsmodified="reviewsmodified"
+                        :current_user="current_user"
+                        :material="recipe"
+                ></reviews-panel>
+                </div>
+              </div>
             </div>
-          </div> <!-- END Reviews Card -->
+          </div>
         </div>
       </div>
 
@@ -313,6 +317,8 @@
   import EditRecipeMetadata from '../components/glazy/recipe/EditRecipeMetadata.vue'
   import EditRecipeComponents from '../components/glazy/recipe/EditRecipeComponents.vue'
 
+  import ReviewsPanel from '../components/glazy/materialreviews/ReviewsPanel.vue'
+
   import Vue from 'vue'
 
   export default {
@@ -332,7 +338,8 @@
       SimilarBaseComponents,
       SimilarUnityFormula,
       EditRecipeMetadata,
-      EditRecipeComponents
+      EditRecipeComponents,
+      ReviewsPanel
     },
     props: {
       recipe_id: {
@@ -460,7 +467,7 @@
       imageUpdated: function () {
         this.fetchRecipe()
       },
-      
+
       editMeta: function () {
         this.isEditMeta = true
       },
