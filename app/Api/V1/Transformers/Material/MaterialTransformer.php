@@ -35,6 +35,7 @@ class MaterialTransformer extends Fractal\TransformerAbstract
 
     const JSON_NAMES = [
         Material::DB_ID                     => 'id',
+        Material::DB_PARENT_ID              => 'parentId',
         Material::DB_NAME                   => 'name',
         Material::DB_DESCRIPTION            => 'description',
         Material::DB_IS_ANALYSIS            => 'isAnalysis',
@@ -70,6 +71,7 @@ class MaterialTransformer extends Fractal\TransformerAbstract
         $material_data = [];
 
         $material_data[self::JSON_NAMES[Material::DB_ID]] = $material[Material::DB_ID];
+        $material_data[self::JSON_NAMES[Material::DB_PARENT_ID]] = $material[Material::DB_PARENT_ID];
         $material_data[self::JSON_NAMES[Material::DB_NAME]] = $material[Material::DB_NAME];
         $material_data[self::JSON_NAMES[Material::DB_DESCRIPTION]] = $material[Material::DB_DESCRIPTION];
         $material_data[self::JSON_NAMES[Material::DB_IS_ANALYSIS]] = (boolean) $material[Material::DB_IS_ANALYSIS];

@@ -7,7 +7,7 @@ namespace App\Api\V1\Requests\Search;
 //use Illuminate\Foundation\Http\FormRequest;
 use App\Api\V1\Requests\ApiFormRequest;
 
-class SimilarRecipesRecipeRequest extends ApiFormRequest
+class SimilarMaterialsMaterialRequest extends ApiFormRequest
 {
     public function authorize()
     {

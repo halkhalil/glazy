@@ -21,6 +21,7 @@ class Material extends Model
     use SoftDeletes;
 
     const DB_ID = 'id';
+    const DB_PARENT_ID = 'parent_id';
     const DB_NAME = 'name';
     const DB_DESCRIPTION = 'description';
     const DB_IS_ANALYSIS = 'is_analysis';

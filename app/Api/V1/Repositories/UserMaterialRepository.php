@@ -67,22 +67,23 @@ class UserMaterialRepository extends Repository
             $this->initializeUserMaterials();
         }
 
-        $materialQuery = Material::query();
-        $materialQuery->whereIn('id', function($query) use ($user_id) {
+        $query = Material::query();
+        $query->whereIn('id', function($query) use ($user_id) {
             $query->selectRaw('material_id')
                 ->from('user_materials')
                 ->where('user_id', $user_id);
         });
         if ($id) {
-            $materialQuery->orWhereIn('id', function($query) use ($id) {
+            $query->orWhereIn('id', function($query) use ($id) {
                 $query->selectRaw('component_material_id')
                     ->from('material_materials')
                     ->where('parent_material_id', $id);
             });
         }
-        $materialQuery->with('analysis');
-        $materialQuery->orderBy('name', 'asc');
-        return $materialQuery->get();
+        $query->with('analysis');
+        $query->with('material_type');
+        $query->orderBy('name', 'asc');
+        return $query->get();
     }
 
     /*

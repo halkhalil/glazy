@@ -43,25 +43,30 @@
                   <div class="col">
                     <material-type-breadcrumbs v-if="!recipe.isPrimitive"
                                                :recipe="recipe"></material-type-breadcrumbs>
-                    <h1 class="card-title">
+                    <h2 class="card-title">
                       <i v-if="recipe.isPrivate" class="fa fa-lock"></i>
                       {{ recipe.name }}
-                    </h1>
+                    </h2>
                   </div>
                   <div class="col-md-3 col-sm-4" v-if="!recipe.isPrimitive">
                     <firing-card :recipe="recipe"></firing-card>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col">
+                  <div class="col-sm-8">
                     <div class="author">
                       <img :src="getUserAvatar(recipe.createdByUser)" alt="..." class="avatar img-raised">
-                      <span>{{ recipe.createdByUser.name }}</span>
+                      <span>
+                        {{ recipe.createdByUser.name }},
+                        <timeago :since="recipe.updatedAt"></timeago>
+                      </span>
                     </div>
 
                   </div>
-                  <div class="col text-right">
-                    <star-rating :rating="Number(recipe.ratingAverage)"
+                  <div class="col-sm-4 float-right">
+                    <star-rating v-if="recipe.ratingTotal"
+                                 class="recipe-vue-star-rating"
+                                 :rating="Number(recipe.ratingAverage)"
                                  :read-only="true"
                                  :star-size="24"
                                  :show-rating="false"
@@ -295,7 +300,6 @@
 <script>
 
   import StarRating from 'vue-star-rating'
-
   import Material from 'ceramicscalc-js/src/material/Material'
 
   import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
@@ -319,6 +323,8 @@
 
   import ReviewsPanel from '../components/glazy/materialreviews/ReviewsPanel.vue'
 
+  import VueTimeago from 'vue-timeago'
+
   import Vue from 'vue'
 
   export default {
@@ -339,7 +345,8 @@
       SimilarUnityFormula,
       EditRecipeMetadata,
       EditRecipeComponents,
-      ReviewsPanel
+      ReviewsPanel,
+      VueTimeago
     },
     props: {
       recipe_id: {
@@ -609,4 +616,7 @@
     background-color: #999;
   }
 
+  .recipe-vue-star-rating {
+    float: right;
+  }
 </style>

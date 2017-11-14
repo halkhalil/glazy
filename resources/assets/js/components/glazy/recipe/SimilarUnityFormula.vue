@@ -100,7 +100,7 @@
             </table>
         </div>
         <div v-else>
-            <h4>No recipes with similar UMF found.</h4>
+            <h5>No recipes with similar UMF formulas found.</h5>
         </div>
     </div>
 

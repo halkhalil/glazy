@@ -2,10 +2,6 @@
   <div class="calc-container" v-if="isLoaded">
     <div class="row edit-recipe-title-row" v-if="originalMaterial">
       <div class="col-md-12">
-          <b-button class="cancel-edit-btn float-right"
-                    size="sm"
-                    variant="secondary"
-                    @click.prevent="editComponentsCancel"><i class="fa fa-times"></i> Cancel</b-button>
         <h4 class="edit-recipe-title">
           <i v-if="originalMaterial.isPrivate" class="fa fa-lock"></i>
           Edit {{ originalMaterial.name }}
@@ -145,9 +141,19 @@
       </div>
       <div class="row">
         <div class="col-sm-7">
+          <b-button class="cancel-edit-btn"
+                    size="sm"
+                    variant="secondary"
+                    @click.prevent="editComponentsCancel"><i class="fa fa-times"></i> Cancel</b-button>
           <b-button size="sm"
                     variant="secondary"
                     @click.prevent="resetRecipe"><i class="fa fa-refresh"></i> Reset</b-button>
+          <b-button size="sm"
+                    variant="info"
+                    @click.prevent="checkForDuplicates"><i class="fa fa-search"></i> Search</b-button>
+          <b-button size="sm"
+                    variant="info"
+                    @click.prevent="update"><i class="fa fa-save"></i> Save</b-button>
         </div>
         <div class="col-sm-3">
           <b-form-input v-model="subtotal"
@@ -163,9 +169,16 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <b-button size="sm"
-                    variant="info"
-                    @click.prevent="update"><i class="fa fa-save"></i> Save Changes</b-button>
+        </div>
+      </div>
+    </b-card>
+
+    <b-card v-if="similarMaterials"
+            title="Recipes with Similar Materials">
+      <div class="row"
+           v-for="material in similarMaterials">
+        <div class="col">
+          {{ material.name }}
         </div>
       </div>
     </b-card>
@@ -187,8 +200,6 @@
   import MaterialAnalysisUmfSpark2Single from '../analysis/MaterialAnalysisUmfSpark2Single.vue';
   import MaterialAnalysisPercentTableCompare from '../analysis/MaterialAnalysisPercentTableCompare.vue';
   import JsonUmfSparkSvg from '../analysis/JsonUmfSparkSvg.vue'
-
-  import qs from 'qs'
 
   export default {
     name: 'EditRecipeComponents',
@@ -301,21 +312,25 @@
       this.fetchMaterials();
 
       if (this.originalMaterial) {
-        this.newMaterial = this.originalMaterial.clone();
+        this.newMaterial = this.originalMaterial.clone()
+        this.newMaterial.id = this.originalMaterial.id
       }
       else {
-        this.newMaterial = new Material();
-        this.newMaterial.setName('New Recipe');
+        this.newMaterial = new Material()
+        this.newMaterial.setName('New Recipe')
       }
 
-      this.resetMaterialFields();
-      this.setSubtotal();
+      this.resetMaterialFields()
+      this.setSubtotal()
 
       setTimeout(() => {
         this.handleResize()
       }, 300);
       window.addEventListener('resize', this.handleResize)
 
+      setTimeout(() => {
+        this.checkForDuplicates()
+      }, 2000);
     },
 
 
@@ -337,8 +352,7 @@
             );
           }
         }
-        this.setSubtotal();
-        //this.checkForDuplicates();
+        this.setSubtotal()
       },
 
       fetchMaterials : function() {
@@ -513,6 +527,10 @@
       },
 
       checkForDuplicates: function() {
+        if (!this.isLoaded) {
+          return
+        }
+        console.log('check for dups')
         this.loadingSimilarMaterials = true;
         this.similarMaterials = null;
 
@@ -521,7 +539,7 @@
           materialComponents: []
         };
 
-        if (this.material) {
+        if (this.newMaterial) {
           form.excludeMaterialId = this.newMaterial.id;
         }
 
@@ -533,22 +551,39 @@
           ) {
             form.materialComponents.push({
               componentMaterialId: this.materialFieldsId[i].value,
-              percentageAmount: this.materialFieldsAmount[i],
+              percentageAmount: Number(this.materialFieldsAmount[i]),
               isAdditional: this.materialFieldsIsAdditional[i],
             });
           }
         }
-
         if (form.materialComponents.length > 0) {
+          console.log('query for dups with')
+          console.log(form)
           // Only search if we have at least one material component
-          axios.post('/api/v1/search/similarRecipes', form)
+          Vue.axios.post(Vue.axios.defaults.baseURL + '/search/similarMaterials', form)
             .then((response) => {
+            if (response.data.error) {
+              console.log('dups error')
+              this.apiError = response.data.error
+              console.log(this.apiError)
+              this.loadingSimilarMaterials = false
+            } else {
+              this.loadingSimilarMaterials = false
               this.similarMaterials = response.data.data;
-              this.loadingSimilarMaterials = false;
-            })
-            .catch(response => {
-              this.loadingSimilarMaterials = false;
-            });
+              console.log('found dups')
+              console.log(this.similarMaterials)
+            }
+          })
+          .catch(response => {
+            if (response.response && response.response.status) {
+              if (response.response.status === 401) {
+                this.$router.push({ path: 'login', query: { error: 401 }})
+              } else {
+                this.serverError = response.response.message;
+              }
+            }
+            this.loadingSimilarMaterials = false
+          })
         }
         else {
           this.loadingSimilarMaterials = false;
@@ -613,7 +648,6 @@
   }
 
   .calc-row {
-    margin-top: 1rem;
   }
 
   .chart-col {

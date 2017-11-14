@@ -68,8 +68,9 @@ $api->version('v1', function (Router $api) {
     $api->group(['prefix' => 'search'], function(Router $api) {
         $api->get('/', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@index')->name('index');
         $api->get('/nearestXY', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@nearestXY')->name('nearestXY');
-        $api->get('/similarBaseComponents/{material_id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarBaseComponents')->name('similarBaseComponents');
-        $api->get('/similarUnityFormula/{material_id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarUnityFormula')->name('similarUnityFormula');
+        $api->post('/similarMaterials/{id?}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarMaterials')->name('similarMaterials');
+        $api->get('/similarBaseComponents/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarBaseComponents')->name('similarBaseComponents');
+        $api->get('/similarUnityFormula/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarUnityFormula')->name('similarUnityFormula');
     });
 
     $api->group(['middleware' => 'jwt.auth'], function(Router $api) {

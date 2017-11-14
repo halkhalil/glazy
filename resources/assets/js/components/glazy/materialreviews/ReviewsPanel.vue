@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="reviews-table" v-else>
-            <em>No reviews found</em>
+            <h5>No reviews found</h5>
         </div>
 
         <form v-if="current_user && (!currentUserReview || editOwnReview)">

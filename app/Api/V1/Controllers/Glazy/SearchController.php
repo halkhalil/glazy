@@ -2,7 +2,7 @@
 
 namespace App\Api\V1\Controllers\Glazy;
 
-use App\Api\V1\Requests\Search\SimilarRecipesRecipeRequest;
+use App\Api\V1\Requests\Search\SimilarMaterialsMaterialRequest;
 use App\Api\V1\Requests\Search\SimilarUnityFormulaRequest;
 
 use App\Api\V1\Transformers\ChartMaterialTransformer;
@@ -477,20 +477,20 @@ class SearchController extends ApiBaseController
     }
     */
 
-    public function similarRecipes(SimilarRecipesRecipeRequest $request)
+    public function similarMaterials(SimilarMaterialsMaterialRequest $request)
     {
         $data = $request->all();
 
-        $materials = $this->materialRepository->similarRecipes($data);
+        $materials = $this->materialRepository->similarMaterials($data);
 
         if (!$materials)
         {
             return $this->respondNotFound('No materials found.');
         }
 
-        return $this->respond([
-            'data' => $this->shallowMaterialTransformer->transformCollection($materials->all())
-        ]);
+        $resource = new FractalCollection($materials, new ShallowMaterialTransformer());
+
+        return $this->manager->createData($resource)->toArray();
     }
 
     public function similarUnityFormula($material_id)

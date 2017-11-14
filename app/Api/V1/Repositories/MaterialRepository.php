@@ -228,15 +228,13 @@ class MaterialRepository extends Repository
                             material_materials.percentage_amount = 16.7);
 
     */
-    /*
-     * DEPRECATED NOW USING MATERIAL HASHES
-    public function similarRecipes(array $data) {
+    public function similarMaterials(array $data) {
 
         $excludeMaterialId = null;
-        if (array_key_exists('exclude_material_id', $data)) {
-            $excludeMaterialId = $data['exclude_material_id'];
+        if (array_key_exists('excludeMaterialId', $data)) {
+            $excludeMaterialId = $data['excludeMaterialId'];
         }
-        $componentData = $data['material_components'];
+        $componentData = $data['materialComponents'];
         Log::error('POST MAT COMP: '.print_r($componentData, true));
 
         if (count($componentData) < 1) {
@@ -244,17 +242,11 @@ class MaterialRepository extends Repository
         }
 
         $query = Material::query();
-
-        $query->select(
-            'id', 'name',
-            'is_primitive', 'material_type_id',
-            'is_analysis', 'is_theoretical',
-            'from_orton_cone_id', 'to_orton_cone_id',
-            'surface_type_id', 'transparency_type_id',
-            'rating_total', 'rating_number',
-            'rgb_r', 'rgb_g', 'rgb_b', 'thumbnail_id',
-            'is_private', 'created_by_user_id', 'updated_by_user_id', 'created_at', 'updated_at'
-        );
+        $query->with('analysis');
+        $query->with('atmospheres');
+        $query->with('material_type');
+        $query->with('thumbnail');
+        $query->with('created_by_user');
 
         $current_user_id = null;
         if (Auth::check())
@@ -270,25 +262,107 @@ class MaterialRepository extends Repository
         }
 
         foreach ($componentData as $componentMaterialData) {
-            if (isset($componentMaterialData['component_material_id'])
-                && isset($componentMaterialData['percentage_amount'])
-                && $componentMaterialData['percentage_amount'] > 0
+            if (isset($componentMaterialData['componentMaterialId'])
+                && isset($componentMaterialData['percentageAmount'])
+                && $componentMaterialData['percentageAmount'] > 0
             ) {
 
-                $child_id = $componentMaterialData['component_material_id'];
-                $amount = $componentMaterialData['percentage_amount'];
-                Log::error('ADD: '.$child_id.' amount '.$amount);
+                $childId = $componentMaterialData['componentMaterialId'];
+                $amount = $componentMaterialData['percentageAmount'];
+                Log::error('ADD: '.$childId.' amount '.$amount);
 
-                $query->whereExists(function ($query) use ($child_id, $amount) {
+                $query->whereExists(function ($query) use ($childId, $amount) {
                     $query->select(DB::raw(1))
                         ->from('material_materials')
                         ->whereRaw('material_materials.parent_material_id = materials.id')
-                        ->whereRaw('material_materials.component_material_id = '.$child_id)
+                        ->whereRaw('material_materials.component_material_id = '.$childId)
                         ->whereRaw('material_materials.percentage_amount = '.$amount);
                 });
             }
         }
 
+        $query->orderBy('updated_at', 'DESC');
+
+        return $query->limit(20)->get();
+    }
+
+    /*
+     * Stupid!  Checking hashes won't work
+    */
+    /*
+    public function similarMaterials(array $data) {
+
+        $current_user_id = null;
+        if (Auth::check())
+        {
+            $user = Auth::guard('api')->user();
+            $current_user_id = $user->id;
+        }
+
+        $excludeMaterialId = null;
+        if (array_key_exists('excludeMaterialId', $data)) {
+            $excludeMaterialId = $data['excludeMaterialId'];
+        }
+        $componentData = $data['materialComponents'];
+        Log::error('POST MAT COMP: '.print_r($componentData, true));
+
+        if (count($componentData) < 1) {
+            return null;
+        }
+
+        $materialIds = []
+        foreach ($componentData as $componentMaterialData) {
+            if (isset($componentMaterialData['componentMaterialId'])
+                && isset($componentMaterialData['percentageAmount'])
+                && $componentMaterialData['percentageAmount'] > 0) {
+                $materialIds[] = $componentMaterialData['componentMaterialId'];
+            }
+        }
+
+        $materials = Materia::whereIn('id', $materialIds)->get();
+        $parentMaterialIds = [];
+        foreach ($materials as $material) {
+            $parentMaterialIds[$material->id] = $material->parent_id;
+        }
+
+        $material = [];
+        foreach ($componentData as $componentMaterialData) {
+            if (isset($componentMaterialData['componentMaterialId'])
+                && isset($componentMaterialData['percentageAmount'])
+                && $componentMaterialData['percentageAmount'] > 0
+            ) {
+                $material['components'][] = [
+                    'component_material_id' => $componentMaterialData['componentMaterialId'],
+                    'component_material' => [
+                        'is_primitive' => true,
+                        'parent_id' => $parentMaterialIds[$componentMaterialData['componentMaterialId']]
+                    ],
+                    'percentage_amount' => $componentMaterialData['percentageAmount'],
+                    'is_additional' => $componentMaterialData['isAdditional']
+                ];
+            }
+        }
+
+        $materialMaterialRepository = new MaterialMaterialRepository();
+        $materialMaterialRepository->setComponentHashes($material);
+
+        if (!$material->additive_composite_hash) {
+            return null;
+        }
+
+        // Query the database for similar recipes (including additives
+        $query = Material::query();
+        $query->with('analysis');
+        $query->with('atmospheres');
+        $query->with('material_type');
+        $query->with('thumbnail');
+        $query->with('created_by_user');
+        $query->ofUserViewable($current_user_id, null);
+        if ($excludeMaterialId) {
+            // Exclude the current recipe
+            $query->where('id', '<>', $excludeMaterialId);
+        }
+        $query->where('additive_composite_hash', $material->base_composite_hash);
         $query->orderBy('updated_at', 'DESC');
 
         return $query->limit(20)->get();
