@@ -18,6 +18,7 @@ export default class SearchQuery {
       surface: 0,
       transparency: 0,
       hex_color: '',
+      color: {},
       p: 0,
       view: this.defaultView,
       order: '',
@@ -25,24 +26,19 @@ export default class SearchQuery {
       y: this.defaultY
     }
 
-    console.log('query: params in construtor:')
-    console.log(params)
-
-    if (params) {
-      console.log('query setting from params:')
-      console.log(params)
-      this.setFromRouterQuery(params)
+    if (this.params) {
+      this.setFromRouterQuery(this.params)
     }
   }
 
   setParams(params) {
     this.params = params
   }
-
+  /*
   copyParams(params) {
     this.params = Object.assign({}, params)
   }
-
+  */
   getMinimalQuery() {
     var minimalQuery = {};
     if (this.params.u) {
@@ -96,8 +92,6 @@ export default class SearchQuery {
   }
 
   setFromRouterQuery(routerQuery) {
-    console.log('IN SET FROM ROUTER QUERY')
-    console.log(routerQuery)
     if (routerQuery) {
       if ('u' in routerQuery && routerQuery.u) {
         this.params.u = Number(routerQuery.u)
@@ -115,7 +109,6 @@ export default class SearchQuery {
         this.params.base_type = Number(routerQuery.base_type)
       }
       if ('type' in routerQuery && routerQuery.type) {
-        console.log('set from routerquery type: ' + routerQuery.type)
         this.params.type = Number(routerQuery.type)
       }
       if ('cone' in routerQuery && routerQuery.cone) {
@@ -132,6 +125,7 @@ export default class SearchQuery {
       }
       if ('hex_color' in routerQuery && routerQuery.hex_color) {
         this.params.hex_color = routerQuery.hex_color
+        this.params.color = { hex: '#' + routerQuery.hex_color }
       }
       if ('p' in routerQuery && routerQuery.p) {
         this.params.p = routerQuery.p
@@ -167,7 +161,7 @@ export default class SearchQuery {
       this.params.x = params.x
     }
   }
-
+  /*
   getFormParams() {
     return {
       keywords: this.params.keywords,
@@ -197,7 +191,7 @@ export default class SearchQuery {
     this.params.y = params.y.value
     this.params.x = params.x.value
   }
-
+  */
   // https://stackoverflow.com/questions/1714786/query-string-encoding-of-a-javascript-object
   // console.log(serialize({foo: "hi there", bar: "100%" }));
   serialize (obj) {

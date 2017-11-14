@@ -216,6 +216,7 @@
         default: null
       }
     },
+
     data() {
       return {
         oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
@@ -234,7 +235,6 @@
         subtotal: 0,
         isProcessing: false,
         similarMaterials: null,
-        loadingSimilarMaterials: false,
         chartHeight: 300,
         chartWidth: 0,
         apiError: null,
@@ -530,8 +530,7 @@
         if (!this.isLoaded) {
           return
         }
-        console.log('check for dups')
-        this.loadingSimilarMaterials = true;
+        this.isProcessing = true
         this.similarMaterials = null;
 
         var form = {
@@ -566,12 +565,10 @@
               console.log('dups error')
               this.apiError = response.data.error
               console.log(this.apiError)
-              this.loadingSimilarMaterials = false
+              this.isProcessing = false
             } else {
-              this.loadingSimilarMaterials = false
+              this.isProcessing = false
               this.similarMaterials = response.data.data;
-              console.log('found dups')
-              console.log(this.similarMaterials)
             }
           })
           .catch(response => {
@@ -582,11 +579,11 @@
                 this.serverError = response.response.message;
               }
             }
-            this.loadingSimilarMaterials = false
+            this.isProcessing = false
           })
         }
         else {
-          this.loadingSimilarMaterials = false;
+          this.isProcessing = false
         }
       },
       getImageBin: function(id) {

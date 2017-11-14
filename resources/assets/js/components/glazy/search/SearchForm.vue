@@ -130,6 +130,17 @@
         </div>
         <div class="form-row">
             <div class="form-group col">
+                <button v-if="!this.query.params.hex_color"
+                        @click.prevent="openColor"
+                        class="btn btn-test btn-icon btn-round"
+                        type="button">
+                    <i class="fa fa-eyedropper"></i>
+                </button>
+                <chrome-picker v-if="this.query.params.hex_color"
+                               :value="this.query.params.color"
+                               @input="updateColorValue"></chrome-picker>
+            </div>
+            <div class="form-group col">
                 <b-button
                         class="search-form-button btn-sm"
                         variant="secondary"
@@ -155,6 +166,7 @@ import SearchQuery from './search-query'
 import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
 import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
 import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
+import { Chrome } from 'vue-color'
 
 import _ from 'lodash'
 
@@ -163,7 +175,7 @@ import _ from 'lodash'
 export default {
   name: 'SearchForm',
   components: {
-    // 'chrome-picker': Chrome
+    'chrome-picker': Chrome
   },
   props: {
       isLarge: {
@@ -193,29 +205,7 @@ export default {
       smallSmall: 'col-md-6',
       smallMedium: 'col-md-12',
       smallLarge: 'col-md-12',
-      flex: 'col',
-      colors: {
-        hex: '#194d33',
-        hsl: {
-          h: 150,
-          s: 0.5,
-          l: 0.2,
-          a: 1
-        },
-        hsv: {
-          h: 150,
-          s: 0.66,
-          v: 0.30,
-          a: 1
-        },
-        rgba: {
-          r: 25,
-          g: 77,
-          b: 51,
-          a: 1
-        },
-        a: 1
-      }
+      flex: 'col'
     }
   },
   computed: {
@@ -295,6 +285,9 @@ export default {
       return null
     }
   },
+  created() {
+
+  },
   methods: {
     search: function () {
       console.log('FORM SEARCH')
@@ -313,10 +306,13 @@ export default {
       this.search()
     },
     resetSearch: function () {
-      //this.query = new SearchQuery();
-      this.$emit('searchrequest', new SearchQuery());
+      // reset search, but keep old base type
+      var oldBaseTypeId = this.query.params.base_type
+      var newQuery = new SearchQuery()
+      newQuery.params.base_type = oldBaseTypeId
+      this.$emit('searchrequest', newQuery);
     },
-    toggleAdvanced () {
+    toggleAdvanced: function () {
       if (this.isAdvanced) {
         this.isAdvanced = false
         this.advancedButtonText = this.showAdvancedText
@@ -325,7 +321,21 @@ export default {
         this.isAdvanced = true
         this.advancedButtonText = this.hideAdvancedText
       }
-    }
+    },
+
+    openColor: function () {
+      if (!this.query.params.hex_color) {
+        this.query.params.hex_color = '1199CC'
+        this.query.params.color = { hex: '#1199CC' }
+      }
+    },
+
+    updateColorValue: _.debounce(function (value) {
+      if (value.hex) {
+        this.query.params.hex_color = value.hex.substring(1)
+        this.search()
+      }
+    }, 1500)
   }
 
 }
@@ -333,6 +343,14 @@ export default {
 </script>
 
 <style>
+
+    .btn.btn-test,
+    .btn.btn-test:hover,
+    .btn.btn-test:focus,
+    .btn.btn-test:active,
+    .btn.btn-test.active {
+        background-color: red;
+    }
 
     .search-form {
         margin-bottom: 10px;

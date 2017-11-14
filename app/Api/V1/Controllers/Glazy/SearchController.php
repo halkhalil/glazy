@@ -90,14 +90,14 @@ class SearchController extends ApiBaseController
         $query = Material::query();
 
         $query->select(
-            'id', 'name',
-            'is_primitive', 'material_type_id',
-            'is_analysis', 'is_theoretical',
-            'from_orton_cone_id', 'to_orton_cone_id',
-            'surface_type_id', 'transparency_type_id',
-            'rating_total', 'rating_number',
-            'rgb_r', 'rgb_g', 'rgb_b', 'thumbnail_id',
-            'is_private', 'created_by_user_id', 'updated_by_user_id', 'created_at', 'updated_at'
+            'materials.id', 'materials.name',
+            'materials.is_primitive', 'materials.material_type_id',
+            'materials.is_analysis', 'materials.is_theoretical',
+            'materials.from_orton_cone_id', 'materials.to_orton_cone_id',
+            'materials.surface_type_id', 'materials.transparency_type_id',
+            'materials.rating_total', 'materials.rating_number',
+            'materials.rgb_r', 'materials.rgb_g', 'materials.rgb_b', 'materials.thumbnail_id',
+            'materials.is_private', 'materials.created_by_user_id', 'materials.updated_by_user_id', 'materials.created_at', 'materials.updated_at'
         );
 
 //        $user = null;
@@ -131,6 +131,13 @@ class SearchController extends ApiBaseController
 
 //        $query->where('materials.is_analysis', false);
 
+        $query->with('analysis');
+        $query->with('atmospheres');
+        $query->with('material_type');
+        $query->with('shallowComponents');
+        $query->with('thumbnail');
+        $query->with('created_by_user');
+
         // TODO
         if ($is_primitive) {
             $query->where('is_primitive', true);
@@ -144,20 +151,28 @@ class SearchController extends ApiBaseController
             list($r, $g, $b) = sscanf($hex_color, "%02x%02x%02x");
 
             if (is_int($r) && is_int($g) && is_int($b)) {
-                $query = $this->getImageQuery($query, $r, $g, $b);
-                $isColorQuery = true;
+                $query->join('material_images', 'material_images.material_id', '=', 'materials.id');
+
+                $selectColor = '((CAST(material_images.dominant_rgb_r AS SIGNED) - '.$r.')*(CAST(material_images.dominant_rgb_r AS SIGNED) - '.$r.'))';
+                $selectColor .= ' + ((CAST(material_images.dominant_rgb_g AS SIGNED) - '.$g.')*(CAST(material_images.dominant_rgb_g AS SIGNED) - '.$g.'))';
+                $selectColor .= ' + ((CAST(material_images.dominant_rgb_b AS SIGNED) - '.$b.')*(CAST(material_images.dominant_rgb_b AS SIGNED) - '.$b.'))';
+                $selectColor .= ' AS colordiff ';
+                $query->selectRaw($selectColor);
+
+                $query->whereNotNull('material_images.dominant_rgb_r');
+
+                $query->with('analysis');
+                $query->with('atmospheres');
+                $query->with('material_type');
+                $query->with('shallowComponents');
+                $query->with('thumbnail');
+                $query->with('created_by_user');
+
+                $query->orderByRaw('colordiff ASC');
             }
         }
-        else {
-            $query->with('analysis');
-            $query->with('atmospheres');
-            $query->with('material_type');
-            $query->with('shallowComponents');
-            $query->with('thumbnail');
-            $query->with('created_by_user');
 
-            $query->orderBy('updated_at', 'DESC');
-        }
+        $query->orderBy('updated_at', 'DESC');
 
         if ($count && $count < self::MAX_ITEMS_PER_PAGE) {
             $recipes = $query->paginate($count, ['*'], 'page', $page);
@@ -173,19 +188,13 @@ class SearchController extends ApiBaseController
 
         $this->manager->parseIncludes(['atmospheres', 'thumbnail', 'createdByUser']);
 
-        if ($isColorQuery) {
-            $resource = new FractalCollection($recipes, new ShallowMaterialFromMaterialImageTransformer());
-            $resource->setPaginator(new IlluminatePaginatorAdapter($recipes));
-            return $this->manager->createData($resource)->toArray();
-        }
-        else {
-            $resource = new FractalCollection($recipes, new ShallowMaterialTransformer());
-            $resource->setPaginator(new IlluminatePaginatorAdapter($recipes));
-            return $this->manager->createData($resource)->toArray();
-        }
+        $resource = new FractalCollection($recipes, new ShallowMaterialTransformer());
+        $resource->setPaginator(new IlluminatePaginatorAdapter($recipes));
+        return $this->manager->createData($resource)->toArray();
     }
 
-
+    /*
+     * TODO: check query needs optimizing
     protected function getImageQuery($materialQuery, $r, $g, $b)
     {
         $imageQuery = MaterialImage::query();
@@ -221,7 +230,7 @@ class SearchController extends ApiBaseController
         return $imageQuery;
 
     }
-
+    */
 
     /**
      * @param $id The Recipe ID

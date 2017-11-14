@@ -6,13 +6,14 @@ use App\Api\V1\Transformers\Material\ShallowMaterialTransformer;
 
 use League\Fractal;
 
-class ShallowMaterialFromMaterialImageTransformer extends Fractal\TransformerAbstract
+class ShallowMaterialFromMaterialImageTransformer extends ShallowMaterialTransformer
 {
     public function transform($materialImage)
     {
         $material = $materialImage->material;
-        $transformer = new ShallowMaterialTransformer();
+        //$transformer = new ShallowMaterialTransformer();
 
-        return $transformer->transform($material);
+        return parent::transform($material);
+        //return $transformer->transform($material);
     }
 }

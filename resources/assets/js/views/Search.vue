@@ -410,6 +410,9 @@
 
     created() {
       this.searchQuery = new SearchQuery(this.$route.query)
+      if (!this.searchQuery.params.base_type) {
+        this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
+      }
       this.fetchitemlist()
     },
 
@@ -467,6 +470,8 @@
               this.pagination = response.data.meta.pagination
               this.$router.push({path: 'search', query: myQuery})
               console.log(this.searchQuery)
+              console.log('results')
+              console.log(this.itemlist)
               this.isProcessing = false
             }
           })
@@ -695,9 +700,7 @@
     margin-bottom: 5px;
   }
 
-
   .d3-tip {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
     font-size: .875rem;
     line-height: 1.125rem;
     font-weight: normal;
@@ -708,4 +711,12 @@
     z-index: 999999;
     position: relative;
   }
+
+  .vc-chrome {
+    width: 100% !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 0.2rem !important;
+    box-shadow: none !important;
+  }
+
 </style>

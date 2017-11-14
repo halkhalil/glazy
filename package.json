@@ -39,9 +39,9 @@
     "laravel-mix": "^1.5.1",
     "svg-sprite-loader": "^3.3.1",
     "vue-axios": "^2.0.2",
-    "vue-color": "^2.4.2",
     "vue-multiselect": "^2.0.3",
     "vue-star-rating": "^1.4.0",
+    "vue-color": "https://github.com/derekphilipau/vue-color/tarball/8ed26e2cedf5ec2c1b16d66a7db047c299aa1da4",
     "vue-template-compiler": "^2.5.2",
     "webpack-bundle-analyzer": "^2.9.1"
   }

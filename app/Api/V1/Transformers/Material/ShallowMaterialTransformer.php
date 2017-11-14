@@ -66,7 +66,7 @@ class ShallowMaterialTransformer extends Fractal\TransformerAbstract
         'analysis'
     ];
 
-    public function transform(Material $material)
+    public function transform($material)
     {
         $material_data = [];
 
