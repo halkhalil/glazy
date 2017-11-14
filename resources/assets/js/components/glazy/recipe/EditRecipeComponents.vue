@@ -181,6 +181,11 @@
           {{ material.name }}
         </div>
       </div>
+      <div v-if="!similarMaterials.length" class="row">
+        <div class="col-md-12">
+          No similar recipes found
+        </div>
+      </div>
     </b-card>
   </div>
 </template>

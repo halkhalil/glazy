@@ -129,26 +129,24 @@
             </div>
         </div>
         <div class="form-row">
-            <div class="form-group col">
+            <div v-bind:class="sizeMedium" class="form-group">
                 <button v-if="!this.query.params.hex_color"
                         @click.prevent="openColor"
-                        class="btn btn-test btn-icon btn-round"
+                        class="btn btn-default btn-sm"
                         type="button">
-                    <i class="fa fa-eyedropper"></i>
+                    <i class="fa fa-eyedropper"></i> Color
                 </button>
                 <chrome-picker v-if="this.query.params.hex_color"
                                :value="this.query.params.color"
                                @input="updateColorValue"></chrome-picker>
             </div>
-            <div class="form-group col">
+            <div v-bind:class="sizeMedium" class="form-group">
                 <b-button
                         class="search-form-button btn-sm"
                         variant="secondary"
                         @click.prevent="toggleAdvanced"
                         v-html="advancedButtonText">
                 </b-button>
-            </div>
-            <div class="form-group col">
                 <b-button
                         class="search-form-button btn-sm"
                         type="reset"
@@ -343,14 +341,6 @@ export default {
 </script>
 
 <style>
-
-    .btn.btn-test,
-    .btn.btn-test:hover,
-    .btn.btn-test:focus,
-    .btn.btn-test:active,
-    .btn.btn-test.active {
-        background-color: red;
-    }
 
     .search-form {
         margin-bottom: 10px;

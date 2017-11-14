@@ -153,6 +153,10 @@
         font-size: 18px;
         line-height: 26px;
     }
+    .umf-traditional img {
+        max-width: none;
+    }
+
     .umf-traditional tbody tr td {
         padding-right: 16px;
     }
@@ -169,52 +173,6 @@
     .umf-traditional td {
         white-space: nowrap!important;
     }
-    .umf-bracket-1 {
-        font-weight: 400;
-        font-size: 26px;
-        line-height: 26px;
-    }
-    .umf-bracket-2 {
-        font-weight: 200;
-        font-size: 52px;
-        line-height: 52px;
-    }
-    .umf-bracket-3 {
-        font-weight: 100;
-        font-size: 78px;
-        line-height: 78px;
-    }
-    .umf-bracket-4 {
-        font-weight: 100;
-        font-size: 104px;
-        line-height: 104px;
-    }
-    .umf-bracket-5 {
-        font-weight: 100;
-        font-size: 130px;
-        line-height: 130px;
-    }
-    .umf-bracket-6 {
-        font-weight: 100;
-        font-size: 156px;
-        line-height: 156px;
-    }
-    .umf-bracket-7 {
-        font-weight: 100;
-        font-size: 182px;
-        line-height: 182px;
-    }
-    .umf-bracket-8 {
-        font-weight: 100;
-        font-size: 208px;
-        line-height: 208px;
-    }
-    .umf-bracket-9 {
-        font-weight: 100;
-        font-size: 234px;
-        line-height: 234px;
-    }
-
 
     .oxide-colors-R2O    { color: #000000; }
     .oxide-colors-RO     { color: #000000; }

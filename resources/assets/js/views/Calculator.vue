@@ -1,5 +1,7 @@
 <template>
-  <edit-recipe-components></edit-recipe-components>
+  <div class="mt-3">
+    <edit-recipe-components></edit-recipe-components>
+  </div>
 </template>
 
 <script>

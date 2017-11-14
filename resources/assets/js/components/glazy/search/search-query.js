@@ -26,8 +26,8 @@ export default class SearchQuery {
       y: this.defaultY
     }
 
-    if (this.params) {
-      this.setFromRouterQuery(this.params)
+    if (params) {
+      this.setFromRouterQuery(params)
     }
   }
 
