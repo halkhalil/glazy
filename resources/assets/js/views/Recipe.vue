@@ -543,7 +543,7 @@
             console.log(this.apiError)
           } else {
             this.recipe = response.data.data;
-            document.title = document.title + " - " + this.recipe.name;
+            document.title = this.recipe.name;
             //TODO this.setMaterial();
             console.log(this.recipe);
             var materialObj = new Material();

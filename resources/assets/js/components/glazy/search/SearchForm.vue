@@ -216,11 +216,13 @@ export default {
         console.log('SEARCH FORM UPDAATE SEARCH QUERY:')
         console.log(this.searchQuery)
         query.setParams(this.searchQuery.params)
+        /*
         if (query.params.collection && this.$auth.check()) {
           if (this.$auth.user().id === query.params.u) {
             query.params.collection = query.userSelfSearchString
           }
         }
+        */
       }
 
       return query
@@ -271,12 +273,15 @@ export default {
 
     collectionsSelect () {
       if (this.$auth.check()) {
+        /*
         var collectionsSelect = [
           { name: 'Your Recipes', id: 'user' }
         ]
+        */
+        var collectionsSelect = []
         var user = this.$auth.user()
         if (user && user.collections && user.collections.length > 0) {
-          collectionsSelect = collectionsSelect.concat(user.collections)
+          collectionsSelect = user.collections
         }
         return collectionsSelect
       }

@@ -13,10 +13,12 @@ use App\Api\V1\Transformers\Material\ShallowMaterialTransformer;
 
 use App\Api\V1\Repositories\MaterialRepository;
 
+use App\Api\V1\Transformers\User\UserTransformer;
 use App\Models\Material;
 
 use App\Models\MaterialAnalysis;
 use App\Models\MaterialImage;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +28,7 @@ use DerekPhilipAu\Ceramicscalc\Models\Analysis\Analysis;
 
 use League\Fractal\Pagination\IlluminatePaginatorAdapter;
 use League\Fractal\Resource\Collection as FractalCollection;
+use League\Fractal\Resource\Item as FractalItem;
 use League\Fractal\Manager as FractalManager;
 
 use App\Api\V1\Serializers\GlazySerializer;
@@ -86,6 +89,17 @@ class SearchController extends ApiBaseController
         $view_option_paginate = $request->input('pag');
 
         $count = $request->input('count');
+
+        $jsonUser = null;
+        if ($search_user_id) {
+            // We're searching within a user's recipes
+            $searchUser = User::with('collections')->find($search_user_id);
+            if ($searchUser) {
+                $this->manager->parseIncludes(['collections']);
+                $userResource = new FractalItem($searchUser, new UserTransformer());
+                $jsonUser = $this->manager->createData($userResource)->toArray();
+            }
+        }
 
         $query = Material::query();
 
@@ -190,6 +204,11 @@ class SearchController extends ApiBaseController
 
         $resource = new FractalCollection($recipes, new ShallowMaterialTransformer());
         $resource->setPaginator(new IlluminatePaginatorAdapter($recipes));
+
+        if ($jsonUser) {
+            $resource->setMetaValue('user', $jsonUser);
+        }
+
         return $this->manager->createData($resource)->toArray();
     }
 

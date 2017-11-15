@@ -5,6 +5,7 @@ namespace App\Api\V1\Transformers\User;
 use App\User;
 
 use App\Api\V1\Transformers\UserProfile\UserProfileTransformer;
+use App\Api\V1\Transformers\Collection\CollectionTransformer;
 use App\Api\V1\Transformers\JsonDateTransformer;
 
 use League\Fractal;
@@ -27,9 +28,15 @@ class UserTransformer extends Fractal\TransformerAbstract
         self::DB_UPDATED_AT => 'updatedAt'
     ];
 
-    protected $defaultIncludes = [
+    protected $availableIncludes = [
         'profile',
+        'collections'
     ];
+    /*
+    protected $defaultIncludes = [
+        'profile'
+    ];
+    */
 
     public function transform(User $user)
     {
@@ -64,4 +71,10 @@ class UserTransformer extends Fractal\TransformerAbstract
         }
     }
 
+    public function includeCollections(User $user)
+    {
+        if ($user->collections && count($user->collections) > 0) {
+            return $this->collection($user->collections, new CollectionTransformer());
+        }
+    }
 }

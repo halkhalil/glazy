@@ -8,12 +8,13 @@
 
             <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                 <ul class="navbar-nav mr-auto">
-                    <router-link to="/search" tag="li" active-class="active" class="nav-item">
-                        <a class="nav-link">
-                            <i class="fa fa-search fa-fw"></i> Search
-                        </a>
+                    <router-link :to="{ name: 'search' }" tag="li" active-class="active" class="nav-link">
+                        <i class="fa fa-search fa-fw"></i> Search
                     </router-link>
-                    <router-link to="/calculator" tag="li" active-class="active" class="nav-item">
+                    <router-link :to="{ path: 'calculator' }"
+                                 tag="li"
+                                 active-class="active"
+                                 class="nav-item">
                         <a class="nav-link">
                             <i class="fa fa-calculator fa-fw"></i> Calc
                         </a>
@@ -28,7 +29,12 @@
                         <a class="nav-link" @click="logout">Logout</a>
                     </li>
                     <li class="nav-item" v-if="$auth.check()">
-                        <a class="nav-link" >{{ $auth.user().name }}</a>
+                        <router-link :to="{ path: 'search', query: { u: $auth.user().id }}"
+                                     tag="li"
+                                     active-class="active"
+                                     class="nav-link">
+                            {{ $auth.user().name }}
+                        </router-link>
                     </li>
                 </ul>
             </div>

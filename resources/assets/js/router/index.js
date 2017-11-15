@@ -60,6 +60,11 @@ export default new Router({
           component: Search
         },
         {
+          path: '/u/:id',
+          name: 'user',
+          component: Search
+        },
+        {
           path: '/recipes/:id',
           name: 'recipes',
           component: Recipe

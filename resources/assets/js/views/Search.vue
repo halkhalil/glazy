@@ -7,17 +7,35 @@
 
     <nav v-bind:class="sidebarClass" class="sidebar d-none d-md-block">
 
-      <h4 class="search-title" v-html="searchTitle"></h4>
-      <h6 class="search-subtitle" v-if="searchSubtitle" v-html="searchSubtitle"></h6>
 
-      <b-button
+      <div v-if="searchUser" class="card card-glazy-profile">
+        <div class="card-avatar">
+          <a href="#pablo">
+            <img src="/img/profile.jpg" alt="..."  class="rounded-circle img-raised">
+          </a>
+        </div>
+        <div class="card-body">
+          <h4 class="card-title">{{ searchUser.name }}</h4>
+          <h6 class="category text-gray">
+            United States
+          </h6>
+          <a href="#pablo" class="btn btn-icon btn-sm btn-round btn-default"><i class="fa fa-info"></i></a>
+          <a href="#pablo" class="btn btn-icon btn-sm btn-round btn-twitter"><i class="fa fa-twitter"></i></a>
+          <a href="#pablo" class="btn btn-icon btn-sm btn-round btn-facebook"><i class="fa fa-facebook-square"></i></a>
+          <a href="#pablo" class="btn btn-icon btn-sm btn-round btn-google"><i class="fa fa-google"></i></a>
+        </div>
+      </div>
+
+      <b-btn
+              v-b-tooltip.hover
+              :title="expandbuttonTooltip"
               size="sm"
               type="reset"
               variant="secondary"
               @click.prevent="toggleExpandMap"
               class="btn-sm expand-button"
               v-html="expandButtonText">
-      </b-button>
+      </b-btn>
 
       <div v-if="hasResults" id="umf-d3-chart-container">
         <umf-d3-chart
@@ -36,8 +54,8 @@
                 :showStullLabels="false"
                 :showZoomButtons="false"
                 :showAxesLabels="true"
-                :highlightedRecipeId="{highlightedRecipeId}"
-                :unHighlightedRecipeId="{unHighlightedRecipeId}"
+                :highlightedRecipeId="highlightedRecipeId"
+                :unHighlightedRecipeId="unHighlightedRecipeId"
                 :xoxide="searchQuery.params.x"
                 :yoxide="searchQuery.params.y"
                 v-on:clickedUmfD3Recipe="clickedD3Chart"
@@ -67,20 +85,39 @@
         Server Error: {{ serverError }}
       </b-alert>
 
+
       <div class="row">
 
         <div class="col-sm-12 d-xl-none d-lg-none d-md-none">
+          <div class="card card-glazy-profile">
+            <div class="card-avatar">
+              <a href="#pablo">
+                <img src="/img/profile.jpg" alt="..."  class="rounded-circle img-raised">
+              </a>
+            </div>
+            <div class="card-body">
+              <h4 class="card-title">Derek Au</h4>
+              <h6 class="category text-gray">
+                United States
+              </h6>
+              <a href="#pablo" class="btn btn-icon btn-sm btn-round btn-default"><i class="fa fa-info"></i></a>
+              <a href="#pablo" class="btn btn-icon btn-sm btn-round btn-twitter"><i class="fa fa-twitter"></i></a>
+              <a href="#pablo" class="btn btn-icon btn-sm btn-round btn-facebook"><i class="fa fa-facebook-square"></i></a>
+              <a href="#pablo" class="btn btn-icon btn-sm btn-round btn-google"><i class="fa fa-google"></i></a>
+            </div>
+          </div>
+        </div>
 
-          <h5 class="search-title" v-html="searchTitle"></h5>
-          <h6 class="search-subtitle" v-if="searchSubtitle" v-html="searchSubtitle"></h6>
-
+        <div class="col-sm-12">
+          <h4 class="search-title" v-html="searchTitle"></h4>
+        </div>
+        <div class="col-sm-12 d-xl-none d-lg-none d-md-none">
           <search-form
                   v-if="searchQuery"
                   :searchQuery="searchQuery"
                   v-on:searchrequest="search"
                   :isLarge="false">
           </search-form>
-
         </div>
 
       </div>
@@ -265,6 +302,7 @@
         recipes: null,
         // searchQuery: new SearchQuery(),
         searchQuery: null,
+        searchUser: null,
         itemlist: [],
         pagination: null,
         isProcessing: false,
@@ -286,8 +324,8 @@
         recipeCardClass: 'col-lg-3 col-md-4 col-sm-6',
         currentPage: null,
         isThumbnailView: true,
-        highlightedRecipeId: 0,
-        unHighlightedRecipeId: 0,
+        highlightedRecipeId: {},
+        unHighlightedRecipeId: {},
         selectedCollectionId: 0,
         toDeleteRecipeId: 0,
         newCollectionName: '',
@@ -341,6 +379,43 @@
             type = this.materialTypes.LOOKUP[this.searchQuery.params.type]
           }
           title += type
+          hasTitle = true
+        }
+
+        if (this.searchQuery.params.cone
+          && this.constants.ORTON_CONES_LOOKUP[this.searchQuery.params.cone]) {
+          if (hasTitle) {
+            title += ', '
+          }
+          title += '△' + this.constants.ORTON_CONES_LOOKUP[this.searchQuery.params.cone]
+          hasTitle = true
+        }
+
+        if (this.searchQuery.params.atmosphere
+          && this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere]) {
+          if (hasTitle) {
+            title += ', '
+          }
+          title += this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere]
+          hasTitle = true
+        }
+
+        if (this.searchQuery.params.surface
+          && this.constants.SURFACE_LOOKUP[this.searchQuery.params.surface]) {
+          if (hasTitle) {
+            title += ', '
+          }
+          title += this.constants.SURFACE_LOOKUP[this.searchQuery.params.surface]
+          hasTitle = true
+        }
+
+        if (this.searchQuery.params.transparency
+          && this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency]) {
+          if (hasTitle) {
+            title += ', '
+          }
+          title += this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency]
+          hasTitle = true
         }
 
         if (!title) {
@@ -348,46 +423,6 @@
         }
 
         return title
-      },
-
-      searchSubtitle () {
-        var subtitle = ''
-        var hasSubtitle = false
-
-        if (this.searchQuery.params.cone_id
-          && this.constants.ORTON_CONES_LOOKUP[this.searchQuery.params.cone_id]) {
-          subtitle += '△' + this.constants.ORTON_CONES_LOOKUP[this.searchQuery.params.cone_id]
-          hasSubtitle = true
-        }
-
-        if (this.searchQuery.params.atmosphere_id
-          && this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere_id]) {
-          if (hasSubtitle) {
-            subtitle += ', '
-          }
-          subtitle += this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere_id]
-          hasSubtitle = true
-        }
-
-        if (this.searchQuery.params.surface_type
-          && this.constants.SURFACE_LOOKUP[this.searchQuery.params.surface_type]) {
-          if (hasSubtitle) {
-            subtitle += ', '
-          }
-          subtitle += this.constants.SURFACE_LOOKUP[this.searchQuery.params.surface_type]
-          hasSubtitle = true
-        }
-
-        if (this.searchQuery.params.transparency_type
-          && this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency_type]) {
-          if (hasSubtitle) {
-            subtitle += ', '
-          }
-          subtitle += this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency_type]
-          hasSubtitle = true
-        }
-
-        return subtitle
       },
 
       collections () {
@@ -405,13 +440,18 @@
       stateCollectionName() {
         return this.newCollectionName.length > 2 ? 'valid' : 'invalid';
       }
-
     },
 
     created() {
       this.searchQuery = new SearchQuery(this.$route.query)
       if (!this.searchQuery.params.base_type) {
         this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
+      }
+      console.log('checking route for u')
+      console.log(this.$route.params)
+      if (this.$route.params && this.$route.params.id) {
+        console.log('found id param: ' + this.$route.params.id)
+        this.searchQuery.params.u = this.$route.params.id
       }
       this.fetchitemlist()
     },
@@ -436,11 +476,13 @@
         this.apiError = null
 
         console.log('############ FETCHITEMLIST')
+        /*
         if (this.searchQuery.params.collection === 'user' && this.$auth.check()) {
           // DAU special case, collection === 'user' signifies search for own recipes..
           this.searchQuery.params.u = this.$auth.user().id
           this.searchQuery.params.collection = 0
         }
+        */
 
         var myQuery = this.searchQuery.getMinimalQuery()
         console.log('searchQuery:')
@@ -462,13 +504,23 @@
               this.isProcessing = false
             } else {
               this.itemlist = response.data.data
-
+              document.title = 'Search: ' + this.searchTitle;
               if (!this.itemlist) {
                 // Make sure itemlist is always defined, and an array
                 this.itemlist = []
               }
+              console.log('********** ENTIRE RESULTS ********')
+              console.log(response.data)
               this.pagination = response.data.meta.pagination
-              this.$router.push({path: 'search', query: myQuery})
+
+              if ('user' in response.data.meta && 'data' in response.data.meta.user) {
+                this.searchUser = response.data.meta.user.data
+              }
+
+              if ('u' in myQuery) {
+                delete myQuery.u // 'u' param is in the route
+              }
+              this.$router.push({path: this.$route.path, query: myQuery})
               console.log(this.searchQuery)
               console.log('results')
               console.log(this.itemlist)
@@ -536,6 +588,7 @@
           this.chartHeight = 300
         }
         this.isMapExpanded = !this.isMapExpanded
+        this.$root.$emit('bv::hide::tooltip')
         setTimeout(() => {
           this.handleResize()
         }, 300)
@@ -559,13 +612,23 @@
         Vue.router.push('#recipe-card-' + data.customdata)
       },
       clickedD3Chart (data) {
-        this.$router.push({ path: '/search#recipe-card-' + data.id, query: this.$route.query })
+        this.$router.push({ path: this.$route.path + '/#recipe-card-' + data.id, query: this.$route.query })
       },
+      /*
       highlightRecipe: function (id) {
         this.highlightedRecipeId = id
       },
       unhighlightRecipe: function (id) {
         this.unHighlightedRecipeId = id
+      },
+      */
+      highlightRecipe: function (id) {
+        // this.highlightedRecipeId = id
+        this.highlightedRecipeId = { id: id }
+      },
+      unhighlightRecipe: function (id) {
+        // this.highlightedRecipeId = 0
+        this.unHighlightedRecipeId = { id: id }
       },
       collectRecipeSelect(id) {
         if (id) {
@@ -655,7 +718,7 @@
 
   .expand-button {
     position: absolute;
-    top: 84px;
+    top: 144px;
     right: -4px;
     z-index: 1001;
     font-size: 1.25rem;
@@ -666,6 +729,37 @@
 
   #umf-d3-chart-container {
     /* need fix tip bug position: relative; */
+  }
+
+
+
+  .card-glazy-profile {
+    color: #FFFFFF;
+    background-color: #2c2c2c;
+    margin-top: 4px;
+    margin-bottom: 10px;
+  }
+
+  .card-glazy-profile .card-avatar {
+    max-width: 64px;
+    max-height: 64px;
+  }
+
+  .card-glazy-profile .card-avatar img {
+    float: left;
+    margin: 10px;
+  }
+
+  .card-glazy-profile .card-body {
+    padding: 0 10px;
+  }
+
+  .card-glazy-profile .card-body .card-title {
+    font-size: 1.25em;
+  }
+
+  .card-glazy-profile .card-body .btn {
+    margin: 0 1px 10px 1px;
   }
 
   .chart-form {
@@ -683,7 +777,7 @@
   }
 
   .search-buttons {
-    margin-bottom: 10px;
+    margin-bottom: 16px;
     margin-top: 5px;
   }
 
@@ -699,10 +793,6 @@
 
   .search-title {
     margin-top: 0;
-    margin-bottom: 5px;
-  }
-
-  .search-subtitle {
     margin-bottom: 5px;
   }
 
