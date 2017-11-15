@@ -1,0 +1,2 @@
+mysql -u homestead -psecret homestead < glaze_data_seeder_no_create.sql
+mysql -u homestead -psecret homestead < countries_seeder.sql

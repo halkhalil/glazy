@@ -31,7 +31,8 @@ class CreateMaterialsTable extends Migration
             $table->text('description')->nullable();
 
             $table->integer('material_type_id')->unsigned()->nullable()->index();
-// TODO: needs thinking
+
+            // TODO: needs thinking
             $table->boolean('is_analysis')->default(false);
             $table->boolean('is_primitive')->default(false);
             $table->boolean('is_theoretical')->default(false);
@@ -41,6 +42,8 @@ class CreateMaterialsTable extends Migration
 
             $table->integer('surface_type_id')->unsigned()->nullable()->index();
             $table->integer('transparency_type_id')->unsigned()->nullable()->index();
+
+            $table->integer('country_id')->unsigned()->nullable()->index();
 
             // COLOR
             $table->string('color_name')->nullable();
@@ -72,6 +75,7 @@ class CreateMaterialsTable extends Migration
             $table->foreign('to_orton_cone_id')->references('id')->on('orton_cones');
             $table->foreign('surface_type_id')->references('id')->on('surface_types');
             $table->foreign('transparency_type_id')->references('id')->on('transparency_types');
+            $table->foreign('country_id')->references('id')->on('countries');
             $table->foreign('created_by_user_id')->references('id')->on('users');
             $table->foreign('updated_by_user_id')->references('id')->on('users');
 

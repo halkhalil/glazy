@@ -1,50 +1,56 @@
 <template>
 
     <div class="row mt-4">
-        <div class="col-md-6 offset-md-3 col-sm-12">
-            <h3>Login to Glazy</h3>
+        <div class="col-md-4 offset-md-4 col-sm-12">
+            <b-card title="Login to Glazy">
+                <b-alert v-if="serverError" show variant="danger">
+                    {{ serverError }}
+                </b-alert>
 
-            <b-alert v-if="error" show variant="danger">
-                {{ error }}
-            </b-alert>
-
-            <div v-show="!code || !type">
-                <a @click="loginSocial('facebook')" href="#" class="btn btn-facebook btn-block btn-sm">
-                    <i class="fa fa-facebook-square"></i> Login with Facebook
-                </a>
-                <a @click="loginSocial('google')" class="btn btn-google btn-block btn-sm">
-                    <i class="fa fa-google-plus"></i> Login with Google
-                </a>
-                <b-form-group
-                        id="email"
-                        label="Email Address">
-                    <b-form-input
-                            id="login-form-email"
-                            v-model.trim="data.body.email"
-                            type="email"
-                    ></b-form-input>
-                </b-form-group>
-                <b-form-group
-                        id="password"
-                        label="Password">
-                    <b-form-input
-                            id="login-form-password"
-                            v-model.trim="data.body.password"
-                            type="password"
-                    ></b-form-input>
-                </b-form-group>
-                <div>
-                    <b-btn size="sm" class="float-left" variant="secondary" @click="cancelLogin()">
-                        Cancel
-                    </b-btn>
-                    <b-btn size="sm" class="float-right" variant="info" @click="login()">
-                        Login
-                    </b-btn>
+                <div v-show="!code || !type">
+                    <a @click="loginSocial('facebook')" href="#" class="btn btn-facebook btn-block btn-sm">
+                        <i class="fa fa-facebook-square"></i> Login with Facebook
+                    </a>
+                    <a @click="loginSocial('google')" class="btn btn-google btn-block btn-sm">
+                        <i class="fa fa-google-plus"></i> Login with Google
+                    </a>
+                    <b-form-group
+                            id="email"
+                            label="Email Address">
+                        <b-form-input v-model.trim="data.body.email"
+                                      type="email"
+                                      :state="emailState"
+                                      aria-describedby="input-help input-feeback"
+                                      placeholder="jane@doe.com"></b-form-input>
+                        <b-form-feedback id="email-feedback">
+                            Invalid email address
+                        </b-form-feedback>
+                    </b-form-group>
+                    <b-form-group
+                            id="password"
+                            label="Password">
+                        <b-form-input
+                                id="login-form-password"
+                                v-model.trim="data.body.password"
+                                :state="passwordState"
+                                type="password"></b-form-input>
+                        <b-form-feedback id="password-feedback">
+                            Invalid password
+                        </b-form-feedback>
+                    </b-form-group>
+                    <div>
+                        <b-btn size="sm" class="float-left" variant="secondary" @click="cancelLogin()">
+                            Cancel
+                        </b-btn>
+                        <b-btn size="sm" class="float-right" variant="info" @click="login()">
+                            Login
+                        </b-btn>
+                    </div>
                 </div>
-            </div>
-            <div v-show="code && type">
-                Logging you in via {{ type }}...
-            </div>
+                <div v-show="code && type">
+                    Logging you in via {{ type }}...
+                </div>
+            </b-card>
         </div>
     </div>
 
@@ -71,7 +77,22 @@
         },
         code: this.$route.query.code,
         type: this.$route.params.type,
-        error: null
+        serverError: null,
+        errors: null
+      }
+    },
+    computed : {
+      emailState() {
+        if (this.errors && 'email' in this.errors) {
+          return 'invalid'
+        }
+        return 'valid'
+      },
+      passwordState() {
+        if (this.errors && 'password' in this.errors) {
+          return 'invalid'
+        }
+        return 'valid'
       }
     },
     mounted () {
@@ -99,7 +120,6 @@
 
     },
     methods: {
-
       login () {
         var redirect = this.$auth.redirect()
         this.$auth.login({
@@ -111,11 +131,17 @@
           fetchUser: this.data.fetchUser,
           success (res) {
             console.log('success ' + this.context)
-            this.$router.push('home')
+            this.$router.push('search')
           },
           error (res) {
             console.log('error ' + this.context)
-            this.error = res.data;
+            if (res.response.data && res.response.data.error) {
+              this.errors = res.response.data.error.errors
+            }
+            if (res.response.status &&
+              Number(res.response.status) === 403 ) {
+              this.serverError = 'Incorrect email & password.'
+            }
           }
         })
       },
@@ -127,7 +153,7 @@
       },
 
       cancelLogin() {
-        this.$router.push('home')
+        this.$router.push('search')
       }
 
     }

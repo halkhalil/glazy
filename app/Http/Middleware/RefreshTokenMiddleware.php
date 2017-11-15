@@ -37,9 +37,28 @@ class RefreshTokenMiddleware
             // If the token is expired, then it will be refreshed and added to the headers
             try
             {
+                $token = Auth::guard()->refresh();
+
+                /**
                 $refreshed = JWTAuth::refresh(JWTAuth::getToken());
                 $user = JWTAuth::setToken($refreshed)->toUser();
                 header('Authorization: Bearer ' . $refreshed);
+                // $response->headers->set('Authorization', 'Bearer '.$refreshed);
+
+                $newtoken = $this->auth->refresh(); // Get new token.
+                $gracePeriod = $this->auth->manager()->getBlacklist()->getGracePeriod();
+                $expiresAt = Carbon::now()->addSeconds($gracePeriod);
+                Cache::put($key, $newtoken, $expiresAt);
+
+
+                $token = Auth::guard()->refresh();
+
+                return response()->json([
+                    'status' => 'ok',
+                    'token' => $token,
+                    'expires_in' => Auth::guard()->factory()->getTTL() * 60
+                ]);
+                 */
             }
             catch (JWTException $e)
             {

@@ -71,10 +71,31 @@
       </div>
       <div class="col-md-4 chart-col">
         <b-card no-body class="chart-card">
-          <div v-if="chartMaterials && isLoaded" id="umf-d3-chart-container">
+          <div v-if="this.originalMaterial && chartMaterials && isLoaded" id="umf-d3-chart-container">
             <umf-d3-chart
                     :recipeData="[this.originalMaterial, this.newMaterial]"
                     :currentRecipeId="this.originalMaterial.id"
+                    :width="chartWidth"
+                    :height="chartHeight"
+                    :chartDivId="'umf-d3-chart-container'"
+                    :baseTypeId="baseTypeId"
+                    :colortype="'r2o'"
+                    :showRecipes="true"
+                    :showCones="false"
+                    :showStullChart="true"
+                    :showStullLabels="true"
+                    :axisLabelFontSize="'1rem'"
+                    :stullLabelsFontSize="'0.75rem'"
+                    :showZoomButtons="false"
+                    :showAxesLabels="true"
+                    :xoxide="'SiO2'"
+                    :yoxide="'Al2O3'"
+            >
+            </umf-d3-chart>
+          </div>
+          <div v-if="!this.originalMaterial && chartMaterials && isLoaded" id="umf-d3-chart-container">
+            <umf-d3-chart
+                    :recipeData="[this.newMaterial]"
                     :width="chartWidth"
                     :height="chartHeight"
                     :chartDivId="'umf-d3-chart-container'"

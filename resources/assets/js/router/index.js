@@ -3,9 +3,11 @@ import Router from 'vue-router'
 
 import AppLayoutFull from '../views/layout/AppLayoutFull'
 
+import Login from '../views/Login'
+import Register from '../views/Register'
+
 import Home from '../views/Home'
 import Search from '../views/Search'
-import Login from '../views/Login'
 import Calculator from '../views/Calculator'
 import Recipe from '../views/Recipe'
 // import RecipeEdit from '../views/RecipeEdit'
@@ -41,6 +43,11 @@ export default new Router({
           path: '/login/:type?',
           name: 'login',
           component: Login
+        },
+        {
+          path: '/register',
+          name: 'register',
+          component: Register
         },
         {
           path: '/calculator',

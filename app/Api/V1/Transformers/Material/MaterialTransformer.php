@@ -46,6 +46,7 @@ class MaterialTransformer extends Fractal\TransformerAbstract
         Material::DB_TO_ORTON_CONE_ID       => 'toOrtonConeId',
         Material::DB_SURFACE_TYPE_ID        => 'surfaceTypeId',
         Material::DB_TRANSPARENCY_TYPE_ID   => 'transparencyTypeId',
+        Material::DB_COUNTRY_ID             => 'countryId',
         Material::DB_COLOR_NAME             => 'colorName',
         Material::DB_THUMBNAIL_ID           => 'thumbnailId',
         Material::DB_RATING_TOTAL           => 'ratingTotal',
@@ -117,6 +118,11 @@ class MaterialTransformer extends Fractal\TransformerAbstract
                 $material[Material::DB_TRANSPARENCY_TYPE_ID];
             $material_data[self::TRANSPARENCY_TYPE_NAME] =
                 $transparencyType->getValue($material[Material::DB_TRANSPARENCY_TYPE_ID]);
+        }
+
+        if ($material[Material::DB_COUNTRY_ID]) {
+            $material_data[self::JSON_NAMES[Material::DB_COUNTRY_ID]] =
+                $material[Material::DB_COUNTRY_ID];
         }
 
         if ($material[Material::DB_COLOR_NAME]) {

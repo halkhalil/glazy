@@ -11,6 +11,7 @@
     "lint": "eslint resources/assets/js"
   },
   "dependencies": {
+    "@websanova/vue-auth": "^2.20.4-beta",
     "axios": "^0.16.2",
     "bootstrap": "4.0.0-beta.2",
     "ceramicscalc-js": "github:derekphilipau/ceramicscalc-js",
@@ -28,7 +29,6 @@
     "vuex-router-sync": "^5.0.0"
   },
   "devDependencies": {
-    "@websanova/vue-auth": "^2.20.0-beta",
     "babel-plugin-transform-async-to-generator": "^6.24.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-stage-2": "^6.24.1",
@@ -39,9 +39,9 @@
     "laravel-mix": "^1.5.1",
     "svg-sprite-loader": "^3.3.1",
     "vue-axios": "^2.0.2",
+    "vue-color": "https://github.com/derekphilipau/vue-color/tarball/8ed26e2cedf5ec2c1b16d66a7db047c299aa1da4",
     "vue-multiselect": "^2.0.3",
     "vue-star-rating": "^1.4.0",
-    "vue-color": "https://github.com/derekphilipau/vue-color/tarball/8ed26e2cedf5ec2c1b16d66a7db047c299aa1da4",
     "vue-template-compiler": "^2.5.2",
     "webpack-bundle-analyzer": "^2.9.1"
   }

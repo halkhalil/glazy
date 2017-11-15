@@ -23,11 +23,18 @@ class SignUpController extends Controller
                 'status' => 'ok'
             ], 201);
         }
-
         $token = $JWTAuth->fromUser($user);
+        /*
         return response()->json([
             'status' => 'ok',
             'token' => $token
         ], 201);
+        */
+        return response([
+            'status' => 'success',
+            'token' => $token,
+            'expires_in' => Auth::guard()->factory()->getTTL() * 60,
+            'data' => $user
+        ])->header('Authorization', $token);
     }
 }

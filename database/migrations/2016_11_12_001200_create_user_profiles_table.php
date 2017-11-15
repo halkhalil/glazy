@@ -19,10 +19,18 @@ class CreateUserProfilesTable extends Migration
 
             $table->increments('id');
             $table->integer('user_id')->unsigned();
-            $table->string('username',50)->nullable();
+            $table->string('username',50)->nullable(); // TODO: Drop this column
+
+            // social login fields
+            $table->string('provider', 32);
+            $table->string('provider_id');
+            $table->string('avatar')->nullable();
+
+            // various profile fields
+            $table->integer('country_id')->unsigned()->nullable()->index();
+
             $table->string('title')->nullable();
             $table->text('description')->nullable();
-            $table->string('location')->nullable();
             $table->string('image_filename')->nullable();
             $table->string('url')->nullable();
             $table->string('pinterest')->nullable();
@@ -33,7 +41,7 @@ class CreateUserProfilesTable extends Migration
             $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users');
-            $table->unique('username');
+            $table->foreign('country_id')->references('id')->on('countries');
         });
     }
 

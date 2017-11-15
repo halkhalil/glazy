@@ -35,6 +35,7 @@ class Material extends Model
     const DB_TO_ORTON_CONE_ID = 'to_orton_cone_id';
     const DB_SURFACE_TYPE_ID = 'surface_type_id';
     const DB_TRANSPARENCY_TYPE_ID = 'transparency_type_id';
+    const DB_COUNTRY_ID = 'country_id';
     const DB_COLOR_NAME = 'color_name';
     const DB_RGB_R = 'rgb_r';
     const DB_RGB_G = 'rgb_g';
@@ -150,6 +151,11 @@ class Material extends Model
     public function transparency_type()
     {
         return $this->belongsTo('App\Models\TransparencyType');
+    }
+
+    public function country()
+    {
+        return $this->belongsTo('App\Models\Country');
     }
 
     public function thumbnail()

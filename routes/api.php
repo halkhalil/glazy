@@ -11,7 +11,7 @@ $api = app(Router::class);
 $api->version('v1', function (Router $api) {
     $api->group(['prefix' => 'auth'], function(Router $api) {
 
-        $api->post('signup', 'App\\Api\\V1\\Controllers\\SignUpController@signUp');
+        $api->post('register', 'App\\Api\\V1\\Controllers\\SignUpController@signUp');
 
         // DAU
         // $api->get('login/{provider}',   'App\\Api\\V1\\Controllers\\LoginController@redirectToProvider');

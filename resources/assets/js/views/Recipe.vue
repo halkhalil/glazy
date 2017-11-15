@@ -552,7 +552,14 @@
           this.isProcessing = false
         })
         .catch(response => {
-          this.serverError = response;
+          this.itemlist = null
+          if (response.response && response.response.status) {
+            if (response.response.status === 401) {
+              this.$auth.refresh() // attempt refresh
+            } else {
+              this.serverError = response.response.message;
+            }
+          }
           this.isProcessing = false
         })
       },

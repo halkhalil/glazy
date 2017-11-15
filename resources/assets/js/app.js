@@ -58,10 +58,7 @@ Vue.use(VueAuth, {
   }
 });
 
-
 Vue.config.productionTip = false
-
-
 
 import VueTimeago from 'vue-timeago'
 Vue.use(VueTimeago, {
