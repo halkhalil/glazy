@@ -68,6 +68,7 @@
           <search-form
                   v-if="searchQuery"
                   :searchQuery="searchQuery"
+                  :searchUser="searchUser"
                   v-on:searchrequest="search"
                   :isLarge="isMapExpanded">
           </search-form>
@@ -115,6 +116,7 @@
           <search-form
                   v-if="searchQuery"
                   :searchQuery="searchQuery"
+                  :searchUser="searchUser"
                   v-on:searchrequest="search"
                   :isLarge="false">
           </search-form>

@@ -131,7 +131,7 @@
           fetchUser: this.data.fetchUser,
           success (res) {
             console.log('success ' + this.context)
-            this.$router.push('search')
+            //this.$router.push({ name: 'user', params: { id: this.$auth.user().id }})
           },
           error (res) {
             console.log('error ' + this.context)

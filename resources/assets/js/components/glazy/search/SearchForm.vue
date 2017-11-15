@@ -183,6 +183,10 @@ export default {
     searchQuery: {
       type: Object,
       default: null
+    },
+    searchUser: {
+        type: Object,
+      default: null
     }
   },
   data() {
@@ -272,21 +276,14 @@ export default {
     },
 
     collectionsSelect () {
-      if (this.$auth.check()) {
-        /*
-        var collectionsSelect = [
-          { name: 'Your Recipes', id: 'user' }
-        ]
-        */
-        var collectionsSelect = []
-        var user = this.$auth.user()
-        if (user && user.collections && user.collections.length > 0) {
-          collectionsSelect = user.collections
-        }
-        return collectionsSelect
+      // TODO: ensure only user-viewable collections are returned
+      if (this.searchUser && this.searchUser.collections &&
+        this.searchUser.collections.length > 0) {
+        return this.searchUser.collections
       }
       return null
     }
+
   },
   created() {
 
