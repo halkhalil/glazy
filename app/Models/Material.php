@@ -319,19 +319,19 @@ class Material extends Model
     {
         if ($search_user_id) {
             // Search by a user
-            $query->where('created_by_user_id', $search_user_id);
+            $query->where('materials.created_by_user_id', $search_user_id);
 
             if (!$current_user_id || $current_user_id !== $search_user_id) {
                 // If user not logged in or user viewing someone else's recipes,
                 // don't show private.
-                $query->where('is_private', false);
+                $query->where('materials.is_private', false);
             }
         }
         elseif ($current_user_id) {
             // Can view all my own recipes (including private) and
             // everyone else's public recipes.
             $query->where(function ($query) use ($current_user_id) {
-                $query->where('is_private', false)
+                $query->where('materials.is_private', false)
                     ->orWhere('materials.created_by_user_id', $current_user_id);
             });
         }
@@ -372,9 +372,9 @@ class Material extends Model
             $search_str = preg_replace('/\s+/',',',$search_str);
             $search_str = addslashes($search_str);
 
-            $selectWords = 'MATCH (description, name, other_names) AGAINST (\''.$search_str.'\') AS relevance';
+            $selectWords = 'MATCH (materials.description, materials.name, materials.other_names) AGAINST (\''.$search_str.'\') AS relevance';
             $query->selectRaw($selectWords);
-            $query->whereRaw($whereID.'MATCH (description, name, other_names) AGAINST (\''.$search_str.'\') > 0'.$whereIDend);
+            $query->whereRaw($whereID.'MATCH (materials.description, materials.name, materials.other_names) AGAINST (\''.$search_str.'\') > 0'.$whereIDend);
             $query->orderByRaw('relevance DESC');
         }
 
@@ -406,11 +406,11 @@ class Material extends Model
         {
             if (count($catIds) == 1)
             {
-                $query->where('material_type_id', $catIds[0]);
+                $query->where('materials.material_type_id', $catIds[0]);
             }
             else
             {
-                $query->whereIn('material_type_id', $catIds);
+                $query->whereIn('materials.material_type_id', $catIds);
             }
         }
 

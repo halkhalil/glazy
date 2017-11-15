@@ -24,8 +24,10 @@ if (mix.inProduction()) {
     'popper.js',
     'vue-router',
     'vuex-router-sync',
-    'd3',
-    'bootstrap-vue'
+    'bootstrap-vue',
+    'lodash',
+    'vue-multiselect',
+    'vue-color'
   ])
 }
 

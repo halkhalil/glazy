@@ -497,6 +497,8 @@ class SearchController extends ApiBaseController
             return $this->respondNotFound('No materials found.');
         }
 
+        $this->manager->parseIncludes(['materialComponents', 'atmospheres', 'thumbnail', 'createdByUser']);
+
         $resource = new FractalCollection($materials, new ShallowMaterialTransformer());
 
         return $this->manager->createData($resource)->toArray();

@@ -8,7 +8,6 @@
         </h4>
       </div>
     </div>
-
     <div class="row calc-row">
       <b-alert v-if="apiError" show variant="danger">
         API Error: {{ apiError.message }}
@@ -18,30 +17,6 @@
       </b-alert>
       <div class="load-container load7 fullscreen" v-if="isProcessing">
         <div class="loader">Loading...</div>
-      </div>
-
-      <div class="col-md-4 chart-col">
-        <div v-if="chartMaterials && isLoaded" id="umf-d3-chart-container" class="w-100">
-          <umf-d3-chart
-                  :recipeData="chartMaterials"
-                  :width="chartWidth"
-                  :height="chartHeight"
-                  :chartDivId="'umf-d3-chart-container'"
-                  :baseTypeId="baseTypeId"
-                  :colortype="'r2o'"
-                  :showRecipes="true"
-                  :showCones="false"
-                  :showStullChart="true"
-                  :showStullLabels="true"
-                  :axisLabelFontSize="'1rem'"
-                  :stullLabelsFontSize="'0.75rem'"
-                  :showZoomButtons="false"
-                  :showAxesLabels="true"
-                  :xoxide="'SiO2'"
-                  :yoxide="'Al2O3'"
-          >
-          </umf-d3-chart>
-        </div>
       </div>
       <div class="col-md-8">
         <b-card no-body class="analysis-card">
@@ -55,14 +30,14 @@
                 >
                 </MaterialAnalysisTableCompare>
                 <JsonUmfSparkSvg
-                        :material="newMaterial"
+                        v-if="originalMaterial"
+                        :material="originalMaterial"
                         :showOxideList="false"
                         :squareSize="30"
                 >
                 </JsonUmfSparkSvg>
                 <JsonUmfSparkSvg
-                        v-if="originalMaterial"
-                        :material="originalMaterial"
+                        :material="newMaterial"
                         :showOxideList="false"
                         :squareSize="30"
                 >
@@ -92,6 +67,32 @@
               </div>
             </b-tab>
           </b-tabs>
+        </b-card>
+      </div>
+      <div class="col-md-4 chart-col">
+        <b-card no-body class="chart-card">
+          <div v-if="chartMaterials && isLoaded" id="umf-d3-chart-container">
+            <umf-d3-chart
+                    :recipeData="[this.originalMaterial, this.newMaterial]"
+                    :currentRecipeId="this.originalMaterial.id"
+                    :width="chartWidth"
+                    :height="chartHeight"
+                    :chartDivId="'umf-d3-chart-container'"
+                    :baseTypeId="baseTypeId"
+                    :colortype="'r2o'"
+                    :showRecipes="true"
+                    :showCones="false"
+                    :showStullChart="true"
+                    :showStullLabels="true"
+                    :axisLabelFontSize="'1rem'"
+                    :stullLabelsFontSize="'0.75rem'"
+                    :showZoomButtons="false"
+                    :showAxesLabels="true"
+                    :xoxide="'SiO2'"
+                    :yoxide="'Al2O3'"
+            >
+            </umf-d3-chart>
+          </div>
         </b-card>
       </div>
     </div>
@@ -173,26 +174,25 @@
       </div>
     </b-card>
 
-    <b-card v-if="similarMaterials"
-            title="Recipes with Similar Materials">
-      <div class="row"
-           v-for="material in similarMaterials">
-        <div class="col">
-          {{ material.name }}
-        </div>
+    <div class="row" v-if="similarMaterials">
+      <div class="col-sm-12">
+        <h5>Similar Recipes</h5>
       </div>
-      <div v-if="!similarMaterials.length" class="row">
-        <div class="col-md-12">
-          No similar recipes found
-        </div>
+      <div class="col-md-4 col-sm-6" v-for="material in similarMaterials">
+        <b-card v-bind:title="material.name">
+          <table class="table table-sm">
+            <tr v-for="component in material.materialComponents">
+              <th>{{ Number(component.percentageAmount).toFixed(2) }}</th>
+              <td>{{ component.material.name }}</td>
+            </tr>
+          </table>
+        </b-card>
       </div>
-    </b-card>
+    </div>
   </div>
 </template>
 
 <script>
-  import Multiselect from 'vue-multiselect';
-
   import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
   import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
   import PercentageAnalysis from 'ceramicscalc-js/src/analysis/PercentageAnalysis'
@@ -206,6 +206,8 @@
   import MaterialAnalysisPercentTableCompare from '../analysis/MaterialAnalysisPercentTableCompare.vue';
   import JsonUmfSparkSvg from '../analysis/JsonUmfSparkSvg.vue'
 
+  import Multiselect from 'vue-multiselect';
+
   export default {
     name: 'EditRecipeComponents',
     components: {
@@ -215,6 +217,7 @@
       MaterialAnalysisPercentTableCompare,
       JsonUmfSparkSvg
     },
+
     props: {
       originalMaterial: {
         type: Object,
@@ -283,6 +286,7 @@
       chartMaterials: function() {
         var chartMaterials = [];
         if (this.originalMaterial && this.newMaterial) {
+          console.log('adding both materials to array')
           chartMaterials.push(this.originalMaterial)
           chartMaterials.push(this.newMaterial)
         }
@@ -318,7 +322,7 @@
 
       if (this.originalMaterial) {
         this.newMaterial = this.originalMaterial.clone()
-        this.newMaterial.id = this.originalMaterial.id
+        this.newMaterial.id = 0
       }
       else {
         this.newMaterial = new Material()
@@ -543,8 +547,8 @@
           materialComponents: []
         };
 
-        if (this.newMaterial) {
-          form.excludeMaterialId = this.newMaterial.id;
+        if (this.originalMaterial) {
+          form.excludeMaterialId = this.originalMaterial.id;
         }
 
         // Check each material component for id and amount
@@ -574,6 +578,7 @@
             } else {
               this.isProcessing = false
               this.similarMaterials = response.data.data;
+              console.log(this.similarMaterials)
             }
           })
           .catch(response => {
@@ -628,8 +633,6 @@
   }
 </script>
 
-<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
-
 <style>
 
   .edit-recipe-title-row {
@@ -650,11 +653,10 @@
   }
 
   .calc-row {
+    margin-top: 1rem;
   }
 
   .chart-col {
-    padding-left: 10px;
-    padding-right: 0;
   }
 
   .analysis-card .tabs .nav-tabs {
