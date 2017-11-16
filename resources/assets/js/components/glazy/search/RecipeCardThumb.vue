@@ -37,13 +37,14 @@
       </h5>
       <p class="card-text">{{ recipe.description }}</p>
       <div class="card-footer">
-        <div class="author">
-          <img src="/img/profile.jpg" alt="..." class="avatar img-raised">
-          <span>{{ recipe.createdByUser.name }}</span>
-        </div>
+        <router-link :to="{ name: 'user', params: { id: recipe.createdByUser.id}}">
+          <div class="author">
+            <img src="/img/profile.jpg" alt="..." class="avatar img-raised">
+            <span>{{ recipe.createdByUser.name }}</span>
+          </div>
+        </router-link>
       </div>
     </div>
-
     <div class="card-footer" v-if="$auth.check()">
       <a @click="collectRecipeRequest(recipe.id)" class="btn btn-icon btn-neutral"><i class="fa fa-bookmark"></i></a>
       <a class="btn btn-icon btn-neutral"

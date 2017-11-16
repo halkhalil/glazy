@@ -445,19 +445,46 @@
     },
 
     created() {
+
+      this.searchUser = null
       this.searchQuery = new SearchQuery(this.$route.query)
       if (!this.searchQuery.params.base_type) {
         this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
       }
-      console.log('checking route for u')
-      console.log(this.$route.params)
       if (this.$route.params && this.$route.params.id) {
-        console.log('found id param: ' + this.$route.params.id)
         this.searchQuery.params.u = this.$route.params.id
       }
       this.fetchitemlist()
     },
+    /*
+    beforeRouteUpdate (to, from, next) {
+      console.log('$$$$$$$$$$$$$$$$$ before route update')
 
+      this.searchUser = null
+      this.searchQuery = new SearchQuery(to.query)
+      if (!this.searchQuery.params.base_type) {
+        this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
+      }
+      if ('params' in to && to.params.id) {
+        this.searchQuery.params.u = to.params.id
+      }
+      this.fetchitemlist()
+      next()
+    },
+    */
+    watch: {
+      $route (route) {
+        this.searchUser = null
+        this.searchQuery = new SearchQuery(route.query)
+        if (!this.searchQuery.params.base_type) {
+          this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
+        }
+        if ('params' in route && route.params.id) {
+          this.searchQuery.params.u = route.params.id
+        }
+        this.fetchitemlist()
+      }
+    },
     mounted() {
       setTimeout(() => {
           this.handleResize()
@@ -466,10 +493,13 @@
     },
     methods: {
 
-      initialSearch () {
-        // direct link into search, get search params from query string & search
-
-        //this.fetchitemlist()
+      newSearch () {
+        var myQuery = this.searchQuery.getMinimalQuery()
+        if ('u' in myQuery) {
+          delete myQuery.u // 'u' param is in the route
+        }
+        // Update the route.  Actual search triggered in beforeRouteUpdate
+        this.$router.push({path: this.$route.path, query: myQuery})
       },
 
       fetchitemlist () {
@@ -477,20 +507,7 @@
         this.serverError = null
         this.apiError = null
 
-        console.log('############ FETCHITEMLIST')
-        /*
-        if (this.searchQuery.params.collection === 'user' && this.$auth.check()) {
-          // DAU special case, collection === 'user' signifies search for own recipes..
-          this.searchQuery.params.u = this.$auth.user().id
-          this.searchQuery.params.collection = 0
-        }
-        */
-
         var myQuery = this.searchQuery.getMinimalQuery()
-        console.log('searchQuery:')
-        console.log(this.searchQuery)
-        console.log('minimal query:')
-        console.log(myQuery)
 
         var querystring = this.searchQuery.toQuerystring(myQuery)
         this.isProcessing = true
@@ -498,7 +515,6 @@
 
         Vue.axios.get(Vue.axios.defaults.baseURL + '/search?' + querystring)
           .then((response) => {
-            console.log('############ GOT RESPONSE')
             if (response.data.error) {
               this.apiError = response.data.error
               console.log(this.apiError)
@@ -511,21 +527,12 @@
                 // Make sure itemlist is always defined, and an array
                 this.itemlist = []
               }
-              console.log('********** ENTIRE RESULTS ********')
-              console.log(response.data)
               this.pagination = response.data.meta.pagination
 
               if ('user' in response.data.meta && 'data' in response.data.meta.user) {
                 this.searchUser = response.data.meta.user.data
               }
 
-              if ('u' in myQuery) {
-                delete myQuery.u // 'u' param is in the route
-              }
-              this.$router.push({path: this.$route.path, query: myQuery})
-              console.log(this.searchQuery)
-              console.log('results')
-              console.log(this.itemlist)
               this.isProcessing = false
             }
           })
@@ -541,34 +548,22 @@
             this.isProcessing = false
           })
       },
-      search (query) {
-        console.log('about to call routerquery')
-        console.log('searchquery')
-        console.log(this.searchQuery)
-        console.log('form query')
-        console.log(query)
 
-        // this.searchQuery = new SearchQuery(query.params)
-        // this.searchQuery.setParams(query)
-        // this.searchQuery.setFromRouterQuery(query.params)
+      search (query) {
         this.searchQuery.setFromSearchForm(query.params)
+
         // New search, so reset the page number
         this.searchQuery.params.p = null
 
-        console.log('############ SEARCH')
-        console.log(this.searchQuery)
-
-        this.fetchitemlist()
+        this.newSearch()
       },
       pageRequest (p) {
-        console.log('############ PAGE')
         this.searchQuery.params.p = p
-        this.fetchitemlist()
+        this.newSearch()
       },
       orderRequest (order) {
-        console.log('############ ORDER')
         this.searchQuery.params.order = order
-        this.fetchitemlist()
+        this.newSearch()
       },
       viewRequest (view) {
         this.searchQuery.params.view = view
@@ -616,14 +611,6 @@
       clickedD3Chart (data) {
         this.$router.push({ path: this.$route.path + '/#recipe-card-' + data.id, query: this.$route.query })
       },
-      /*
-      highlightRecipe: function (id) {
-        this.highlightedRecipeId = id
-      },
-      unhighlightRecipe: function (id) {
-        this.unHighlightedRecipeId = id
-      },
-      */
       highlightRecipe: function (id) {
         // this.highlightedRecipeId = id
         this.highlightedRecipeId = { id: id }
@@ -643,7 +630,6 @@
       },
 
       copyRecipe: function (id) {
-        console.log('search copy recipe : ' + id)
         if (!id) {
           return
         }
@@ -684,7 +670,7 @@
             } else {
               this.toDeleteRecipeId = 0
               this.isProcessing = false
-              this.fetchitemlist()
+              this.newSearch()
             }
           })
           .catch(response => {

@@ -195,10 +195,12 @@ class SearchController extends ApiBaseController
             $recipes = $query->paginate(self::DEFAULT_ITEMS_PER_PAGE, ['*'], 'page', $page);
         }
 
+        /*
         if (!$recipes || $recipes->total() == 0)
         {
             return $this->respondNotFound('No recipes found.');
         }
+        */
 
         $this->manager->parseIncludes(['atmospheres', 'thumbnail', 'createdByUser']);
 

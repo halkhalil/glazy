@@ -29,7 +29,7 @@
                         <a class="nav-link" @click="logout">Logout</a>
                     </li>
                     <li class="nav-item" v-if="$auth.check()">
-                        <router-link :to="{ name: 'user', params: { id: $auth.user().id }}"
+                        <router-link :to="{ name: 'user', params: { id: $auth.user().id}}"
                                      tag="li"
                                      active-class="active"
                                      class="nav-link">
