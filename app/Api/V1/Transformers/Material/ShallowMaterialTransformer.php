@@ -39,6 +39,7 @@ class ShallowMaterialTransformer extends Fractal\TransformerAbstract
         Material::DB_DESCRIPTION            => 'description',
         Material::DB_IS_ANALYSIS            => 'isAnalysis',
         Material::DB_IS_PRIMITIVE           => 'isPrimitive',
+        Material::DB_IS_ARCHIVED            => 'isArchived',
         Material::DB_IS_PRIVATE             => 'isPrivate',
         Material::DB_MATERIAL_TYPE_ID       => 'materialTypeId',
         Material::DB_FROM_ORTON_CONE_ID     => 'fromOrtonConeId',
@@ -79,6 +80,7 @@ class ShallowMaterialTransformer extends Fractal\TransformerAbstract
 
         $material_data[self::JSON_NAMES[Material::DB_IS_ANALYSIS]] = (boolean) $material[Material::DB_IS_ANALYSIS];
         $material_data[self::JSON_NAMES[Material::DB_IS_PRIMITIVE]] = (boolean) $material[Material::DB_IS_PRIMITIVE];
+        $material_data[self::JSON_NAMES[Material::DB_IS_ARCHIVED]] = (boolean) $material[Material::DB_IS_ARCHIVED];
 
         $materialType = new MaterialType();
 

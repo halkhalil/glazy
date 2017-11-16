@@ -137,6 +137,10 @@ class MaterialController extends ApiBaseController
             return $this->respondUnauthorized('This recipe does not belong to you.');
         }
 
+        if ($material->is_archived) {
+            return $this->respondUnauthorized('Archived recipes cannot be deleted.');
+        }
+
         $result = $this->materialRepository->destroy($id);
 
         return $this->respondDeleted('Recipe deleted');

@@ -28,6 +28,7 @@ class CreateUserProfilesTable extends Migration
 
             // various profile fields
             $table->integer('country_id')->unsigned()->nullable()->index();
+            $table->string('location')->nullable();
 
             $table->string('title')->nullable();
             $table->text('description')->nullable();

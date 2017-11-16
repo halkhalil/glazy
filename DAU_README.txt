@@ -106,6 +106,9 @@ password root
 source database/seeds/Glazy/ImportOldGlazy.sql
 #################################
 
+update materials set is_archived = TRUE where created_by_user_id = 1
+
+
 #################################
 cp app/console/commands (or entire app/console dir)
 #################################

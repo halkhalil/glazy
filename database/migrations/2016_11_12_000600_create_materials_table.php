@@ -36,6 +36,7 @@ class CreateMaterialsTable extends Migration
             $table->boolean('is_analysis')->default(false);
             $table->boolean('is_primitive')->default(false);
             $table->boolean('is_theoretical')->default(false);
+            $table->boolean('is_archived')->default(false);
 
             $table->integer('from_orton_cone_id')->unsigned()->nullable()->index();
             $table->integer('to_orton_cone_id')->unsigned()->nullable()->index();

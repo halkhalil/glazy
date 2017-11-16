@@ -48,20 +48,19 @@
                             <i class="fa fa-times"></i>
                         </a>
                     </div>
-                    <div class="gallery-swatches text-right">
-                        <a v-if="currentImage.dominant_hex_color"
-                           role="button" class="btn btn-primary btn-float btn-sm"
+                    <div class="gallery-swatches">
+                        <a v-if="currentImage.dominantHexColor"
+                           role="button" class="btn"
                            :href="'/search?hex_color=' + currentImage.dominantHexColor"
                            :style="'background-color: #' + currentImage.dominantHexColor">
-                            <i class="fa fa-eyedropper"></i>
                         </a>
-                        <a v-if="currentImage.secondary_hex_color"
-                           role="button" class="btn btn-primary btn-float btn-sm"
+                        <a v-if="currentImage.secondaryHexColor"
+                           role="button" class="btn"
                            :href="'/search?hex_color=' + currentImage.secondaryHexColor"
                            :style="'background-color: #' + currentImage.secondaryHexColor">
-                            <i class="fa fa-eyedropper"></i>
                         </a>
                     </div>
+
                     <div v-if="currentImage.title || currentImage.description"
                             class="card-body">
                         <h6 class="card-title" v-if="currentImage.title">
@@ -483,11 +482,33 @@
         margin-top: -4.5rem;
     }
 
+    /*
     .gallery-swatches {
         position: absolute;
         top: 0;
         width: 100%;
     }
+    */
+
+    .gallery-swatches {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 0;
+        margin: 0;
+    }
+
+    .gallery-swatches .btn {
+        min-width: 24px;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        overflow: hidden;
+        border-radius: 24px !important;
+        padding: 0;
+        margin: 0;
+    }
+
 
     .galleryselected {
         opacity: 0.5;

@@ -26,6 +26,7 @@ class Material extends Model
     const DB_DESCRIPTION = 'description';
     const DB_IS_ANALYSIS = 'is_analysis';
     const DB_IS_PRIMITIVE = 'is_primitive';
+    const DB_IS_ARCHIVED = 'is_archived';
     const DB_IS_PRIVATE = 'is_private';
     const DB_MATERIAL_TYPE_ID = 'material_type_id';
     const DB_MATERIAL_TYPE = 'material_type';

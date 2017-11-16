@@ -103,7 +103,7 @@
                       <b-button class="btn-info" v-if="!(recipe.isPrivate)" v-on:click="unpublishRecipe()"><i class="fa fa-lock"></i> Unpublish</b-button>
                       <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
                       <b-button class="btn-info" v-on:click="editComponents()"><i class="fa fa-list"></i> Edit Recipe</b-button>
-                      <b-button class="btn-danger"  v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
+                      <b-button class="btn-danger" v-if="!recipe.isArchived" v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
                     </b-button-group>
 
                     <b-modal v-if="canEdit"
@@ -372,11 +372,15 @@
         isProcessing: false,
         apiError: null,
         serverError: null,
-        glazeTypeId: new MaterialTypes().GLAZE_TYPE_ID
+        glazeTypeId: new MaterialTypes().GLAZE_TYPE_ID,
+        isEditRequest: false
       }
     },
 
     mounted() {
+      if ('isEdit' in this.$route.query && this.$route.query.isEdit) {
+        this.isEditRequest = true
+      }
       this.fetchRecipe()
     },
 
@@ -532,6 +536,7 @@
         })
       },
 
+
       sendRecipeGetRequest: function (url) {
         this.apiError = null
         this.isProcessing = true
@@ -542,13 +547,17 @@
             this.isProcessing = false
             console.log(this.apiError)
           } else {
-            this.recipe = response.data.data;
-            document.title = this.recipe.name;
-            //TODO this.setMaterial();
-            console.log(this.recipe);
-            var materialObj = new Material();
-            this.material = Material.createFromJson(this.recipe);
-          }
+            this.recipe = response.data.data
+            document.title = this.recipe.name
+            var materialObj = new Material()
+            this.material = Material.createFromJson(this.recipe)
+
+            if (this.isEditRequest && this.canEdit) {
+              // User just created this recipe in calculator
+              this.isEditRequest = false
+              this.editMeta()
+            }
+        }
           this.isProcessing = false
         })
         .catch(response => {

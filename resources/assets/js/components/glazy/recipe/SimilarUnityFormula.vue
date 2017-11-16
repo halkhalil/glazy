@@ -120,7 +120,7 @@
 
     data() {
       return {
-        materialList: null
+        materialList: []
       }
     },
 

@@ -14,7 +14,7 @@
                     <router-link :to="{ name: 'materials' }" tag="li" active-class="active" class="nav-link">
                         <i class="fa fa-flask fa-fw"></i> Materials
                     </router-link>
-                    <router-link :to="{ path: 'calculator' }"
+                    <router-link :to="{ name: 'calculator' }"
                                  tag="li"
                                  active-class="active"
                                  class="nav-item">
@@ -48,9 +48,12 @@
 <script>
 
   export default {
+
     name: 'AppHeader',
+
     props: {
     },
+
     data() {
       return {
         context: 'login context',

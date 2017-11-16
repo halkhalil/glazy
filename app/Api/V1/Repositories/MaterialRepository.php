@@ -54,7 +54,14 @@ class MaterialRepository extends Repository
         
         $material->fill($data);
 
+        // TODO: might need to change later for primitive creation
         $material->is_primitive = false;
+
+        // Set this recipe's owner
+        $material->created_by_user_id = Auth::guard()->user()->id;
+
+        // All copied recipes are private by default
+        $material->is_private = true;
 
         $material->save();
 
@@ -118,6 +125,10 @@ class MaterialRepository extends Repository
         $material = Material::with('analysis')->with('thumbnail')->find($id);
 
         if (!$material) {
+            return false;
+        }
+
+        if ($material->is_archived) {
             return false;
         }
 
@@ -409,7 +420,7 @@ class MaterialRepository extends Repository
         $selectFields = 'materials.id, materials.name, materials.is_primitive, materials.material_type_id, '
             .'materials.is_analysis, materials.is_theoretical, materials.from_orton_cone_id, '
             .'materials.to_orton_cone_id, materials.surface_type_id, materials.transparency_type_id, '
-            .'materials.thumbnail_id, materials.is_private, materials.created_by_user_id, '
+            .'materials.thumbnail_id, materials.is_private, materials.is_archived, materials.created_by_user_id, '
             .'materials.created_at, materials.updated_at, '
             .$distanceField.' as distance';
 
@@ -479,7 +490,9 @@ class MaterialRepository extends Repository
             'surface_type_id', 'transparency_type_id',
             'rating_total', 'rating_number',
             'rgb_r', 'rgb_g', 'rgb_b', 'thumbnail_id',
-            'is_private', 'created_by_user_id', 'updated_by_user_id', 'created_at', 'updated_at'
+            'is_private', 'is_archived',
+            'created_by_user_id', 'updated_by_user_id',
+            'created_at', 'updated_at'
         );
         $query->with('thumbnail');
         $query->with('created_by_user');

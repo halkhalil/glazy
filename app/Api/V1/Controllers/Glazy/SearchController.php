@@ -111,7 +111,8 @@ class SearchController extends ApiBaseController
             'materials.surface_type_id', 'materials.transparency_type_id',
             'materials.rating_total', 'materials.rating_number',
             'materials.rgb_r', 'materials.rgb_g', 'materials.rgb_b', 'materials.thumbnail_id',
-            'materials.is_private', 'materials.created_by_user_id', 'materials.updated_by_user_id', 'materials.created_at', 'materials.updated_at'
+            'materials.is_private', 'materials.is_archived', 'materials.created_by_user_id',
+            'materials.updated_by_user_id', 'materials.created_at', 'materials.updated_at'
         );
 
 //        $user = null;
@@ -317,7 +318,7 @@ class SearchController extends ApiBaseController
         $selectFields = 'materials.id, materials.name, materials.is_primitive, materials.material_type_id, '
             .'materials.is_analysis, materials.is_theoretical, materials.from_orton_cone_id, '
             .'materials.to_orton_cone_id, materials.surface_type_id, materials.transparency_type_id, '
-            .'materials.thumbnail_id, materials.is_private, materials.created_by_user_id, '
+            .'materials.thumbnail_id, materials.is_private, materials.is_archived, materials.created_by_user_id, '
             .'materials.created_at, materials.updated_at, '
             . $distanceField
             .' as distance';

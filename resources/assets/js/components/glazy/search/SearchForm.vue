@@ -134,7 +134,7 @@
                  class="form-group">
                 <button v-if="!this.query.params.hex_color"
                         @click.prevent="openColor"
-                        class="btn btn-default btn-sm"
+                        class="btn btn-default search-form-button"
                         type="button">
                     <i class="fa fa-eyedropper"></i> Color
                 </button>
@@ -144,13 +144,13 @@
             </div>
             <div v-bind:class="sizeMedium" class="form-group">
                 <b-button
-                        class="search-form-button btn-sm"
+                        class="search-form-button"
                         variant="secondary"
                         @click.prevent="toggleAdvanced"
                         v-html="advancedButtonText">
                 </b-button>
                 <b-button
-                        class="search-form-button btn-sm"
+                        class="search-form-button"
                         type="reset"
                         variant="secondary"
                         @click.prevent="resetSearch">
@@ -362,6 +362,8 @@ export default {
     .search-form-button {
         margin-top: 0px;
         margin-bottom: 0px;
+        padding: 11px 16px;
     }
+
 
 </style>

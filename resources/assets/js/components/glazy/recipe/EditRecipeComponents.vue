@@ -140,7 +140,7 @@
                   :id="index + '_name'"
                   :options="selectMaterials"
                   v-model="materialFieldsId[index]"
-                  @input="updateMultiSelected(index)"
+                  @input="focusAmountInput(index)"
                   key="value"
                   label="label"
           ></multiselect>
@@ -155,12 +155,12 @@
                         v-focus="index === focused"
                         @focus="focused = index"
                         @blur="focused = null"
-                        @input="updateSelected"></b-form-input>
+                        @input="updateMaterial"></b-form-input>
         </div>
         <div class="col-sm-2">
           <b-form-checkbox id="index + '_add'"
                            v-model="materialFieldsIsAdditional[index]"
-                           @input="updateSelected">
+                           @input="updateMaterial">
           </b-form-checkbox>
         </div>
       </div>
@@ -178,7 +178,7 @@
                     @click.prevent="checkForDuplicates"><i class="fa fa-search"></i> Search</b-button>
           <b-button size="sm"
                     variant="info"
-                    @click.prevent="update"><i class="fa fa-save"></i> Save</b-button>
+                    @click.prevent="store"><i class="fa fa-save"></i> Save</b-button>
         </div>
         <div class="col-sm-3">
           <b-form-input v-model="subtotal"
@@ -201,6 +201,7 @@
     <div class="row" v-if="similarMaterials">
       <div class="col-sm-12">
         <h5>Similar Recipes</h5>
+        <p v-if="!similarMaterials || !similarMaterials.length" class="description">No similar recipes found.</p>
       </div>
       <div class="col-md-4 col-sm-6" v-for="material in similarMaterials">
         <b-card v-bind:title="material.name">
@@ -344,7 +345,7 @@
     },
 
     mounted() {
-      this.fetchMaterials();
+      this.fetchPrimitiveMaterials();
 
       if (this.originalMaterial) {
         this.newMaterial = this.originalMaterial.clone()
@@ -372,12 +373,12 @@
     methods: {
 
 
-      updateMultiSelected (index) {
+      focusAmountInput (index) {
         this.focused = index
-        this.updateSelected()
+        this.updateMaterial()
       },
 
-      updateSelected (val) {
+      updateMaterial () {
         this.newMaterial.removeAllMaterialComponents();
 
         for (var i = 0; i < this.materialFieldsId.length; i++) {
@@ -396,7 +397,7 @@
         this.setSubtotal()
       },
 
-      fetchMaterials : function() {
+      fetchPrimitiveMaterials : function() {
         this.isProcessing = true
         var materialsListUrl = '/usermaterials/editList/';
         if (this.originalMaterial) {
@@ -479,7 +480,7 @@
 
       resetRecipe: function() {
         this.resetMaterialFields();
-        this.updateSelected(null);
+        this.updateMaterial();
       },
 
       setSubtotal: function() {
@@ -497,7 +498,7 @@
         this.subtotal = Number(subtotal).toFixed(2);
       },
 
-      update: function () {
+      store: function () {
         if (this.isLoaded) {
           this.$emit('isProcessing')
           this.isProcessing = true
@@ -519,7 +520,8 @@
             }
           }
 
-          if (this.newMaterial) {
+          if (this.originalMaterial) {
+            // We are updating the original material
             form._method = 'PATCH';
             // form.materialComponents = JSON.stringify(form.materialComponents)
             console.log('updating: form:')
@@ -544,6 +546,13 @@
               console.log(response.data)
             })
           } else {
+            // Create a new recipe
+            if (form.materialComponents.length === 0) {
+              // Don't create a new material that has no components
+              // TODO: Add warning message
+              this.isProcessing = false
+              return
+            }
             Vue.axios.post(Vue.axios.defaults.baseURL + '/materialmaterials/', form)
               .then((response) => {
               console.log('got response:')
@@ -551,15 +560,18 @@
               if (response.data.error) {
                 // error
                 this.apiError = response.data.error
+                this.isProcessing = false
                 console.log(this.apiError)
               } else {
-                console.log('emit updatedRecipeComponents')
-                this.$emit('updatedRecipeComponents')
-                // TODO:
+                // Success creating recipe, now go to the recipe page:
+                console.log(response)
+                var material = response.data.data
+                this.$router.push({ name: 'recipes', params: { id: material.id }, query: { isEdit: true }})
               }
             })
             .catch(response => {
               this.serverError = response;
+              this.isProcessing = false
               console.log('UPDATE ERROR')
               console.log(response.data)
             })
