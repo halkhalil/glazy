@@ -1,18 +1,20 @@
 <template>
     <div v-if="isLoaded">
+
         <table class="table table-sm analysis-percent-table">
             <thead>
             <tr>
-                <th v-if="hasNewAnalysis"></th>
+                <th v-if="hasOriginalAnalysis"></th>
                 <th v-for="i in presentOxides.length"
                     v-html="OXIDE_NAME_DISPLAY[presentOxides[i-1]]">
                 </th>
                 <th v-if="!isPercentMol">LOI</th>
             </tr>
             </thead>
+
             <tbody>
-            <tr>
-                <th v-if="hasNewAnalysis">Old</th>
+            <tr v-if="hasOriginalAnalysis">
+                <th>Old</th>
                 <td v-for="i in presentOxides.length">
                         <span v-if="originalAnalysis.getOxide(presentOxides[i-1]) > 0">
                             {{ Number(originalAnalysis.getOxide(presentOxides[i-1])).toFixed(2) }}
@@ -22,8 +24,8 @@
                     {{ Number(originalAnalysis.getLOI()).toFixed(2) }}
                 </td>
             </tr>
-            <tr v-if="hasNewAnalysis">
-                <th>New</th>
+            <tr>
+                <th v-if="hasOriginalAnalysis">New</th>
                 <td v-for="i in presentOxides.length">
                         <span v-if="newAnalysis.getOxide(presentOxides[i-1]) > 0">
                             <strong>
@@ -35,7 +37,7 @@
                     {{ Number(newAnalysis.getLOI()).toFixed(2) }}
                 </td>
             </tr>
-            <tr class="diff-analysis" v-if="hasNewAnalysis">
+            <tr class="diff-analysis" v-if="hasOriginalAnalysis">
                 <th>Diff</th>
                 <td v-for="i in presentOxides.length">
                         <span v-if="Math.abs(newAnalysis.getOxide(presentOxides[i-1]) - originalAnalysis.getOxide(presentOxides[i-1])) >= 0.005">
@@ -79,7 +81,6 @@
     },
     data() {
       return {
-        isMounted: false,
         OXIDE_NAME_DISPLAY: Analysis.OXIDE_NAME_DISPLAY
       }
     },
@@ -106,7 +107,7 @@
       presentOxides: function () {
         var present = [];
         if (this.isLoaded) {
-          if (this.hasNewAnalysis) {
+          if (this.hasOriginalAnalysis) {
             for (var i = 0; i < Analysis.OXIDE_NAMES.length; i++) {
               if (this.round(this.originalAnalysis.getOxide(Analysis.OXIDE_NAMES[i]), this.precision) > 0 ||
                   this.round(this.newAnalysis.getOxide(Analysis.OXIDE_NAMES[i]), this.precision) > 0) {
@@ -116,7 +117,7 @@
           }
           else {
             for (var i = 0; i < Analysis.OXIDE_NAMES.length; i++) {
-              if (this.round(this.originalAnalysis.getOxide(Analysis.OXIDE_NAMES[i]), this.precision) > 0) {
+              if (this.round(this.newAnalysis.getOxide(Analysis.OXIDE_NAMES[i]), this.precision) > 0) {
                 present.push(Analysis.OXIDE_NAMES[i]);
               }
             }
@@ -126,16 +127,14 @@
       },
 
       isLoaded: function () {
-        if (this.isMounted
-          && this.originalAnalysis
-        ) {
+        if (this.originalAnalysis || this.newAnalysis) {
           return true;
         }
         return false;
       },
 
-      hasNewAnalysis: function () {
-        if (this.newAnalysis) {
+      hasOriginalAnalysis: function () {
+        if (this.originalAnalysis) {
           return true;
         }
         return false;
@@ -143,7 +142,6 @@
     },
 
     mounted() {
-      this.isMounted = true;
     },
 
     methods: {

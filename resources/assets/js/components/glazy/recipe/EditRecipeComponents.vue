@@ -22,7 +22,7 @@
         <b-card no-body class="analysis-card">
           <b-tabs ref="tabs" card>
             <b-tab title="UMF" active>
-              <div v-if="newMaterial.materialComponents.length === 0">
+              <div v-if="!hasMaterials">
                 No analysis.  Please add materials.
               </div>
               <div v-else>
@@ -50,7 +50,7 @@
               </div>
             </b-tab>
             <b-tab title="% Mol">
-              <div v-if="newMaterial.materialComponents.length === 0">
+              <div v-if="!hasMaterials">
                 No analysis.  Please add materials.
               </div>
               <div v-else class="table-responsive">
@@ -63,7 +63,7 @@
               </div>
             </b-tab>
             <b-tab title="%">
-              <div v-if="newMaterial.materialComponents.length === 0">
+              <div v-if="!hasMaterials">
                 No analysis.  Please add materials.
               </div>
               <div v-else class="table-responsive">
@@ -78,6 +78,7 @@
           </b-tabs>
         </b-card>
       </div>
+
       <div class="col-md-4 chart-col">
         <b-card no-body class="chart-card">
           <div v-if="this.originalMaterial && chartMaterials && isLoaded" id="umf-d3-chart-container">
@@ -318,6 +319,13 @@
           }
         }
         return numVisibleRows;
+      },
+
+      hasMaterials: function() {
+        if (this.newMaterial.materialComponents.length > 0) {
+          return true
+        }
+        return false
       },
 
       chartMaterials: function() {
