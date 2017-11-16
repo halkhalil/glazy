@@ -16,7 +16,7 @@
     "bootstrap": "4.0.0-beta.2",
     "ceramicscalc-js": "github:derekphilipau/ceramicscalc-js",
     "js-cookie": "^2.1.4",
-    "popper.js": "^1.12.7",
+    "popper.js": "^1.12.9",
     "tween.js": "^16.6.0",
     "vform": "^0.8.1",
     "vue": "^2.5.2",

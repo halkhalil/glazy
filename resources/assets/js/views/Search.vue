@@ -7,7 +7,6 @@
 
     <nav v-bind:class="sidebarClass" class="sidebar d-none d-md-block">
 
-
       <div v-if="searchUser" class="card card-glazy-profile">
         <div class="card-avatar">
           <a href="#pablo">
@@ -17,12 +16,34 @@
         <div class="card-body">
           <h4 class="card-title">{{ searchUser.name }}</h4>
           <h6 class="category text-gray">
-            United States
+            asdlkfjsl
           </h6>
-          <a href="#pablo" class="btn btn-icon btn-sm btn-round btn-default"><i class="fa fa-info"></i></a>
-          <a href="#pablo" class="btn btn-icon btn-sm btn-round btn-twitter"><i class="fa fa-twitter"></i></a>
-          <a href="#pablo" class="btn btn-icon btn-sm btn-round btn-facebook"><i class="fa fa-facebook-square"></i></a>
-          <a href="#pablo" class="btn btn-icon btn-sm btn-round btn-google"><i class="fa fa-google"></i></a>
+          <div v-if="'profile' in searchUser">
+            <a v-if="'url' in searchUser.profile && searchUser.profile.url"
+               v-bind:href="'http://' + searchUser.profile.url"
+               target="_blank"
+               class="btn btn-icon btn-sm btn-round btn-default">
+              <i class="fa fa-link"></i>
+            </a>
+            <a v-if="'facebook' in searchUser.profile && searchUser.profile.facebook"
+               v-bind:href="'https://www.facebook.com/' + searchUser.profile.facebook"
+               target="_blank"
+               class="btn btn-icon btn-sm btn-round btn-facebook">
+              <i class="fa fa-facebook"></i>
+            </a>
+            <a v-if="'instagram' in searchUser.profile && searchUser.profile.instagram"
+               v-bind:href="'https://www.instagram.com/' + searchUser.profile.instagram"
+               target="_blank"
+               class="btn btn-icon btn-sm btn-round btn-instagram">
+              <i class="fa fa-instagram"></i>
+            </a>
+            <a v-if="'pinterest' in searchUser.profile && searchUser.profile.pinterest"
+               v-bind:href="'https://www.pinterest.com/' + searchUser.profile.pinterest"
+               target="_blank"
+               class="btn btn-icon btn-sm btn-round btn-pinterest">
+              <i class="fa fa-pinterest"></i>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -110,7 +131,8 @@
         </div>
 
         <div class="col-sm-12">
-          <h4 class="search-title" v-html="searchTitle"></h4>
+          <search-breadcrumbs :searchQuery="searchQuery"
+                              :searchUser="searchUser"></search-breadcrumbs>
         </div>
         <div class="col-sm-12 d-xl-none d-lg-none d-md-none">
           <search-form
@@ -258,6 +280,8 @@
   import RecipeCardThumb from '../components/glazy/search/RecipeCardThumb.vue'
   import RecipeCardRow from '../components/glazy/search/RecipeCardRow.vue'
 
+  import SearchBreadcrumbs from '../components/glazy/search/SearchBreadcrumbs.vue'
+
   import SearchForm from '../components/glazy/search/SearchForm.vue'
   import SearchQuery from '../components/glazy/search/search-query'
   import FilterPaginator from '../components/glazy/search/FilterPaginator.vue'
@@ -274,7 +298,8 @@
       RecipeCardThumb,
       RecipeCardRow,
       UmfD3Chart,
-      SearchForm
+      SearchForm,
+      SearchBreadcrumbs
     },
     props: {
       isembedded: {
@@ -358,73 +383,6 @@
 
       order () {
         return this.searchQuery.params.order;
-      },
-
-      searchTitle () {
-        var title = ''
-        var hasTitle = false
-
-        if (this.searchQuery.params.keywords &&
-          this.searchQuery.params.keywords.length >= this.minSearchTextLength) {
-          title += '"' + this.searchQuery.params.keywords + '"'
-          hasTitle = true
-        }
-
-        if (this.searchQuery.params.base_type
-          && this.materialTypes.LOOKUP[this.searchQuery.params.base_type]) {
-          if (hasTitle) {
-            title += ', '
-          }
-          var type = this.materialTypes.LOOKUP[this.searchQuery.params.base_type]
-          if (this.searchQuery.params.type
-            && this.materialTypes.LOOKUP[this.searchQuery.params.type]) {
-            type = this.materialTypes.LOOKUP[this.searchQuery.params.type]
-          }
-          title += type
-          hasTitle = true
-        }
-
-        if (this.searchQuery.params.cone
-          && this.constants.ORTON_CONES_LOOKUP[this.searchQuery.params.cone]) {
-          if (hasTitle) {
-            title += ', '
-          }
-          title += '△' + this.constants.ORTON_CONES_LOOKUP[this.searchQuery.params.cone]
-          hasTitle = true
-        }
-
-        if (this.searchQuery.params.atmosphere
-          && this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere]) {
-          if (hasTitle) {
-            title += ', '
-          }
-          title += this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere]
-          hasTitle = true
-        }
-
-        if (this.searchQuery.params.surface
-          && this.constants.SURFACE_LOOKUP[this.searchQuery.params.surface]) {
-          if (hasTitle) {
-            title += ', '
-          }
-          title += this.constants.SURFACE_LOOKUP[this.searchQuery.params.surface]
-          hasTitle = true
-        }
-
-        if (this.searchQuery.params.transparency
-          && this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency]) {
-          if (hasTitle) {
-            title += ', '
-          }
-          title += this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency]
-          hasTitle = true
-        }
-
-        if (!title) {
-          title = 'Search'
-        }
-
-        return title
       },
 
       collections () {

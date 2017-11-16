@@ -93,9 +93,9 @@ class SearchController extends ApiBaseController
         $jsonUser = null;
         if ($search_user_id) {
             // We're searching within a user's recipes
-            $searchUser = User::with('collections')->find($search_user_id);
+            $searchUser = User::with('collections')->with('profile')->find($search_user_id);
             if ($searchUser) {
-                $this->manager->parseIncludes(['collections']);
+                $this->manager->parseIncludes(['collections', 'profile']);
                 $userResource = new FractalItem($searchUser, new UserTransformer());
                 $jsonUser = $this->manager->createData($userResource)->toArray();
             }

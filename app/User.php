@@ -63,6 +63,11 @@ class User extends Authenticatable implements JWTSubject
     /**
      * DAU
      */
+    public function profile()
+    {
+        return $this->hasOne('App\Models\UserProfile');
+    }
+
     public function collections()
     {
         return $this->hasMany('App\Models\Collection', 'created_by_user_id');

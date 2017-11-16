@@ -260,7 +260,8 @@ export default {
       if (this.query.params.base_type) {
         if (this.previousBaseTypeId != 0) {
           // we're switching base types.. set type to null
-          this.query.params.type = 0;
+          // TODO: BUG
+          // this.query.params.type = 0;
         }
         this.previousBaseTypeId = this.query.params.base_type;
         switch (this.query.params.base_type) {
