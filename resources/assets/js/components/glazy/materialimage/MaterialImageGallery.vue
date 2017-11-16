@@ -7,11 +7,11 @@
             <div class="col-md-12" v-if="currentImage">
                 <div class="card image-gallery-card text-center">
                     <a @click.stop.prevent="lightbox()" href="#">
-                        <img class="card-img-top img-fluid"
-                             :src="getImageUrl(currentImage.filename, 'm')"
+                        <img :src="getImageUrl(currentImage.filename, 'm')"
                              :alt="currentImage.title">
                     </a>
 
+                    <!--
                     <div class="btn-previous-image" v-if="imageList.length > 1">
                         <b-button
                                 @click.stop.prevent="previousImage()"
@@ -26,7 +26,7 @@
                             <i class="fa fa-chevron-right"></i>
                         </b-button>
                     </div>
-
+                    -->
                     <div v-if="current_user" class="card-block gallery-actions">
                         <a v-if="(current_user.id == material.createdByUserId) && (currentImage.id != material.thumbnail_id)"
                            @click.stop.prevent="setThumbnail()"
@@ -48,26 +48,25 @@
                             <i class="fa fa-times"></i>
                         </a>
                     </div>
-
                     <div class="gallery-swatches text-right">
                         <a v-if="currentImage.dominant_hex_color"
                            role="button" class="btn btn-primary btn-float btn-sm"
-                           :href="'/search?hex_color=' + currentImage.dominant_hex_color"
-                           :style="'background-color: #' + currentImage.dominant_hex_color">
+                           :href="'/search?hex_color=' + currentImage.dominantHexColor"
+                           :style="'background-color: #' + currentImage.dominantHexColor">
                             <i class="fa fa-eyedropper"></i>
                         </a>
                         <a v-if="currentImage.secondary_hex_color"
                            role="button" class="btn btn-primary btn-float btn-sm"
-                           :href="'/search?hex_color=' + currentImage.secondary_hex_color"
-                           :style="'background-color: #' + currentImage.secondary_hex_color">
+                           :href="'/search?hex_color=' + currentImage.secondaryHexColor"
+                           :style="'background-color: #' + currentImage.secondaryHexColor">
                             <i class="fa fa-eyedropper"></i>
                         </a>
                     </div>
                     <div v-if="currentImage.title || currentImage.description"
                             class="card-body">
-                        <p class="card-title" v-if="currentImage.title">
+                        <h6 class="card-title" v-if="currentImage.title">
                             {{ currentImage.title }}
-                        </h5>
+                        </h6>
                         <p class="card-text" v-if="currentImage.description">
                             {{ currentImage.description }}
                         </p>
@@ -151,37 +150,31 @@
         </div>
 
         <!-- Lightbox Modal -->
-        <div v-if="currentImage" class="modal fade" id="lightboxModal" tabindex="-1" role="dialog" aria-labelledby="image lightbox" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" v-if="currentImage.title">
-                            {{ currentImage.title }}
-                        </h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p v-if="currentImage.description">
-                            {{ currentImage.description }}
-                        </p>
-                        <img class="img-fluid"
-                             :src="getImageUrl(currentImage.filename, 'l')"
-                             :alt="currentImage.title">
-                    </div>
-                </div>
+        <b-modal ref="lightboxModal"
+                 hide-footer
+                 hide-header
+                 :title="currentImage.title"
+                 size="lg">
+            <div class="d-block text-center">
+                <img class="img-fluid"
+                     :src="getImageUrl(currentImage.filename, 'l')"
+                     :alt="currentImage.title">
+                <h6 class="mt-2" v-if="currentImage.title">
+                    {{ currentImage.title }}
+                </h6>
+                <p class="description"
+                   v-if="currentImage.description">
+                    {{ currentImage.description }}
+                </p>
             </div>
-        </div>
+        </b-modal>
+
     </div>
-
-
 
 </template>
 <script>
 
   import Vue from 'vue'
-
   import UploadMaterialImageForm from './UploadMaterialImageForm.vue'
 
   export default {
@@ -303,7 +296,7 @@
       },
 
       lightbox: function () {
-        $('#lightboxModal').modal('show');
+        this.$refs.lightboxModal.show();
       },
 
       confirmDelete: function () {

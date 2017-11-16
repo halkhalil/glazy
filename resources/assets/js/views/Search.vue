@@ -15,8 +15,8 @@
         </div>
         <div class="card-body">
           <h4 class="card-title">{{ searchUser.name }}</h4>
-          <h6 class="category text-gray">
-            asdlkfjsl
+          <h6 v-if="'profile' in searchUser && searchUser.profile.countryName" class="category text-gray">
+            {{ searchUser.profile.countryName }}
           </h6>
           <div v-if="'profile' in searchUser">
             <a v-if="'url' in searchUser.profile && searchUser.profile.url"
@@ -406,7 +406,13 @@
 
       this.searchUser = null
       this.searchQuery = new SearchQuery(this.$route.query)
-      if (!this.searchQuery.params.base_type) {
+
+      if (this.$route.name === 'materials') {
+        // Primitive search
+        if (!this.searchQuery.params.base_type) {
+          this.searchQuery.params.base_type = 1
+        }
+      } else if (!this.searchQuery.params.base_type) {
         this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
       }
       if (this.$route.params && this.$route.params.id) {
@@ -432,9 +438,21 @@
     */
     watch: {
       $route (route) {
+        if (route.hash) {
+          // This is only an internal link, no need to requery
+          return
+        }
         this.searchUser = null
         this.searchQuery = new SearchQuery(route.query)
-        if (!this.searchQuery.params.base_type) {
+
+        console.log('ROUTE NAME: ' + route.name)
+        if (route.name === 'materials') {
+          // Primitive search
+          if (!this.searchQuery.params.base_type) {
+            this.searchQuery.params.base_type = 1
+          }
+        } else if (!this.searchQuery.params.base_type) {
+          // Composite search
           this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
         }
         if ('params' in route && route.params.id) {
@@ -480,7 +498,7 @@
               this.isProcessing = false
             } else {
               this.itemlist = response.data.data
-              document.title = 'Search: ' + this.searchTitle;
+              document.title = 'Search';
               if (!this.itemlist) {
                 // Make sure itemlist is always defined, and an array
                 this.itemlist = []
@@ -562,12 +580,8 @@
           this.chartWidth = document.getElementById('umf-d3-chart-container').clientWidth
         }
       },
-      clickedChart (data) {
-        document.getElementById('d3-tooltip-div').setAttribute('style', 'opacity: 0')
-        Vue.router.push('#recipe-card-' + data.customdata)
-      },
       clickedD3Chart (data) {
-        this.$router.push({ path: this.$route.path + '/#recipe-card-' + data.id, query: this.$route.query })
+        this.$router.push({ path: this.$route.path + '#recipe-card-' + data.id, query: this.$route.query })
       },
       highlightRecipe: function (id) {
         // this.highlightedRecipeId = id

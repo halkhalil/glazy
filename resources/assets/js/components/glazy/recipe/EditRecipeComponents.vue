@@ -140,7 +140,7 @@
                   :id="index + '_name'"
                   :options="selectMaterials"
                   v-model="materialFieldsId[index]"
-                  @input="updateSelected"
+                  @input="updateMultiSelected(index)"
                   key="value"
                   label="label"
           ></multiselect>
@@ -152,6 +152,9 @@
                         type="number"
                         min="0"
                         placeholder="%"
+                        v-focus="index === focused"
+                        @focus="focused = index"
+                        @blur="focused = null"
                         @input="updateSelected"></b-form-input>
         </div>
         <div class="col-sm-2">
@@ -229,6 +232,8 @@
 
   import Multiselect from 'vue-multiselect';
 
+  import { focus } from 'vue-focus';
+
   export default {
     name: 'EditRecipeComponents',
     components: {
@@ -238,14 +243,13 @@
       MaterialAnalysisPercentTableCompare,
       JsonUmfSparkSvg
     },
-
     props: {
       originalMaterial: {
         type: Object,
         default: null
       }
     },
-
+    directives: { focus: focus },
     data() {
       return {
         oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
@@ -267,7 +271,8 @@
         chartHeight: 300,
         chartWidth: 0,
         apiError: null,
-        serverError: null
+        serverError: null,
+        focused: null
       };
     },
     computed : {
@@ -366,7 +371,13 @@
 
     methods: {
 
-      updateSelected (newSelected) {
+
+      updateMultiSelected (index) {
+        this.focused = index
+        this.updateSelected()
+      },
+
+      updateSelected (val) {
         this.newMaterial.removeAllMaterialComponents();
 
         for (var i = 0; i < this.materialFieldsId.length; i++) {

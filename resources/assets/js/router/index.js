@@ -65,6 +65,11 @@ export default new Router({
           component: Search
         },
         {
+          path: '/materials',
+          name: 'materials',
+          component: Search
+        },
+        {
           path: '/recipes/:id',
           name: 'recipes',
           component: Recipe

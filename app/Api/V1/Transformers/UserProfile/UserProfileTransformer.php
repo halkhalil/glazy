@@ -2,6 +2,7 @@
 
 namespace App\Api\V1\Transformers\UserProfile;
 
+use App\Models\Country;
 use App\Models\UserProfile;
 
 use League\Fractal;
@@ -28,6 +29,11 @@ class UserProfileTransformer extends Fractal\TransformerAbstract
         $user_profile_data[self::JSON_NAMES[UserProfile::DB_TITLE]] = $user_profile[UserProfile::DB_TITLE];
         $user_profile_data[self::JSON_NAMES[UserProfile::DB_DESCRIPTION]] = $user_profile[UserProfile::DB_DESCRIPTION];
         $user_profile_data[self::JSON_NAMES[UserProfile::DB_COUNTRY_ID]] = $user_profile[UserProfile::DB_COUNTRY_ID];
+
+        $countryLookup = new Country();
+        $user_profile_data['countryName'] = $countryLookup->getValue($user_profile[UserProfile::DB_COUNTRY_ID]);
+
+
         $user_profile_data[self::JSON_NAMES[UserProfile::DB_URL]] = $user_profile[UserProfile::DB_URL];
         $user_profile_data[self::JSON_NAMES[UserProfile::DB_PINTEREST]] = $user_profile[UserProfile::DB_PINTEREST];
         $user_profile_data[self::JSON_NAMES[UserProfile::DB_FACEBOOK]] = $user_profile[UserProfile::DB_FACEBOOK];

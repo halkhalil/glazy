@@ -35,14 +35,14 @@
                     </template>
                 </b-form-select>
             </div>
-            <div v-bind:class="sizeMedium" v-if="subtype_options" class="form-group">
+            <div v-bind:class="sizeMedium" v-if="subTypeOptions" class="form-group">
                 <b-form-select
                         size="sm"
-                        v-if="subtype_options"
+                        v-if="subTypeOptions"
                         id="typeId"
                         placeholder="Subtype"
                         v-model="query.params.type"
-                        :options="subtype_options"
+                        :options="subTypeOptions"
                         @input="search">
                     <template slot="first">
                         <option :value="0">All Subtypes</option>
@@ -50,7 +50,7 @@
                 </b-form-select>
             </div>
         </div>
-        <div class="form-row">
+        <div v-if="$route.name !== 'materials'" class="form-row">
             <div v-bind:class="sizeMedium" class="form-group">
                 <b-form-select
                         size="sm"
@@ -78,7 +78,7 @@
                 </b-form-select>
             </div>
         </div>
-        <div v-if="isAdvanced" class="form-row">
+        <div v-if="$route.name !== 'materials' && isAdvanced" class="form-row">
             <div v-bind:class="sizeMedium" class="form-group">
                 <b-form-select
                         size="sm"
@@ -129,7 +129,9 @@
             </div>
         </div>
         <div class="form-row">
-            <div v-bind:class="sizeMedium" class="form-group">
+            <div v-if="$route.name !== 'materials'"
+                 v-bind:class="sizeMedium"
+                 class="form-group">
                 <button v-if="!this.query.params.hex_color"
                         @click.prevent="openColor"
                         class="btn btn-default btn-sm"
@@ -253,10 +255,13 @@ export default {
     },
 
     baseTypeOptions: function () {
-      return this.materialTypes.getParentTypes();
+      if (this.$route.name === 'materials') {
+        return this.materialTypes.PRIMITIVE_SELECT;
+      }
+      return this.materialTypes.COMPOSITE_PARENT_SELECT;
     },
 
-    subtype_options: function () {
+    subTypeOptions: function () {
       if (this.query.params.base_type) {
         if (this.previousBaseTypeId != 0) {
           // we're switching base types.. set type to null

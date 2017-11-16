@@ -9,7 +9,10 @@
             <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                 <ul class="navbar-nav mr-auto">
                     <router-link :to="{ name: 'search' }" tag="li" active-class="active" class="nav-link">
-                        <i class="fa fa-search fa-fw"></i> Search
+                        <i class="fa fa-list fa-fw"></i> Recipes
+                    </router-link>
+                    <router-link :to="{ name: 'materials' }" tag="li" active-class="active" class="nav-link">
+                        <i class="fa fa-flask fa-fw"></i> Materials
                     </router-link>
                     <router-link :to="{ path: 'calculator' }"
                                  tag="li"
@@ -46,7 +49,6 @@
 
   export default {
     name: 'AppHeader',
-
     props: {
     },
     data() {

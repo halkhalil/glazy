@@ -21,6 +21,7 @@
     "vform": "^0.8.1",
     "vue": "^2.5.2",
     "vue-d3-stull-charts": "github:derekphilipau/vue-d3-stull-charts",
+    "vue-focus": "^2.1.0",
     "vue-i18n": "^7.3.1",
     "vue-meta": "^1.2.0",
     "vue-router": "^3.0.1",
