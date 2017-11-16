@@ -44,7 +44,12 @@
                     <material-type-breadcrumbs v-if="!recipe.isPrimitive"
                                                :recipe="recipe"></material-type-breadcrumbs>
                     <h2 class="card-title">
-                      <i v-if="recipe.isPrivate" class="fa fa-lock"></i>
+                      <i v-if="recipe.isPrivate"
+                         v-b-tooltip.hover title="Private"
+                         class="fa fa-lock"></i>
+                      <i v-if="recipe.isArchived"
+                         v-b-tooltip.hover title="Archived"
+                         class="fa fa-archive"></i>
                       {{ recipe.name }}
                     </h2>
                   </div>

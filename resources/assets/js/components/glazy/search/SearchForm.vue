@@ -305,6 +305,11 @@ export default {
       if (this.query.params.keywords.length >= this.minSearchTextLength) {
         this.query.params.keywords = e.target.value
         this.search()
+      } else if (!e.target.value && this.$route.query && 'keywords' in this.$route.query) {
+        // There was a keyword search, but now there is not
+        // So we still need to search
+        this.query.params.keywords = ''
+        this.search()
       }
     }, 1000),
     searchBaseType: function () {

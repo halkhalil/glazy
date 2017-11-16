@@ -22,13 +22,18 @@
         <b-card no-body class="analysis-card">
           <b-tabs ref="tabs" card>
             <b-tab title="UMF" active>
-              <div class="table-responsive">
-                <MaterialAnalysisTableCompare
-                        :originalMaterial="originalMaterial"
-                        :newMaterial="newMaterial"
-                        :showHeadings="false"
-                >
-                </MaterialAnalysisTableCompare>
+              <div v-if="newMaterial.materialComponents.length === 0">
+                No analysis.  Please add materials.
+              </div>
+              <div v-else>
+                <div class="table-responsive">
+                  <MaterialAnalysisTableCompare
+                          :originalMaterial="originalMaterial"
+                          :newMaterial="newMaterial"
+                          :showHeadings="false"
+                  >
+                  </MaterialAnalysisTableCompare>
+                </div>
                 <JsonUmfSparkSvg
                         v-if="originalMaterial"
                         :material="originalMaterial"
@@ -45,24 +50,28 @@
               </div>
             </b-tab>
             <b-tab title="% Mol">
-              <div class="table-responsive">
+              <div v-if="newMaterial.materialComponents.length === 0">
+                No analysis.  Please add materials.
+              </div>
+              <div v-else class="table-responsive">
                 <MaterialAnalysisPercentTableCompare
                         :originalMaterial="originalMaterial"
                         :newMaterial="newMaterial"
                         :showHeadings="false"
-                        :isPercentMol="true"
-                >
+                        :isPercentMol="true">
                 </MaterialAnalysisPercentTableCompare>
               </div>
             </b-tab>
             <b-tab title="%">
-              <div class="table-responsive">
+              <div v-if="newMaterial.materialComponents.length === 0">
+                No analysis.  Please add materials.
+              </div>
+              <div v-else class="table-responsive">
                 <MaterialAnalysisPercentTableCompare
                         :originalMaterial="originalMaterial"
                         :newMaterial="newMaterial"
                         :showHeadings="false"
-                        :isPercentMol="false"
-                >
+                        :isPercentMol="false">
                 </MaterialAnalysisPercentTableCompare>
               </div>
             </b-tab>
@@ -155,6 +164,7 @@
                         v-focus="index === focused"
                         @focus="focused = index"
                         @blur="focused = null"
+                        @change="focused = index"
                         @input="updateMaterial"></b-form-input>
         </div>
         <div class="col-sm-2">
@@ -269,7 +279,7 @@
         subtotal: 0,
         isProcessing: false,
         similarMaterials: null,
-        chartHeight: 300,
+        chartHeight: 240,
         chartWidth: 0,
         apiError: null,
         serverError: null,
@@ -372,12 +382,18 @@
 
     methods: {
 
-
       focusAmountInput (index) {
         this.focused = index
         this.updateMaterial()
       },
-
+      /*
+      moveDown: function() {
+        this.focused = Math.min(this.focused + 1, this.materialFieldsId.length - 1);
+      },
+      moveUp: function() {
+        this.focused = Math.max(this.focused - 1, 0);
+      },
+      */
       updateMaterial () {
         this.newMaterial.removeAllMaterialComponents();
 
