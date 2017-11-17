@@ -1,47 +1,55 @@
 <template>
     <header>
-        <nav class="navbar navbar-expand-md fixed-top navbar-light bg-white">
-            <a class="navbar-brand" href="#"><img src="/img/logo.png" height="26" alt="Glazy"></a>
-            <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-                <ul class="navbar-nav mr-auto">
-                    <router-link :to="{ name: 'search' }" tag="li" active-class="active" class="nav-link">
+        <b-navbar class="navbar navbar-expand-md fixed-top navbar-light bg-white"
+                  toggleable>
+            <b-navbar-brand href="#"><img src="/img/logo.png" height="26" alt="Glazy"></b-navbar-brand>
+            <b-navbar-toggle target="nav_dropdown_collapse"></b-navbar-toggle>
+            <b-collapse is-nav id="nav_dropdown_collapse">
+                <b-navbar-nav>
+                    <b-nav-item :to="{ name: 'search' }" >
                         <i class="fa fa-list fa-fw"></i> Recipes
-                    </router-link>
-                    <router-link :to="{ name: 'materials' }" tag="li" active-class="active" class="nav-link">
+                    </b-nav-item>
+                    <b-nav-item :to="{ name: 'materials' }" >
                         <i class="fa fa-flask fa-fw"></i> Materials
-                    </router-link>
-                    <router-link :to="{ name: 'calculator' }"
-                                 tag="li"
-                                 active-class="active"
-                                 class="nav-item">
-                        <a class="nav-link">
-                            <i class="fa fa-calculator fa-fw"></i> Calc
-                        </a>
-                    </router-link>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#"><i class="fa fa-question fa-fw"></i> Help</a>
-                    </li>
-                    <li class="nav-item" v-if="!$auth.check()">
-                        <a class="nav-link" href="/login"><i class="fa fa-user-circle-o fa-fw"></i> Login</a>
-                    </li>
-                    <li class="nav-item" v-if="$auth.check()">
-                        <a class="nav-link" @click="logout">Logout</a>
-                    </li>
-                    <li class="nav-item" v-if="$auth.check()">
-                        <router-link :to="{ name: 'user', params: { id: $auth.user().id}}"
-                                     tag="li"
-                                     active-class="active"
-                                     class="nav-link">
-                            {{ $auth.user().name }}
-                        </router-link>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+                    </b-nav-item>
+                    <b-nav-item :to="{ name: 'calculator' }" >
+                        <i class="fa fa-calculator fa-fw"></i> Calc
+                    </b-nav-item>
+                    <b-nav-item href="#" >
+                        <i class="fa fa-question fa-fw"></i> Help</a>
+                    </b-nav-item>
+                    <b-nav-item v-if="!$auth.check()"
+                                :to="{ name: 'login' }" >
+                        <i class="fa fa-user-circle-o fa-fw"></i> Login</a>
+                    </b-nav-item>
+                    <b-nav-item v-if="!$auth.check()"
+                                :to="{ name: 'register' }" >
+                        <i class="fa fa-user-plus fa-fw"></i> Join!</a>
+                    </b-nav-item>
+                    <b-nav-item-dropdown v-if="$auth.check()"
+                                         :text="$auth.user().name" right>
+                        <b-dropdown-item :to="{ name: 'user', params: { id: $auth.user().id}}">
+                            My Recipes
+                        </b-dropdown-item>
+                        <b-dropdown-item :to="{ name: 'user-materials', params: { id: $auth.user().id}}">
+                            My Materials
+                        </b-dropdown-item>
+                        <b-dropdown-item href="#">
+                            Settings
+                        </b-dropdown-item>
+                        <b-dropdown-item @click="logout">
+                            Logout
+                        </b-dropdown-item>
+                    </b-nav-item-dropdown>
+                    <b-nav-item-dropdown text="Lang" right>
+                        <b-dropdown-item href="#">EN</b-dropdown-item>
+                        <b-dropdown-item href="#">ES</b-dropdown-item>
+                        <b-dropdown-item href="#">RU</b-dropdown-item>
+                        <b-dropdown-item href="#">FA</b-dropdown-item>
+                    </b-nav-item-dropdown>
+                </b-navbar-nav>
+            </b-collapse>
+        </b-navbar>
     </header>
 </template>
 

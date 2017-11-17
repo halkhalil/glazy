@@ -45,7 +45,7 @@
                                                :recipe="recipe"></material-type-breadcrumbs>
                     <h2 class="card-title">
                       <i v-if="recipe.isPrivate"
-                         v-b-tooltip.hover title="Private"
+                         v-b-tooltip.hover title="Archived"
                          class="fa fa-lock"></i>
                       <i v-if="recipe.isArchived"
                          v-b-tooltip.hover title="Archived"
@@ -615,6 +615,7 @@
 
   .recipe-info-row {
     margin-top: 1rem;
+    padding-top: 15px;
   }
 
   .recipe-info-card .card-description {

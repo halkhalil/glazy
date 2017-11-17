@@ -24,7 +24,7 @@
       </a>
     </div>
 
-    <ul class="list-group list-group-flush list-group-cone">
+    <ul v-if="!recipe.isPrimitive" class="list-group list-group-flush list-group-cone">
       <li class="list-group-item" v-html="'&#9651;' + coneString + ' ' + atmospheresString"></li>
     </ul>
     <div class="card-body">

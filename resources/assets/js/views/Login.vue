@@ -1,6 +1,6 @@
 <template>
 
-    <div class="row mt-4">
+    <div class="row content-row">
         <div class="col-md-4 offset-md-4 col-sm-12">
             <b-card title="Login to Glazy">
                 <b-alert v-if="serverError" show variant="danger">
@@ -57,7 +57,6 @@
 </template>
 
 <script>
-
   export default {
     name: 'Login',
 
@@ -162,4 +161,8 @@
 </script>
 
 <style>
+
+    .content-row {
+        padding-top: 15px;
+    }
 </style>

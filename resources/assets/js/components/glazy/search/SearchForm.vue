@@ -1,7 +1,7 @@
 <template>
     <form class="search-form">
         <div class="form-row">
-            <div v-if="collectionsSelect && collectionsSelect.length > 0"
+            <div v-if="!isPrimitiveSearch && collectionsSelect && collectionsSelect.length > 0"
                  v-bind:class="sizeLarge" class="form-group">
                 <b-form-select
                         size="sm"
@@ -50,7 +50,7 @@
                 </b-form-select>
             </div>
         </div>
-        <div v-if="$route.name !== 'materials'" class="form-row">
+        <div v-if="isPrimitiveSearch" class="form-row">
             <div v-bind:class="sizeMedium" class="form-group">
                 <b-form-select
                         size="sm"
@@ -78,7 +78,7 @@
                 </b-form-select>
             </div>
         </div>
-        <div v-if="$route.name !== 'materials' && isAdvanced" class="form-row">
+        <div v-if="isPrimitiveSearch && isAdvanced" class="form-row">
             <div v-bind:class="sizeMedium" class="form-group">
                 <b-form-select
                         size="sm"
@@ -129,17 +129,17 @@
             </div>
         </div>
         <div class="form-row">
-            <div v-if="$route.name !== 'materials'"
+            <div v-if="isPrimitiveSearch"
                  v-bind:class="sizeMedium"
                  class="form-group">
-                <button v-if="!this.query.params.hex_color"
-                        @click.prevent="openColor"
-                        class="btn btn-default search-form-button"
+                <button @click.prevent="toggleColorPicker"
+                        class="btn btn-block search-form-color-button"
+                        :style="{'background-color': colorButtonColor, 'color': colorButtonTextColor}"
                         type="button">
-                    <i class="fa fa-eyedropper"></i> Color
+                    <i class="fa fa-eyedropper"></i> {{ colorButtonText }}
                 </button>
-                <chrome-picker v-if="this.query.params.hex_color"
-                               :value="this.query.params.color"
+                <chrome-picker v-if="isPickingColor"
+                               :value="query.params.color"
                                @input="updateColorValue"></chrome-picker>
             </div>
             <div v-bind:class="sizeMedium" class="form-group">
@@ -209,7 +209,8 @@ export default {
       smallSmall: 'col-md-6',
       smallMedium: 'col-md-12',
       smallLarge: 'col-md-12',
-      flex: 'col'
+      flex: 'col',
+      isPickingColor: false
     }
   },
   computed: {
@@ -233,6 +234,15 @@ export default {
 
       return query
     },
+
+    isPrimitiveSearch: function () {
+      if (this.$route.name === 'materials' ||
+        this.$route.name === 'user-materials') {
+        return true
+      }
+      return false
+    },
+
     sizeSmall: function () {
       if (this.isLarge) {
         return this.largeSmall
@@ -255,7 +265,7 @@ export default {
     },
 
     baseTypeOptions: function () {
-      if (this.$route.name === 'materials') {
+      if (this.isPrimitiveSearch) {
         return this.materialTypes.PRIMITIVE_SELECT;
       }
       return this.materialTypes.COMPOSITE_PARENT_SELECT;
@@ -288,11 +298,37 @@ export default {
         return this.searchUser.collections
       }
       return null
+    },
+
+    colorButtonText () {
+      if (this.isPickingColor) {
+        return 'Choose Color'
+      }
+      return 'Pick a Color'
+    },
+
+    colorButtonColor () {
+      if ('hex' in this.query.params.color && this.query.params.color.hex) {
+        return this.query.params.color.hex
+      }
+      return '#CCCCCC'
+    },
+
+    colorButtonTextColor () {
+      // Still don't know the best way to do this
+      // Combination of hue & value better
+      if (!('hsv' in this.query.params.color)) {
+        return '#000000'
+      }
+      if ((this.query.params.color.hsv.h > 200 && this.query.params.color.hsv.s > 0.8) ||
+        (this.query.params.color.hsv.v < 0.5)) {
+        return '#FFFFFF'
+      }
+      return '#000000'
     }
 
   },
   created() {
-
   },
   methods: {
     search: function () {
@@ -334,19 +370,19 @@ export default {
       }
     },
 
-    openColor: function () {
-      if (!this.query.params.hex_color) {
-        this.query.params.hex_color = '1199CC'
-        this.query.params.color = { hex: '#1199CC' }
+    toggleColorPicker () {
+      this.isPickingColor = !this.isPickingColor
+      if (!this.isPickingColor && 'hex' in this.query.params.color) {
+        this.query.params.hex_color = this.query.params.color.hex.substring(1)
+        this.search()
       }
     },
 
-    updateColorValue: _.debounce(function (value) {
+    updateColorValue: function (value) {
       if (value.hex) {
-        this.query.params.hex_color = value.hex.substring(1)
-        this.search()
+        this.query.params.color = value
       }
-    }, 1500)
+    }
   }
 
 }
@@ -370,5 +406,10 @@ export default {
         padding: 11px 16px;
     }
 
+    .search-form-color-button {
+        margin-top: 0px;
+        margin-bottom: 4px;
+        padding: 7px 16px;
+    }
 
 </style>

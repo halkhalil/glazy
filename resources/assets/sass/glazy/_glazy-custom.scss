@@ -2,7 +2,7 @@
 body {
   color: #2c2c2c;
   background-color: #efefef;
-  padding-top: 4rem;
+  margin-top: 50px;
   font-size: 14px;
   font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
   overflow-x: hidden;
@@ -16,11 +16,8 @@ body {
 
 @import "loader";
 
-/*
-.table > thead > tr > th {
-  border-bottom-width: 1px;
-  font-size: 1em;
-  font-weight: 600;
-  border: 0;
+.navbar {
+  min-height: 50px;
+  padding-top: 0;
+  padding-bottom: 0;
 }
-*/

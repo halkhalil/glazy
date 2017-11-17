@@ -407,7 +407,8 @@
       this.searchUser = null
       this.searchQuery = new SearchQuery(this.$route.query)
 
-      if (this.$route.name === 'materials') {
+      if (this.$route.name === 'materials' ||
+        this.$route.name === 'user-materials') {
         // Primitive search
         if (!this.searchQuery.params.base_type) {
           this.searchQuery.params.base_type = 1
@@ -437,6 +438,7 @@
     },
     */
     watch: {
+
       $route (route) {
         if (route.hash) {
           // This is only an internal link, no need to requery
@@ -445,8 +447,8 @@
         this.searchUser = null
         this.searchQuery = new SearchQuery(route.query)
 
-        console.log('ROUTE NAME: ' + route.name)
-        if (route.name === 'materials') {
+        if (route.name === 'materials' ||
+          route.name === 'user-materials') {
           // Primitive search
           if (!this.searchQuery.params.base_type) {
             this.searchQuery.params.base_type = 1
@@ -666,14 +668,13 @@
   .sidebar {
     background-color: #efefef;
     position: fixed;
-    top: 51px;
+    top: 50px;
     bottom: 0;
     left: 0;
     z-index: 1000;
-    padding: 20px 10px;
+    padding: 15px 15px;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    // border-right: 1px solid #888888;
   }
 
   .expand-button {
@@ -683,20 +684,16 @@
     z-index: 1001;
     font-size: 1.25rem;
     line-height: 1;
-//    background-color: #dedede;
-//    padding-right: 0.4rem;
   }
 
   #umf-d3-chart-container {
     /* need fix tip bug position: relative; */
   }
 
-
-
   .card-glazy-profile {
     color: #FFFFFF;
     background-color: #2c2c2c;
-    margin-top: 4px;
+    margin-top: 0;
     margin-bottom: 10px;
   }
 
@@ -715,6 +712,7 @@
   }
 
   .card-glazy-profile .card-body .card-title {
+    margin-top: 10px;
     font-size: 1.25em;
   }
 
