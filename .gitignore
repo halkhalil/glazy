@@ -1,6 +1,9 @@
 /node_modules
 /public/storage
+/public/hot
 /storage/*.key
+/storage/app
+/storage/logs
 /vendor
 /.idea
 Homestead.json
@@ -10,3 +13,6 @@ Homestead.yaml
 /database/seeds/Glazy/glaze_data_seeder.sql
 /database/seeds/Glazy/glaze_data_seeder_no_create.sql
 /resources/assets/sass/glazy/nowui
+/resources/assets/sass/glazy/nowui.tgz
+npm-debug.log
+yarn-error.log
