@@ -101,7 +101,7 @@
       imageUrl: function() {
         if (this.recipe.thumbnail && this.recipe.thumbnail.filename) {
           var bin = this.getImageBin(this.recipe.id);
-          return APP_URL + '/storage/uploads/recipes/' +
+          return GLAZY_APP_URL + '/storage/uploads/recipes/' +
             bin + '/s_' + this.recipe.thumbnail.filename;
         }
         return '/img/recipes/black.png';

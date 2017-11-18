@@ -7,6 +7,9 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 
 use App\Models\Material;
 use App\Policies\MaterialPolicy;
+use App\Models\MaterialImage;
+use App\Policies\MaterialImagePolicy;
+
 
 
 class AuthServiceProvider extends ServiceProvider
@@ -18,7 +21,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
-        Material::class => MaterialPolicy::class
+        Material::class => MaterialPolicy::class,
+        MaterialImage::class => MaterialImagePolicy::class
     ];
 
     /**

@@ -17,7 +17,6 @@ class MaterialImage extends Model
     const DB_SECONDARY_RGB_G = 'secondary_rgb_g';
     const DB_SECONDARY_RGB_B = 'secondary_rgb_b';
     const DB_FILENAME = 'filename';
-    const DB_URL = 'url';
     const DB_IS_PRIVATE = 'is_private';
     const DB_CREATED_BY_USER_ID = 'created_by_user_id';
     const DB_CREATED_AT = 'created_at';

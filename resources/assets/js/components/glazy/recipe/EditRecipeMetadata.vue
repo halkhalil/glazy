@@ -67,6 +67,7 @@
                     <label for="fromOrtonConeId">Lowest Cone</label>
                     <b-form-select
                             v-model="form.fromOrtonConeId"
+                            id="fromOrtonConeId"
                             :options="constants.ORTON_CONES_SELECT_TEXT"
                             @input="updateFromCone">
                     </b-form-select>
@@ -75,6 +76,7 @@
                     <label for="toOrtonConeId">Highest Cone</label>
                     <b-form-select
                             v-model="form.toOrtonConeId"
+                            id="toOrtonConeId"
                             :options="constants.ORTON_CONES_SELECT_TEXT"
                             @input="updateToCone">
                     </b-form-select>

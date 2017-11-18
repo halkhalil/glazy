@@ -1,16 +1,50 @@
 
 <template>
-
-    <div id="image-gallery">
-
+    <div v-if="isLoaded" id="image-gallery">
         <div class="row">
             <div class="col-md-12" v-if="currentImage">
                 <div class="card image-gallery-card text-center">
-                    <a @click.stop.prevent="lightbox()" href="#">
-                        <img :src="getImageUrl(currentImage.filename, 'm')"
-                             :alt="currentImage.title">
-                    </a>
+                    <div class="card-image">
+                        <a @click.stop.prevent="lightbox()" href="#">
+                            <img class="img rounded"
+                                 :src="getImageUrl(currentImage.filename, 'm')"
+                                 :alt="currentImage.title">
+                        </a>
 
+                        <div v-if="currentUser" class="gallery-actions">
+                            <b-button v-if="(currentUser.id == material.createdByUserId) && (currentImage.id !== material.thumbnailId)"
+                                      @click.stop.prevent="setThumbnail()"
+                                      v-b-tooltip.hover
+                                      title="Set as recipe thumbnail"
+                                      class="btn btn-info btn-icon btn-round"
+                                      type="button">
+                                <i class="fa fa-thumb-tack"></i>
+                            </b-button>
+                            <b-button v-else-if="(currentUser.id == material.createdByUserId) && (currentImage.id === material.thumbnailId)"
+                                      class="btn btn-default btn-icon btn-round"
+                                      disabled
+                                      type="button">
+                                <i class="fa fa-thumb-tack"></i>
+                            </b-button>
+
+                            <b-button v-if="(currentUser.id == currentImage.createdByUserId)"
+                                      @click.stop.prevent="imageUpdate()"
+                                      v-b-tooltip.hover
+                                      title="Edit Image"
+                                      class="btn btn-info btn-icon btn-round"
+                                      type="button">
+                                <i class="fa fa-edit"></i>
+                            </b-button>
+                            <b-button v-if="(currentUser.id == currentImage.createdByUserId)"
+                                      @click.stop.prevent="confirmDelete()"
+                                      v-b-tooltip.hover
+                                      title="Delete Image"
+                                      class="btn btn-danger btn-icon btn-round"
+                                      type="button">
+                                <i class="fa fa-times"></i>
+                            </b-button>
+                        </div>
+                    </div>
                     <!--
                     <div class="btn-previous-image" v-if="imageList.length > 1">
                         <b-button
@@ -27,39 +61,7 @@
                         </b-button>
                     </div>
                     -->
-                    <div v-if="currentUser" class="card-block gallery-actions">
-                        <b-button v-if="(currentUser.id == material.createdByUserId) && (currentImage.id !== material.thumbnailId)"
-                                  @click.stop.prevent="setThumbnail()"
-                                  v-b-tooltip.hover
-                                  title="Set as recipe thumbnail"
-                                  class="btn btn-primary btn-icon btn-round"
-                                  type="button">
-                            <i class="fa fa-thumb-tack"></i>
-                        </b-button>
-                        <b-button v-else-if="(currentUser.id == material.createdByUserId) && (currentImage.id === material.thumbnailId)"
-                                  class="btn btn-primary btn-icon btn-round"
-                                  disabled
-                                  type="button">
-                            <i class="fa fa-thumb-tack"></i>
-                        </b-button>
 
-                        <b-button v-if="(currentUser.id == currentImage.createdByUserId)"
-                                  @click.stop.prevent="imageUpdate()"
-                                  v-b-tooltip.hover
-                                  title="Edit Image"
-                                  class="btn btn-primary btn-icon btn-round"
-                                  type="button">
-                            <i class="fa fa-edit"></i>
-                        </b-button>
-                        <b-button v-if="(currentUser.id == currentImage.createdByUserId)"
-                                  @click.stop.prevent="confirmDelete()"
-                                  v-b-tooltip.hover
-                                  title="Delete Image"
-                                  class="btn btn-danger btn-icon btn-round"
-                                  type="button">
-                            <i class="fa fa-times"></i>
-                        </b-button>
-                    </div>
                     <div class="gallery-swatches">
                         <a v-if="currentImage.dominantHexColor"
                            role="button" class="btn"
@@ -73,6 +75,18 @@
                         </a>
                     </div>
 
+                    <ul v-if="currentImage.ortonConeId || currentImage.atmosphereId"
+                        class="list-group list-group-flush list-group-cone">
+                        <li class="list-group-item">
+                            <span v-if="currentImage.ortonConeId"
+                                  v-html="'&#9651;' + constants.ORTON_CONES_LOOKUP[currentImage.ortonConeId]">
+                            </span>
+                            <span v-if="currentImage.atmosphereId">
+                                {{ constants.ATMOSPHERE_LOOKUP[currentImage.atmosphereId] }}
+                            </span>
+                        </li>
+                    </ul>
+
                     <div v-if="currentImage.title || currentImage.description"
                             class="card-body">
                         <h6 class="card-title" v-if="currentImage.title">
@@ -85,7 +99,6 @@
                 </div>
             </div>
         </div>
-
         <div v-if="currentImage && imageList.length > 1" class="row">
             <div class="col-md-4 col-sm-6 image-gallery-thumb" v-for="image in imageList">
                 <a @click.stop.prevent="selectImage(image)"
@@ -97,7 +110,6 @@
                 </a>
             </div>
         </div>
-
         <div v-if="$auth.check()" class="row">
             <div class="col-sm-12">
                 <button type="button" class="btn btn-info btn-block btn-sm"  v-on:click="imageUpload()">
@@ -107,36 +119,24 @@
         </div>
 
         <!-- Add Image Modal -->
-        <b-modal ref="addImageModal" id="addImageModal" title="Add Photo">
+        <b-modal ref="addImageModal" hide-footer id="addImageModal" title="Add Photo">
             <upload-material-image-form
                     :material="material"
                     v-on:imageuploadcancel="imageUploadCancel"
                     v-on:imageuploaded="imageUploaded">
             </upload-material-image-form>
-            <div slot="modal-footer" class="w-100">
-            </div>
         </b-modal>
 
+
         <!-- Edit Image Modal -->
-        <div v-if="currentImage" class="modal fade" id="updateImageModal" tabindex="-1" role="dialog" aria-labelledby="update image" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Update Image</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <edit-material-image-form
-                                :image="currentImage"
-                                v-on:imageupdatecancel="imageUpdateCancel"
-                                v-on:imageupdated="imageUpdated">
-                        </edit-material-image-form>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <b-modal ref="updateImageModal" hide-footer id="updateImageModal" title="Update Photo">
+            <edit-material-image-form
+                    :image="currentImage"
+                    :imageUrl="getImageUrl(currentImage.filename, 'm')"
+                    v-on:imageupdatecancel="imageUpdateCancel"
+                    v-on:imageupdated="imageUpdated">
+            </edit-material-image-form>
+        </b-modal>
 
         <!-- Lightbox Modal -->
         <b-modal v-if="currentImage" ref="lightboxModal"
@@ -165,8 +165,6 @@
                  ok-title="Delete Forever">
             <p>Once deleted, you will not be able to retrieve this image!</p>
         </b-modal>
-
-
     </div>
 
 </template>
@@ -174,13 +172,15 @@
 
   import Vue from 'vue'
   import UploadMaterialImageForm from './UploadMaterialImageForm.vue'
+  import EditMaterialImageForm from './EditMaterialImageForm.vue'
+  import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
 
   export default {
 
     name: 'MaterialImageGallery',
-
     components: {
-      UploadMaterialImageForm
+      UploadMaterialImageForm,
+      EditMaterialImageForm
     },
     props: {
       material: {
@@ -191,17 +191,10 @@
     data() {
       return {
         selectedImage: null,
-        dropzoneOptions: {
-          url: 'https://httpbin.org/post',
-          thumbnailWidth: 150,
-          maxFilesize: 0.5,
-          headers: { "My-Awesome-Header": "header value" },
-          dictDefaultMessage: "<i class='fa fa-cloud-upload'></i> Upload Photo"
-        },
-        photoForm: {
-          title: null
-        }
-      };
+        constants: new GlazyConstants(),
+        apiError: null,
+        serverError: null
+      }
     },
 
     computed: {
@@ -222,7 +215,6 @@
       },
 
       imageList: function () {
-
         if (this.isLoaded) {
           if (this.material.hasOwnProperty('images')) {
             return this.material.images;
@@ -266,7 +258,7 @@
       },
 
       imageUploadCancel: function () {
-        $('#addImageModal').modal('hide');
+        this.$refs.addImageModal.hide();
       },
 
       imageUploaded: function () {
@@ -275,15 +267,15 @@
       },
 
       imageUpdate: function () {
-        $('#updateImageModal').modal('show');
+        this.$refs.updateImageModal.show();
       },
 
       imageUpdateCancel: function () {
-        $('#updateImageModal').modal('hide');
+        this.$refs.updateImageModal.hide();
       },
 
       imageUpdated: function () {
-        $('#updateImageModal').modal('hide');
+        this.$refs.updateImageModal.hide();
         this.$emit('imageupdated');
       },
 
@@ -296,7 +288,7 @@
       getImageUrl: function (filename, size) {
         var bin = this.getImageBin(this.material.id);
 
-        return APP_URL + '/storage/uploads/recipes/' + bin + '/' + size + '_' + filename;
+        return GLAZY_APP_URL + '/storage/uploads/recipes/' + bin + '/' + size + '_' + filename;
       },
 
       selectImage: function (image) {
@@ -304,51 +296,50 @@
       },
 
       lightbox: function () {
-        this.$refs.lightboxModal.show();
+        this.$refs.lightboxModal.show()
       },
 
       confirmDelete: function () {
-        $('#deleteImageModal').modal('show');
+        this.$refs.deleteConfirmModal.show()
       },
-        /*
-         cancelDelete: function() {
-         $('#deleteImageModal').modal('hide');
-         },
-         */
 
       deleteImage: function() {
         if (!this.currentImage) {
           return;
         }
-        $('#deleteImageModal').modal('hide');
-//                $('#deleteMaterialModal').modal('hide');
-        axios.delete('/api/v1/materialimages/' + this.currentImage.id)
+        this.$refs.deleteConfirmModal.hide();
+
+        Vue.axios.delete(Vue.axios.defaults.baseURL + '/materialimages/' + this.currentImage.id)
           .then((response) => {
-          this.material = null;
-        this.selectedImage = null;
-        this.$emit('imageupdated');
-//                        $('#materialDeletedModal').modal('show');
-//                        window.setTimeout(function () {
-//                            this.isDeleted = true;
-//                            window.location = '/search';
-//                        }, 2000);
-      })
+          if (response.data.error) {
+            this.apiError = response.data.error
+            console.log(this.apiError)
+          } else {
+            this.$emit('imageupdated');
+            this.selectedImage = null;
+          }
+        })
         .catch(response => {
-          // Error Handling
-        });
+          this.serverError = response;
+        })
       },
 
       setThumbnail: function() {
         if (!this.currentImage) {
           return;
         }
-        axios.get('/api/v1/recipes/' + this.material.id + '/image/' + this.currentImage.id)
+        Vue.axios.get(Vue.axios.defaults.baseURL + '/recipes/' + this.material.id + '/image/' + this.currentImage.id)
           .then((response) => {
-          this.$emit('imageupdated');
-      })
+          if (response.data.error) {
+            this.apiError = response.data.error
+            console.log(this.apiError)
+          } else {
+            this.$emit('imageupdated');
+          }
+        })
         .catch(response => {
-          // Error Handling
-        });
+          this.serverError = response;
+        })
       },
 
       previousImage: function () {
@@ -474,21 +465,32 @@
     .image-gallery-card {
         margin-bottom: 10px;
     }
+
+    .image-gallery-card .card-image {
+    }
+
+    .image-gallery-card .card-image .gallery-actions {
+        position: absolute;
+        bottom: 0px;
+        right: 10px;
+        padding: 0;
+        margin: 0;
+    }
     .image-gallery-card .card-body {
         padding: 10px;
     }
+    .image-gallery-card .card-body .card-title {
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
 
     .image-gallery-thumb {
-        padding: 0 10px;
+        padding: 10px 10px;
     }
 
     /**/
 
     .glazy-gallery-thumbs {
-    }
-
-    .gallery-actions {
-        margin-top: -4.5rem;
     }
 
     /*
@@ -537,10 +539,14 @@
         font-size: 3rem;
     }
 
-    .upload-thumbnail {
-    //  display: inline;
-        width:100%;
-        height:100%;
+
+
+    .list-group-cone li {
+        background-color: #efefef;
+        color: #666666;
+        padding: 5px 10px;
+        border-top: none;
+        border-bottom: none;
     }
 
 </style>

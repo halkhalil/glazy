@@ -14,8 +14,6 @@ class MaterialImageTransformer extends Fractal\TransformerAbstract
 {
     use JsonDateTransformer;
 
-    const ORTON_CONE_NAME = 'ortonConeName';
-    const ATMOSPHERE_NAME = 'atmosphereName';
     const DOMINANT_HEX_COLOR = 'dominantHexColor';
     const SECONDARY_HEX_COLOR = 'secondaryHexColor';
 
@@ -33,7 +31,6 @@ class MaterialImageTransformer extends Fractal\TransformerAbstract
         MaterialImage::DB_SECONDARY_RGB_G   => 'secondaryRgbG',
         MaterialImage::DB_SECONDARY_RGB_B   => 'secondaryRgbB',
         MaterialImage::DB_FILENAME          => 'filename',
-        MaterialImage::DB_URL               => 'url',
         MaterialImage::DB_IS_PRIVATE        => 'isPrivate',
         MaterialImage::DB_CREATED_BY_USER_ID => 'createdByUserId',
         MaterialImage::DB_CREATED_AT        => 'createdAt',
@@ -42,9 +39,6 @@ class MaterialImageTransformer extends Fractal\TransformerAbstract
 
     public function transform(MaterialImage $materialImage)
     {
-        $ortonCones = new OrtonCone();
-        $atmosphere = new Atmosphere();
-
         $image_data = [];
 
         if ($materialImage)
@@ -58,12 +52,10 @@ class MaterialImageTransformer extends Fractal\TransformerAbstract
 
             if ($materialImage[MaterialImage::DB_ORTON_CONE_ID]) {
                 $image_data[self::JSON_NAMES[MaterialImage::DB_ORTON_CONE_ID]] = $materialImage[MaterialImage::DB_ORTON_CONE_ID];
-                $image_data[self::JSON_NAMES[self::ORTON_CONE_NAME]] = $ortonCones->getValue($materialImage[MaterialImage::DB_ORTON_CONE_ID]);
             }
 
             if ($materialImage[MaterialImage::DB_ATMOSPHERE_ID]) {
                 $image_data[self::JSON_NAMES[MaterialImage::DB_ATMOSPHERE_ID]] = $materialImage[MaterialImage::DB_ATMOSPHERE_ID];
-                $image_data[self::JSON_NAMES[self::ATMOSPHERE_NAME]] = $atmosphere->getValue($materialImage[MaterialImage::DB_ATMOSPHERE_ID]);
             }
 
             if ($materialImage[MaterialImage::DB_DOMINANT_RGB_R]
@@ -98,10 +90,6 @@ class MaterialImageTransformer extends Fractal\TransformerAbstract
                 $image_data[self::JSON_NAMES[MaterialImage::DB_FILENAME]] = $materialImage[MaterialImage::DB_FILENAME];
             }
 
-            if ($materialImage['url']) {
-                $image_data[self::JSON_NAMES[MaterialImage::DB_URL]] = $materialImage[MaterialImage::DB_URL];
-            }
-
             $image_data[self::JSON_NAMES[MaterialImage::DB_IS_PRIVATE]] = (boolean) $materialImage[MaterialImage::DB_IS_PRIVATE];
             $image_data[self::JSON_NAMES[MaterialImage::DB_CREATED_BY_USER_ID]] = $materialImage[MaterialImage::DB_CREATED_BY_USER_ID];
             $image_data[self::JSON_NAMES[MaterialImage::DB_CREATED_AT]] = $this->jsonDate($materialImage[MaterialImage::DB_CREATED_AT]);
@@ -110,4 +98,5 @@ class MaterialImageTransformer extends Fractal\TransformerAbstract
 
         return $image_data;
     }
+
 }

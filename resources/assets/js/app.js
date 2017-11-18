@@ -1,3 +1,12 @@
+/**
+ * INITIALIZE ALL GLAZY-RELATED CONSTANTS
+ */
+// import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
+// import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
+
+window.GLAZY_APP_URL = 'http://homestead.app'
+// window.GLAZY_MATERIAL_TYPES = new MaterialTypes()
+// window.GLAZY_CONSTANTS = new GlazyConstants()
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -35,8 +44,7 @@ require('vue-multiselect/dist/vue-multiselect.min.css')
 
 Vue.use(VueAxios, axios)
 
-window.APP_URL = 'http://homestead.app'
-Vue.axios.defaults.baseURL = APP_URL + '/api'
+Vue.axios.defaults.baseURL = GLAZY_APP_URL + '/api'
 
 Vue.router=router
 
@@ -45,13 +53,13 @@ Vue.use(VueAuth, {
   http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
   router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
   rolesVar: 'role',
-  facebookData: {url: APP_URL + '/api/auth/login/facebook/callback', method: 'POST', redirect: '/'},
+  facebookData: {url: GLAZY_APP_URL + '/api/auth/login/facebook/callback', method: 'POST', redirect: '/'},
   facebookOauth2Data: {
     clientId: '186121775282852',
     redirect: function () { return this.options.getUrl() + '/login/facebook'; },
     scope: 'public_profile email'
   },
-  googleData: {url: APP_URL + '/api/auth/login/google/callback', method: 'POST', redirect: '/'},
+  googleData: {url: GLAZY_APP_URL + '/api/auth/login/google/callback', method: 'POST', redirect: '/'},
   googleOauth2Data: {
     clientId: '927001342736-522sp5s40ecildcdmeq08njcb250o7t0.apps.googleusercontent.com',
     redirect: function () { return this.options.getUrl() + '/login/google'; },

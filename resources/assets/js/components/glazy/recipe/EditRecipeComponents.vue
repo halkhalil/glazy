@@ -705,6 +705,7 @@
 <style>
 
   .edit-recipe-title-row {
+    margin-bottom: 10px;
   }
 
   .edit-recipe-title {
@@ -720,7 +721,6 @@
   }
 
   .calc-row {
-    margin-top: 10px;
   }
 
   .chart-col {

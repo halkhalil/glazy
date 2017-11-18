@@ -139,10 +139,18 @@ class MaterialImageRepository extends Repository
 
         $materialImage = $this->getModel();
 
-        $materialImage->fill($data);
         $materialImage->material_id = $material->id;
         $materialImage->created_by_user_id = $current_user_id;
         $materialImage->updated_by_user_id = $current_user_id;
+
+        $materialImage->title = $data['title'];
+        $materialImage->description = $data['description'];
+        if ($data['ortonConeId']) {
+            $materialImage->orton_cone_id = $data['ortonConeId'];
+        }
+        if ($data['atmosphereId']) {
+            $materialImage->atmosphere_id = $data['atmosphereId'];
+        }
 
         if (!$data['imageFile']) {
             throw new Exception('Upload file not found');
@@ -189,8 +197,18 @@ class MaterialImageRepository extends Repository
 
         $current_user_id = Auth::guard('api')->user()->id;
 
-        $materialImage->fill($data);
         $materialImage->updated_by_user_id = $current_user_id;
+
+        $materialImage->title = $data['title'];
+        $materialImage->description = $data['description'];
+        $materialImage->orton_cone_id = null;
+        $materialImage->atmosphere_id = null;
+        if ($data['ortonConeId']) {
+            $materialImage->orton_cone_id = $data['ortonConeId'];
+        }
+        if ($data['atmosphereId']) {
+            $materialImage->atmosphere_id = $data['atmosphereId'];
+        }
 
         $materialImage->save();
 

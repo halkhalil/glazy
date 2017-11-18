@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-3">
+  <div class="calculator-component">
     <edit-recipe-components></edit-recipe-components>
   </div>
 </template>
@@ -17,3 +17,12 @@
     }
   }
 </script>
+
+<style>
+
+  .calculator-component {
+    padding-top: 15px;
+  }
+
+
+</style>

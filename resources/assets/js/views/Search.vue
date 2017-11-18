@@ -97,7 +97,7 @@
       </div>
     </nav>
 
-    <main v-bind:class="mainClass" role="main" class="ml-sm-auto pt-3 search-results">
+    <main v-bind:class="mainClass" role="main" class="ml-sm-auto search-results">
 
 
       <b-alert v-if="apiError" show variant="danger">
@@ -727,6 +727,7 @@
 
   .search-results {
     background-color: #dedede;
+
     padding-bottom: 64px;
   }
 

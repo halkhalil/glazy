@@ -2,8 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Access\User\User;
-use App\Models\Material;
+use App\User;
 use App\Models\MaterialImage;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -42,8 +41,7 @@ class MaterialImagePolicy
      */
     public function update(User $user, MaterialImage $materialImage)
     {
-        return true;
-        //return $user->id === $materialImage->created_by_user_id;
+        return $user->id === $materialImage->created_by_user_id;
     }
 
     /**

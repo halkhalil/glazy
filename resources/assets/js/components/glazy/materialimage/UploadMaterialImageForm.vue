@@ -1,6 +1,6 @@
 <template>
 
-<form class="form-horizontal" role="form" v-on:submit.prevent v-if="isLoaded">
+<form role="form" v-on:submit.prevent v-if="isLoaded">
 
     <div class="load-container load7" v-if="isProcessing">
         <div class="loader">Uploading...</div>
@@ -27,68 +27,83 @@
                 </span>
             </div>
         </div>
-        <div class="col-sm-12">
-            <b-form-group
-                    :class="{'has-danger': errors.title}"
-                    id="photoTitle"
-            >
-                <b-form-input
-                        id="photoTitleInput"
-                        v-model.trim="form.title"
-                        placeholder="Photo Caption"
-                        type="text"
-                ></b-form-input>
-            </b-form-group>
+        <b-form-group
+                class="col-sm-12"
+                :class="{'has-danger': errors.title}"
+                id="photoTitle">
+            <b-form-input
+                    id="photoTitleInput"
+                    v-model.trim="form.title"
+                    placeholder="Photo Caption"
+                    type="text"
+            ></b-form-input>
+        </b-form-group>
+        <b-form-group
+                class="col-sm-12"
+                :class="{'has-danger': errors.description}"
+                id="photoDescription">
+            <b-form-textarea id="photoDescriptionTextarea"
+                             v-model="form.description"
+                             placeholder="Optional description. Firing conditions, recipe changes, etc."
+                             :rows="3"
+                             :max-rows="6">
+            </b-form-textarea>
+        </b-form-group>
+        <b-form-group class="col-md-6 col-sm-4" id="imageCone">
+            <b-form-select
+                    id="ortonConeId"
+                    v-model="form.ortonConeId"
+                    :options="constants.ORTON_CONES_SELECT_TEXT_SIMPLE">
+                <template slot="first">
+                    <option :value="0">Temperature</option>
+                </template>
+            </b-form-select>
+        </b-form-group>
 
-            <b-form-group
-                    :class="{'has-danger': errors.description}"
-                    id="photoDescription"
-            >
-                <b-form-textarea id="photoDescriptionTextarea"
-                                 v-model="form.description"
-                                 placeholder="Optional description. Firing conditions, recipe changes, etc."
-                                 :rows="3"
-                                 :max-rows="6">
-                </b-form-textarea>
-            </b-form-group>
+        <b-form-group class="col-md-6 col-sm-8" id="imageAtmosphere">
+            <b-form-select
+                    id="atmosphereId"
+                    v-model="form.atmosphereId"
+                    :options="constants.ATMOSPHERE_SELECT">
+                <template slot="first">
+                    <option :value="0">Atmosphere</option>
+                </template>
+            </b-form-select>
+        </b-form-group>
+        <div class="form-group col-sm-12 text-right">
+            <button class="btn btn-cancel btn-sm"
+                    @click.prevent="cancelEdit">
+                Cancel
+            </button>
+            <button v-if="files"
+                    class="btn btn-info btn-sm"
+                    @click.prevent="upload">
+                <i class="fa fa-cloud-upload"></i> Upload Image
+            </button>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12 text-right pt-5">
-            <div class="form-group">
-                <button class="btn btn-cancel btn-sm"
-                        @click.prevent="cancelEdit">
-                    Cancel
-                </button>
-                <button v-if="files"
-                        class="btn btn-info btn-sm"
-                        @click.prevent="upload">
-                    <i class="fa fa-cloud-upload"></i> Upload Image
-                </button>
-            </div>
-        </div>
-    </div>
-
 </form>
 
 </template>
 
 <script>
 
-export default {
+import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
 
+export default {
   name: 'UploadMaterialImageForm',
   props: {
     material: {
       type: Object,
       default: null
-    },
+    }
   },
   data() {
     return {
       errors: {},
       hasErrors: false,
       isProcessing: false,
+      constants: new GlazyConstants(),
       files: null,
       image: '',
       maxUploadSizeMB: 6,
@@ -109,7 +124,9 @@ export default {
         form = {
           materialId: this.material.id,
           title: '',
-          description: ''
+          description: '',
+          ortonConeId: 0,
+          atmosphereId: 0
         }
       }
       return form;
@@ -128,6 +145,8 @@ export default {
       formData.append('materialId', this.form.materialId);
       formData.append('title', this.form.title);
       formData.append('description', this.form.description);
+      formData.append('ortonConeId', this.form.ortonConeId);
+      formData.append('atmosphereId', this.form.atmosphereId);
       formData.append('imageFile', this.files[0]);
 
       Vue.axios.post(Vue.axios.defaults.baseURL + '/materialimages', formData)
@@ -181,10 +200,12 @@ export default {
     },
 
     resetForm: function () {
-      this.image = '';
-      this.files = null;
-      this.form.title = null;
-      this.form.description = null;
+      this.image = ''
+      this.files = null
+      this.form.title = ''
+      this.form.description = ''
+      this.form.ortonConeId = 0
+      this.form.atmosphereId = 0
     },
 
     removeImage: function (e) {

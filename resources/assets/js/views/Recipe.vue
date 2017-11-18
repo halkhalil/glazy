@@ -139,7 +139,6 @@
         <div class="col-md-4">
 
           <material-image-gallery
-                  :current_user="current_user"
                   :material="recipe"
                   v-on:imageupdated="imageUpdated"></material-image-gallery>
 

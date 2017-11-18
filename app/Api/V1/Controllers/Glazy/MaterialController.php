@@ -81,7 +81,9 @@ class MaterialController extends ApiBaseController
             return $this->respondNotFound('Material or Image does not exist');
         }
 
-        $this->authorize('update', $material);
+        if (!Auth::guard()->user()->can('update', $material)) {
+            return $this->respondUnauthorized('This recipe does not belong to you.');
+        }
 
         $material->thumbnail_id = $image->id;
         $material->save();

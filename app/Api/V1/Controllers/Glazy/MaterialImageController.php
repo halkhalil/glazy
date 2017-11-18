@@ -161,14 +161,18 @@ class MaterialImageController extends ApiBaseController
     {
         $data = $request->all();
 
-        $image = $this->materialImageRepository->get($imageId);
+        $materialImage = $this->materialImageRepository->get($imageId);
 
-        if (! $image)
+        if (! $materialImage)
         {
             return $this->respondNotFound('Image does not exist');
         }
 
-        $image = $this->materialImageRepository->update($image, $data);
+        if (!Auth::guard()->user()->can('update', $materialImage)) {
+            return $this->respondUnauthorized('This image does not belong to you.');
+        }
+
+        $this->materialImageRepository->update($materialImage, $data);
 
         return $this->respondUpdated('Material Image successfully updated');
     }
@@ -182,16 +186,13 @@ class MaterialImageController extends ApiBaseController
             return $this->respondNotFound('Recipe does not exist');
         }
 
-        $this->authorize('delete', $materialImage);
+        if (!Auth::guard()->user()->can('delete', $materialImage)) {
+            return $this->respondUnauthorized('This image does not belong to you.');
+        }
 
-        $result = $this->materialImageRepository->destroy($materialImage);
+        $this->materialImageRepository->destroy($materialImage);
 
         return $this->respondDeleted('Image deleted');
-    }
-
-
-    public function getAll()
-    {
     }
 
 }
