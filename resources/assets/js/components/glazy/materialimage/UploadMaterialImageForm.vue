@@ -56,17 +56,15 @@
     <div class="row">
         <div class="col-sm-12 text-right pt-5">
             <div class="form-group">
+                <button class="btn btn-cancel btn-sm"
+                        @click.prevent="cancelEdit">
+                    Cancel
+                </button>
                 <button v-if="files"
                         class="btn btn-info btn-sm"
                         @click.prevent="upload">
                     <i class="fa fa-cloud-upload"></i> Upload Image
                 </button>
-
-                <button class="btn btn-cancel btn-sm"
-                        @click.prevent="cancelEdit">
-                    Cancel
-                </button>
-
             </div>
         </div>
     </div>

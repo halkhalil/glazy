@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="recipe-component">
     <b-alert v-if="apiError" show variant="danger">
       API Error: {{ apiError.message }}
     </b-alert>
@@ -46,10 +46,10 @@
                     <h2 class="card-title">
                       <i v-if="recipe.isPrivate"
                          v-b-tooltip.hover title="Archived"
-                         class="fa fa-lock"></i>
+                         class="fa fa-eye-slash"></i>
                       <i v-if="recipe.isArchived"
                          v-b-tooltip.hover title="Archived"
-                         class="fa fa-archive"></i>
+                         class="fa fa-lock"></i>
                       {{ recipe.name }}
                     </h2>
                   </div>
@@ -104,8 +104,8 @@
                       <b-button v-on:click="copyRecipe()"><i class="fa fa-copy"></i> Copy</b-button>
                     </b-button-group>
                     <b-button-group class="recipe-action-group" v-if="canEdit">
-                      <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-unlock"></i> Publish</b-button>
-                      <b-button class="btn-info" v-if="!(recipe.isPrivate)" v-on:click="unpublishRecipe()"><i class="fa fa-lock"></i> Unpublish</b-button>
+                      <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-eye"></i> Publish</b-button>
+                      <b-button class="btn-info" v-if="!(recipe.isPrivate)" v-on:click="unpublishRecipe()"><i class="fa fa-eye-slash"></i> Unpublish</b-button>
                       <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
                       <b-button class="btn-info" v-on:click="editComponents()"><i class="fa fa-list"></i> Edit Recipe</b-button>
                       <b-button class="btn-danger" v-if="!recipe.isArchived" v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
@@ -611,11 +611,14 @@
   }
 </script>
 
+
 <style>
 
-  .recipe-info-row {
-    margin-top: 1rem;
+  .recipe-component {
     padding-top: 15px;
+  }
+
+  .recipe-info-row {
   }
 
   .recipe-info-card .card-description {

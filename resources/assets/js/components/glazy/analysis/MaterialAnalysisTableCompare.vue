@@ -1,12 +1,13 @@
 <template>
     <table v-if="isLoaded" class="table table-sm analysis-table" v-bind:class="tableClass">
         <thead>
-        <tr class="oxide-types" v-if="showHeadings">
+        <tr class="oxide-type-headings" v-if="showHeadings">
             <th v-if="this.originalAnalysis && this.newAnalysis"></th>
             <th :colspan="presentROR2OOXIDES.length">Fluxes</th>
             <th :colspan="presentR2O3OXIDES.length">Stabilizers</th>
             <th :colspan="presentRO2OXIDES.length">Glass-formers</th>
             <th :colspan="presentOTHEROXIDES.length">Other</th>
+            <th colspan="2">Ratios</th>
         </tr>
         <tr>
             <th v-if="this.originalAnalysis && this.newAnalysis"></th>
@@ -21,6 +22,12 @@
             </th>
             <th v-for="i in presentOTHEROXIDES.length"
                 v-html="OXIDE_NAME_DISPLAY[presentOTHEROXIDES[i-1]]">
+            </th>
+            <th>
+                R<sub>2</sub>O:RO
+            </th>
+            <th>
+                Si:Al
             </th>
         </tr>
         </thead>
@@ -47,6 +54,14 @@
                     {{ Number(originalAnalysis.getOxide(presentOTHEROXIDES[i-1])).toFixed(precision) }}
                 </span>
             </td>
+            <td>
+                {{ Number(originalAnalysis.getR2OTotal()).toFixed(precision) }}
+                :
+                {{ Number(originalAnalysis.getROTotal()).toFixed(precision) }}
+            </td>
+            <td>
+                {{ Number(originalAnalysis.getSiO2Al2O3Ratio()).toFixed(precision) }}
+            </td>
         </tr>
         <tr class="new-analysis" v-if="this.newAnalysis">
             <th v-if="this.originalAnalysis && this.newAnalysis">New</th>
@@ -70,6 +85,14 @@
                     <strong>{{ Number(newAnalysis.getOxide(presentOTHEROXIDES[i-1])).toFixed(precision) }}</strong>
                 </span>
             </td>
+            <td>
+                {{ Number(newAnalysis.getR2OTotal()).toFixed(precision) }}
+                :
+                {{ Number(newAnalysis.getROTotal()).toFixed(precision) }}
+            </td>
+            <td>
+                {{ Number(newAnalysis.getSiO2Al2O3Ratio()).toFixed(precision) }}
+            </td>
         </tr>
         <tr class="diff-analysis" v-if="this.originalAnalysis && this.newAnalysis">
             <th>Diff</th>
@@ -91,6 +114,18 @@
             <td v-for="i in presentOTHEROXIDES.length">
                 <span v-if="Math.abs(newAnalysis.getOxide(presentOTHEROXIDES[i-1]) - originalAnalysis.getOxide(presentOTHEROXIDES[i-1])) > 0.004">
                     {{ Number(newAnalysis.getOxide(presentOTHEROXIDES[i-1]) - originalAnalysis.getOxide(presentOTHEROXIDES[i-1])).toFixed(precision) }}
+                </span>
+            </td>
+            <td>
+                <span v-if="Math.abs(newAnalysis.getR2OTotal() - originalAnalysis.getR2OTotal()) > 0.004">
+                {{ Number(newAnalysis.getR2OTotal() - originalAnalysis.getR2OTotal()).toFixed(precision) }}
+                :
+                {{ Number(newAnalysis.getROTotal() - originalAnalysis.getROTotal()).toFixed(precision) }}
+                </span>
+            </td>
+            <td>
+                <span v-if="Math.abs(newAnalysis.getSiO2Al2O3Ratio() - originalAnalysis.getSiO2Al2O3Ratio()) > 0.004">
+                {{ Number(newAnalysis.getSiO2Al2O3Ratio() - originalAnalysis.getSiO2Al2O3Ratio()).toFixed(precision) }}
                 </span>
             </td>
         </tr>
@@ -236,6 +271,10 @@
 
     .analysis-table tr th {
         opacity: 0.5;
+    }
+
+    .analysis-table .oxide-type-headings {
+        font-size: 10px;
     }
 
     .diff-analysis {

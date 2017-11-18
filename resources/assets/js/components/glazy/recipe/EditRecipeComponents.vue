@@ -30,7 +30,7 @@
                   <MaterialAnalysisTableCompare
                           :originalMaterial="originalMaterial"
                           :newMaterial="newMaterial"
-                          :showHeadings="false"
+                          :showHeadings="true"
                   >
                   </MaterialAnalysisTableCompare>
                 </div>
@@ -701,10 +701,10 @@
   }
 </script>
 
+
 <style>
 
   .edit-recipe-title-row {
-    margin-top: 1rem;
   }
 
   .edit-recipe-title {
@@ -717,11 +717,10 @@
   }
 
   .calc-container {
-//    background-color: #efefef;
   }
 
   .calc-row {
-    margin-top: 1rem;
+    margin-top: 10px;
   }
 
   .chart-col {

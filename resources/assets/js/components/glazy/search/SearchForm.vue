@@ -11,7 +11,7 @@
                         text-field="name"
                         @input="search">
                     <template slot="first">
-                        <option :value="0">All Collections</option>
+                        <option :value="0">Your Recipes</option>
                     </template>
                 </b-form-select>
             </div>
@@ -50,7 +50,7 @@
                 </b-form-select>
             </div>
         </div>
-        <div v-if="isPrimitiveSearch" class="form-row">
+        <div v-if="!isPrimitiveSearch" class="form-row">
             <div v-bind:class="sizeMedium" class="form-group">
                 <b-form-select
                         size="sm"
@@ -78,7 +78,7 @@
                 </b-form-select>
             </div>
         </div>
-        <div v-if="isPrimitiveSearch && isAdvanced" class="form-row">
+        <div v-if="!isPrimitiveSearch && isAdvanced" class="form-row">
             <div v-bind:class="sizeMedium" class="form-group">
                 <b-form-select
                         size="sm"
@@ -129,7 +129,7 @@
             </div>
         </div>
         <div class="form-row">
-            <div v-if="isPrimitiveSearch"
+            <div v-if="!isPrimitiveSearch"
                  v-bind:class="sizeMedium"
                  class="form-group">
                 <button @click.prevent="toggleColorPicker"

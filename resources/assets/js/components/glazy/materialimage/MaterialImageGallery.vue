@@ -27,26 +27,38 @@
                         </b-button>
                     </div>
                     -->
-                    <div v-if="current_user" class="card-block gallery-actions">
-                        <a v-if="(current_user.id == material.createdByUserId) && (currentImage.id != material.thumbnail_id)"
-                           @click.stop.prevent="setThumbnail()"
-                            href="#" role="button" class="btn btn-primary btn-float btn-sm">
+                    <div v-if="currentUser" class="card-block gallery-actions">
+                        <b-button v-if="(currentUser.id == material.createdByUserId) && (currentImage.id !== material.thumbnailId)"
+                                  @click.stop.prevent="setThumbnail()"
+                                  v-b-tooltip.hover
+                                  title="Set as recipe thumbnail"
+                                  class="btn btn-primary btn-icon btn-round"
+                                  type="button">
                             <i class="fa fa-thumb-tack"></i>
-                        </a>
-                        <button v-else-if="(current_user.id == material.createdByUserId) && (currentImage.id == material.thumbnail_id)"
-                           class="btn btn-outline-default btn-float btn-sm" disabled>
+                        </b-button>
+                        <b-button v-else-if="(currentUser.id == material.createdByUserId) && (currentImage.id === material.thumbnailId)"
+                                  class="btn btn-primary btn-icon btn-round"
+                                  disabled
+                                  type="button">
                             <i class="fa fa-thumb-tack"></i>
-                        </button>
-                        <a v-if="(current_user.id == currentImage.createdByUserId)"
-                                @click.stop.prevent="imageUpdate()"
-                                href="#" role="button" class="btn btn-primary btn-float btn-sm">
+                        </b-button>
+
+                        <b-button v-if="(currentUser.id == currentImage.createdByUserId)"
+                                  @click.stop.prevent="imageUpdate()"
+                                  v-b-tooltip.hover
+                                  title="Edit Image"
+                                  class="btn btn-primary btn-icon btn-round"
+                                  type="button">
                             <i class="fa fa-edit"></i>
-                        </a>
-                        <a v-if="(current_user.id == currentImage.createdByUserId)"
-                           @click.stop.prevent="confirmDelete()"
-                            href="#" role="button" class="btn btn-danger btn-float btn-sm">
+                        </b-button>
+                        <b-button v-if="(currentUser.id == currentImage.createdByUserId)"
+                                  @click.stop.prevent="confirmDelete()"
+                                  v-b-tooltip.hover
+                                  title="Delete Image"
+                                  class="btn btn-danger btn-icon btn-round"
+                                  type="button">
                             <i class="fa fa-times"></i>
-                        </a>
+                        </b-button>
                     </div>
                     <div class="gallery-swatches">
                         <a v-if="currentImage.dominantHexColor"
@@ -74,7 +86,7 @@
             </div>
         </div>
 
-        <div class="row" v-if="imageList.length > 1">
+        <div v-if="currentImage && imageList.length > 1" class="row">
             <div class="col-md-4 col-sm-6 image-gallery-thumb" v-for="image in imageList">
                 <a @click.stop.prevent="selectImage(image)"
                    :class="{ galleryselected: (image.id == currentImage.id) }"
@@ -106,7 +118,7 @@
         </b-modal>
 
         <!-- Edit Image Modal -->
-        <div class="modal fade" id="updateImageModal" tabindex="-1" role="dialog" aria-labelledby="update image" aria-hidden="true">
+        <div v-if="currentImage" class="modal fade" id="updateImageModal" tabindex="-1" role="dialog" aria-labelledby="update image" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -126,33 +138,10 @@
             </div>
         </div>
 
-        <!-- Confirm Delete Modal -->
-        <div class="modal fade" id="deleteImageModal" tabindex="-1" role="dialog" aria-labelledby="delete image" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Are you sure?</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Once deleted, you will not be able to retrieve this image!</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger"
-                                @click.stop.prevent="deleteImage()">Confirm Delete</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Lightbox Modal -->
-        <b-modal ref="lightboxModal"
+        <b-modal v-if="currentImage" ref="lightboxModal"
                  hide-footer
                  hide-header
-                 :title="currentImage.title"
                  size="lg">
             <div class="d-block text-center">
                 <img class="img-fluid"
@@ -167,6 +156,16 @@
                 </p>
             </div>
         </b-modal>
+
+        <!-- Confirm Delete Modal -->
+        <b-modal id="deleteConfirmModal"
+                 ref="deleteConfirmModal"
+                 title="Delete Image?"
+                 v-on:ok="deleteImage"
+                 ok-title="Delete Forever">
+            <p>Once deleted, you will not be able to retrieve this image!</p>
+        </b-modal>
+
 
     </div>
 
@@ -183,9 +182,12 @@
     components: {
       UploadMaterialImageForm
     },
-
-    props: ['current_user', 'material'],
-
+    props: {
+      material: {
+        type: Object,
+        default: null
+      }
+    },
     data() {
       return {
         STORAGE_BASE_URL: 'http://homestead.app',
@@ -210,6 +212,14 @@
           return true;
         }
         return false;
+      },
+
+      currentUser: function () {
+        // Only the creator of a recipe can edit it
+        if (this.$auth.check()) {
+          return this.$auth.user()
+        }
+        return false
       },
 
       imageList: function () {

@@ -259,6 +259,7 @@
                       v-model.trim="newCollectionName"
                       placeholder="Collection Name"></b-form-input>
       </b-form-group>
+
     </b-modal>
 
   </div>

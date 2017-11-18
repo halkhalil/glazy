@@ -31,8 +31,8 @@
       <h6 class="category text-primary">{{ materialTypes.LOOKUP[recipe.materialTypeId] }}</h6>
       <h5 class="card-title">
         <router-link :to="{ name: 'recipes', params: { id: recipe.id }}">
-          <i v-if="recipe.isPrivate" class="fa fa-lock"></i>
-          <i v-if="recipe.isArchived" class="fa fa-archive"></i>
+          <i v-if="recipe.isPrivate" class="fa fa-eye-slash"></i>
+          <i v-if="recipe.isArchived" class="fa fa-lock"></i>
           {{ recipe.name }}
         </router-link>
       </h5>
@@ -50,7 +50,7 @@
       <a @click="collectRecipeRequest(recipe.id)" class="btn btn-icon btn-neutral"><i class="fa fa-bookmark"></i></a>
       <a class="btn btn-icon btn-neutral"
          @click="copyRecipeRequest(recipe.id)"><i class="fa fa-copy"></i></a>
-      <a v-if="canEdit() && !recipe.isArchived"
+      <a v-if="isCanEdit && !recipe.isArchived"
          @click="deleteRecipeRequest(recipe.id)"
          class="btn btn-icon btn-neutral"><i class="fa fa-trash"></i></a>
     </div>
@@ -91,7 +91,14 @@
         }
         return false;
       },
-
+      isCanEdit: function () {
+        // Only the creator of a recipe can edit it
+        if (this.$auth.check() &&
+          this.$auth.user().id === this.recipe.createdByUserId) {
+          return true
+        }
+        return false
+      },
       imageUrl: function() {
         if (this.recipe.thumbnail && this.recipe.thumbnail.filename) {
           var bin = this.getImageBin(this.recipe.id);
@@ -171,15 +178,6 @@
 
       deleteRecipeRequest: function (id) {
         this.$emit('deleteRecipeRequest', id);
-      },
-
-      canEdit: function () {
-        // Only the creator of a recipe can edit it
-        if (this.$auth.check() &&
-          this.$auth.user().id === this.recipe.createdByUserId) {
-          return true
-        }
-        return false
       }
     }
   }
