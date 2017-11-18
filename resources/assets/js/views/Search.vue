@@ -727,7 +727,7 @@
 
   .search-results {
     background-color: #dedede;
-
+    padding-top: 15px;
     padding-bottom: 64px;
   }
 

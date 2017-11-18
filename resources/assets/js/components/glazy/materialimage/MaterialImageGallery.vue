@@ -129,7 +129,7 @@
 
 
         <!-- Edit Image Modal -->
-        <b-modal ref="updateImageModal" hide-footer id="updateImageModal" title="Update Photo">
+        <b-modal v-if="currentImage" ref="updateImageModal" hide-footer id="updateImageModal" title="Update Photo">
             <edit-material-image-form
                     :image="currentImage"
                     :imageUrl="getImageUrl(currentImage.filename, 'm')"

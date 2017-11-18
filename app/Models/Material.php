@@ -118,6 +118,7 @@ class Material extends Model
         return $this->hasMany('App\Models\MaterialMaterial', 'parent_material_id')
             ->with('component_material')
             ->with('component_material.analysis')
+            ->with('component_material.thumbnail')
             ->orderBy('is_additional', 'asc')
             ->orderBy('percentage_amount', 'desc')
             ->orderBy('id', 'asc');

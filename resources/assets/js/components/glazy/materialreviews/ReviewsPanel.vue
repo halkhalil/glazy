@@ -19,20 +19,14 @@
                                          :star-size="24"
                                          :show-rating="false"
                                          :increment="0.01"></star-rating>
-                            <button v-if="currentUserReview && currentUserReview.id == review.id && !editOwnReview"
-                                    @click="clickEditOwnReview"
-                                    class="btn btn-primary">Edit Your Review</button>
                             <p>
                                 {{ review.description }}
                             </p>
-                            <div class="media-footer">
-                                <a href="#pablo" class="btn btn-primary btn-neutral pull-right" rel="tooltip" title="" data-original-title="Reply to Comment">
-                                    <i class="now-ui-icons ui-1_send"></i> Reply
-                                </a>
-
-                                <a href="#pablo" class="btn btn-danger btn-neutral pull-right">
-                                    <i class="now-ui-icons ui-2_favourite-28"></i> 243
-                                </a>
+                            <div v-if="currentUserReview && currentUserReview.id == review.id && !editOwnReview">
+                                <button @click="clickEditOwnReview"
+                                        class="btn btn-info"><i class="fa fa-edit"></i> Edit Review</button>
+                                <button @click="clickDeleteOwnReview"
+                                        class="btn btn-danger"><i class="fa fa-trash"></i> Delete Review</button>
                             </div>
                         </div>
                     </div>
@@ -43,10 +37,10 @@
             <h5>No reviews found</h5>
         </div>
 
-        <form v-if="current_user && (!currentUserReview || editOwnReview)">
+        <form v-if="currentUser && (!currentUserReview || editOwnReview)">
         <div class="row">
             <div class="col-sm-12">
-                <h4 v-if="currentUserReview">Modify your review</h4>
+                <h4 v-if="currentUserReview">Edit your review</h4>
                 <h4 v-else="currentUserReview">Add a review</h4>
             </div>
         </div>
@@ -63,7 +57,7 @@
                                  :star-size="24">
                     </star-rating>
 
-                    <a href="#" @click.prevent="resetRating">Reset Rating</a>
+                    <a v-if="form.rating" @click.prevent="resetRating">Reset Rating</a>
                 </div>
             </div>
             <div class="col-sm-9">
@@ -119,6 +113,14 @@
         return false;
       },
 
+      currentUser: function () {
+        // Only the creator of a recipe can edit it
+        if (this.$auth.check()) {
+          return this.$auth.user()
+        }
+        return false
+      },
+
       reviewList: function () {
         if (this.isLoaded) {
           if (this.material.hasOwnProperty('reviews')) {
@@ -130,13 +132,13 @@
 
       currentUserReview: function () {
 
-        if (this.current_user
+        if (this.currentUser
           && this.isLoaded
           && this.reviewList
           && this.reviewList.length) {
 
           for (var i = 0, len = this.reviewList.length; i < len; i++) {
-            if (this.current_user.id == this.reviewList[i].user.id) {
+            if (this.currentUser.id == this.reviewList[i].user.id) {
               return this.reviewList[i];
             }
           }
@@ -182,7 +184,6 @@
 
       resetRating() {
         this.form.rating = 0;
-//                e.preventDefault();
       },
 
       clickEditOwnReview() {
@@ -191,38 +192,69 @@
         this.editOwnReview = true;
       },
 
-      submitReview(e) {
-        e.preventDefault();
+      clickDeleteOwnReview() {
+        this.isProcessing = true;
+        Vue.axios.delete(Vue.axios.defaults.baseURL + '/materialreviews/' + this.currentUserReview.id)
+          .then((response) => {
+          if (response.data.error) {
+            this.apiError = response.data.error
+            this.isProcessing = false
+            console.log(this.apiError)
+          } else {
+            this.resetForm();
+            this.isProcessing = false;
+            this.editOwnReview = false;
+            this.$emit('reviewsmodified');
+          }
+        }).catch(response => {
+          this.serverError = response;
+          this.isProcessing = false
+        })
+      },
 
+      submitReview() {
         this.isProcessing = true;
 
         if (this.currentUserReview) {
-          this.form._method = 'PATCH';
-          var updateUrl = '/api/v1/materialreviews/' + this.currentUserReview.id;
-          axios.post(updateUrl, this.form)
-            .then(function (response) {
+          this.form._method = 'PATCH'
+          var updateUrl = '/materialreviews/' + this.currentUserReview.id
+
+          Vue.axios.post(Vue.axios.defaults.baseURL + '/materialreviews/' + this.currentUserReview.id, this.form)
+            .then((response) => {
+            if (response.data.error) {
+              this.apiError = response.data.error
+              this.isProcessing = false
+              console.log(this.apiError)
+            }
+            else {
               this.resetForm();
               this.isProcessing = false;
               this.editOwnReview = false;
               this.$emit('reviewsmodified');
-            }.bind(this), function (response) {
-              this.errors = response.data;
-              this.hasErrors = true;
-              this.isProcessing = false;
-            }.bind(this));
+            }
+          }).catch(response => {
+            this.serverError = response;
+            this.isProcessing = false
+          })
         }
         else {
           this.form.material_id = this.material.id;
-          axios.post('/api/v1/materialreviews', this.form)
-            .then(function (response) {
+
+          Vue.axios.post(Vue.axios.defaults.baseURL + '/materialreviews/', this.form)
+            .then((response) => {
+            if (response.data.error) {
+              this.apiError = response.data.error
+              this.isProcessing = false
+              console.log(this.apiError)
+            } else {
               this.resetForm();
               this.isProcessing = false;
               this.$emit('reviewsmodified');
-            }.bind(this), function (response) {
-              this.errors = response.data;
-              this.hasErrors = true;
-              this.isProcessing = false;
-            }.bind(this));
+            }
+          }).catch(response => {
+            this.serverError = response;
+            this.isProcessing = false
+          })
         }
       },
 
@@ -231,7 +263,6 @@
         this.form.description = null;
       }
     }
-
   }
 
 </script>
@@ -241,6 +272,7 @@
     .reviews-table tr {
         vertical-align: top;
     }
+
 
     .reviews-table th, td {
         padding: 1rem;

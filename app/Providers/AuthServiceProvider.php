@@ -9,6 +9,8 @@ use App\Models\Material;
 use App\Policies\MaterialPolicy;
 use App\Models\MaterialImage;
 use App\Policies\MaterialImagePolicy;
+use App\Models\MaterialReview;
+use App\Policies\MaterialReviewPolicy;
 
 
 
@@ -22,7 +24,8 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         'App\Model' => 'App\Policies\ModelPolicy',
         Material::class => MaterialPolicy::class,
-        MaterialImage::class => MaterialImagePolicy::class
+        MaterialImage::class => MaterialImagePolicy::class,
+        MaterialReview::class => MaterialReviewPolicy::class
     ];
 
     /**

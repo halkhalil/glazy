@@ -61,10 +61,19 @@ $api->version('v1', function (Router $api) {
     $api->group(['prefix' => 'materialimages'], function(Router $api) {
         $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
             $api->post('/', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialImageController@store')->name('store');
-            $api->patch('/{materialimage}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialImageController@update')->name('update');
-            $api->delete('/{materialimage}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialImageController@destroy')->name('destroy');
+            $api->patch('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialImageController@update')->name('update');
+            $api->delete('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialImageController@destroy')->name('destroy');
         });
     });
+
+    $api->group(['prefix' => 'materialreviews'], function(Router $api) {
+        $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
+            $api->post('/', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialReviewController@store')->name('store');
+            $api->patch('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialReviewController@update')->name('update');
+            $api->delete('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialReviewController@destroy')->name('destroy');
+        });
+    });
+
 
     $api->group(['prefix' => 'search'], function(Router $api) {
         $api->get('/', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@index')->name('index');

@@ -129,7 +129,7 @@
           .then((response) => {
           if (response.data.error) {
             this.apiError = response.data.error
-            this.isProcessing = true
+            this.isProcessing = false
             console.log(this.apiError)
           }
           else {

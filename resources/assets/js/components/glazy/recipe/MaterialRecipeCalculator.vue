@@ -12,6 +12,10 @@
         <tbody>
         <tr v-for="(materialComponent, index) in this.materialComponents" v-bind:class="{ 'table-info' : materialComponent.isAdditional }">
             <td>
+                <img class="rounded-circle"
+                     width="40" height="40"
+                     v-if="materialComponent.material.thumbnail"
+                     :src="getImageUrl(materialComponent.material.thumbnail, 's')"/>
                 <i v-if="materialComponent.isAdditional" class="fa fa-plus"></i>
                 <a v-if="materialComponent.material.isPrimitive" :href="'/materials/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
                 <a v-else :href="'/recipes/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
@@ -50,68 +54,80 @@
 
 export default {
 
-    name: 'MaterialRecipeCalculator',
+  name: 'MaterialRecipeCalculator',
 
-    props: {
-        materialComponents: {
-          type: Array,
-          default: null
-        }
-    },
-
-    data() {
-        return {
-            batch_size    : '',
-            batch_rows    : [],
-            subtotal_rows : []
-        }
-    },
-
-    computed : {
-        isLoaded: function() {
-          if (this.materialComponents) {
-            return true;
-          }
-          return false;
-        },
-        totalAmount: function() {
-            console.log('Get total amount.');
-            var total_amount = 0.0;
-            for (var index in this.materialComponents) {
-                var materialComponent = this.materialComponents[index];
-                if (!materialComponent.isAdditional) {
-                    total_amount += parseFloat(materialComponent.percentageAmount);
-                }
-            }
-            return total_amount.toFixed(2);
-        }
-    },
-
-    mounted() {
-        console.log('Materials Calculator Component mounted.');
-    },
-
-    methods: {
-        calculateBatch: function (event) {
-            if (!isNaN(parseFloat(this.batch_size))) {
-                var batch_rows = [];
-                var subtotal_rows = [];
-                var subtotal = 0;
-
-                for (var index in this.materialComponents) {
-                    var materialComponent = this.materialComponents[index];
-                    var value = parseFloat(materialComponent.percentageAmount)
-                            * parseFloat(this.batch_size)
-                            / parseFloat(this.totalAmount);
-                    subtotal += value;
-                    batch_rows[index] = value.toFixed(2);
-                    subtotal_rows[index] = subtotal.toFixed(2);
-                }
-                this.$set(this, 'batch_rows', batch_rows);
-                this.$set(this, 'subtotal_rows', subtotal_rows);
-            }
-        }
+  props: {
+    materialComponents: {
+      type: Array,
+      default: null
     }
+  },
+
+  data() {
+    return {
+      batch_size: '',
+      batch_rows: [],
+      subtotal_rows: []
+    }
+  },
+
+  computed: {
+    isLoaded: function () {
+      if (this.materialComponents) {
+        return true;
+      }
+      return false;
+    },
+    totalAmount: function () {
+      console.log('Get total amount.');
+      var total_amount = 0.0;
+      for (var index in this.materialComponents) {
+        var materialComponent = this.materialComponents[index];
+        if (!materialComponent.isAdditional) {
+          total_amount += parseFloat(materialComponent.percentageAmount);
+        }
+      }
+      return total_amount.toFixed(2);
+    }
+  },
+
+  mounted() {
+    console.log('Materials Calculator Component mounted.');
+  },
+
+  methods: {
+    calculateBatch: function (event) {
+      if (!isNaN(parseFloat(this.batch_size))) {
+        var batch_rows = [];
+        var subtotal_rows = [];
+        var subtotal = 0;
+
+        for (var index in this.materialComponents) {
+          var materialComponent = this.materialComponents[index];
+          var value = parseFloat(materialComponent.percentageAmount)
+            * parseFloat(this.batch_size)
+            / parseFloat(this.totalAmount);
+          subtotal += value;
+          batch_rows[index] = value.toFixed(2);
+          subtotal_rows[index] = subtotal.toFixed(2);
+        }
+        this.$set(this, 'batch_rows', batch_rows);
+        this.$set(this, 'subtotal_rows', subtotal_rows);
+      }
+    },
+
+
+    getImageBin: function (id) {
+      id = '' + id;
+      console.log("IMAGE BIN: " + id.substr(id.length - 2))
+      return id.substr(id.length - 2);
+    },
+
+    getImageUrl: function (thumbnail, size) {
+      var bin = this.getImageBin(thumbnail.materialId);
+      return GLAZY_APP_URL + '/storage/uploads/recipes/' + bin + '/' + size + '_' + thumbnail.filename;
+    }
+  }
 
 }
 

@@ -94,6 +94,18 @@ class MaterialReviewRepository extends Repository
 
     public function destroy(Model $materialReview)
     {
+        $material = Material::find($materialReview->material_id);
+
+        if (!$material) {
+            return false;
+        }
+
+        // Update total rating info for material
+        $material->rating_total -= $materialReview->rating;
+        $material->rating_number -= 1;
+        $material->rating_average = $material->rating_total / $material->rating_number;
+        $material->save();
+
         $materialReview->delete();
     }
 
