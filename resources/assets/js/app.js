@@ -34,8 +34,9 @@ import VueAuth from '@websanova/vue-auth'
 require('vue-multiselect/dist/vue-multiselect.min.css')
 
 Vue.use(VueAxios, axios)
-//Vue.axios = axios
-Vue.axios.defaults.baseURL = 'http://homestead.app/api';
+
+window.APP_URL = 'http://homestead.app'
+Vue.axios.defaults.baseURL = APP_URL + '/api'
 
 Vue.router=router
 
@@ -44,13 +45,13 @@ Vue.use(VueAuth, {
   http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
   router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
   rolesVar: 'role',
-  facebookData: {url: 'http://homestead.app/api/auth/login/facebook/callback', method: 'POST', redirect: '/'},
+  facebookData: {url: APP_URL + '/api/auth/login/facebook/callback', method: 'POST', redirect: '/'},
   facebookOauth2Data: {
     clientId: '186121775282852',
     redirect: function () { return this.options.getUrl() + '/login/facebook'; },
     scope: 'public_profile email'
   },
-  googleData: {url: 'http://homestead.app/api/auth/login/google/callback', method: 'POST', redirect: '/'},
+  googleData: {url: APP_URL + '/api/auth/login/google/callback', method: 'POST', redirect: '/'},
   googleOauth2Data: {
     clientId: '927001342736-522sp5s40ecildcdmeq08njcb250o7t0.apps.googleusercontent.com',
     redirect: function () { return this.options.getUrl() + '/login/google'; },

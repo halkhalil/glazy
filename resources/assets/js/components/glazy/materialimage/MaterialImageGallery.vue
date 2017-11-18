@@ -190,7 +190,6 @@
     },
     data() {
       return {
-        STORAGE_BASE_URL: 'http://homestead.app',
         selectedImage: null,
         dropzoneOptions: {
           url: 'https://httpbin.org/post',
@@ -297,7 +296,7 @@
       getImageUrl: function (filename, size) {
         var bin = this.getImageBin(this.material.id);
 
-        return this.STORAGE_BASE_URL + '/storage/uploads/recipes/' + bin + '/' + size + '_' + filename;
+        return APP_URL + '/storage/uploads/recipes/' + bin + '/' + size + '_' + filename;
       },
 
       selectImage: function (image) {

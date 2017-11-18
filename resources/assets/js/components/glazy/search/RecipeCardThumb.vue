@@ -78,7 +78,6 @@
     },
     data() {
       return {
-        STORAGE_BASE_URL: 'http://homestead.app',
         constants: new GlazyConstants(),
         oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
         materialTypes: new MaterialTypes()
@@ -102,8 +101,7 @@
       imageUrl: function() {
         if (this.recipe.thumbnail && this.recipe.thumbnail.filename) {
           var bin = this.getImageBin(this.recipe.id);
-          return this.STORAGE_BASE_URL +
-            '/storage/uploads/recipes/' +
+          return APP_URL + '/storage/uploads/recipes/' +
             bin + '/s_' + this.recipe.thumbnail.filename;
         }
         return '/img/recipes/black.png';
