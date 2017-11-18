@@ -180,7 +180,9 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         Laravel\Socialite\SocialiteServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class
+        Intervention\Image\ImageServiceProvider::class,
+
+        Nutsweb\LaravelPrerender\LaravelPrerenderServiceProvider::class,
     ],
 
     /*
