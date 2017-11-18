@@ -15,6 +15,22 @@ export default {
     AppLayoutFull,
     AppHeader,
     AppSidebar
+  },
+  metaInfo: {
+    // if no subcomponents specify a metaInfo.title, this title will be used
+    title: 'Glazy',
+    // all titles will be injected into this template
+    titleTemplate: '%s | Glazy',
+    meta: [
+      {
+        'property': 'og:type',
+        'content': 'website'
+      },
+      {
+        'property': 'og:site_name',
+        'content': 'Glazy Ceramic Glaze and Pottery Recipes'
+      }
+    ]
   }
 }
 </script>

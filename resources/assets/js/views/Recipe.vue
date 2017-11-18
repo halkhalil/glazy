@@ -58,7 +58,7 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-sm-8">
+                  <div class="col-sm-4">
                     <div class="author">
                       <img :src="getUserAvatar(recipe.createdByUser)" alt="..." class="avatar img-raised">
                       <span>
@@ -67,6 +67,37 @@
                       </span>
                     </div>
 
+                  </div>
+                  <div class="col-sm-4 float-center">
+                    <social-sharing :url="this.meta.url"
+                                    :title="this.meta.title"
+                                    :description="this.meta.description"
+                                    hashtags="glaze,ceramics,recipe"
+                                    inline-template>
+                      <div>
+
+                        <button class="btn btn-icon btn-neutral btn-default">
+                          <network network="email">
+                            <i class="fa fa-envelope"></i>
+                          </network>
+                        </button>
+                        <button class="btn btn-icon btn-neutral btn-facebook">
+                          <network network="facebook">
+                            <i class="fa fa-facebook"></i>
+                          </network>
+                        </button>
+                        <button class="btn btn-icon btn-neutral btn-google">
+                          <network network="googleplus">
+                            <i class="fa fa-google-plus"></i>
+                          </network>
+                        </button>
+                        <button class="btn btn-icon btn-neutral btn-pinterest">
+                          <network network="pinterest">
+                            <i class="fa fa-pinterest"></i>
+                          </network>
+                        </button>
+                      </div>
+                    </social-sharing>
                   </div>
                   <div class="col-sm-4 float-right">
                     <star-rating v-if="recipe.ratingTotal"
@@ -333,7 +364,52 @@
 
   export default {
     name: 'Recipe',
+    metaInfo () {
+      return {
+        title: this.meta.title,
+        meta: [
+          {
+            'vmid': "description",
+            'property': 'description',
+            'content': this.meta.description
+          },
+          {
+            'property': 'og:description',
+            'content': this.meta.description
+          },
+          {
+            'property': 'og:title',
+            'content': this.meta.title
+          },
+          {
+            'property': 'og:url',
+            'content': this.meta.url
+          },
+          {
+            'property': 'og:image',
+            'content': this.meta.image
+          },
+          {
+            'property': 'twitter:description',
+            'content': this.meta.description
+          }
+        ]
+      }
+    },
+    /**
+     <meta property="og:type" content="website">
+     <meta property="og:site_name" content="Glazy">
+     <meta property="og:url" content="{!! URL::full('recipes.show', array('recipes' => $recipe->id)) !!}">
+     <meta property="og:title" content="{{ $metatitle }}">
+     <meta property="og:image" content="{!! 'http://glazy.org'.$imgurl !!}">
+     <meta property="og:description" content="{{ $meta_description }}">
 
+     <meta name="description" content="{{ $meta_description }}">
+     @if (!empty($recipe->created_by_user))
+     <meta name="author" content="{!! $recipe->created_by_user->first_name !!} {!! $recipe->created_by_user->last_name !!}">
+     @endif
+
+     */
     components: {
       MaterialTypeBreadcrumbs,
       FiringCard,
@@ -406,6 +482,20 @@
           return true
         }
         return false
+      },
+      meta: function () {
+        var meta = {
+          title: 'Recipe',
+          description: 'Glazy Ceramics Recipe',
+          url: GLAZY_APP_URL + this.$route.fullPath,
+          image: ''
+        }
+        if (this.recipe) {
+          if (this.recipe.thumbnail) {
+            meta.image = this.getImageUrl(this.recipe.thumbnail, 'm')
+          }
+        }
+        return meta
       }
     },
     beforeRouteUpdate (to, from, next) {
@@ -552,7 +642,8 @@
             console.log(this.apiError)
           } else {
             this.recipe = response.data.data
-            document.title = this.recipe.name
+            this.meta.title = this.recipe.name
+            this.meta.description = this.recipe.name
             var materialObj = new Material()
             this.material = Material.createFromJson(this.recipe)
 
@@ -602,9 +693,18 @@
           return user.username;
         }
         return user.name;
+      },
+
+      getImageBin: function (id) {
+        id = '' + id;
+        console.log("IMAGE BIN: " + id.substr(id.length - 2))
+        return id.substr(id.length - 2);
+      },
+
+      getImageUrl: function (materialImage, size) {
+        var bin = this.getImageBin(materialImage.materialId);
+        return GLAZY_APP_URL + '/storage/uploads/recipes/' + bin + '/' + size + '_' + materialImage.filename;
       }
-
-
 
     }
   }
@@ -624,6 +724,9 @@
     margin-top: 20px;
   }
 
+  .recipe-info-card .card-body .card-title {
+    font-size: 2.25em;
+  }
   .recipe-action-group .btn {
     padding: 11px 16px;
   }

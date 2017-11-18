@@ -5,9 +5,6 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <meta name="author" content="Derek Au">
-        <meta name="description" content="Glazy">
-
         <title>{{ config('app.name') }}</title>
 
         <link href="https://fonts.googleapis.com/css?family=Montserrat:700,300,200" rel="stylesheet">

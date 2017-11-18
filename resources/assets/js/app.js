@@ -31,6 +31,10 @@ import Vue from 'vue'
 import GlazyApp from './GlazyApp'
 import router from './router'
 
+import Meta from 'vue-meta'
+Vue.use(Meta)
+import SocialSharing from 'vue-social-sharing'
+Vue.use(SocialSharing);
 import BootstrapVue from 'bootstrap-vue'
 Vue.use(BootstrapVue)
 

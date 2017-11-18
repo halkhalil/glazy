@@ -11,7 +11,7 @@
         </thead>
         <tbody>
         <tr v-for="(materialComponent, index) in this.materialComponents" v-bind:class="{ 'table-info' : materialComponent.isAdditional }">
-            <td>
+            <td class="align-middle">
                 <img class="rounded-circle"
                      width="40" height="40"
                      v-if="materialComponent.material.thumbnail"
@@ -20,13 +20,13 @@
                 <a v-if="materialComponent.material.isPrimitive" :href="'/materials/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
                 <a v-else :href="'/recipes/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
             </td>
-            <td class="amount">
+            <td class="align-middle amount">
                 {{ parseFloat(materialComponent.percentageAmount) }}
             </td>
-            <td class="batch" :id="'batch_' + materialComponent.material.id">{{ batch_rows[index] }}</td>
-            <td class="subtotal" :id="'subtotal_' + materialComponent.material.id">{{ subtotal_rows[index] }}</td>
+            <td class="align-middle batch" :id="'batch_' + materialComponent.material.id">{{ batch_rows[index] }}</td>
+            <td class="align-middle subtotal" :id="'subtotal_' + materialComponent.material.id">{{ subtotal_rows[index] }}</td>
         </tr>
-        <tr class="subtotal">
+        <tr class="align-middle subtotal">
             <td>Total</td>
             <td>{{ totalAmount }}</td>
             <td></td>
@@ -49,11 +49,9 @@
     </table>
 </template>
 
-
 <script>
 
 export default {
-
   name: 'MaterialRecipeCalculator',
 
   props: {
@@ -123,9 +121,9 @@ export default {
       return id.substr(id.length - 2);
     },
 
-    getImageUrl: function (thumbnail, size) {
-      var bin = this.getImageBin(thumbnail.materialId);
-      return GLAZY_APP_URL + '/storage/uploads/recipes/' + bin + '/' + size + '_' + thumbnail.filename;
+    getImageUrl: function (materialImage, size) {
+      var bin = this.getImageBin(materialImage.materialId);
+      return GLAZY_APP_URL + '/storage/uploads/recipes/' + bin + '/' + size + '_' + materialImage.filename;
     }
   }
 
@@ -134,6 +132,14 @@ export default {
 </script>
 
 <style>
+
+    .material-recipe-calculator-table tr th {
+        padding: 5px;
+    }
+
+    .material-recipe-calculator-table tr td {
+        padding: 5px;
+    }
 
     .material-recipe-calculator-table tr td.batch {
         color: #666666;

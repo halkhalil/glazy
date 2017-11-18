@@ -70,7 +70,8 @@
                               rows="3"></textarea>
                 </div>
                 <button v-if="form.rating > 0 && form.description"
-                        @click.prevent="submitReview" class="btn btn-primary">
+                        @click.prevent="submitReview" class="btn btn-info">
+                    <i class="fa fa-save"></i>
                     <span v-if="currentUserReview">Update Your Review</span>
                     <span v-else>Add Review</span>
                 </button>

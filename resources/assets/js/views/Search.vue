@@ -293,6 +293,11 @@
 
   export default {
     name: 'Search',
+    metaInfo () {
+      return {
+        title: this.title
+      }
+    },
     components: {
       AppFooter,
       FilterPaginator,
@@ -326,6 +331,7 @@
     },
     data() {
       return {
+        title: 'Search',
         oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
         recipes: null,
         // searchQuery: new SearchQuery(),
@@ -501,13 +507,11 @@
               this.isProcessing = false
             } else {
               this.itemlist = response.data.data
-              document.title = 'Search';
               if (!this.itemlist) {
                 // Make sure itemlist is always defined, and an array
                 this.itemlist = []
               }
               this.pagination = response.data.meta.pagination
-
               if ('user' in response.data.meta && 'data' in response.data.meta.user) {
                 this.searchUser = response.data.meta.user.data
               }

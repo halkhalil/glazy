@@ -103,7 +103,13 @@ class MaterialReviewRepository extends Repository
         // Update total rating info for material
         $material->rating_total -= $materialReview->rating;
         $material->rating_number -= 1;
-        $material->rating_average = $material->rating_total / $material->rating_number;
+        if ($material->rating_number) {
+            // Re-calculate average if there are still ratings
+            $material->rating_average = $material->rating_total / $material->rating_number;
+        } else {
+            // No other ratings for this material
+            $material->rating_average = 0;
+        }
         $material->save();
 
         $materialReview->delete();
