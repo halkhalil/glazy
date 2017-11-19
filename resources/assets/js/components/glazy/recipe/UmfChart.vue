@@ -14,10 +14,10 @@
         </div>
         <div v-if="isLoaded" class="row">
             <div class="col-md-12 col-sm-12 mb-2">
-                <img src="/img/charts/recipe.png" height="12"/> Recipe &nbsp;
-                <img src="/img/charts/analysis.png" height="14"/> Analysis &nbsp;
-                <img src="/img/charts/current.png" height="15"/> Current Recipe &nbsp; &nbsp;
-                R<sub>2</sub>O:RO Scale <img src="/img/charts/ror2oscale.png" height="35" width="366"/>
+                <img src="/img/charts/recipe.png" height="25"/> Recipe &nbsp;
+                <img src="/img/charts/analysis.png" height="25"/> Analysis &nbsp;
+                <img src="/img/charts/current.png" height="25"/> Current Recipe &nbsp; &nbsp;
+                R<sub>2</sub>O:RO Scale <img src="/img/charts/ror2oscale.png" height="37" width="365"/>
             </div>
             <div class="col-md-8">
                 <div id="umf-d3-chart-container" class="w-100">

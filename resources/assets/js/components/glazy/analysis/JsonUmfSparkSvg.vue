@@ -13,13 +13,13 @@
                   y="0"
                   v-bind:height="squareSize"
                   v-bind:width="squareSize"
-                  class="color-R2O"
+                  class="oxide-colors-fill-R2O"
                   v-bind:rx="radius"
                   v-bind:ry="radius">
                 <title v-if="showOxideTitle">R₂O:RO</title>
             </rect>
 
-            <path class="color-RO"
+            <path class="oxide-colors-fill-RO"
                   v-bind:d="rightRoundedRect(squareSize - (umf.ROTotal * squareSize), 0, umf.ROTotal * squareSize, squareSize, radius)">
                 <title v-if="showOxideTitle">R₂O:RO</title>
             </path>
@@ -38,7 +38,7 @@
                       v-bind:x="item.x"
                       v-bind:height="squareSize"
                       v-bind:width="item.width"
-                      v-bind:class="'color-' + item.name"
+                      v-bind:class="'oxide-colors-fill-' + item.name"
                       v-bind:rx="radius"
                       v-bind:ry="radius">
                     <title v-if="showOxideTitle">{{ item.name }}</title>
@@ -241,10 +241,11 @@
     }
     .umf-svg text.legend {
         stroke: none;
-        fill: rgba(0,0,0,0.8);
+        fill: rgba(255,255,255,0.6);
         text-anchor: middle;
         overflow-x: visible;
     }
+    /*
     .umf-svg rect.color-R2O    { fill: #ff6666; }
     .umf-svg path.color-RO     { fill: #cccc66; }
     .umf-svg rect.color-SiO2   { fill: #9999ff; }
@@ -277,4 +278,5 @@
     .umf-svg rect.color-F      { fill: #cccccc; }
     .umf-svg rect.color-PbO    { fill: #ff0000; }
     .umf-svg rect.color-SnO2   { fill: #cccccc; }
+    */
 </style>

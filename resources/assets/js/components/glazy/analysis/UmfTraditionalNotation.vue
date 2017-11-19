@@ -174,43 +174,8 @@
         white-space: nowrap!important;
     }
 
-    .oxide-colors-R2O    { color: #000000; }
-    .oxide-colors-RO     { color: #000000; }
-    .oxide-colors-SiO2   { color: #000000; }
-    .oxide-colors-Al2O3  { color: #009900; }
-    .oxide-colors-B2O3   { color: #000000; }
 
-    .oxide-colors-Li2O   { color: #ff0000; }
-    .oxide-colors-Na2O   { color: #ff2222; }
-    .oxide-colors-K2O    { color: #ff4444; }
-
-    .oxide-colors-BeO    { color: #0000ff; }
-    .oxide-colors-MgO    { color: #2222ff; }
-    .oxide-colors-CaO    { color: #4444ff; }
-    .oxide-colors-SrO    { color: #6666ff; }
-    .oxide-colors-BaO    { color: #8888ff; }
-
-
-    .oxide-colors-P2O5   { color: #000000; }
-    .oxide-colors-TiO2   { color: #000000; }
-    .oxide-colors-ZrO    { color: #000000; }
-    .oxide-colors-ZrO2   { color: #000000; }
-    .oxide-colors-V2O5   { color: #000000; }
-    .oxide-colors-Cr2O3  { color: #000000; }
-    .oxide-colors-MnO    { color: #000000; }
-    .oxide-colors-MnO2   { color: #000000; }
-    .oxide-colors-FeO    { color: #000000; }
-    .oxide-colors-Fe2O3  { color: #000000; }
-    .oxide-colors-CoO    { color: #000000; }
-    .oxide-colors-NiO    { color: #000000; }
-    .oxide-colors-CuO    { color: #000000; }
-    .oxide-colors-Cu2O   { color: #000000; }
-    .oxide-colors-CdO    { color: #000000; }
-    .oxide-colors-ZnO    { color: #000000; }
-    .oxide-colors-F      { color: #000000; }
-    .oxide-colors-PbO    { color: #000000; }
-    .oxide-colors-SnO2   { color: #000000; }
-/*
+    /*
     .oxide-colors .color-R2O    { background: #ff6666; color: #000000; }
     .oxide-colors .color-RO     { background: #cccc66; color: #000000; }
     .oxide-colors .color-SiO2   { background: #9999ff; color: #ffffff; }
