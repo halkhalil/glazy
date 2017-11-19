@@ -26,9 +26,15 @@
                     <i class="fa fa-th"></i></b-button>
                 <b-button
                         size="sm"
+                        @click.prevent="viewRequest('details')"
+                        v-bind:class="{ 'disabled' : view === 'details' }">
+                    <i class="fa fa-list-ol"></i>
+                </b-button>
+                <b-button
+                        size="sm"
                         @click.prevent="viewRequest('rows')"
                         v-bind:class="{ 'disabled' : view === 'rows' }">
-                    <i class="fa fa-list-ol"></i>
+                    <i class="fa fa-table"></i>
                 </b-button>
             </b-button-group>
 

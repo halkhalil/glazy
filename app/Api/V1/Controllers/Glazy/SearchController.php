@@ -205,7 +205,7 @@ class SearchController extends ApiBaseController
         }
         */
 
-        $this->manager->parseIncludes(['atmospheres', 'thumbnail', 'createdByUser']);
+        $this->manager->parseIncludes(['atmospheres', 'materialComponents', 'thumbnail', 'createdByUser']);
 
         $resource = new FractalCollection($recipes, new ShallowMaterialTransformer());
         $resource->setPaginator(new IlluminatePaginatorAdapter($recipes));

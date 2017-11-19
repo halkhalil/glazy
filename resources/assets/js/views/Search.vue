@@ -75,8 +75,8 @@
                 :showStullLabels="false"
                 :showZoomButtons="false"
                 :showAxesLabels="true"
-                :highlightedRecipeId="highlightedRecipeId"
-                :unHighlightedRecipeId="unHighlightedRecipeId"
+                :highlightedRecipeId="highlightedMaterialId"
+                :unHighlightedRecipeId="unHighlightedMaterialId"
                 :xoxide="searchQuery.params.x"
                 :yoxide="searchQuery.params.y"
                 v-on:clickedUmfD3Recipe="clickedD3Chart"
@@ -151,7 +151,7 @@
               :pagination="pagination"
               :view="searchQuery.params.view"
               :order="order"
-              :item_type_name="'recipes'"
+              :item_type_name="'materials'"
               v-on:pagerequest="pageRequest"
               v-on:orderrequest="orderRequest"
               v-on:viewrequest="viewRequest">
@@ -176,31 +176,42 @@
             </button>
           </div>
         </div>
-
       </div>
 
-
       <section class="row" v-if="(searchQuery.params.view === 'cards') && !isProcessing">
-        <div v-bind:class="recipeCardClass" class=""
-             v-for="(recipe, index) in itemlist">
-          <RecipeCardThumb
-                  :recipe="recipe"
-                  v-on:highlightRecipe="highlightRecipe"
-                  v-on:unhighlightRecipe="unhighlightRecipe"
-                  v-on:copyRecipeRequest="copyRecipe"
-                  v-on:deleteRecipeRequest="confirmDeleteRecipe"
-                  v-on:collectRecipeRequest="collectRecipeSelect"
-          ></RecipeCardThumb>
+        <div v-bind:class="materialCardClass" class=""
+             v-for="(material, index) in itemlist">
+          <material-card-thumb
+                  :material="material"
+                  v-on:highlightMaterial="highlightMaterial"
+                  v-on:unhighlightMaterial="unhighlightMaterial"
+                  v-on:copyMaterialRequest="copyMaterial"
+                  v-on:deleteMaterialRequest="confirmDeleteMaterial"
+                  v-on:collectMaterialRequest="collectMaterialSelect"
+          ></material-card-thumb>
         </div>
       </section>
-      <section class="row" v-else-if="!isProcessing">
-        <table class="table table-hover recipe-detail-table">
+      <section class="row" v-if="(searchQuery.params.view === 'details') && !isProcessing">
+        <div v-bind:class="materialCardClass" class=""
+             v-for="(material, index) in itemlist">
+          <material-card-detail
+                  :material="material"
+                  v-on:highlightMaterial="highlightMaterial"
+                  v-on:unhighlightMaterial="unhighlightMaterial"
+                  v-on:copyMaterialRequest="copyMaterial"
+                  v-on:deleteMaterialRequest="confirmDeleteMaterial"
+                  v-on:collectMaterialRequest="collectMaterialSelect"
+          ></material-card-detail>
+        </div>
+      </section>
+      <section class="row" v-else-if="(searchQuery.params.view === 'rows') && !isProcessing">
+        <table class="table table-hover material-detail-table">
           <tbody>
-            <tr is="RecipeCardRow"
-                v-for="(recipe, index) in itemlist"
-                :recipe="recipe"
-                v-on:highlightRecipe="highlightRecipe"
-                v-on:unhighlightRecipe="unhighlightRecipe">
+            <tr is="material-card-row"
+                v-for="(material, index) in itemlist"
+                :material="material"
+                v-on:highlightMaterial="highlightMaterial"
+                v-on:unhighlightMaterial="unhighlightMaterial">
             </tr>
           </tbody>
         </table>
@@ -211,7 +222,7 @@
               :pagination="pagination"
               :view="searchQuery.params.view"
               :order="order"
-              :item_type_name="'recipes'"
+              :item_type_name="'materials'"
               v-on:pagerequest="pageRequest"
               v-on:orderrequest="orderRequest"
               v-on:viewrequest="viewRequest">
@@ -224,7 +235,7 @@
     <b-modal id="deleteConfirmModal"
              ref="deleteConfirmModal"
              title="Delete Recipe?"
-             v-on:ok="deleteRecipe"
+             v-on:ok="deleteMaterial"
              ok-title="Delete Forever"
     >
       <p>Once deleted, you will not be able to retrieve this recipe!</p>
@@ -233,7 +244,7 @@
     <b-modal id="collectModal"
              ref="collectModal"
              title="Collect Recipe"
-             v-on:ok="collectRecipe"
+             v-on:ok="collectMaterial"
              ok-title="Add"
     >
       <p>Collect in:</p>
@@ -266,6 +277,7 @@
 </template>
 
 <script>
+
   import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
   import PercentageAnalysis from 'ceramicscalc-js/src/analysis/PercentageAnalysis'
   import Material from 'ceramicscalc-js/src/material/Material'
@@ -278,8 +290,9 @@
   import MaterialAnalysisUmfSpark2Single from '../components/glazy/analysis/MaterialAnalysisUmfSpark2Single.vue';
   import MaterialAnalysisPercentTableCompare from '../components/glazy/analysis/MaterialAnalysisPercentTableCompare.vue';
 
-  import RecipeCardThumb from '../components/glazy/search/RecipeCardThumb.vue'
-  import RecipeCardRow from '../components/glazy/search/RecipeCardRow.vue'
+  import MaterialCardThumb from '../components/glazy/search/MaterialCardThumb.vue'
+  import MaterialCardDetail from '../components/glazy/search/MaterialCardDetail.vue'
+  import MaterialCardRow from '../components/glazy/search/MaterialCardRow.vue'
 
   import SearchBreadcrumbs from '../components/glazy/search/SearchBreadcrumbs.vue'
 
@@ -301,8 +314,9 @@
     components: {
       AppFooter,
       FilterPaginator,
-      RecipeCardThumb,
-      RecipeCardRow,
+      MaterialCardThumb,
+      MaterialCardDetail,
+      MaterialCardRow,
       UmfD3Chart,
       SearchForm,
       SearchBreadcrumbs
@@ -333,7 +347,7 @@
       return {
         title: 'Search',
         oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
-        recipes: null,
+        materials: null,
         // searchQuery: new SearchQuery(),
         searchQuery: null,
         searchUser: null,
@@ -355,13 +369,13 @@
         expandbuttonTooltip: 'Show More Map',
         sidebarClass: 'col-md-3',
         mainClass: 'col-md-9',
-        recipeCardClass: 'col-lg-3 col-md-4 col-sm-6',
+        materialCardClass: 'col-lg-3 col-md-4 col-sm-6 col-6',
         currentPage: null,
         isThumbnailView: true,
-        highlightedRecipeId: {},
-        unHighlightedRecipeId: {},
+        highlightedMaterialId: {},
+        unHighlightedMaterialId: {},
         selectedCollectionId: 0,
-        toDeleteRecipeId: 0,
+        toDeleteMaterialId: 0,
         newCollectionName: '',
         minSearchTextLength: 3,
         apiError: null,
@@ -557,14 +571,14 @@
           this.expandbuttonTooltip = 'Show More Map'
           this.sidebarClass = 'col-md-3'
           this.mainClass = 'col-md-9'
-          this.recipeCardClass = 'col-lg-3 col-md-4 col-sm-6'
+          this.materialCardClass = 'col-lg-3 col-md-4 col-sm-6 col-6'
           this.chartHeight = 200
         } else {
           this.expandButtonText = '<i class="fa fa-angle-double-left"></i>'
           this.expandbuttonTooltip = 'Show Less Map'
           this.sidebarClass = 'col-md-6'
           this.mainClass = 'col-md-6'
-          this.recipeCardClass = 'col-lg-4 col-md-6 col-sm-6'
+          this.materialCardClass = 'col-lg-4 col-md-6 col-sm-6 col-6'
           this.chartHeight = 300
         }
         this.isMapExpanded = !this.isMapExpanded
@@ -588,27 +602,27 @@
         }
       },
       clickedD3Chart (data) {
-        this.$router.push({ path: this.$route.path + '#recipe-card-' + data.id, query: this.$route.query })
+        this.$router.push({ path: this.$route.path + '#material-card-' + data.id, query: this.$route.query })
       },
-      highlightRecipe: function (id) {
-        // this.highlightedRecipeId = id
-        this.highlightedRecipeId = { id: id }
+      highlightMaterial: function (id) {
+        // this.highlightedMaterialId = id
+        this.highlightedMaterialId = { id: id }
       },
-      unhighlightRecipe: function (id) {
-        // this.highlightedRecipeId = 0
-        this.unHighlightedRecipeId = { id: id }
+      unhighlightMaterial: function (id) {
+        // this.highlightedMaterialId = 0
+        this.unHighlightedMaterialId = { id: id }
       },
-      collectRecipeSelect(id) {
+      collectMaterialSelect(id) {
         if (id) {
           this.$refs.collectModal.show();
         }
       },
 
-      collectRecipe(id) {
+      collectMaterial(id) {
 
       },
 
-      copyRecipe: function (id) {
+      copyMaterial: function (id) {
         if (!id) {
           return
         }
@@ -621,8 +635,8 @@
             this.isProcessing = false
           } else {
             this.isProcessing = false
-            var recipeCopy = response.data.data;
-            this.$router.push({ name: 'recipes', params: { id: recipeCopy.id }})
+            var materialCopy = response.data.data;
+            this.$router.push({ name: 'recipes', params: { id: materialCopy.id }})
           }
         })
         .catch(response => {
@@ -631,29 +645,29 @@
         })
       },
 
-      confirmDeleteRecipe: function(id) {
+      confirmDeleteMaterial: function(id) {
         if (id) {
-          this.toDeleteRecipeId = id
+          this.toDeleteMaterialId = id
           this.$refs.deleteConfirmModal.show();
         }
       },
 
-      deleteRecipe: function() {
-        if (this.toDeleteRecipeId) {
-          Vue.axios.delete(Vue.axios.defaults.baseURL + '/recipes/' + this.toDeleteRecipeId)
+      deleteMaterial: function() {
+        if (this.toDeleteMaterialId) {
+          Vue.axios.delete(Vue.axios.defaults.baseURL + '/recipes/' + this.toDeleteMaterialId)
             .then((response) => {
             if (response.data.error) {
               this.apiError = response.data.error
               console.log(this.apiError)
               this.isProcessing = false
             } else {
-              this.toDeleteRecipeId = 0
+              this.toDeleteMaterialId = 0
               this.isProcessing = false
               this.newSearch()
             }
           })
           .catch(response => {
-            this.toDeleteRecipeId = 0
+            this.toDeleteMaterialId = 0
             this.serverError = response;
             this.isProcessing = false
           })
@@ -750,7 +764,7 @@
     margin-top: 0px;
   }
 
-  .recipe-detail-table {
+  .material-detail-table {
     border-top-style: hidden;
     border-bottom-style: hidden;
   }
