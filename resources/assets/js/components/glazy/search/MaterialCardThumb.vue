@@ -39,14 +39,12 @@
         </router-link>
       </h5>
       <p class="card-text">{{ material.description }}</p>
-      <div class="card-footer">
-        <router-link :to="{ name: 'user', params: { id: material.createdByUser.id}}">
-          <div class="author">
-            <img src="/img/profile.jpg" alt="..." class="avatar img-raised">
-            <span>{{ material.createdByUser.name }}</span>
-          </div>
-        </router-link>
-      </div>
+      <router-link :to="{ name: 'user', params: { id: material.createdByUser.id}}">
+        <div class="author">
+          <img src="/img/profile.jpg" alt="..." class="avatar">
+          <span>{{ material.createdByUser.name }}</span>
+        </div>
+      </router-link>
     </div>
     <div class="card-footer" v-if="$auth.check()">
       <a @click="collectMaterialRequest(material.id)" class="btn btn-icon btn-neutral"><i class="fa fa-bookmark"></i></a>
@@ -131,6 +129,10 @@
     border-bottom: none;
   }
 
+  .material-card .card-body {
+    padding: 10px;
+  }
+
   .material-card .swatches {
     position: absolute;
     top: 5px;
@@ -161,7 +163,7 @@
 
   .material-card .card-footer .btn {
     color: #999999;
-    margin: 5px 0;
+    margin: 0;
   }
 
   .material-anchor {

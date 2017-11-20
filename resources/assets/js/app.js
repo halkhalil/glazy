@@ -44,6 +44,8 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueAuth from '@websanova/vue-auth'
 
+import { store } from './store/store'
+
 require('vue-multiselect/dist/vue-multiselect.min.css')
 
 Vue.use(VueAxios, axios)
@@ -87,6 +89,7 @@ Vue.use(VueTimeago, {
 const app = new Vue({
   el: '#app',
   router,
+  store,
   template: '<GlazyApp/>',
   components: { GlazyApp }
 })

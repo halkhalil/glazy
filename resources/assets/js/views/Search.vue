@@ -60,7 +60,7 @@
 
       <div v-if="hasResults" id="umf-d3-chart-container">
         <umf-d3-chart
-                :recipeData="itemlist"
+                :recipeData="searchItems"
                 :width="chartWidth"
                 :height="chartHeight"
                 :margin="chartMargin"
@@ -99,14 +99,12 @@
 
     <main v-bind:class="mainClass" role="main" class="ml-sm-auto search-results">
 
-
       <b-alert v-if="apiError" show variant="danger">
         API Error: {{ apiError.message }}
       </b-alert>
       <b-alert v-if="serverError" show variant="danger">
         Server Error: {{ serverError }}
       </b-alert>
-
 
       <div class="row">
 
@@ -148,7 +146,7 @@
 
       <filter-paginator
               v-if="hasResults && hasPagination"
-              :pagination="pagination"
+              :pagination="searchPagination"
               :view="searchQuery.params.view"
               :order="order"
               :item_type_name="'materials'"
@@ -162,7 +160,7 @@
         <div
                 class="alert alert-warning col-sm-12"
                 role="alert"
-                v-if="(!itemlist || itemlist.length <= 0) && !isProcessing">
+                v-if="(!searchItems || searchItems.length <= 0) && !isProcessing">
           <div class="container">
             <div class="alert-icon">
               <i class="fa fa-bell"></i>
@@ -180,7 +178,7 @@
 
       <section class="row" v-if="(searchQuery.params.view === 'cards') && !isProcessing">
         <div v-bind:class="materialCardClass" class=""
-             v-for="(material, index) in itemlist">
+             v-for="(material, index) in searchItems">
           <material-card-thumb
                   :material="material"
                   v-on:highlightMaterial="highlightMaterial"
@@ -193,7 +191,7 @@
       </section>
       <section class="row" v-if="(searchQuery.params.view === 'details') && !isProcessing">
         <div v-bind:class="materialCardClass" class=""
-             v-for="(material, index) in itemlist">
+             v-for="(material, index) in searchItems">
           <material-card-detail
                   :material="material"
                   v-on:highlightMaterial="highlightMaterial"
@@ -208,7 +206,7 @@
         <table class="table table-hover material-detail-table">
           <tbody>
             <tr is="material-card-row"
-                v-for="(material, index) in itemlist"
+                v-for="(material, index) in searchItems"
                 :material="material"
                 v-on:highlightMaterial="highlightMaterial"
                 v-on:unhighlightMaterial="unhighlightMaterial">
@@ -219,7 +217,7 @@
 
       <filter-paginator
               v-if="hasResults && hasPagination && !isProcessing"
-              :pagination="pagination"
+              :pagination="searchPagination"
               :view="searchQuery.params.view"
               :order="order"
               :item_type_name="'materials'"
@@ -351,9 +349,9 @@
         // searchQuery: new SearchQuery(),
         searchQuery: null,
         searchUser: null,
-        itemlist: [],
-        pagination: null,
-        isProcessing: false,
+        // itemlist: [],
+        // pagination: null,
+        // isProcessing: false,
         materialTypes: new MaterialTypes(),
         constants: new GlazyConstants(),
         chartHeight: 200,
@@ -387,16 +385,28 @@
         return true;
       },
 
+      searchItems () {
+        return this.$store.getters.searchItems
+      },
+
+      searchPagination () {
+        return this.$store.getters.searchPagination
+      },
+
+      isProcessing() {
+        return this.$store.getters.isProcessing
+      },
+
       hasResults () {
-        if (this.itemlist
-          && this.itemlist.length > 0) {
+        if (this.searchItems
+          && this.searchItems.length > 0) {
           return true;
         }
         return false;
       },
 
       hasPagination () {
-        if (this.pagination) {
+        if (this.searchPagination) {
           return true;
         }
         return false;
@@ -440,7 +450,10 @@
       if (this.$route.params && this.$route.params.id) {
         this.searchQuery.params.u = this.$route.params.id
       }
-      this.fetchitemlist()
+
+      this.$store.dispatch('search', {
+        query: this.searchQuery
+      })
     },
     /*
     beforeRouteUpdate (to, from, next) {
@@ -481,7 +494,10 @@
         if ('params' in route && route.params.id) {
           this.searchQuery.params.u = route.params.id
         }
-        this.fetchitemlist()
+
+        this.$store.dispatch('search', {
+          query: this.searchQuery
+        })
       }
     },
     mounted() {
@@ -499,51 +515,6 @@
         }
         // Update the route.  Actual search triggered in beforeRouteUpdate
         this.$router.push({path: this.$route.path, query: myQuery})
-      },
-
-      fetchitemlist () {
-        // New Search, reset all errors
-        this.serverError = null
-        this.apiError = null
-
-        var myQuery = this.searchQuery.getMinimalQuery()
-
-        var querystring = this.searchQuery.toQuerystring(myQuery)
-        this.isProcessing = true
-        console.log('SEARCH: ' + querystring)
-
-        Vue.axios.get(Vue.axios.defaults.baseURL + '/search?' + querystring)
-          .then((response) => {
-            if (response.data.error) {
-              this.apiError = response.data.error
-              console.log(this.apiError)
-              this.itemlist = null
-              this.isProcessing = false
-            } else {
-              this.itemlist = response.data.data
-              if (!this.itemlist) {
-                // Make sure itemlist is always defined, and an array
-                this.itemlist = []
-              }
-              this.pagination = response.data.meta.pagination
-              if ('user' in response.data.meta && 'data' in response.data.meta.user) {
-                this.searchUser = response.data.meta.user.data
-              }
-
-              this.isProcessing = false
-            }
-          })
-          .catch(response => {
-            this.itemlist = null
-            if (response.response && response.response.status) {
-              if (response.response.status === 401) {
-                this.$auth.refresh() // attempt refresh
-              } else {
-                this.serverError = response.response.message;
-              }
-            }
-            this.isProcessing = false
-          })
       },
 
       search (query) {

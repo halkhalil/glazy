@@ -1,333 +1,348 @@
 <template>
-  <div class="recipe-component">
-    <b-alert v-if="apiError" show variant="danger">
-      API Error: {{ apiError.message }}
-    </b-alert>
-    <b-alert v-if="serverError" show variant="danger">
-      Server Error: {{ serverError }}
-    </b-alert>
-    <div class="load-container load7 fullscreen" v-if="isProcessing">
-      <div class="loader">Loading...</div>
-    </div>
-
-    <div v-if="isEditComponents && isLoaded && !isDeleted">
-      <edit-recipe-components :originalMaterial="material"
-                              v-on:isProcessing="isProcessingRecipe"
-                              v-on:updatedRecipeComponents="updatedRecipeComponents"
-                              v-on:editComponentsCancel="editComponentsCancel">
-      </edit-recipe-components>
-    </div>
-    <div v-if="!isEditComponents && isLoaded && !isDeleted" v-cloak>
-
-      <div id="addCollectionAlert" class="alert alert-success fade show" style="display: none;">
-        <i class="fa fa-check"></i> Recipe added to collection!
+  <div class="row recipe-component">
+    <nav class="col-md-4 sidebar d-none d-md-block">
+      <h5>Search Results</h5>
+      <a href="#">Back to Search</a>
+      <section class="row" v-if="searchItems">
+        <div class="col-md-12"
+             v-for="(material, index) in searchItems">
+          <material-card-detail
+                  :material="material"
+          ></material-card-detail>
+        </div>
+      </section>
+    </nav>
+    <main role="main" class="col-md-8 ml-sm-auto search-results">
+      <b-alert v-if="apiError" show variant="danger">
+        API Error: {{ apiError.message }}
+      </b-alert>
+      <b-alert v-if="serverError" show variant="danger">
+        Server Error: {{ serverError }}
+      </b-alert>
+      <div class="load-container load7 fullscreen" v-if="isProcessing">
+        <div class="loader">Loading...</div>
       </div>
 
-      <div class="row recipe-info-row">
-        <div class="col-md-8">
-          <div class="card recipe-info-card">
-            <div class="card-body">
+      <div v-if="isEditComponents && isLoaded && !isDeleted">
+        <edit-recipe-components :originalMaterial="material"
+                                v-on:isProcessing="isProcessingRecipe"
+                                v-on:updatedRecipeComponents="updatedRecipeComponents"
+                                v-on:editComponentsCancel="editComponentsCancel">
+        </edit-recipe-components>
+      </div>
+      <div v-if="!isEditComponents && isLoaded && !isDeleted" v-cloak>
 
-              <b-alert :show="showRecipeUpdatedSeconds" variant="info">
-                Recipe successfully updated.
-              </b-alert>
+        <div id="addCollectionAlert" class="alert alert-success fade show" style="display: none;">
+          <i class="fa fa-check"></i> Recipe added to collection!
+        </div>
 
-              <div v-if="isEditMeta">
-                <edit-recipe-metadata :recipe="recipe"
-                                      v-on:updatedRecipeMeta="updatedRecipeMeta"
-                                      v-on:editMetaCancel="editMetaCancel"
-                                      v-on:isProcessing="isProcessingRecipe"></edit-recipe-metadata>
-              </div>
-              <div v-show="!(isEditMeta)">
-                <div class="row">
-                  <div class="col">
-                    <material-type-breadcrumbs v-if="!recipe.isPrimitive"
-                                               :recipe="recipe"></material-type-breadcrumbs>
-                    <h2 class="card-title">
-                      <i v-if="recipe.isPrivate"
-                         v-b-tooltip.hover title="Archived"
-                         class="fa fa-eye-slash"></i>
-                      <i v-if="recipe.isArchived"
-                         v-b-tooltip.hover title="Archived"
-                         class="fa fa-lock"></i>
-                      {{ recipe.name }}
-                    </h2>
-                  </div>
-                  <div class="col-md-3 col-sm-4" v-if="!recipe.isPrimitive">
-                    <firing-card :recipe="recipe"></firing-card>
-                  </div>
+        <div class="row recipe-info-row">
+          <div class="col-md-8">
+            <div class="card recipe-info-card">
+              <div class="card-body">
+
+                <b-alert :show="showRecipeUpdatedSeconds" variant="info">
+                  Recipe successfully updated.
+                </b-alert>
+
+                <div v-if="isEditMeta">
+                  <edit-recipe-metadata :recipe="recipe"
+                                        v-on:updatedRecipeMeta="updatedRecipeMeta"
+                                        v-on:editMetaCancel="editMetaCancel"
+                                        v-on:isProcessing="isProcessingRecipe"></edit-recipe-metadata>
                 </div>
-                <div class="row">
-                  <div class="col-sm-4">
-                    <div class="author">
-                      <img :src="getUserAvatar(recipe.createdByUser)" alt="..." class="avatar img-raised">
-                      <span>
-                        {{ recipe.createdByUser.name }},
-                        <timeago :since="recipe.updatedAt"></timeago>
-                      </span>
+                <div v-show="!(isEditMeta)">
+                  <div class="row">
+                    <div class="col">
+                      <material-type-breadcrumbs v-if="!recipe.isPrimitive"
+                                                 :recipe="recipe"></material-type-breadcrumbs>
+                      <h2 class="card-title">
+                        <i v-if="recipe.isPrivate"
+                           v-b-tooltip.hover title="Archived"
+                           class="fa fa-eye-slash"></i>
+                        <i v-if="recipe.isArchived"
+                           v-b-tooltip.hover title="Archived"
+                           class="fa fa-lock"></i>
+                        {{ recipe.name }}
+                      </h2>
+                    </div>
+                    <div class="col-md-3 col-sm-4" v-if="!recipe.isPrimitive">
+                      <firing-card :recipe="recipe"></firing-card>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-sm-4">
+                      <div class="author">
+                        <img :src="getUserAvatar(recipe.createdByUser)" alt="..." class="avatar img-raised">
+                        <span>
+                      {{ recipe.createdByUser.name }},
+                      <timeago :since="recipe.updatedAt"></timeago>
+                    </span>
+                      </div>
+
+                    </div>
+                    <div class="col-sm-4 float-center">
+                      <social-sharing :url="this.meta.url"
+                                      :title="this.meta.title"
+                                      :description="this.meta.description"
+                                      hashtags="glaze,ceramics,recipe"
+                                      inline-template>
+                        <div>
+
+                          <button class="btn btn-icon btn-neutral btn-default">
+                            <network network="email">
+                              <i class="fa fa-envelope"></i>
+                            </network>
+                          </button>
+                          <button class="btn btn-icon btn-neutral btn-facebook">
+                            <network network="facebook">
+                              <i class="fa fa-facebook"></i>
+                            </network>
+                          </button>
+                          <button class="btn btn-icon btn-neutral btn-google">
+                            <network network="googleplus">
+                              <i class="fa fa-google-plus"></i>
+                            </network>
+                          </button>
+                          <button class="btn btn-icon btn-neutral btn-pinterest">
+                            <network network="pinterest">
+                              <i class="fa fa-pinterest"></i>
+                            </network>
+                          </button>
+                        </div>
+                      </social-sharing>
+                    </div>
+                    <div class="col-sm-4 float-right">
+                      <star-rating v-if="recipe.ratingTotal"
+                                   class="recipe-vue-star-rating"
+                                   :rating="Number(recipe.ratingAverage)"
+                                   :read-only="true"
+                                   :star-size="24"
+                                   :show-rating="false"
+                                   :increment="0.01"></star-rating>
+                    </div>
+                  </div>
+                  <p class="card-description">
+                    {{ recipe.description }}
+                  </p>
+
+                  <div class="row" v-if="$auth.check()">
+
+                    <div class="col-md-12">
+
+                      <b-button-group class="recipe-action-group">
+                        <b-dropdown left>
+                          <span slot=text><i class="fa fa-bookmark" aria-hidden="true"></i> Collect</span>
+                          <b-dropdown-item>Item 1</b-dropdown-item>
+                          <b-dropdown-item>Item 2</b-dropdown-item>
+                          <b-dropdown-divider></b-dropdown-divider>
+                          <b-dropdown-item>Item 3</b-dropdown-item>
+                        </b-dropdown>
+                        <b-dropdown left>
+                          <span slot=text><i class="fa fa-cloud-download" aria-hidden="true"></i> Export</span>
+                          <b-dropdown-item>Item 1</b-dropdown-item>
+                          <b-dropdown-item>Item 2</b-dropdown-item>
+                          <b-dropdown-divider></b-dropdown-divider>
+                          <b-dropdown-item>Item 3</b-dropdown-item>
+                        </b-dropdown>
+                        <b-button v-on:click="copyRecipe()"><i class="fa fa-copy"></i> Copy</b-button>
+                      </b-button-group>
+                      <b-button-group class="recipe-action-group" v-if="canEdit">
+                        <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-eye"></i> Publish</b-button>
+                        <b-button class="btn-info" v-if="!(recipe.isPrivate)" v-on:click="unpublishRecipe()"><i class="fa fa-eye-slash"></i> Unpublish</b-button>
+                        <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
+                        <b-button class="btn-info" v-on:click="editComponents()"><i class="fa fa-list"></i> Edit Recipe</b-button>
+                        <b-button class="btn-danger" v-if="!recipe.isArchived" v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
+                      </b-button-group>
+
+                      <b-modal v-if="canEdit"
+                               id="deleteConfirmModal"
+                               title="Delete Recipe?"
+                               v-on:ok="deleteRecipe"
+                               ok-title="Delete Forever"
+                      >
+                        <p>Once deleted, you will not be able to retrieve this recipe!</p>
+                      </b-modal>
+
                     </div>
 
                   </div>
-                  <div class="col-sm-4 float-center">
-                    <social-sharing :url="this.meta.url"
-                                    :title="this.meta.title"
-                                    :description="this.meta.description"
-                                    hashtags="glaze,ceramics,recipe"
-                                    inline-template>
-                      <div>
 
-                        <button class="btn btn-icon btn-neutral btn-default">
-                          <network network="email">
-                            <i class="fa fa-envelope"></i>
-                          </network>
-                        </button>
-                        <button class="btn btn-icon btn-neutral btn-facebook">
-                          <network network="facebook">
-                            <i class="fa fa-facebook"></i>
-                          </network>
-                        </button>
-                        <button class="btn btn-icon btn-neutral btn-google">
-                          <network network="googleplus">
-                            <i class="fa fa-google-plus"></i>
-                          </network>
-                        </button>
-                        <button class="btn btn-icon btn-neutral btn-pinterest">
-                          <network network="pinterest">
-                            <i class="fa fa-pinterest"></i>
-                          </network>
-                        </button>
-                      </div>
-                    </social-sharing>
-                  </div>
-                  <div class="col-sm-4 float-right">
-                    <star-rating v-if="recipe.ratingTotal"
-                                 class="recipe-vue-star-rating"
-                                 :rating="Number(recipe.ratingAverage)"
-                                 :read-only="true"
-                                 :star-size="24"
-                                 :show-rating="false"
-                                 :increment="0.01"></star-rating>
+                  <div v-if="!recipe.isPrimitive" class="row">
+
+                    <div class="col-md-12 mt-4">
+                      <material-recipe-calculator
+                              :materialComponents="recipe.materialComponents"></material-recipe-calculator>
+                    </div>
+
                   </div>
                 </div>
-                <p class="card-description">
-                  {{ recipe.description }}
-                </p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
 
-                <div class="row" v-if="$auth.check()">
+            <material-image-gallery
+                    :material="recipe"
+                    v-on:imageupdated="imageUpdated"></material-image-gallery>
 
-                  <div class="col-md-12">
+          </div>
+        </div>
 
-                    <b-button-group class="recipe-action-group">
-                      <b-dropdown left>
-                        <span slot=text><i class="fa fa-bookmark" aria-hidden="true"></i> Collect</span>
-                        <b-dropdown-item>Item 1</b-dropdown-item>
-                        <b-dropdown-item>Item 2</b-dropdown-item>
-                        <b-dropdown-divider></b-dropdown-divider>
-                        <b-dropdown-item>Item 3</b-dropdown-item>
-                      </b-dropdown>
-                      <b-dropdown left>
-                        <span slot=text><i class="fa fa-cloud-download" aria-hidden="true"></i> Export</span>
-                        <b-dropdown-item>Item 1</b-dropdown-item>
-                        <b-dropdown-item>Item 2</b-dropdown-item>
-                        <b-dropdown-divider></b-dropdown-divider>
-                        <b-dropdown-item>Item 3</b-dropdown-item>
-                      </b-dropdown>
-                      <b-button v-on:click="copyRecipe()"><i class="fa fa-copy"></i> Copy</b-button>
-                    </b-button-group>
-                    <b-button-group class="recipe-action-group" v-if="canEdit">
-                      <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-eye"></i> Publish</b-button>
-                      <b-button class="btn-info" v-if="!(recipe.isPrivate)" v-on:click="unpublishRecipe()"><i class="fa fa-eye-slash"></i> Unpublish</b-button>
-                      <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
-                      <b-button class="btn-info" v-on:click="editComponents()"><i class="fa fa-list"></i> Edit Recipe</b-button>
-                      <b-button class="btn-danger" v-if="!recipe.isArchived" v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
-                    </b-button-group>
-
-                    <b-modal v-if="canEdit"
-                             id="deleteConfirmModal"
-                             title="Delete Recipe?"
-                             v-on:ok="deleteRecipe"
-                             ok-title="Delete Forever"
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card"> <!-- BEGIN Analysis Card -->
+              <div class="card-body">
+                <h2 class="card-title">Analysis</h2>
+                <!--
+                <view-recipe-materials-analysis
+                        :recipe="recipe"></view-recipe-materials-analysis>
+                -->
+                <div class="row" v-if="!recipe.isPrimitive && recipe.baseTypeId == glazeTypeId">
+                  <div class="col-md-6">
+                    <umf-traditional-notation
+                            :material="material"
+                            :showOxideList="false"
+                            :squareSize="100">
+                    </umf-traditional-notation>
+                  </div>
+                  <div class="col-md-6">
+                    <JsonUmfSparkSvg
+                            :material="recipe"
+                            :squareSize="56"
+                            :fontSize="12"
+                            :showOxideTitle="true"
+                            :showOxideList="true"
                     >
-                      <p>Once deleted, you will not be able to retrieve this recipe!</p>
-                    </b-modal>
-
+                    </JsonUmfSparkSvg>
                   </div>
-
                 </div>
-
-                <div v-if="!recipe.isPrimitive" class="row">
-
-                  <div class="col-md-12 mt-4">
-                    <material-recipe-calculator
-                            :materialComponents="recipe.materialComponents"></material-recipe-calculator>
+                <div class="row mt-4">
+                  <div class="col-md-12">
+                    <b-tabs class="analysis-tabs" active>
+                      <b-tab title="Mol % Analysis" >
+                        <component-table
+                                :material="material"
+                                :isFormulaAnalysis="true"></component-table>
+                      </b-tab>
+                      <b-tab title="% Analysis">
+                        <component-table
+                                :material="material"
+                                :isFormulaAnalysis="false"></component-table>
+                      </b-tab>
+                    </b-tabs>
                   </div>
+                </div>
 
+                <!--
+                <material-analysis-percent-table-compare
+                        :originalAnalysis="material.getMolePercentageFormula().analysis">
+                </material-analysis-percent-table-compare>
+                -->
+              </div>
+            </div> <!-- END Analysis Card -->
+          </div>
+        </div>
+
+
+        <div class="row" v-if="!recipe.isPrimitive">
+          <div class="col-md-12">
+            <umf-chart
+                    :current_user="null"
+                    :material="recipe"
+            ></umf-chart>
+          </div>
+        </div>
+
+
+
+        <div v-if="!recipe.isPrimitive" class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="card-title">Similar Base Recipes</h2>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <similar-base-components :material="recipe"></similar-base-components>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-md-4">
 
-          <material-image-gallery
-                  :material="recipe"
-                  v-on:imageupdated="imageUpdated"></material-image-gallery>
-
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card"> <!-- BEGIN Analysis Card -->
-            <div class="card-body">
-              <h2 class="card-title">Analysis</h2>
-              <!--
-              <view-recipe-materials-analysis
-                      :recipe="recipe"></view-recipe-materials-analysis>
-              -->
-              <div class="row" v-if="!recipe.isPrimitive && recipe.baseTypeId == glazeTypeId">
-                <div class="col-md-6">
-                  <umf-traditional-notation
-                          :material="material"
-                          :showOxideList="false"
-                          :squareSize="100">
-                  </umf-traditional-notation>
-                </div>
-                <div class="col-md-6">
-                      <JsonUmfSparkSvg
-                              :material="recipe"
-                              :squareSize="56"
-                              :fontSize="12"
-                              :showOxideTitle="true"
-                              :showOxideList="true"
-                      >
-                      </JsonUmfSparkSvg>
-                </div>
-              </div>
-              <div class="row mt-4">
-                <div class="col-md-12">
-                  <b-tabs class="analysis-tabs" active>
-                    <b-tab title="Mol % Analysis" >
-                      <component-table
-                              :material="material"
-                              :isFormulaAnalysis="true"></component-table>
-                    </b-tab>
-                    <b-tab title="% Analysis">
-                      <component-table
-                              :material="material"
-                              :isFormulaAnalysis="false"></component-table>
-                    </b-tab>
-                  </b-tabs>
-                </div>
-              </div>
-
-              <!--
-              <material-analysis-percent-table-compare
-                      :originalAnalysis="material.getMolePercentageFormula().analysis">
-              </material-analysis-percent-table-compare>
-              -->
-            </div>
-          </div> <!-- END Analysis Card -->
-        </div>
-      </div>
-
-
-      <div class="row" v-if="!recipe.isPrimitive">
-        <div class="col-md-12">
-          <umf-chart
-                  :current_user="null"
-                  :material="recipe"
-          ></umf-chart>
-        </div>
-      </div>
-
-
-
-      <div v-if="!recipe.isPrimitive" class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-body">
-              <h2 class="card-title">Similar Base Recipes</h2>
-              <div class="row">
-                <div class="col-sm-12">
-                  <similar-base-components :material="recipe"></similar-base-components>
+        <div v-if="!recipe.isPrimitive" class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="card-title">Similar Unity Formula</h2>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <similar-unity-formula :material="recipe"></similar-unity-formula>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div v-if="!recipe.isPrimitive" class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-body">
-              <h2 class="card-title">Similar Unity Formula</h2>
-              <div class="row">
-                <div class="col-sm-12">
-                  <similar-unity-formula :material="recipe"></similar-unity-formula>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="card-title">Reviews</h2>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <reviews-panel
+                            v-on:reviewsmodified="reviewsmodified"
+                            :current_user="current_user"
+                            :material="recipe"
+                    ></reviews-panel>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-body">
-              <h2 class="card-title">Reviews</h2>
-              <div class="row">
-                <div class="col-sm-12">
-                <reviews-panel
-                        v-on:reviewsmodified="reviewsmodified"
+        <div class="modal fade collection-add-recipe-modal" id="addToCollectionModal" tabindex="-1" role="dialog" aria-labelledby="add to collection" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add to Collection</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <collection-add-recipe-form
+                        :recipe="recipe"
                         :current_user="current_user"
-                        :material="recipe"
-                ></reviews-panel>
-                </div>
+                        v-on:collectionaddrecipe="collectionaddrecipe"
+                ></collection-add-recipe-form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="materialDeletedModal" tabindex="-1" role="dialog" aria-labelledby="delete recipe" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Material deleted!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>Redirecting to your recipes..</p>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </main>
 
-      <div class="modal fade collection-add-recipe-modal" id="addToCollectionModal" tabindex="-1" role="dialog" aria-labelledby="add to collection" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Add to Collection</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <collection-add-recipe-form
-                      :recipe="recipe"
-                      :current_user="current_user"
-                      v-on:collectionaddrecipe="collectionaddrecipe"
-              ></collection-add-recipe-form>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="modal fade" id="materialDeletedModal" tabindex="-1" role="dialog" aria-labelledby="delete recipe" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Material deleted!</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <p>Redirecting to your recipes..</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
 </template>
@@ -357,6 +372,8 @@
   import EditRecipeComponents from '../components/glazy/recipe/EditRecipeComponents.vue'
 
   import ReviewsPanel from '../components/glazy/materialreviews/ReviewsPanel.vue'
+
+  import MaterialCardDetail from '../components/glazy/search/MaterialCardDetail.vue'
 
   import VueTimeago from 'vue-timeago'
 
@@ -426,7 +443,8 @@
       EditRecipeMetadata,
       EditRecipeComponents,
       ReviewsPanel,
-      VueTimeago
+      VueTimeago,
+      MaterialCardDetail
     },
     props: {
       recipe_id: {
@@ -496,6 +514,9 @@
           }
         }
         return meta
+      },
+      searchItems: function () {
+        return this.$store.getters.searchItems
       }
     },
     beforeRouteUpdate (to, from, next) {
@@ -715,6 +736,18 @@
 
   .recipe-component {
     padding-top: 15px;
+  }
+
+  .sidebar {
+    background-color: #efefef;
+    position: fixed;
+    top: 50px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    padding: 15px 15px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   }
 
   .recipe-info-row {

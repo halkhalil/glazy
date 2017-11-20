@@ -54,7 +54,7 @@
       </table>
       <router-link :to="{ name: 'user', params: { id: material.createdByUser.id}}">
         <div class="author">
-          <img src="/img/profile.jpg" alt="..." class="avatar img-raised">
+          <img src="/img/profile.jpg" alt="..." class="avatar">
           <span>{{ material.createdByUser.name }}</span>
         </div>
       </router-link>
@@ -162,7 +162,7 @@
 
   .material-detail-card .card-body table {
     font-size: 12px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
   }
 
   .material-detail-card .card-body table tr.subtotal {
