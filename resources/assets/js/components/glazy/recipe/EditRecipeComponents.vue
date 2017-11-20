@@ -26,27 +26,19 @@
                 No analysis.  Please add materials.
               </div>
               <div v-else>
-                <div class="table-responsive">
-                  <MaterialAnalysisTableCompare
-                          :originalMaterial="originalMaterial"
-                          :newMaterial="newMaterial"
-                          :showHeadings="true"
-                  >
-                  </MaterialAnalysisTableCompare>
-                </div>
-                <JsonUmfSparkSvg
-                        v-if="originalMaterial"
+
+                <umf-traditional-notation
                         :material="originalMaterial"
-                        :showOxideList="false"
-                        :squareSize="30"
-                >
-                </JsonUmfSparkSvg>
-                <JsonUmfSparkSvg
+                        :isSmall="false">
+                </umf-traditional-notation>
+                <umf-traditional-notation
+                        class="mt-1"
                         :material="newMaterial"
-                        :showOxideList="false"
-                        :squareSize="30"
-                >
-                </JsonUmfSparkSvg>
+                        :showLegend="false"
+                        :isSmall="false">
+                </umf-traditional-notation>
+
+
               </div>
             </b-tab>
             <b-tab title="% Mol">
@@ -241,6 +233,7 @@
   import MaterialAnalysisUmfSpark2Single from '../analysis/MaterialAnalysisUmfSpark2Single.vue';
   import MaterialAnalysisPercentTableCompare from '../analysis/MaterialAnalysisPercentTableCompare.vue';
   import JsonUmfSparkSvg from '../analysis/JsonUmfSparkSvg.vue'
+  import UmfTraditionalNotation from '../analysis/UmfTraditionalNotation.vue';
 
   import Multiselect from 'vue-multiselect';
 
@@ -253,7 +246,8 @@
       UmfD3Chart,
       MaterialAnalysisTableCompare,
       MaterialAnalysisPercentTableCompare,
-      JsonUmfSparkSvg
+      JsonUmfSparkSvg,
+      UmfTraditionalNotation
     },
     props: {
       originalMaterial: {

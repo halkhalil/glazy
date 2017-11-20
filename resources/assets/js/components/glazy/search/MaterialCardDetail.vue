@@ -35,6 +35,13 @@
           </router-link>
         </h5>
       </div>
+
+      <umf-traditional-notation
+        :material="material"
+        showSimpleLegend="true"
+        isSmall="true">
+      </umf-traditional-notation>
+
       <table v-if="!material.isPrimitive && 'materialComponents' in material && material.materialComponents.length > 0"
              class="table table-sm">
         <tr v-for="(materialComponent, index) in material.materialComponents"
@@ -54,7 +61,7 @@
       </table>
       <router-link :to="{ name: 'user', params: { id: material.createdByUser.id}}">
         <div class="author">
-          <img src="/img/profile.jpg" alt="..." class="avatar">
+          <img src="/img/profile.jpg" alt="..." class="avatar img-raised">
           <span>{{ material.createdByUser.name }}</span>
         </div>
       </router-link>
@@ -72,12 +79,16 @@
 </template>
 
 <script>
-
+  import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
   import MaterialHelper from './material-helper'
+
+  // import MaterialAnalysisVerticalTable from '../analysis/MaterialAnalysisVerticalTable.vue'
+  import UmfTraditionalNotation from '../analysis/UmfTraditionalNotation.vue';
 
   export default {
     name: 'MaterialCardThumb',
     components: {
+      UmfTraditionalNotation
     },
     props: {
       material: {
@@ -160,8 +171,20 @@
     margin-bottom: 5px;
   }
 
+  .material-detail-card .umf-traditional {
+    font-size: 14px;
+    line-height: 13px;
+  }
+  .material-detail-card .umf-traditional thead tr th {
+    font-size: 10px;
+  }
+  .material-detail-card .umf-traditional tbody tr td.bracket {
+    padding: 0 4px;
+  }
+
   .material-detail-card .card-body table {
     font-size: 12px;
+    margin-top: 10px;
     margin-bottom: 10px;
   }
 
@@ -185,6 +208,7 @@
     top: -240px;
     visibility: hidden;
   }
+
 
 
 </style>

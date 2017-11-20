@@ -134,6 +134,7 @@ export default {
 <style>
 
     .material-recipe-calculator-table tr th {
+        font-size: 10px;
         padding: 5px;
     }
 

@@ -1,9 +1,10 @@
 <template>
   <div class="row recipe-component">
-    <nav class="col-md-4 sidebar d-none d-md-block">
+    <nav v-if="searchItems && searchItems.length > 0"
+         class="col-md-3 sidebar d-none d-md-block">
       <h5>Search Results</h5>
       <a href="#">Back to Search</a>
-      <section class="row" v-if="searchItems">
+      <section class="row">
         <div class="col-md-12"
              v-for="(material, index) in searchItems">
           <material-card-detail
@@ -12,7 +13,7 @@
         </div>
       </section>
     </nav>
-    <main role="main" class="col-md-8 ml-sm-auto search-results">
+    <main v-bind:class="mainClass" role="main" class="ml-sm-auto recipe-result">
       <b-alert v-if="apiError" show variant="danger">
         API Error: {{ apiError.message }}
       </b-alert>
@@ -471,7 +472,7 @@
         apiError: null,
         serverError: null,
         glazeTypeId: new MaterialTypes().GLAZE_TYPE_ID,
-        isEditRequest: false
+        isEditRequest: false,
       }
     },
 
@@ -492,6 +493,12 @@
           return true;
         }
         return false;
+      },
+      mainClass: function() {
+        if (this.searchItems && this.searchItems.length > 0) {
+          return 'col-md-9'
+        }
+        return 'col-md-12'
       },
       canEdit: function () {
         // Only the creator of a recipe can edit it
@@ -521,6 +528,8 @@
     },
     beforeRouteUpdate (to, from, next) {
       // Ensure that the back/forward buttons work within this component/route
+      this.isEditComponents = false
+      this.isEditMeta = false
       this.sendRecipeGetRequest('/recipes/' + to.params.id)
       next()
     },
@@ -735,7 +744,23 @@
 <style>
 
   .recipe-component {
-    padding-top: 15px;
+    // padding-top: 15px;
+  }
+
+  .my-sidebar {
+    -ms-flex: 0 0 300px;
+    flex: 0 0 300px;
+    background-color: greenyellow;
+    padding: 15px 15px;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  }
+
+  @media (max-width: 690px) {
+    .my-sidebar {
+      display: none;
+    }
   }
 
   .sidebar {
@@ -748,6 +773,12 @@
     padding: 15px 15px;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  }
+
+  .recipe-result {
+    background-color: #dedede;
+    padding-top: 15px;
+    padding-bottom: 64px;
   }
 
   .recipe-info-row {
