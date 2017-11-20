@@ -6,9 +6,10 @@
       <a href="#">Back to Search</a>
       <section class="row">
         <div class="col-md-12"
-             v-for="(material, index) in searchItems">
+             v-for="searchMaterial in searchItems">
           <material-card-detail
-                  :material="material"
+                  :material="searchMaterial"
+                  :currentMaterialId="material.id"
           ></material-card-detail>
         </div>
       </section>
@@ -31,7 +32,7 @@
                                 v-on:editComponentsCancel="editComponentsCancel">
         </edit-recipe-components>
       </div>
-      <div v-if="!isEditComponents && isLoaded && !isDeleted" v-cloak>
+      <div v-if="!isEditComponents && isLoaded && !isDeleted">
 
         <div id="addCollectionAlert" class="alert alert-success fade show" style="display: none;">
           <i class="fa fa-check"></i> Recipe added to collection!
@@ -200,22 +201,43 @@
                         :recipe="recipe"></view-recipe-materials-analysis>
                 -->
                 <div class="row" v-if="!recipe.isPrimitive && recipe.baseTypeId == glazeTypeId">
-                  <div class="col-md-6">
-                    <umf-traditional-notation
-                            :material="material"
-                            :showOxideList="false"
-                            :squareSize="100">
-                    </umf-traditional-notation>
-                  </div>
-                  <div class="col-md-6">
-                    <JsonUmfSparkSvg
-                            :material="recipe"
-                            :squareSize="56"
-                            :fontSize="12"
-                            :showOxideTitle="true"
-                            :showOxideList="true"
-                    >
-                    </JsonUmfSparkSvg>
+                  <div class="col-sm-12">
+                    <table class="analysis-layout-table w-100">
+                      <tr>
+                        <td>
+                          <umf-traditional-notation
+                                  :material="material"
+                                  :showOxideList="false"
+                                  :squareSize="100">
+                          </umf-traditional-notation>
+                        </td>
+                        <td class="text-right">
+                          <div class="card card-umf-info card-plain">
+                            <div class="card-body">
+                              <h6 class="card-title">R<sub>2</sub>O : RO</h6>
+                              <p class="card-text">
+                          <span class="oxide-colors-Na2O">
+                            {{ Number(recipe.analysis.umfAnalysis.R2OTotal).toFixed(2) }}
+                          </span>
+                                :
+                                <span class="oxide-colors-CaO">
+                            {{ Number(recipe.analysis.umfAnalysis.ROTotal).toFixed(2) }}
+                          </span>
+                              </p>
+                            </div>
+                          </div>
+
+                          <div class="card card-umf-info card-plain">
+                            <div class="card-body">
+                              <h6 class="card-title">SiO<sub>2</sub> : Al<sub>2</sub>O<sub>3</sub></h6>
+                              <p class="card-text">
+                                {{ Number(recipe.analysis.umfAnalysis.SiO2Al2O3Ratio).toFixed(2) }}
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
                   </div>
                 </div>
                 <div class="row mt-4">
@@ -360,7 +382,7 @@
   import MaterialRecipeCalculator from '../components/glazy/recipe/MaterialRecipeCalculator.vue'
   import MaterialImageGallery from '../components/glazy/materialimage/MaterialImageGallery.vue'
 
-  import JsonUmfSparkSvg from '../components/glazy/analysis/JsonUmfSparkSvg.vue'
+  // import JsonUmfSparkSvg from '../components/glazy/analysis/JsonUmfSparkSvg.vue'
   import MaterialAnalysisUmfSpark2Single from '../components/glazy/analysis/MaterialAnalysisUmfSpark2Single.vue';
   import UmfTraditionalNotation from '../components/glazy/analysis/UmfTraditionalNotation.vue';
   import ComponentTable from '../components/glazy/analysis/ComponentTable.vue'
@@ -436,7 +458,6 @@
       MaterialImageGallery,
       UmfChart,
       MaterialAnalysisUmfSpark2Single,
-      JsonUmfSparkSvg,
       UmfTraditionalNotation,
       ComponentTable,
       SimilarBaseComponents,
@@ -810,4 +831,34 @@
   .recipe-vue-star-rating {
     float: right;
   }
+
+  .analysis-layout-table {
+    padding: 0 20px;
+  }
+
+  .analysis-layout-table tr td {
+    padding: 0;
+  }
+
+  .card-umf-info {
+    background-color: #efefef;
+    max-width: 11em;
+    margin-bottom: 10px;
+  }
+
+  .card-umf-info .card-body {
+    padding: 5px;
+    text-align: center;
+  }
+
+  .card-umf-info .card-body .card-title {
+    color: #999999;
+    margin: 0;
+    text-transform: none;
+  }
+
+  .card-umf-info .card-body .card-text {
+    font-size: 2em;
+  }
+
 </style>

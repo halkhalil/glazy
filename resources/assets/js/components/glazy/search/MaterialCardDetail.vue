@@ -2,10 +2,11 @@
 
   <div v-if="materialHelper"
        class="card material-detail-card"
+       v-bind:class="materialCardClass"
        @mouseover="highlightMaterial(material.id)"
        @mouseleave="unhighlightMaterial(material.id)">
     <div class="card-body">
-      <table class="w-100">
+      <table class="card-header-table w-100">
         <tr>
           <td class="align-top">
             <span v-bind:id="'material-card-' + material.id"
@@ -36,32 +37,60 @@
         </h5>
       </div>
 
-      <umf-traditional-notation
-        :material="material"
-        showSimpleLegend="true"
-        isSmall="true">
-      </umf-traditional-notation>
+      <b-btn v-b-toggle="'detail-collapse-' + material.id"
+             variant="primary"
+             class="btn btn-link btn-info btn-more-info"><i class="fa fa-chevron-down"></i> More Info</b-btn>
+      <b-collapse v-bind:id="'detail-collapse-' + material.id">
 
-      <table v-if="!material.isPrimitive && 'materialComponents' in material && material.materialComponents.length > 0"
-             class="table table-sm">
-        <tr v-for="(materialComponent, index) in material.materialComponents"
-            v-bind:class="{ 'table-info' : materialComponent.isAdditional }">
-          <td>
-            <i v-if="materialComponent.isAdditional" class="fa fa-plus"></i>
-            {{ materialComponent.material.name }}
-          </td>
-          <td class="text-right">
-            {{ Number(materialComponent.percentageAmount).toFixed(2) }}
-          </td>
-        </tr>
-        <tr class="subtotal">
-          <td></td>
-          <td class="text-right">{{ Number(material.materialComponentTotalAmount).toFixed(2) }}</td>
-        </tr>
-      </table>
+        <umf-traditional-notation
+                :material="material"
+                showSimpleLegend=true
+                isSmall=true>
+        </umf-traditional-notation>
+
+        <div class="ratios">
+          R<sub>2</sub>O:RO
+
+          <span class="badge">
+            <span class="oxide-colors-Na2O">
+            {{ Number(material.analysis.umfAnalysis.R2OTotal).toFixed(2) }}
+            </span>
+              :
+              <span class="oxide-colors-CaO">
+            {{ Number(material.analysis.umfAnalysis.ROTotal).toFixed(2) }}
+            </span>
+          </span>
+
+          SiO<sub>2</sub>:Al<sub>2</sub>O<sub>3</sub>
+          <span class="badge">
+            {{ Number(material.analysis.umfAnalysis.SiO2Al2O3Ratio).toFixed(2) }}
+          </span>
+        </div>
+
+        <table v-if="!material.isPrimitive && 'materialComponents' in material && material.materialComponents.length > 0"
+               class="table table-sm material-component-table">
+          <tr v-for="(materialComponent, index) in material.materialComponents"
+              v-bind:class="{ 'table-info' : materialComponent.isAdditional }">
+            <td>
+              <i v-if="materialComponent.isAdditional" class="fa fa-plus"></i>
+              {{ materialComponent.material.name }}
+            </td>
+            <td class="text-right">
+              {{ Number(materialComponent.percentageAmount).toFixed(2) }}
+            </td>
+          </tr>
+          <tr class="subtotal">
+            <td></td>
+            <td class="text-right">{{ Number(material.materialComponentTotalAmount).toFixed(2) }}</td>
+          </tr>
+        </table>
+
+      </b-collapse>
+
+
       <router-link :to="{ name: 'user', params: { id: material.createdByUser.id}}">
         <div class="author">
-          <img src="/img/profile.jpg" alt="..." class="avatar img-raised">
+          <img src="/img/profile.jpg" alt="..." class="avatar">
           <span>{{ material.createdByUser.name }}</span>
         </div>
       </router-link>
@@ -94,6 +123,10 @@
       material: {
         type: Object,
         default: null
+      },
+      currentMaterialId: {
+        type: Number,
+        default: 0
       }
     },
     data() {
@@ -116,6 +149,13 @@
           materialHelper = new MaterialHelper(this.material)
         }
         return materialHelper
+      },
+
+      materialCardClass: function () {
+        if (this.currentMaterialId === this.material.id) {
+          return 'material-detail-card-current'
+        }
+        return null
       }
     },
     methods: {
@@ -153,6 +193,10 @@
     border-bottom: none;
   }
 
+  .material-detail-card-current {
+    border: 2px solid #2CA8FF;
+  }
+
   .material-detail-card .card-body {
     padding: 10px;
   }
@@ -171,8 +215,26 @@
     margin-bottom: 5px;
   }
 
+  .material-detail-card .card-body .ratios {
+    margin-top: 4px;
+    font-size: 12px;
+  }
+
+  .material-detail-card .card-body .ratios .badge {
+    background-color: #efefef;
+    font-size: 12px;
+    padding: 4px;
+    margin: 2px;
+  }
+
+  .material-detail-card .btn-more-info {
+    padding: 10px 4px;
+    margin: 0;
+  }
+
   .material-detail-card .umf-traditional {
-    font-size: 14px;
+    margin: 0;
+    font-size: 12px;
     line-height: 13px;
   }
   .material-detail-card .umf-traditional thead tr th {
@@ -182,13 +244,21 @@
     padding: 0 4px;
   }
 
-  .material-detail-card .card-body table {
+  .material-detail-card .card-body .card-header-table {
+    margin: 0;
+  }
+
+  .material-detail-card .card-body .card-header-table tr td {
+    padding: 0;
+  }
+
+  .material-detail-card .card-body .material-component-table {
     font-size: 12px;
     margin-top: 10px;
     margin-bottom: 10px;
   }
 
-  .material-detail-card .card-body table tr.subtotal {
+  .material-detail-card .card-body .material-component-table tr.subtotal {
     background-color: #efefef;
   }
 

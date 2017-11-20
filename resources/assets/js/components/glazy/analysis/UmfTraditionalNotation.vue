@@ -1,69 +1,69 @@
 <template>
-
-    <table class="umf-traditional" v-if="isLoaded">
-        <thead v-if="showLegend || showSimpleLegend">
-        <tr class="legend-row">
-            <th colspan="2">
-                <span v-if="!showSimpleLegend" class="subtitle">FLUXES</span>
-            </th>
-            <th colspan="2">
-                <span v-if="!showSimpleLegend" class="subtitle">STABILIZERS</span>
-            </th>
-            <th colspan="2">
-                <span v-if="!showSimpleLegend" class="subtitle">GLASS-FORMERS</span>
-            </th>
-            <th colspan="2">
-                <span v-if="!showSimpleLegend" class="subtitle">OTHER</span>
-            </th>
-        </tr>
-        <tr>
-            <th colspan="2">
-                RO/R<sub>2</sub>O
-            </th>
-            <th colspan="2">
-                R<sub>2</sub>O<sub>3</sub>
-            </th>
-            <th colspan="2">
-                RO<sub>2</sub>
-            </th>
-            <th colspan="2">
-                <span v-if="showSimpleLegend">OTHER</span>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                <div v-for="oxide in fluxes" v-html="oxide"></div>
-            </td>
-            <td class="bracket">
-                <img v-bind:src="'/img/brackets/r' + fluxes.length + '.png'"
-                     v-bind:height="fluxes.length * heightMultiplier"
-                     v-bind:width="bracketWidth"/>
-            </td>
-            <td>
-                <div v-for="oxide in r2o3" v-html="oxide"></div>
-            </td>
-            <td class="bracket">
-                <img v-bind:src="'/img/brackets/l' + sio2.length + '.png'"
-                     v-bind:height="sio2.length * heightMultiplier"
-                     v-bind:width="bracketWidth"/>
-            </td>
-            <td>
-                <div v-for="oxide in sio2" v-html="oxide"></div>
-            </td>
-            <td class="bracket" v-if="other.length">
-                <img v-bind:src="'/img/brackets/l' + other.length + '.png'"
-                     v-bind:height="other.length * heightMultiplier"
-                     v-bind:width="bracketWidth"/>
-            </td>
-            <td v-if="other.length">
-                <div v-for="oxide in other" v-html="oxide"></div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
+    <div class="table-responsive">
+        <table class="umf-traditional" v-if="isLoaded">
+            <thead v-if="showLegend || showSimpleLegend">
+            <tr class="legend-row">
+                <th colspan="2">
+                    <span v-if="!showSimpleLegend" class="subtitle">FLUXES</span>
+                </th>
+                <th colspan="2">
+                    <span v-if="!showSimpleLegend" class="subtitle">STABILIZERS</span>
+                </th>
+                <th colspan="2">
+                    <span v-if="!showSimpleLegend" class="subtitle">GLASS-FORMERS</span>
+                </th>
+                <th v-if="other.length" colspan="2">
+                    <span v-if="!showSimpleLegend" class="subtitle">OTHER</span>
+                </th>
+            </tr>
+            <tr>
+                <th colspan="2">
+                    RO/R<sub>2</sub>O
+                </th>
+                <th colspan="2">
+                    R<sub>2</sub>O<sub>3</sub>
+                </th>
+                <th colspan="2">
+                    RO<sub>2</sub>
+                </th>
+                <th v-if="other.length" colspan="2">
+                    <span v-if="showSimpleLegend">OTHER</span>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <div v-for="oxide in fluxes" v-html="oxide"></div>
+                </td>
+                <td class="bracket">
+                    <img v-bind:src="'/img/brackets/r' + fluxes.length + '.png'"
+                         v-bind:height="fluxes.length * heightMultiplier"
+                         v-bind:width="bracketWidth"/>
+                </td>
+                <td>
+                    <div v-for="oxide in r2o3" v-html="oxide"></div>
+                </td>
+                <td class="bracket">
+                    <img v-bind:src="'/img/brackets/l' + sio2.length + '.png'"
+                         v-bind:height="sio2.length * heightMultiplier"
+                         v-bind:width="bracketWidth"/>
+                </td>
+                <td>
+                    <div v-for="oxide in sio2" v-html="oxide"></div>
+                </td>
+                <td class="bracket" v-if="other.length">
+                    <img v-bind:src="'/img/brackets/l' + other.length + '.png'"
+                         v-bind:height="other.length * heightMultiplier"
+                         v-bind:width="bracketWidth"/>
+                </td>
+                <td v-if="other.length">
+                    <div v-for="oxide in other" v-html="oxide"></div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </template>
 
 

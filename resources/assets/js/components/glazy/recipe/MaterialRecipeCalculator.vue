@@ -5,12 +5,13 @@
         <tr>
             <th>Material</th>
             <th>Amount</th>
-            <th>Batch</th>
-            <th>Subtotal</th>
+            <th v-if="batchValues">Batch</th>
+            <th v-if="batchValues">Subtotal</th>
         </tr>
         </thead>
         <tbody>
-        <tr v-for="(materialComponent, index) in this.materialComponents" v-bind:class="{ 'table-info' : materialComponent.isAdditional }">
+        <tr v-for="(materialComponent, index) in this.materialComponents"
+            v-bind:class="{ 'table-info' : materialComponent.isAdditional }">
             <td class="align-middle">
                 <img class="rounded-circle"
                      width="40" height="40"
@@ -23,26 +24,29 @@
             <td class="align-middle amount">
                 {{ parseFloat(materialComponent.percentageAmount) }}
             </td>
-            <td class="align-middle batch" :id="'batch_' + materialComponent.material.id">{{ batch_rows[index] }}</td>
-            <td class="align-middle subtotal" :id="'subtotal_' + materialComponent.material.id">{{ subtotal_rows[index] }}</td>
+            <td v-if="batchValues"
+                class="align-middle batch" :id="'batch_' + materialComponent.material.id">
+                {{ batchValues.batchRows[index] }}
+            </td>
+            <td v-if="batchValues"
+                class="align-middle subtotal" :id="'subtotal_' + materialComponent.material.id">
+                {{ batchValues.subtotalRows[index] }}
+            </td>
         </tr>
         <tr class="align-middle subtotal">
             <td>Total</td>
             <td>{{ totalAmount }}</td>
-            <td></td>
-            <td></td>
+            <td v-if="batchValues" colspan="2"></td>
         </tr>
         <tr class="batch_form">
-            <td colspan="4">
-                <form class="form-inline pull-right" id="batch_form" v-on:submit.prevent @keydown.enter="calculateBatch">
-                    <div class="form-group">
-                        <label for="batch_size">Batch:&nbsp;</label>
-                        <input type="number" inputmode="numeric" size="10" class="form-control" placeholder="0.00" id="batch_size" v-model.number="batch_size">
-                        <button type="button" v-on:click="calculateBatch" id="batch_calculate" class="btn btn-primary btn-icon">
-                            <i class="fa fa-calculator"></i>
-                        </button>
-                    </div>
-                </form>
+            <td v-bind:colspan="numColumns" class="text-right">
+                        Calculate Batch:&nbsp;
+                        <input type="number"
+                               inputmode="numeric"
+                               size="10"
+                               placeholder="0.00"
+                               id="batchSize"
+                               v-model.number="batchSize">
             </td>
         </tr>
         </tbody>
@@ -50,7 +54,6 @@
 </template>
 
 <script>
-
 export default {
   name: 'MaterialRecipeCalculator',
 
@@ -63,9 +66,7 @@ export default {
 
   data() {
     return {
-      batch_size: '',
-      batch_rows: [],
-      subtotal_rows: []
+      batchSize: null
     }
   },
 
@@ -77,15 +78,43 @@ export default {
       return false;
     },
     totalAmount: function () {
-      console.log('Get total amount.');
-      var total_amount = 0.0;
-      for (var index in this.materialComponents) {
-        var materialComponent = this.materialComponents[index];
-        if (!materialComponent.isAdditional) {
-          total_amount += parseFloat(materialComponent.percentageAmount);
-        }
+      var totalAmount = 0.0
+      if (this.materialComponents && this.materialComponents.length > 0) {
+        this.materialComponents.forEach(function (materialComponent, index) {
+          if (!materialComponent.isAdditional) {
+            totalAmount += parseFloat(materialComponent.percentageAmount);
+          }
+        })
+        return totalAmount.toFixed(2)
       }
-      return total_amount.toFixed(2);
+      return 0
+    },
+    batchValues: function () {
+      if (this.batchSize &&
+        !isNaN(parseFloat(this.batchSize)) &&
+        this.materialComponents) {
+        var batchValues = {
+          batchRows: [],
+          subtotalRows: []
+        }
+        var subtotal = 0;
+        this.materialComponents.forEach(function (materialComponent, index) {
+          var value = parseFloat(materialComponent.percentageAmount)
+            * parseFloat(this.batchSize)
+            / parseFloat(this.totalAmount)
+          subtotal += value
+          batchValues.batchRows[index] = value.toFixed(2)
+          batchValues.subtotalRows[index] = subtotal.toFixed(2)
+        }.bind(this))
+        return batchValues
+      }
+      return null
+    },
+    numColumns: function () {
+      if (this.batchValues) {
+        return 4
+      }
+      return 2
     }
   },
 
@@ -94,26 +123,6 @@ export default {
   },
 
   methods: {
-    calculateBatch: function (event) {
-      if (!isNaN(parseFloat(this.batch_size))) {
-        var batch_rows = [];
-        var subtotal_rows = [];
-        var subtotal = 0;
-
-        for (var index in this.materialComponents) {
-          var materialComponent = this.materialComponents[index];
-          var value = parseFloat(materialComponent.percentageAmount)
-            * parseFloat(this.batch_size)
-            / parseFloat(this.totalAmount);
-          subtotal += value;
-          batch_rows[index] = value.toFixed(2);
-          subtotal_rows[index] = subtotal.toFixed(2);
-        }
-        this.$set(this, 'batch_rows', batch_rows);
-        this.$set(this, 'subtotal_rows', subtotal_rows);
-      }
-    },
-
 
     getImageBin: function (id) {
       id = '' + id;
