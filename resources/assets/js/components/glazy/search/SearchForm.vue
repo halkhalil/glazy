@@ -20,8 +20,10 @@
                        class="form-control form-control-sm"
                        v-model="query.params.keywords"
                        placeholder="Search Term"
-                       @input="updateKeywords">
+                       @input="updateKeywords"
+                       @keydown.enter.prevent="updateKeywords">
             </div>
+
             <div v-bind:class="sizeMedium" class="form-group">
                 <b-form-select
                         size="sm"

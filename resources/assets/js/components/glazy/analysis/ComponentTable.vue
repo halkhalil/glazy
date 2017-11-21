@@ -9,7 +9,7 @@
                 <th v-for="oxideName in presentOxides">
                     <a :href="'/oxides/' + oxideName" v-html="OXIDE_NAME_DISPLAY[oxideName]"></a>
                 </th>
-                <th v-if="!isMolPercent">LOI</th>
+                <th v-if="!isFormula">LOI</th>
             </tr>
 
             </thead>
@@ -28,7 +28,7 @@
                     </span>
                 </td>
 
-                <td v-if="!isMolPercent">
+                <td v-if="!isFormula">
                     <span v-if="materialComponent.analysis['loi']">
                         {{ materialComponent.analysis['loi'] }}
                     </span>
@@ -49,14 +49,17 @@
                         {{ parseFloat(totalAnalysis.getOxide(oxideName)).toFixed(2) }}
                     </span>
                 </td>
-                <td v-if="!isMolPercent">
+                <td v-if="!isFormula">
                     <span v-if="totalAnalysis.loi && totalAnalysis.loi > 0">
                         {{ parseFloat(totalAnalysis.loi).toFixed(2) }}
                     </span>
                 </td>
             </tr>
-            <tr class="table-info" v-if="!isMolPercent">
-                <td>
+            <tr class="table-info">
+                <td v-if="isFormula">
+                    Mol % Formula
+                </td>
+                <td v-else>
                     Adjusted Total (100%)
                 </td>
                 <td>
@@ -66,7 +69,7 @@
                         {{ parseFloat(adjustedPercentageAnalysis.getOxide(oxideName)).toFixed(2) }}
                     </span>
                 </td>
-                <td></td>
+                <td v-if="!isFormula"></td>
             </tr>
             </tbody>
         </table>
@@ -88,7 +91,7 @@
         type: Object,
         default: null
       },
-      isMolPercent: {
+      isFormula: {
         type: Boolean,
         default: true
       }
@@ -101,6 +104,9 @@
     computed: {
       presentOxides: function () {
         if (this.isLoaded) {
+          if (this.isFormula) {
+            return this.material.analysis.formulaAnalysis.getPresentOxideNamesArray()
+          }
           return this.material.analysis.percentageAnalysis.getPresentOxideNamesArray()
         }
         return [];
@@ -112,8 +118,8 @@
           this.material.materialComponents && this.material.materialComponents.length > 0) {
           this.material.materialComponents.forEach(function (materialComponent, index) {
             var materialAnalysis = null
-            if (this.isMolPercent) {
-              materialAnalysis = materialComponent.material.getMolePercentageFormula()
+            if (this.isFormula) {
+              materialAnalysis = materialComponent.material.analysis.formulaAnalysis
             } else {
               materialAnalysis = materialComponent.material.analysis.percentageAnalysis
             }
@@ -126,7 +132,7 @@
                 materialOxides[oxideName] = ''
               }
             }.bind(this))
-            if (!this.isMolPercent) {
+            if (!this.isFormula) {
               if (materialAnalysis.loi) {
                 materialOxides['loi'] = parseFloat(materialAnalysis.loi *
                   materialComponent.amount / this.material.componentsTotalPercentage).toFixed(2)
@@ -146,24 +152,26 @@
         }
         return myarray
       },
-
       analysisName: function () {
-        if (this.isMolPercent) {
+        if (this.isFormula) {
           return 'formulaAnalysis'
         }
         return 'percentageAnalysis'
       },
 
       totalAnalysis: function () {
-        if (this.isMolPercent) {
-          return this.material.getMolePercentageFormula()
+        if (this.isFormula) {
+          return this.material.analysis.formulaAnalysis
         }
         return this.material.analysis.percentageAnalysis
       },
 
       adjustedPercentageAnalysis: function () {
         if (this.isLoaded) {
-          return this.material.get100PercentPercentageAnalysis();
+          if (this.isFormula) {
+            return this.material.getMolePercentageFormula()
+          }
+          return this.material.get100PercentPercentageAnalysis()
         }
         return null;
       },

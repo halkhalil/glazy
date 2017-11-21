@@ -257,15 +257,15 @@
                 <div class="row mt-4">
                   <div class="col-md-12">
                     <b-tabs class="analysis-tabs" active>
-                      <b-tab title="Mol % Analysis" >
-                        <component-table
-                                :material="material"
-                                :isMolPercent="true"></component-table>
-                      </b-tab>
                       <b-tab title="% Analysis">
                         <component-table
                                 :material="material"
-                                :isMolPercent="false"></component-table>
+                                :isFormula="false"></component-table>
+                      </b-tab>
+                      <b-tab title="Formula" >
+                        <component-table
+                                :material="material"
+                                :isFormula="true"></component-table>
                       </b-tab>
                     </b-tabs>
                   </div>

@@ -19,7 +19,7 @@
     "popper.js": "^1.13.0",
     "tween.js": "^16.6.0",
     "vform": "^0.8.1",
-    "vue": "^2.5.7",
+    "vue": "^2.5.8",
     "vue-d3-stull-charts": "github:derekphilipau/vue-d3-stull-charts",
     "vue-focus": "^2.1.0",
     "vue-i18n": "^7.3.1",
@@ -44,7 +44,7 @@
     "vue-color": "https://github.com/derekphilipau/vue-color/tarball/36d1969b0d9298e310f24c9734c485eff6b61693",
     "vue-multiselect": "^2.0.3",
     "vue-star-rating": "^1.4.0",
-    "vue-template-compiler": "^2.5.7",
+    "vue-template-compiler": "^2.5.8",
     "webpack-bundle-analyzer": "^2.9.1"
   }
 }
