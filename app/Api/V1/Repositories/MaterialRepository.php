@@ -39,6 +39,7 @@ class MaterialRepository extends Repository
             ->with('images')
             ->with('reviews')
             ->with('created_by_user')
+            ->with('created_by_user.profile')
             // ->where('is_primitive', false)
             ->find($id);
     }
@@ -258,6 +259,7 @@ class MaterialRepository extends Repository
         $query->with('material_type');
         $query->with('thumbnail');
         $query->with('created_by_user');
+        $query->with('created_by_user.profile');
 
         $current_user_id = null;
         if (Auth::check())
@@ -430,6 +432,7 @@ class MaterialRepository extends Repository
         $query->with('analysis');
         $query->with('thumbnail');
         $query->with('created_by_user');
+        $query->with('created_by_user.profile');
 
         $query->ofUserViewable($current_user_id, null);
 
@@ -496,6 +499,7 @@ class MaterialRepository extends Repository
         );
         $query->with('thumbnail');
         $query->with('created_by_user');
+        $query->with('created_by_user.profile');
 
         $query->ofUserViewable($current_user_id, null);
 

@@ -11,8 +11,8 @@ use App\Models\MaterialImage;
 use App\Policies\MaterialImagePolicy;
 use App\Models\MaterialReview;
 use App\Policies\MaterialReviewPolicy;
-
-
+use App\Models\UserProfile;
+use App\Policies\UserProfilePolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -25,7 +25,8 @@ class AuthServiceProvider extends ServiceProvider
         'App\Model' => 'App\Policies\ModelPolicy',
         Material::class => MaterialPolicy::class,
         MaterialImage::class => MaterialImagePolicy::class,
-        MaterialReview::class => MaterialReviewPolicy::class
+        MaterialReview::class => MaterialReviewPolicy::class,
+        UserProfile::class => UserProfilePolicy::class
     ];
 
     /**

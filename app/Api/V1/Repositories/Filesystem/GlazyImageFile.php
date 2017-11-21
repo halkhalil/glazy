@@ -30,6 +30,8 @@ class GlazyImageFile
     const IMAGE_SIZE_MEDIUM = 800;
     const IMAGE_SIZE_SMALL = 300;
 
+    const IMAGE_URL_PATH = '/storage/uploads';
+
     const TMP_STORAGE_NAME = 'tmp';
     const MATERIALS_STORAGE_NAME = 'materials';
     const COLLECTIONS_STORAGE_NAME = 'collections';
@@ -134,7 +136,7 @@ class GlazyImageFile
 
     }
 
-    protected static function getBin($primaryId) {
+    public static function getBin($primaryId) {
         //  A bin is a directory with the same digits as the first one or two digits of the recipe id.
         return substr($primaryId, -2, 2);
     }

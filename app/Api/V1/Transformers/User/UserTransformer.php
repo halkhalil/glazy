@@ -29,14 +29,12 @@ class UserTransformer extends Fractal\TransformerAbstract
     ];
 
     protected $availableIncludes = [
-        'profile',
         'collections'
     ];
-    /*
+
     protected $defaultIncludes = [
         'profile'
     ];
-    */
 
     public function transform(User $user)
     {
@@ -45,19 +43,6 @@ class UserTransformer extends Fractal\TransformerAbstract
         $user_data[self::JSON_NAMES[self::DB_ID]] = $user[self::DB_ID];
         $user_data[self::JSON_NAMES[self::DB_EMAIL]] = $user[self::DB_EMAIL];
         $user_data[self::JSON_NAMES[self::DB_NAME]] = $user[self::DB_NAME];
-
-        //TODO        $user_data['gravatar'] = gravatar()->get($user->email, ['size' => 50]);
-        /*
-        if ($user->providers) {
-            foreach ($user->providers as $provider) {
-                if ($provider->avatar) {
-                    $user_data['avatar'] = $provider->avatar;
-                    break;
-                }
-            }
-        }
-        */
-
         $user_data[self::JSON_NAMES[self::DB_CREATED_AT]] = $this->jsonDate($user[self::DB_CREATED_AT]);
         $user_data[self::JSON_NAMES[self::DB_UPDATED_AT]] = $this->jsonDate($user[self::DB_UPDATED_AT]);
 

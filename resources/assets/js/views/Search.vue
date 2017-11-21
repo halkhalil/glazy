@@ -8,10 +8,11 @@
     <nav v-bind:class="sidebarClass" class="sidebar d-none d-md-block">
 
       <div v-if="searchUser" class="card card-glazy-profile">
-        <div class="card-avatar">
-          <a href="#pablo">
-            <img src="/img/profile.jpg" alt="..."  class="rounded-circle img-raised">
-          </a>
+        <div v-if="'profile' in searchUser && searchUser.profile.avatar"
+             class="card-avatar">
+          <img v-bind:src="searchUser.profile.avatar"
+               v-bind:alt="searchUser.name"
+               class="rounded-circle img-raised">
         </div>
         <div class="card-body">
           <h4 class="card-title">{{ searchUser.name }}</h4>

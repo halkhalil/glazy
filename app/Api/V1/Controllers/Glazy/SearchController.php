@@ -152,6 +152,7 @@ class SearchController extends ApiBaseController
         $query->with('shallowComponents');
         $query->with('thumbnail');
         $query->with('created_by_user');
+        $query->with('created_by_user.profile');
 
         // TODO
         /*
@@ -184,6 +185,7 @@ class SearchController extends ApiBaseController
                 $query->with('shallowComponents');
                 $query->with('thumbnail');
                 $query->with('created_by_user');
+                $query->with('created_by_user.profile');
 
                 $query->orderByRaw('colordiff ASC');
             }
@@ -331,6 +333,7 @@ class SearchController extends ApiBaseController
         $query->with('analysis');
         $query->with('thumbnail');
         $query->with('created_by_user');
+        $query->with('created_by_user.profile');
 
         // Only search for recipes
         // TODO:  Why not also search for primitives?
