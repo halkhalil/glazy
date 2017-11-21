@@ -63,6 +63,8 @@ const actions = {
   search (context, payload) {
     context.commit('isProcessing')
     context.commit('setQuery', payload.query)
+    // Clear out all old errors and search user
+    context.commit('setSearchUser', null)
     context.dispatch('resetError')
 
     var myQuery = payload.query.getMinimalQuery()

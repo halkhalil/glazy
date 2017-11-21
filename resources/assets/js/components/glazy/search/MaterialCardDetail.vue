@@ -39,7 +39,11 @@
 
       <b-btn v-b-toggle="'detail-collapse-' + material.id"
              variant="primary"
-             class="btn btn-link btn-info btn-more-info"><i class="fa fa-chevron-down"></i> More Info</b-btn>
+             class="btn btn-link btn-info btn-more-info">
+        <span class="when-opened"><i class="fa fa-chevron-up"></i> Less Info</span>
+        <span class="when-closed"><i class="fa fa-chevron-down"></i> More Info</span>
+      </b-btn>
+
       <b-collapse v-bind:id="'detail-collapse-' + material.id">
 
         <umf-traditional-notation
@@ -232,6 +236,11 @@
   .material-detail-card .btn-more-info {
     padding: 10px 4px;
     margin: 0;
+  }
+
+  .collapsed > .when-opened,
+  :not(.collapsed) > .when-closed {
+    display: none;
   }
 
   .material-detail-card .umf-traditional {

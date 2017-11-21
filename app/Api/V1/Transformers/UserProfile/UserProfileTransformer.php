@@ -45,10 +45,10 @@ class UserProfileTransformer extends Fractal\TransformerAbstract
             // Use Glazy profile pic if possible
             // TODO: Specify size?
             $bin = GlazyImageFile::getBin($user_profile->id);
-            // Example: http://homestead.app/storage/uploads/profiles/1/m_1.56338c5852888.jpg
+            // Example: http://homestead.app/storage/uploads/profiles/1/s_1.56338c5852888.jpg
             $user_profile_data['avatar'] = GlazyImageFile::IMAGE_URL_PATH.'/'
                 .GlazyImageFile::PROFILES_STORAGE_NAME.'/'
-                .$bin.'/m_'.$user_profile->image_filename;
+                .$bin.'/s_'.$user_profile->image_filename;
         } else if ($user_profile->facebook_avatar) {
             $user_profile_data['avatar'] = $user_profile->facebook_avatar;
         } else if ($user_profile->google_avatar) {

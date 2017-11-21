@@ -2,10 +2,19 @@
   <div class="row recipe-component">
     <nav v-if="isLoaded && searchItems && searchItems.length > 0"
          class="col-md-3 sidebar d-none d-md-block">
+
       <h5>Search Results</h5>
-      <router-link v-if="searchRoute" :to="{ name: searchRoute.name, query: searchRoute.query }">
+
+      <router-link v-if="searchRoute && searchRoute.name === 'search'"
+                   :to="{ name: searchRoute.name, query: searchRoute.query }">
         Back to search
       </router-link>
+
+      <router-link v-if="searchRoute && searchRoute.name === 'user'"
+                   :to="{ name: searchRoute.name, params: searchRoute.params, query: searchRoute.query }">
+        Back to search
+      </router-link>
+
       <section class="row">
         <div class="col-md-12"
              v-for="searchMaterial in searchItems">
@@ -510,7 +519,7 @@
     },
 
     beforeRouteEnter (to, from, next) {
-      if (from.name === 'search') {
+      if (from.name === 'search' || from.name === 'user') {
         // cache the search route for "back" button
         // access this component via vm, not this
         next(vm => {
