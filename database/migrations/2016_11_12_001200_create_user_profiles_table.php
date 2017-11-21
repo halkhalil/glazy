@@ -22,9 +22,11 @@ class CreateUserProfilesTable extends Migration
             $table->string('username',50)->nullable(); // TODO: Drop this column
 
             // social login fields
-            $table->string('provider', 32);
-            $table->string('provider_id');
-            $table->string('avatar')->nullable();
+            $table->string('facebook_id')->nullable();
+            $table->string('facebook_avatar')->nullable();
+
+            $table->string('google_id')->nullable();
+            $table->string('google_avatar')->nullable();
 
             // various profile fields
             $table->integer('country_id')->unsigned()->nullable()->index();

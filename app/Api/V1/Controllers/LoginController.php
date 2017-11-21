@@ -3,6 +3,7 @@
 namespace App\Api\V1\Controllers;
 
 use App\User;
+use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
@@ -62,6 +63,16 @@ class LoginController extends Controller
      **/
     public function loginSocial(Request $request, $provider)
     {
+        if ($provider !== 'facebook' && $provider !== 'google') {
+            // Only facebook & google supported
+            if (!$request->has('code')) {
+                return response([
+                    'status' => 'error',
+                    'msg' => 'Only Facebook & Google login supported',
+                ], 401);
+            }
+        }
+
         if (!$request->has('code')) {
             return response([
                 'status' => 'success',
@@ -78,21 +89,46 @@ class LoginController extends Controller
 
         $user = User::query()->firstOrNew(['email' => $providerUser->getEmail()]);
 
-        if(!$user->exists) {
-            /**
-            $table->string('provider')->nullable();
-            $table->string('provider_id',60)->unique()->nullable();
-            $table->string('avatar_url')->nullable();
-            // All Providers
-            //$user->getId();
-            //$user->getNickname();
-            //$user->getAvatar();
-             */
+        if($user->exists) {
+            // User with this email already exists
+            // Check if various profile fields already set
+            $userProfile = UserProfile::query()->firstOrNew(['user_id' => $user->id]);
+            if ($userProfile) {
+                $userProfile->user_id = $user->id;
+                if ($providerUser->getAvatar()) {
+                    $userProfile[$provider.'_avatar'] =
+                        $this->getOriginalAvatar($provider, $providerUser->getAvatar());
+                }
+                if ($providerUser->getId()) {
+                    $userProfile[$provider.'_id'] = $providerUser->getId();
+                }
+                $userProfile->save();
+            }
+        } else {
+            // This is a "new" user according to Glazy
+            // (This person might already have an account,
+            // but there's no way to tell if email is different.)
             $user->email = $providerUser->getEmail();
             $user->name = $providerUser->getName();
 
             $user->remember_token = str_random(10);
+
             $user->save();
+
+            $userProfile = UserProfile::query()->firstOrNew(['user_id' => $user->id]);
+            Log::info('trying create new user profile: id: '.$user->id.' avatar:'.$providerUser->getAvatar());
+
+            if ($userProfile) {
+                $userProfile->user_id = $user->id;
+                if ($providerUser->getAvatar()) {
+                    $userProfile[$provider.'_avatar'] =
+                        $this->getOriginalAvatar($provider, $providerUser->getAvatar());
+                }
+                if ($providerUser->getId()) {
+                    $userProfile[$provider.'_id'] = $providerUser->getId();
+                }
+                $userProfile->save();
+            }
 
             Log::info('MMMMMM Callback Created User: '.$user->name);
         }
@@ -109,6 +145,13 @@ class LoginController extends Controller
         ])->header('Authorization', $token);
     }
 
+    protected function getOriginalAvatar($provider, $avatar) {
+        if ($provider === 'google') {
+            return str_replace('?sz=50', '', $avatar);
+        } elseif ($provider === 'facebook') {
+            return str_replace('?type=normal', '?type=large', $avatar);
+        }
+    }
 
     /**
      * Log the user in
