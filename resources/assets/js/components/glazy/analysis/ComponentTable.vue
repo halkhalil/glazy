@@ -1,6 +1,5 @@
 <template>
     <div class="table-responsive">
-        {{ myarray }}
         <table v-if="isLoaded" class="table table-sm table-hover material-analysis-table">
             <thead>
             <tr>

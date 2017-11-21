@@ -5,12 +5,12 @@
 
       <h5 class="search-title">Search Results</h5>
 
-      <router-link v-if="searchRoute && searchRoute.name === 'search'"
+      <router-link v-if="searchRoute && (searchRoute.name === 'search' || searchRoute.name === 'materials')"
                    :to="{ name: searchRoute.name, query: searchRoute.query }">
         <i class="fa fa-chevron-left"></i> Back to search
       </router-link>
 
-      <router-link v-if="searchRoute && searchRoute.name === 'user'"
+      <router-link v-if="searchRoute && (searchRoute.name === 'user' || searchRoute.name === 'user-materials')"
                    :to="{ name: searchRoute.name, params: searchRoute.params, query: searchRoute.query }">
         <i class="fa fa-chevron-left"></i> Back to search
       </router-link>
@@ -520,7 +520,10 @@
     },
 
     beforeRouteEnter (to, from, next) {
-      if (from.name === 'search' || from.name === 'user') {
+      console.log('BEFORE ENTER ROUTER')
+      console.log(from)
+      if (from.name === 'search' || from.name === 'user' ||
+        from.name === 'materials' || from.name === 'user-materials') {
         // cache the search route for "back" button
         // access this component via vm, not this
         next(vm => {
