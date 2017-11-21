@@ -1,9 +1,11 @@
 <template>
   <div class="row recipe-component">
-    <nav v-if="searchItems && searchItems.length > 0"
+    <nav v-if="isLoaded && searchItems && searchItems.length > 0"
          class="col-md-3 sidebar d-none d-md-block">
       <h5>Search Results</h5>
-      <a href="#">Back to Search</a>
+      <router-link v-if="searchRoute" :to="{ name: searchRoute.name, query: searchRoute.query }">
+        Back to search
+      </router-link>
       <section class="row">
         <div class="col-md-12"
              v-for="searchMaterial in searchItems">
@@ -494,6 +496,7 @@
         serverError: null,
         glazeTypeId: new MaterialTypes().GLAZE_TYPE_ID,
         isEditRequest: false,
+        searchRoute: null
       }
     },
 
@@ -504,6 +507,17 @@
       this.fetchRecipe()
     },
 
+    beforeRouteEnter (to, from, next) {
+      if (from.name === 'search') {
+        // cache the search route for "back" button
+        // access this component via vm, not this
+        next(vm => {
+          vm.searchRoute = from
+        })
+      } else {
+        next()
+      }
+    },
     computed : {
       isLoaded: function() {
         if (this.recipe &&
@@ -697,6 +711,18 @@
             this.meta.description = this.recipe.name
             var materialObj = new Material()
             this.material = Material.createFromJson(this.recipe)
+
+            if (this.searchItems && this.searchItems.length > 0) {
+              // doesn't work
+              //this.$router.push({ path: this.$route.path + '#material-card-' + this.recipe.id })
+              //this.$nextTick(() => document.getElementById('#material-card-' + this.recipe.id).scrollIntoView())
+              //Vue.nextTick(function () {
+              //  document.getElementById('#material-card-' + this.recipe.id).scrollIntoView()
+              //}.bind(this))
+              //window.setTimeout(function () {
+              //  document.getElementById('#material-card-' + this.recipe.id).scrollIntoView()
+              //}.bind(this), 2000)
+            }
 
             if (this.isEditRequest && this.canEdit) {
               // User just created this recipe in calculator

@@ -384,22 +384,18 @@
 
       searchItems () {
         return this.$store.getters['search/searchItems']
-        //return this.$store.getters.search.searchItems
       },
 
       searchPagination () {
         return this.$store.getters['search/searchPagination']
-        //return this.$store.getters.search.searchPagination
       },
 
       searchUser () {
         return this.$store.getters['search/searchUser']
-        //return this.$store.getters.search.searchUser
       },
 
       isProcessing() {
         return this.$store.getters['search/isProcessing']
-        //return this.$store.getters.search.isProcessing
       },
 
       hasResults () {
@@ -477,7 +473,6 @@
     },
     */
     watch: {
-
       $route (route) {
         if (route.hash) {
           // This is only an internal link, no need to requery

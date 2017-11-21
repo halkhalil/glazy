@@ -26,19 +26,76 @@
                 No analysis.  Please add materials.
               </div>
               <div v-else>
+                <table class="table-analysis-layout">
+                  <tr>
+                    <td>
+                      <umf-traditional-notation
+                              :material="originalMaterial"
+                              :isSmall="false">
+                      </umf-traditional-notation>
+                    </td>
+                    <td class="text-right">
+                      <div class="card card-umf-info card-plain">
+                        <div class="card-body">
+                          <h6 class="card-title">R<sub>2</sub>O : RO</h6>
+                          <p class="card-text">
+                          <span class="oxide-colors-Na2O">
+                            {{ Number(originalUMFAnalysis.getR2OTotal()).toFixed(2) }}
+                          </span>
+                            :
+                            <span class="oxide-colors-CaO">
+                            {{ Number(originalUMFAnalysis.getROTotal()).toFixed(2) }}
+                          </span>
+                          </p>
+                        </div>
+                      </div>
 
-                <umf-traditional-notation
-                        :material="originalMaterial"
-                        :isSmall="false">
-                </umf-traditional-notation>
-                <umf-traditional-notation
-                        class="mt-1"
-                        :material="newMaterial"
-                        :showLegend="false"
-                        :isSmall="false">
-                </umf-traditional-notation>
+                      <div class="card card-umf-info card-plain">
+                        <div class="card-body">
+                          <h6 class="card-title">SiO<sub>2</sub> : Al<sub>2</sub>O<sub>3</sub></h6>
+                          <p class="card-text">
+                            {{ Number(originalUMFAnalysis.getSiO2Al2O3Ratio()).toFixed(2) }}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <umf-traditional-notation
+                              class="mt-1"
+                              :material="newMaterial"
+                              :showLegend="false"
+                              :isSmall="false">
+                      </umf-traditional-notation>
+                    </td>
+                    <td class="text-right">
+                      <div class="card card-umf-info card-plain">
+                        <div class="card-body">
+                          <h6 class="card-title">R<sub>2</sub>O : RO</h6>
+                          <p class="card-text">
+                          <span class="oxide-colors-Na2O">
+                            {{ Number(newUMFAnalysis.getR2OTotal()).toFixed(2) }}
+                          </span>
+                            :
+                            <span class="oxide-colors-CaO">
+                            {{ Number(newUMFAnalysis.getROTotal()).toFixed(2) }}
+                          </span>
+                          </p>
+                        </div>
+                      </div>
 
-
+                      <div class="card card-umf-info card-plain">
+                        <div class="card-body">
+                          <h6 class="card-title">SiO<sub>2</sub> : Al<sub>2</sub>O<sub>3</sub></h6>
+                          <p class="card-text">
+                            {{ Number(newUMFAnalysis.getSiO2Al2O3Ratio()).toFixed(2) }}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
               </div>
             </b-tab>
             <b-tab title="% Mol">
@@ -737,6 +794,32 @@
     background-color: #999;
   }
 
+  .table-analysis-layout tr td {
+    padding: 4px;
+  }
+
+  .card-umf-info {
+    background-color: #efefef;
+    max-width: 7em;
+    min-width: 6em;
+    margin-bottom: 10px;
+  }
+
+  .card-umf-info .card-body {
+    padding: 5px;
+    text-align: center;
+  }
+
+  .card-umf-info .card-body .card-title {
+    font-size: .8em;
+    color: #999999;
+    margin: 0;
+    text-transform: none;
+  }
+
+  .card-umf-info .card-body .card-text {
+    font-size: 1.2em;
+  }
 
 .dropdown .dropdown-menu {
   z-index: 999;
