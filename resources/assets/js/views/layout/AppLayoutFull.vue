@@ -7,13 +7,11 @@
 
 <script>
     import AppHeader from './AppHeader.vue'
-    import AppSidebar from './AppSidebar.vue'
 
   export default {
     name: 'AppLayoutFull',
     components: {
-      AppHeader,
-      AppSidebar
+      AppHeader
     },
     mounted() {
     }

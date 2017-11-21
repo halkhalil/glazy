@@ -3,19 +3,19 @@
     <nav v-if="isLoaded && searchItems && searchItems.length > 0"
          class="col-md-3 sidebar d-none d-md-block">
 
-      <h5>Search Results</h5>
+      <h5 class="search-title">Search Results</h5>
 
       <router-link v-if="searchRoute && searchRoute.name === 'search'"
                    :to="{ name: searchRoute.name, query: searchRoute.query }">
-        Back to search
+        <i class="fa fa-chevron-left"></i> Back to search
       </router-link>
 
       <router-link v-if="searchRoute && searchRoute.name === 'user'"
                    :to="{ name: searchRoute.name, params: searchRoute.params, query: searchRoute.query }">
-        Back to search
+        <i class="fa fa-chevron-left"></i> Back to search
       </router-link>
 
-      <section class="row">
+      <section class="row search-results">
         <div class="col-md-12"
              v-for="searchMaterial in searchItems">
           <material-card-detail
@@ -85,16 +85,17 @@
                   </div>
                   <div class="row">
                     <div class="col-sm-4">
-                      <div class="author">
-                        <img v-if="'profile' in recipe.createdByUser && 'avatar' in recipe.createdByUser.profile"
-                             v-bind:src="recipe.createdByUser.profile.avatar"
-                             class="avatar"/>
-                        <span>
-                      {{ recipe.createdByUser.name }},
-                      <timeago :since="recipe.updatedAt"></timeago>
-                    </span>
-                      </div>
-
+                      <router-link :to="{ name: 'user', params: { id: recipe.createdByUser.id}}">
+                        <div class="author">
+                          <img v-if="'profile' in recipe.createdByUser && 'avatar' in recipe.createdByUser.profile"
+                               v-bind:src="recipe.createdByUser.profile.avatar"
+                               class="avatar"/>
+                          <span>
+                            {{ recipe.createdByUser.name }},
+                            <timeago :since="recipe.updatedAt"></timeago>
+                          </span>
+                        </div>
+                      </router-link>
                     </div>
                     <div class="col-sm-4 float-center">
                       <social-sharing :url="this.meta.url"
@@ -259,12 +260,12 @@
                       <b-tab title="Mol % Analysis" >
                         <component-table
                                 :material="material"
-                                :isFormulaAnalysis="true"></component-table>
+                                :isMolPercent="true"></component-table>
                       </b-tab>
                       <b-tab title="% Analysis">
                         <component-table
                                 :material="material"
-                                :isFormulaAnalysis="false"></component-table>
+                                :isMolPercent="false"></component-table>
                       </b-tab>
                     </b-tabs>
                   </div>
@@ -794,22 +795,6 @@
     // padding-top: 15px;
   }
 
-  .my-sidebar {
-    -ms-flex: 0 0 300px;
-    flex: 0 0 300px;
-    background-color: greenyellow;
-    padding: 15px 15px;
-    height: 100%;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-  }
-
-  @media (max-width: 690px) {
-    .my-sidebar {
-      display: none;
-    }
-  }
-
   .sidebar {
     background-color: #efefef;
     position: fixed;
@@ -826,6 +811,15 @@
     background-color: #dedede;
     padding-top: 15px;
     padding-bottom: 64px;
+  }
+
+  .sidebar .search-title {
+    margin-bottom: 0;
+  }
+
+  .sidebar .search-results {
+    margin-top: 5px;
+    background-color: #efefef;
   }
 
   .recipe-info-row {

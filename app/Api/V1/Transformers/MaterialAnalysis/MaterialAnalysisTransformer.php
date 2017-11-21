@@ -27,6 +27,20 @@ class MaterialAnalysisTransformer extends Fractal\TransformerAbstract
             $percent_analysis['loi'] = $analysis['loi'];
             $analysis_data['percentageAnalysis'] = $percent_analysis;
 
+            /*
+            $mol_percent_analysis = [];
+            foreach(Analysis::OXIDE_NAMES as $oxide_name)
+            {
+                $mol_percent_oxide_name = $oxide_name.'_percent_mol';
+
+                if ($analysis[$mol_percent_oxide_name] > 0)
+                {
+                    $mol_percent_analysis[$oxide_name] = $analysis[$mol_percent_oxide_name];
+                }
+            }
+            $analysis_data['molPercentageAnalysis'] = $mol_percent_analysis;
+            */
+
             $umf_analysis = [];
             foreach(Analysis::OXIDE_NAMES as $oxide_name)
             {

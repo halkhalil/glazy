@@ -76,6 +76,7 @@
 
     .firing-card {
         background-color: #999999;
+        min-width: 8em;
     }
 
     .firing-card .card-body {

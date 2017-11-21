@@ -1,5 +1,5 @@
 <template>
-    <div class="table-responsive">
+    <div class="table-responsive umf-traditional-container">
         <table class="umf-traditional" v-if="isLoaded">
             <thead v-if="showLegend || showSimpleLegend">
             <tr class="legend-row">
@@ -18,7 +18,7 @@
             </tr>
             <tr>
                 <th colspan="2">
-                    RO/R<sub>2</sub>O
+                    R<sub>2</sub>O/RO
                 </th>
                 <th colspan="2">
                     R<sub>2</sub>O<sub>3</sub>
@@ -166,6 +166,10 @@
 
 <style>
     /* Traditional UMF Notation Styles */
+    .umf-traditional-container {
+        overflow-y: hidden;
+    }
+
     .umf-traditional {
         font-size: 18px;
         line-height: 26px;

@@ -1,34 +1,36 @@
 <template>
     <div class="table-responsive">
+        {{ myarray }}
         <table v-if="isLoaded" class="table table-sm table-hover material-analysis-table">
             <thead>
             <tr>
                 <th>Material</th>
                 <th>% Amount</th>
                 <th v-for="oxideName in presentOxides">
-                    <a :href="'/oxides/' + oxideName">{{ oxideName }}</a>
+                    <a :href="'/oxides/' + oxideName" v-html="OXIDE_NAME_DISPLAY[oxideName]"></a>
                 </th>
-                <th v-if="!isFormulaAnalysis">LOI</th>
+                <th v-if="!isMolPercent">LOI</th>
             </tr>
+
             </thead>
             <tbody>
-            <tr v-for="(materialComponent, index) in material.materialComponents" v-bind:class="{ info : materialComponent.is_additional }">
+            <tr v-for="materialComponent in componentContributions" v-bind:class="{ info : materialComponent.isAdditional }">
                 <td>
-                    <a v-if="materialComponent.material.is_primitive" :href="'/materials/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
-                    <a v-else :href="'/recipes/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
+                    <a v-if="materialComponent.isPrimitive" :href="'/materials/' + materialComponent.id">{{ materialComponent.name }}</a>
+                    <a v-else :href="'/recipes/' + materialComponent.id">{{ materialComponent.name }}</a>
                 </td>
-                <td>
-                    {{ parseFloat(materialComponent.getAmount()).toFixed(2) }}
+                <td class="amount">
+                    {{ materialComponent.amount }}
                 </td>
                 <td v-for="oxideName in presentOxides">
-                    <span v-if="materialComponent.material.analysis[analysisName].getOxide(oxideName) > 0">
-                        {{ parseFloat(materialComponent.material.analysis[analysisName].getOxide(oxideName) *  materialComponent.amount / material.componentsTotalPercentage).toFixed(2) }}
+                    <span v-if="materialComponent.analysis[oxideName]">
+                        {{ materialComponent.analysis[oxideName] }}
                     </span>
                 </td>
 
-                <td v-if="!isFormulaAnalysis">
-                    <span v-if="materialComponent.material.analysis[analysisName].loi && materialComponent.material.analysis[analysisName].loi > 0">
-                        {{ parseFloat(materialComponent.material.analysis[analysisName].loi *  materialComponent.amount / material.componentsTotalPercentage).toFixed(2) }}
+                <td v-if="!isMolPercent">
+                    <span v-if="materialComponent.analysis['loi']">
+                        {{ materialComponent.analysis['loi'] }}
                     </span>
                 </td>
 
@@ -37,23 +39,23 @@
                 <td>
                     Total
                 </td>
-                <td>
+                <td class="amount">
                     <span v-if="material.componentsTotalPercentage">
                         {{ parseFloat(material.componentsTotalPercentage).toFixed(2) }}
                     </span>
                 </td>
                 <td v-for="oxideName in presentOxides">
-                    <span v-if="material.analysis[analysisName].getOxide(oxideName) > 0">
-                        {{ parseFloat(material.analysis[analysisName].getOxide(oxideName)).toFixed(2) }}
+                    <span v-if="totalAnalysis.getOxide(oxideName) > 0">
+                        {{ parseFloat(totalAnalysis.getOxide(oxideName)).toFixed(2) }}
                     </span>
                 </td>
-                <td v-if="!isFormulaAnalysis">
-                    <span v-if="material.analysis[analysisName].loi && material.analysis[analysisName].loi > 0">
-                        {{ parseFloat(material.analysis[analysisName].loi).toFixed(2) }}
+                <td v-if="!isMolPercent">
+                    <span v-if="totalAnalysis.loi && totalAnalysis.loi > 0">
+                        {{ parseFloat(totalAnalysis.loi).toFixed(2) }}
                     </span>
                 </td>
             </tr>
-            <tr class="table-info" v-if="!isFormulaAnalysis">
+            <tr class="table-info" v-if="!isMolPercent">
                 <td>
                     Adjusted Total (100%)
                 </td>
@@ -86,27 +88,77 @@
         type: Object,
         default: null
       },
-      isFormulaAnalysis: {
+      isMolPercent: {
         type: Boolean,
         default: true
       }
     },
-
+    data() {
+      return {
+        OXIDE_NAME_DISPLAY: Analysis.OXIDE_NAME_DISPLAY
+      }
+    },
     computed: {
       presentOxides: function () {
         if (this.isLoaded) {
-          console.log('GGGGGGGGGGGGGG')
-          console.log(this.material)
-          return this.material.analysis[this.analysisName].getPresentOxideNamesArray()
+          return this.material.analysis.percentageAnalysis.getPresentOxideNamesArray()
         }
         return [];
       },
 
+      componentContributions: function () {
+        var myarray = []
+        if (this.presentOxides && this.presentOxides.length &&
+          this.material.materialComponents && this.material.materialComponents.length > 0) {
+          this.material.materialComponents.forEach(function (materialComponent, index) {
+            var materialAnalysis = null
+            if (this.isMolPercent) {
+              materialAnalysis = materialComponent.material.getMolePercentageFormula()
+            } else {
+              materialAnalysis = materialComponent.material.analysis.percentageAnalysis
+            }
+            var materialOxides = {}
+            this.presentOxides.forEach(function (oxideName) {
+              if (materialAnalysis.getOxide(oxideName)) {
+                materialOxides[oxideName] = parseFloat(materialAnalysis.getOxide(oxideName) *
+                  materialComponent.amount / this.material.componentsTotalPercentage).toFixed(2)
+              } else {
+                materialOxides[oxideName] = ''
+              }
+            }.bind(this))
+            if (!this.isMolPercent) {
+              if (materialAnalysis.loi) {
+                materialOxides['loi'] = parseFloat(materialAnalysis.loi *
+                  materialComponent.amount / this.material.componentsTotalPercentage).toFixed(2)
+              } else {
+                materialOxides['loi'] = ''
+              }
+            }
+            myarray.push({
+              id: materialComponent.material.id,
+              name: materialComponent.material.name,
+              amount: parseFloat(materialComponent.amount).toFixed(2),
+              isAdditional: materialComponent.isAdditional,
+              isPrimitive: materialComponent.material.isPrimitive,
+              analysis: materialOxides
+            })
+          }.bind(this))
+        }
+        return myarray
+      },
+
       analysisName: function () {
-        if (this.isFormulaAnalysis) {
+        if (this.isMolPercent) {
           return 'formulaAnalysis'
         }
         return 'percentageAnalysis'
+      },
+
+      totalAnalysis: function () {
+        if (this.isMolPercent) {
+          return this.material.getMolePercentageFormula()
+        }
+        return this.material.analysis.percentageAnalysis
       },
 
       adjustedPercentageAnalysis: function () {
@@ -131,7 +183,13 @@
 </script>
 
 <style>
+    .material-analysis-table tr th {
+        font-size: 12px;
+    }
     .material-analysis-table tr td, .material-analysis-table tr th {
         text-align: right;
+    }
+    .material-analysis-table tr td.amount {
+        font-weight: bold;
     }
 </style>

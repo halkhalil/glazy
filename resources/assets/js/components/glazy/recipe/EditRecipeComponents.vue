@@ -27,7 +27,7 @@
               </div>
               <div v-else>
                 <table class="table-analysis-layout">
-                  <tr>
+                  <tr v-if="originalMaterial && originalUMFAnalysis">
                     <td>
                       <umf-traditional-notation
                               :material="originalMaterial"
@@ -60,7 +60,7 @@
                       </div>
                     </td>
                   </tr>
-                  <tr>
+                  <tr v-if="newMaterial && newUMFAnalysis">
                     <td>
                       <umf-traditional-notation
                               class="mt-1"

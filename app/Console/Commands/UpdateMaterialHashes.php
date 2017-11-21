@@ -60,14 +60,13 @@ class UpdateMaterialHashes extends Command
         for ($i = 1; $i <= $loop_limit; $i++) {
             echo " Querying DB ".$i.": ".$query->toSql()."\n";
 
-//            $materials = $query->limit($query_limit)->get();
             $materials = $query->paginate($query_limit, ['*'], 'page', $i);
 
             echo "DB Queried...\n";
 
             if (!$materials || !$materials->count())
             {
-                echo "No materials found with null percent analysis.\n";
+                echo "No materials found with null base composite hash.\n";
                 break;
             }
 

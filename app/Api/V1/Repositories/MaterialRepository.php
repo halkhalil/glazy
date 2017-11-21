@@ -71,6 +71,11 @@ class MaterialRepository extends Repository
 
     public function update(Model $material, array $jsonData)
     {
+        if ($material->is_archived) {
+            // Archived materials cannot be updated
+            return false;
+        }
+
         $data = [];
         $data['id'] = $jsonData['id'];
         $data['name'] = $jsonData['name'];
@@ -130,6 +135,7 @@ class MaterialRepository extends Repository
         }
 
         if ($material->is_archived) {
+            // Archived materials cannot be deleted
             return false;
         }
 

@@ -7,14 +7,13 @@
 <script>
 //require('material-design-lite');
 
-import { AppLayoutFull, AppHeader, AppSidebar } from './views/layout/'
+import { AppLayoutFull, AppHeader } from './views/layout/'
 
 export default {
   name: 'GlazyApp',
   components: {
     AppLayoutFull,
-    AppHeader,
-    AppSidebar
+    AppHeader
   },
   metaInfo: {
     // if no subcomponents specify a metaInfo.title, this title will be used

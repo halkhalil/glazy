@@ -71,7 +71,7 @@
             email: '',
             password: ''
           },
-          rememberMe: false,
+          rememberMe: true,
           fetchUser: true
         },
         code: this.$route.query.code,
@@ -124,6 +124,7 @@
         this.$auth.login({
           data: this.data.body,
           rememberMe: this.data.rememberMe,
+          autoLogin: true,
           redirect: {
             name: redirect ? redirect.from.name : 'search'
           },

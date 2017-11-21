@@ -81,7 +81,8 @@
     },
     mounted () {
       if (this.$auth.check() && !this.$auth.user.id) {
-        this.fetchUser()
+        // TODO: no need to fetch user, already gotten from login
+        // this.fetchUser()
       }
     },
     methods: {
