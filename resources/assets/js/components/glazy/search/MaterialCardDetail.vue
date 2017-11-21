@@ -90,7 +90,9 @@
 
       <router-link :to="{ name: 'user', params: { id: material.createdByUser.id}}">
         <div class="author">
-          <img src="/img/profile.jpg" alt="..." class="avatar">
+          <img v-if="'profile' in material.createdByUser && 'avatar' in material.createdByUser.profile"
+               v-bind:src="material.createdByUser.profile.avatar"
+               class="avatar"/>
           <span>{{ material.createdByUser.name }}</span>
         </div>
       </router-link>

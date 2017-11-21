@@ -77,7 +77,9 @@
                   <div class="row">
                     <div class="col-sm-4">
                       <div class="author">
-                        <img :src="getUserAvatar(recipe.createdByUser)" alt="..." class="avatar img-raised">
+                        <img v-if="'profile' in recipe.createdByUser && 'avatar' in recipe.createdByUser.profile"
+                             v-bind:src="recipe.createdByUser.profile.avatar"
+                             class="avatar"/>
                         <span>
                       {{ recipe.createdByUser.name }},
                       <timeago :since="recipe.updatedAt"></timeago>
@@ -753,17 +755,6 @@
         return '/u/' + recipe.createdByUser.id;
       },
 
-      getUserAvatar: function(user) {
-        if (user.hasOwnProperty('avatar') && user.avatar) {
-          return user.avatar;
-        }
-        else if (user.hasOwnProperty('gravatar') && user.gravatar) {
-          return user.gravatar;
-        }
-        else {
-          return 'http://www.gravatar.com/avatar/?d=mm';
-        }
-      },
 
       getDisplayName: function(user) {
         if (user.hasOwnProperty('username') && user.username) {
