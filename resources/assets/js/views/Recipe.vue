@@ -9,7 +9,7 @@
              v-for="searchMaterial in searchItems">
           <material-card-detail
                   :material="searchMaterial"
-                  :currentMaterialId="material.id"
+                  :currentMaterialId="recipe.id"
           ></material-card-detail>
         </div>
       </section>
@@ -544,7 +544,7 @@
         return meta
       },
       searchItems: function () {
-        return this.$store.getters.searchItems
+        return this.$store.getters['search/searchItems']
       }
     },
     beforeRouteUpdate (to, from, next) {

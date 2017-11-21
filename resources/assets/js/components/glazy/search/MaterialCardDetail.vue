@@ -44,8 +44,8 @@
 
         <umf-traditional-notation
                 :material="material"
-                showSimpleLegend=true
-                isSmall=true>
+                :showSimpleLegend="true"
+                :isSmall="true">
         </umf-traditional-notation>
 
         <div class="ratios">

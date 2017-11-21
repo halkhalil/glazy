@@ -348,9 +348,6 @@
         materials: null,
         // searchQuery: new SearchQuery(),
         searchQuery: null,
-        searchUser: null,
-        // itemlist: [],
-        // pagination: null,
         // isProcessing: false,
         materialTypes: new MaterialTypes(),
         constants: new GlazyConstants(),
@@ -386,15 +383,23 @@
       },
 
       searchItems () {
-        return this.$store.getters.searchItems
+        return this.$store.getters['search/searchItems']
+        //return this.$store.getters.search.searchItems
       },
 
       searchPagination () {
-        return this.$store.getters.searchPagination
+        return this.$store.getters['search/searchPagination']
+        //return this.$store.getters.search.searchPagination
+      },
+
+      searchUser () {
+        return this.$store.getters['search/searchUser']
+        //return this.$store.getters.search.searchUser
       },
 
       isProcessing() {
-        return this.$store.getters.isProcessing
+        return this.$store.getters['search/isProcessing']
+        //return this.$store.getters.search.isProcessing
       },
 
       hasResults () {
@@ -435,7 +440,7 @@
 
     created() {
 
-      this.searchUser = null
+      //this.searchUser = null
       this.searchQuery = new SearchQuery(this.$route.query)
 
       if (this.$route.name === 'materials' ||
@@ -451,7 +456,7 @@
         this.searchQuery.params.u = this.$route.params.id
       }
 
-      this.$store.dispatch('search', {
+      this.$store.dispatch('search/search', {
         query: this.searchQuery
       })
     },
@@ -495,7 +500,7 @@
           this.searchQuery.params.u = route.params.id
         }
 
-        this.$store.dispatch('search', {
+        this.$store.dispatch('search/search', {
           query: this.searchQuery
         })
       }

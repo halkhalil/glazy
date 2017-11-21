@@ -18,6 +18,9 @@ const getters = {
   searchPagination(state) {
     return state.searchPagination
   },
+  searchUser(state) {
+    return state.searchUser
+  },
   isProcessing(state) {
     return state.isProcessing
   }
@@ -103,5 +106,6 @@ export default {
   state,
   mutations,
   actions,
-  getters
+  getters,
+  namespaced: true
 }
