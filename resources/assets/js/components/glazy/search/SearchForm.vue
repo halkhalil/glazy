@@ -109,6 +109,19 @@
             </div>
         </div>
         <div v-if="isAdvanced" class="form-row">
+            <div v-bind:class="sizeMedium" class="form-group">
+                <b-form-select
+                        size="sm"
+                        id="transparencyId"
+                        placeholder="Transparency"
+                        v-model="query.params.transparency"
+                        :options="constants.TRANSPARENCY_SELECT"
+                        @input="search">
+                    <template slot="first">
+                        <option :value="0">All Transparencies</option>
+                    </template>
+                </b-form-select>
+            </div>
             <div class="form-group col">
                 <b-form-select
                         size="sm"
