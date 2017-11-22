@@ -290,6 +290,10 @@
     visibility: hidden;
   }
 
+  .material-card-img-link {
+    border-bottom: none !important;
+  }
+
 
 
 </style>
