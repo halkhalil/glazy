@@ -2,6 +2,7 @@
 
 namespace App\Api\V1\Transformers\Material;
 
+use App\Models\Country;
 use App\Models\Material;
 use App\Models\MaterialType;
 use App\Models\OrtonCone;
@@ -113,11 +114,10 @@ class MaterialTransformer extends Fractal\TransformerAbstract
                 $surfaceType->getValue($material[Material::DB_SURFACE_TYPE_ID]);
         }
 
-        $transparencyType = new TransparencyType();
-
         if ($material[Material::DB_TRANSPARENCY_TYPE_ID]) {
             $material_data[self::JSON_NAMES[Material::DB_TRANSPARENCY_TYPE_ID]] =
                 $material[Material::DB_TRANSPARENCY_TYPE_ID];
+            $transparencyType = new TransparencyType();
             $material_data[self::TRANSPARENCY_TYPE_NAME] =
                 $transparencyType->getValue($material[Material::DB_TRANSPARENCY_TYPE_ID]);
         }
@@ -125,6 +125,8 @@ class MaterialTransformer extends Fractal\TransformerAbstract
         if ($material[Material::DB_COUNTRY_ID]) {
             $material_data[self::JSON_NAMES[Material::DB_COUNTRY_ID]] =
                 $material[Material::DB_COUNTRY_ID];
+            $countryLookup = new Country();
+            $material_data['countryName'] = $countryLookup->getValue($material[Material::DB_COUNTRY_ID]);
         }
 
         if ($material[Material::DB_COLOR_NAME]) {

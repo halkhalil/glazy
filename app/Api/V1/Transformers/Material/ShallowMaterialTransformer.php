@@ -12,6 +12,7 @@ use App\Models\MaterialType;
 use App\Models\OrtonCone;
 use App\Models\SurfaceType;
 use App\Models\TransparencyType;
+use App\Models\Country;
 use Illuminate\Support\Facades\Log;
 use App\Api\V1\Transformers\JsonDateTransformer;
 
@@ -46,6 +47,7 @@ class ShallowMaterialTransformer extends Fractal\TransformerAbstract
         Material::DB_TO_ORTON_CONE_ID       => 'toOrtonConeId',
         Material::DB_SURFACE_TYPE_ID        => 'surfaceTypeId',
         Material::DB_TRANSPARENCY_TYPE_ID   => 'transparencyTypeId',
+        Material::DB_COUNTRY_ID             => 'countryId',
         Material::DB_COLOR_NAME             => 'colorName',
         Material::DB_THUMBNAIL_ID           => 'thumbnailId',
         Material::DB_RATING_TOTAL           => 'ratingTotal',
@@ -115,13 +117,19 @@ class ShallowMaterialTransformer extends Fractal\TransformerAbstract
                 $surfaceType->getValue($material[Material::DB_SURFACE_TYPE_ID]);
         }
 
-        $transparencyType = new TransparencyType();
-
         if ($material[Material::DB_TRANSPARENCY_TYPE_ID]) {
             $material_data[self::JSON_NAMES[Material::DB_TRANSPARENCY_TYPE_ID]] =
                 $material[Material::DB_TRANSPARENCY_TYPE_ID];
+            $transparencyType = new TransparencyType();
             $material_data[self::TRANSPARENCY_TYPE_NAME] =
                 $transparencyType->getValue($material[Material::DB_TRANSPARENCY_TYPE_ID]);
+        }
+
+        if ($material[Material::DB_COUNTRY_ID]) {
+            $material_data[self::JSON_NAMES[Material::DB_COUNTRY_ID]] =
+                $material[Material::DB_COUNTRY_ID];
+            $countryLookup = new Country();
+            $material_data['countryName'] = $countryLookup->getValue($material[Material::DB_COUNTRY_ID]);
         }
 
         if ($material[Material::DB_COLOR_NAME]) {

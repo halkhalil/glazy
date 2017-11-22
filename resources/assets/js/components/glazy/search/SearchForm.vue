@@ -115,7 +115,7 @@
                         id="countryId"
                         placeholder="Country"
                         v-model="query.params.country"
-                        :options="constants.COUNTRY_SELECT"
+                        :options="countries"
                         @input="search">
                     <template slot="first">
                         <option :value="0">All Countries</option>
@@ -212,6 +212,7 @@ export default {
       materialTypes: new MaterialTypes(),
       previousBaseTypeId: null,
       constants: new GlazyConstants(),
+      countries: GlazyConstants.COUNTRY_SELECT,
       oxides: Analysis.OXIDE_NAME_UNICODE_SELECT,
       minSearchTextLength: 3,
       showAdvancedText: '<i class="fa fa-plus"></i> Advanced',

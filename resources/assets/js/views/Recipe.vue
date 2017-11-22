@@ -78,6 +78,10 @@
                            class="fa fa-lock"></i>
                         {{ recipe.name }}
                       </h2>
+
+                      <span v-if="recipe.countryName"
+                            class="material-country">{{ recipe.countryName }}</span>
+
                     </div>
                     <div class="col-md-3 col-sm-4" v-if="!recipe.isPrimitive">
                       <firing-card :recipe="recipe"></firing-card>
@@ -834,7 +838,13 @@
 
   .recipe-info-card .card-body .card-title {
     font-size: 2.25em;
+    margin-bottom: 0;
   }
+
+  .recipe-info-card .card-body .author {
+    margin-top: 10px;
+  }
+
   .recipe-action-group .btn {
     padding: 11px 16px;
   }

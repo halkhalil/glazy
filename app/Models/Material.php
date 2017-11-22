@@ -66,6 +66,7 @@ class Material extends Model
         'to_orton_cone_id',
         'surface_type_id',
         'transparency_type_id',
+        'country_id',
         'color_name',
         'rgb_r',
         'rgb_g',

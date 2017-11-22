@@ -88,6 +88,15 @@ class MaterialRepository extends Repository
         if (array_key_exists('materialTypeId', $jsonData)) {
             $data['material_type_id'] = $jsonData['materialTypeId'];
         }
+        if (array_key_exists('transparencyTypeId', $jsonData)) {
+            $data['transparency_type_id'] = $jsonData['transparencyTypeId'];
+        }
+        if (array_key_exists('surfaceTypeId', $jsonData)) {
+            $data['surface_type_id'] = $jsonData['surfaceTypeId'];
+        }
+        if (array_key_exists('countryId', $jsonData)) {
+            $data['country_id'] = $jsonData['countryId'];
+        }
         if (array_key_exists('fromOrtonConeId', $jsonData)) {
             $data['from_orton_cone_id'] = $jsonData['fromOrtonConeId'];
         }

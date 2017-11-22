@@ -61,8 +61,38 @@
                 </b-col>
             </b-row>
 
+            <b-row class="mt-2">
+                <b-col md="6">
+                    <label for="transparencyTypeId">Transparency</label>
+                    <b-form-select
+                            size="sm"
+                            id="transparencyTypeId"
+                            placeholder="Transparency"
+                            v-model="form.transparencyTypeId"
+                            :options="constants.TRANSPARENCY_SELECT"
+                            @input="search">
+                        <template slot="first">
+                            <option :value="0">All Transparencies</option>
+                        </template>
+                    </b-form-select>
+                </b-col>
+                <b-col md="6">
+                    <label for="surfaceTypeId">Surface</label>
+                    <b-form-select
+                            size="sm"
+                            id="surfaceTypeId"
+                            placeholder="Surface"
+                            v-model="form.surfaceTypeId"
+                            :options="constants.SURFACE_SELECT"
+                            @input="search">
+                        <template slot="first">
+                            <option :value="0">All Surfaces</option>
+                        </template>
+                    </b-form-select>
+                </b-col>
+            </b-row>
 
-            <b-row class="mt-4">
+            <b-row class="mt-2">
                 <b-col md="4" sm="6">
                     <label for="fromOrtonConeId">Lowest Cone</label>
                     <b-form-select
@@ -72,7 +102,7 @@
                             @input="updateFromCone">
                     </b-form-select>
                 </b-col>
-                <b-col md="4" sm="6" v-if="subTypeOptions && subTypeOptions.length > 0">
+                <b-col md="4" sm="6">
                     <label for="toOrtonConeId">Highest Cone</label>
                     <b-form-select
                             v-model="form.toOrtonConeId"
@@ -83,16 +113,30 @@
                 </b-col>
             </b-row>
 
-            <b-form-group
-                    id="groupAtmospheres"
-                    label="Atmospheres (Optional)"
-            >
-                <b-form-checkbox-group id="atmospheres"
-                                       v-model="form.atmospheres"
-                                       :options="atmospheres">
-                </b-form-checkbox-group>
-            </b-form-group>
+            <b-row class="mt-2">
+                <b-col md="12">
+                    <b-form-group
+                            id="groupAtmospheres"
+                            label="Atmospheres (Optional)">
+                        <b-form-checkbox-group id="atmospheres"
+                                               v-model="form.atmospheres"
+                                               :options="atmospheres">
+                        </b-form-checkbox-group>
+                    </b-form-group>
+                </b-col>
+            </b-row>
 
+            <b-row class="mt-2">
+                <b-col md="6">
+                    <label for="countryId">Country (Optional)</label>
+                    <b-form-select
+                            class="col"
+                            id="countryId"
+                            v-model="form.countryId"
+                            :options="countries">
+                    </b-form-select>
+                </b-col>
+            </b-row>
 
             <b-form-group id="groupButtons">
                 <b-button class="float-right"
@@ -135,6 +179,7 @@
         constants: new GlazyConstants(),
         materialTypes: new MaterialTypes(),
         atmospheres: new GlazyConstants().ATMOSPHERE_SELECT,
+        countries: GlazyConstants.COUNTRY_SELECT,
         testsel: []
       }
     },
@@ -146,9 +191,12 @@
         description: this.recipe.description,
         baseTypeId: this.recipe.baseTypeId,
         materialTypeId: this.recipe.materialTypeId,
+        transparencyTypeId: this.recipe.transparencyTypeId,
+        surfaceTypeId: this.recipe.surfaceTypeId,
         fromOrtonConeId: this.recipe.fromOrtonConeId,
         toOrtonConeId: this.recipe.toOrtonConeId,
-        atmospheres: []
+        atmospheres: [],
+        countryId: this.recipe.countryId
       }
       if (this.recipe.atmospheres) {
         for (var i = 0; i < this.recipe.atmospheres.length; i++) {
