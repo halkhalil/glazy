@@ -6,7 +6,7 @@ import AppLayoutFull from '../views/layout/AppLayoutFull'
 import Login from '../views/Login'
 import Register from '../views/Register'
 
-import Home from '../views/Home'
+// import Home from '../views/Home'
 import Search from '../views/Search'
 import Calculator from '../views/Calculator'
 import Recipe from '../views/Recipe'
@@ -31,14 +31,9 @@ export default new Router({
     {
       path: '/',
       redirect: '/search',
-      name: 'Homex',
+      name: 'home',
       component: AppLayoutFull,
       children: [
-        {
-          path: 'home',
-          name: 'home',
-          component: Home
-        },
         {
           path: '/login/:type?',
           name: 'login',
@@ -99,12 +94,8 @@ export default new Router({
           name: 'error-502',
           component: Error502
         },
-        {
-          path: '*',
-          redirect: '/404'
-        }
+        { path: '*', redirect: '/search' }
       ]
-    }
+    },
   ]
 })
-
