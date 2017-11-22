@@ -509,4 +509,21 @@ class Material extends Model
         return $query;
     }
 
+    public function scopeOfCountry($query, $country_id)
+    {
+        if (!empty($country_id)) {
+            $query->where('materials.country_id', $country_id);
+            /*
+             * TODO: Include materials without country?  Nah..
+            $query->where(function ($query) use ($country_id) {
+                $query->where('materials.country_id', $country_id)
+                    ->orWhere('materials.country_id', null);
+            });
+            */
+
+        }
+
+        return $query;
+    }
+
 }

@@ -17,6 +17,7 @@ export default class SearchQuery {
       atmosphere: 0,
       surface: 0,
       transparency: 0,
+      country: 0,
       hex_color: '',
       color: {},
       p: 0,
@@ -71,6 +72,9 @@ export default class SearchQuery {
     if (this.params.transparency) {
       minimalQuery.transparency = this.params.transparency
     }
+    if (this.params.country) {
+      minimalQuery.country = this.params.country
+    }
     if (this.params.hex_color) {
       minimalQuery.hex_color = this.params.hex_color
     }
@@ -123,6 +127,9 @@ export default class SearchQuery {
       if ('transparency' in routerQuery && routerQuery.transparency) {
         this.params.transparency = Number(routerQuery.transparency)
       }
+      if ('country' in routerQuery && routerQuery.country) {
+        this.params.country = Number(routerQuery.country)
+      }
       if ('hex_color' in routerQuery && routerQuery.hex_color) {
         this.params.hex_color = routerQuery.hex_color
         this.params.color = { hex: '#' + routerQuery.hex_color }
@@ -156,42 +163,13 @@ export default class SearchQuery {
       this.params.atmosphere = Number(params.atmosphere)
       this.params.surface = Number(params.surface)
       this.params.transparency = Number(params.transparency)
+      this.params.country = Number(params.country)
       this.params.hex_color = params.hex_color
       this.params.y = params.y
       this.params.x = params.x
     }
   }
-  /*
-  getFormParams() {
-    return {
-      keywords: this.params.keywords,
-      collection: { value: this.params.collection },
-      base_type: { value: this.params.base_type },
-      type: { value: this.params.type },
-      cone: { value: this.params.cone},
-      atmosphere: { value: this.params.atmosphere},
-      surface: { value: this.params.surface},
-      transparency: { value: this.params.transparency},
-      hex_color: this.params.hex_color,
-      y: { value: this.params.y},
-      x: { value: this.params.x}
-    }
-  }
 
-  setFormParams(params) {
-    this.params.keywords = params.keywords
-    this.params.collection = params.collection.value
-    this.params.base_type = params.base_type.value
-    this.params.type = params.type.value
-    this.params.cone = params.cone.value
-    this.params.atmosphere = params.atmosphere.value
-    this.params.surface = params.surface.value
-    this.params.transparency = params.transparency.value
-    this.params.hex_color = params.hex_color
-    this.params.y = params.y.value
-    this.params.x = params.x.value
-  }
-  */
   // https://stackoverflow.com/questions/1714786/query-string-encoding-of-a-javascript-object
   // console.log(serialize({foo: "hi there", bar: "100%" }));
   serialize (obj) {

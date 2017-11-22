@@ -112,13 +112,13 @@
             <div v-bind:class="sizeMedium" class="form-group">
                 <b-form-select
                         size="sm"
-                        id="transparencyId"
-                        placeholder="Transparency"
-                        v-model="query.params.transparency"
-                        :options="constants.TRANSPARENCY_SELECT"
+                        id="countryId"
+                        placeholder="Country"
+                        v-model="query.params.country"
+                        :options="constants.COUNTRY_SELECT"
                         @input="search">
                     <template slot="first">
-                        <option :value="0">All Transparencies</option>
+                        <option :value="0">All Countries</option>
                     </template>
                 </b-form-select>
             </div>
