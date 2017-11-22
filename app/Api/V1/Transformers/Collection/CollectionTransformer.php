@@ -20,7 +20,8 @@ class CollectionTransformer extends Fractal\TransformerAbstract
         {
             $collection_data = [
                 'id' => $collection->id,
-                'name' => $collection->name
+                'name' => $collection->name,
+                'materialCount' => $collection->material_count
             ];
         }
 

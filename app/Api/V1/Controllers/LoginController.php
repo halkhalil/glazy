@@ -176,7 +176,10 @@ class LoginController extends Controller
         }
 
         $user = Auth::guard()->user();
-        $user->load('collections');
+        // $user->load('collections');
+        $user->load(['collections' => function ($q) {
+            $q->orderBy('name', 'asc');
+        }]);
 
         return response([
                 'status' => 'success',

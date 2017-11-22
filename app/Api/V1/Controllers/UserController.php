@@ -30,7 +30,10 @@ class UserController extends Controller
     public function user()
     {
         $user = Auth::guard()->user();
-        $user->load('collections');
+        //$user->load('collections');
+        $user->load(['collections' => function ($q) {
+            $q->orderBy('name', 'asc');
+        }]);
 
         // return response()->json(['data' => Auth::guard()->user()]);
         return response()->json(['data' => $user]);
