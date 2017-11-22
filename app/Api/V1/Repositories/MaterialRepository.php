@@ -12,6 +12,8 @@ use App\Models\MaterialImage;
 use App\Models\MaterialMaterial;
 use App\Models\MaterialReview;
 
+use DerekPhilipAu\Ceramicscalc\Models\Analysis\PercentageAnalysis;
+use DerekPhilipAu\Ceramicscalc\Models\Material\PrimitiveMaterial;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -83,19 +85,39 @@ class MaterialRepository extends Repository
             $data['description'] = $jsonData['description'];
         }
         if (array_key_exists('baseTypeId', $jsonData)) {
-            $data['base_type_id'] = $jsonData['baseTypeId'];
+            if ($jsonData['baseTypeId']) {
+                $data['base_type_id'] = $jsonData['baseTypeId'];
+            } else {
+                $data['base_type_id'] = null;
+            }
         }
         if (array_key_exists('materialTypeId', $jsonData)) {
-            $data['material_type_id'] = $jsonData['materialTypeId'];
+            if ($jsonData['materialTypeId']) {
+                $data['material_type_id'] = $jsonData['materialTypeId'];
+            } else {
+                $data['material_type_id'] = null;
+            }
         }
         if (array_key_exists('transparencyTypeId', $jsonData)) {
-            $data['transparency_type_id'] = $jsonData['transparencyTypeId'];
+            if ($jsonData['transparencyTypeId']) {
+                $data['transparency_type_id'] = $jsonData['transparencyTypeId'];
+            } else {
+                $data['transparency_type_id'] = null;
+            }
         }
         if (array_key_exists('surfaceTypeId', $jsonData)) {
-            $data['surface_type_id'] = $jsonData['surfaceTypeId'];
+            if ($jsonData['surfaceTypeId']) {
+                $data['surface_type_id'] = $jsonData['surfaceTypeId'];
+            } else {
+                $data['surface_type_id'] = null;
+            }
         }
         if (array_key_exists('countryId', $jsonData)) {
-            $data['country_id'] = $jsonData['countryId'];
+            if ($jsonData['countryId']) {
+                $data['country_id'] = $jsonData['countryId'];
+            } else {
+                $data['country_id'] = null;
+            }
         }
         if (array_key_exists('fromOrtonConeId', $jsonData)) {
             $data['from_orton_cone_id'] = $jsonData['fromOrtonConeId'];
@@ -128,6 +150,22 @@ class MaterialRepository extends Repository
                 $atmosphere->atmosphere_id = $atmosphere_id;
                 $atmosphere->save();
             }
+        }
+
+        if ($material->is_primitive && $jsonData['analysis']) {
+            // For primitive materials, we also update the analysis
+            $percentageAnalysis = new PercentageAnalysis();
+            $percentageAnalysis->setOxides($jsonData['analysis']);
+            $percentageAnalysis->setLOI($jsonData['loi']);
+            $primitiveMaterial = new PrimitiveMaterial($material->id);
+            $primitiveMaterial->setPercentageAnalysis($percentageAnalysis);
+            $material->analysis->setAnalysis($primitiveMaterial);
+
+            if (array_key_exists('weight', $jsonData)) {
+                $material->analysis['weight'] = $jsonData['weight'];
+            }
+
+            $material->analysis->save();
         }
 
         return $material;

@@ -1,5 +1,5 @@
 <template>
-<div class="row" id="edit-recipe-form">
+<div class="row edit-recipe-metadata">
     <div class="col-md-12">
         <b-alert v-if="apiError" show variant="danger">
             API Error: {{ apiError.message }}
@@ -39,8 +39,8 @@
             </b-form-group>
 
             <b-row class="mt-2">
-                <b-col md="6">
-                    <label for="baseTypeId">Recipe Type</label>
+                <b-col md="6" v-if="!recipe.isPrimitive">
+                    <label for="baseTypeId">Type</label>
                     <b-form-select
                             class="col"
                             id="baseTypeId"
@@ -61,7 +61,7 @@
                 </b-col>
             </b-row>
 
-            <b-row class="mt-2">
+            <b-row class="mt-2" v-if="!recipe.isPrimitive">
                 <b-col md="6">
                     <label for="transparencyTypeId">Transparency</label>
                     <b-form-select
@@ -92,13 +92,13 @@
                 </b-col>
             </b-row>
 
-            <b-row class="mt-2">
+            <b-row class="mt-2" v-if="!recipe.isPrimitive">
                 <b-col md="4" sm="6">
                     <label for="fromOrtonConeId">Lowest Cone</label>
                     <b-form-select
                             v-model="form.fromOrtonConeId"
                             id="fromOrtonConeId"
-                            :options="constants.ORTON_CONES_SELECT_TEXT"
+                            :options="constants.ORTON_CONES_SELECT_TEXT_SIMPLE"
                             @input="updateFromCone">
                     </b-form-select>
                 </b-col>
@@ -107,13 +107,13 @@
                     <b-form-select
                             v-model="form.toOrtonConeId"
                             id="toOrtonConeId"
-                            :options="constants.ORTON_CONES_SELECT_TEXT"
+                            :options="constants.ORTON_CONES_SELECT_TEXT_SIMPLE"
                             @input="updateToCone">
                     </b-form-select>
                 </b-col>
             </b-row>
 
-            <b-row class="mt-2">
+            <b-row class="mt-2" v-if="!recipe.isPrimitive">
                 <b-col md="12">
                     <b-form-group
                             id="groupAtmospheres"
@@ -133,8 +133,34 @@
                             class="col"
                             id="countryId"
                             v-model="form.countryId"
-                            :options="countries">
+
+                            :options="COUNTRY_SELECT">
+                        <template slot="first">
+                            <option :value="0">No Country</option>
+                        </template>
                     </b-form-select>
+                </b-col>
+            </b-row>
+
+            <b-row class="mt-2 percent-analysis-oxide"  v-if="recipe.isPrimitive">
+                <b-col lg="3" md="3" sm="6"
+                       v-for="(oxideName, index) in OXIDE_NAMES" :key="index">
+                    <label v-bind:for="oxideName" v-html="OXIDE_NAME_DISPLAY[oxideName]"></label>
+                    <b-form-input id="oxideName"
+                                  type="number"
+                                  v-model.trim="form.analysis[oxideName]"></b-form-input>
+                </b-col>
+                <b-col lg="3" md="3" sm="6">
+                    <label for="loi">LOI</label>
+                    <b-form-input id="loi"
+                                  type="number"
+                                  v-model.trim="form.loi"></b-form-input>
+                </b-col>
+                <b-col lg="3" md="3" sm="6">
+                    <label for="weight">Weight</label>
+                    <b-form-input id="weight"
+                                  type="number"
+                                  v-model.trim="form.weight"></b-form-input>
                 </b-col>
             </b-row>
 
@@ -157,6 +183,9 @@
 
 
 <script>
+  import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
+  import FormulaAnalysis from 'ceramicscalc-js/src/analysis/FormulaAnalysis'
+  import PercentageAnalysis from 'ceramicscalc-js/src/analysis/PercentageAnalysis'
 
   import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
   import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
@@ -172,35 +201,58 @@
     },
     data() {
       return {
-        form: {},
+        form: {
+          name: '',
+          description: '',
+          baseTypeId: null,
+          materialTypeId: null,
+          transparencyTypeId: null,
+          surfaceTypeId: null,
+          fromOrtonConeId: null,
+          toOrtonConeId: null,
+          atmospheres: [],
+          countryId: null,
+          analysis: new Analysis(),
+          loi: null,
+          weight: null
+        },
+        // isPrimitive: false,
         errors: [],
         apiError: null,
         serverError: null,
         constants: new GlazyConstants(),
         materialTypes: new MaterialTypes(),
         atmospheres: new GlazyConstants().ATMOSPHERE_SELECT,
-        countries: GlazyConstants.COUNTRY_SELECT,
-        testsel: []
+        COUNTRY_SELECT: GlazyConstants.COUNTRY_SELECT,
+        OXIDE_NAMES: Analysis.OXIDE_NAMES,
+        OXIDE_NAME_DISPLAY: Analysis.OXIDE_NAME_DISPLAY
       }
     },
     created() {
-      this.form = {
-        _method: 'PATCH',
-        id: this.recipe.id,
-        name: this.recipe.name,
-        description: this.recipe.description,
-        baseTypeId: this.recipe.baseTypeId,
-        materialTypeId: this.recipe.materialTypeId,
-        transparencyTypeId: this.recipe.transparencyTypeId,
-        surfaceTypeId: this.recipe.surfaceTypeId,
-        fromOrtonConeId: this.recipe.fromOrtonConeId,
-        toOrtonConeId: this.recipe.toOrtonConeId,
-        atmospheres: [],
-        countryId: this.recipe.countryId
-      }
-      if (this.recipe.atmospheres) {
-        for (var i = 0; i < this.recipe.atmospheres.length; i++) {
-          this.form.atmospheres.push(this.recipe.atmospheres[i].id);
+      if (this.recipe) {
+        this.form = {
+          _method: 'PATCH',
+          id: this.recipe.id,
+          name: this.recipe.name,
+          description: this.recipe.description,
+          baseTypeId: this.recipe.baseTypeId,
+          materialTypeId: this.recipe.materialTypeId,
+          transparencyTypeId: this.recipe.transparencyTypeId,
+          surfaceTypeId: this.recipe.surfaceTypeId,
+          fromOrtonConeId: this.recipe.fromOrtonConeId,
+          toOrtonConeId: this.recipe.toOrtonConeId,
+          atmospheres: [],
+          countryId: this.recipe.countryId,
+          analysis: new Analysis(),
+          loi: this.recipe.analysis.percentageAnalysis.loi
+        }
+        this.form.analysis.setOxides(this.recipe.analysis.percentageAnalysis)
+
+        // this.form.analysis.initOxidesNull()
+        if (this.recipe.atmospheres) {
+          for (var i = 0; i < this.recipe.atmospheres.length; i++) {
+            this.form.atmospheres.push(this.recipe.atmospheres[i].id);
+          }
         }
       }
     },
@@ -221,16 +273,40 @@
         return this.materialTypes.getParentTypes();
       },
       subTypeOptions: function () {
-        switch (this.form.baseTypeId) {
-          case this.materialTypes.GLAZE_TYPE_ID:
-            return this.materialTypes.getGlazeTypes()
-          case this.materialTypes.CLAYS_TYPE_ID:
-            return this.materialTypes.getClayTypes()
-          case this.materialTypes.SLIPS_TYPE_ID:
-            return this.materialTypes.getSlipTypes()
+        if (this.isLoaded) {
+          if (this.recipe.isPrimitive) {
+            return this.materialTypes.PRIMITIVE_SELECT
+          } else {
+            switch (this.form.baseTypeId) {
+              case this.materialTypes.GLAZE_TYPE_ID:
+                return this.materialTypes.getGlazeTypes()
+              case this.materialTypes.CLAYS_TYPE_ID:
+                return this.materialTypes.getClayTypes()
+              case this.materialTypes.SLIPS_TYPE_ID:
+                return this.materialTypes.getSlipTypes()
+            }
+          }
         }
         return null
       }
+      /*
+      calculated formula weight depends upon unity type..
+      formulaWeight: function () {
+        if (this.isLoaded && this.recipe.isPrimitive) {
+          var percentageAnalysis = new PercentageAnalysis()
+          percentageAnalysis.setOxides(this.form.analysis)
+          percentageAnalysis.setLOI(this.form.loi)
+          console.log("PERCENT")
+          console.log(percentageAnalysis)
+          var formulaAnalysis = FormulaAnalysis.createNoUnityFormula(percentageAnalysis)
+          console.log("FORMULA")
+          console.log(formulaAnalysis)
+
+          return formulaAnalysis.getFormulaWeight()
+        }
+        return null
+      }
+      */
     },
     methods: {
       update: function () {
@@ -285,3 +361,14 @@
     }
   }
 </script>
+
+<style>
+
+    .edit-recipe-metadata label {
+        margin-bottom: 0;
+    }
+
+    .percent-analysis-oxide .col {
+        padding: 0 5px;
+    }
+</style>

@@ -78,10 +78,6 @@
                            class="fa fa-lock"></i>
                         {{ recipe.name }}
                       </h2>
-
-                      <span v-if="recipe.countryName"
-                            class="material-country">{{ recipe.countryName }}</span>
-
                     </div>
                     <div class="col-md-3 col-sm-4" v-if="!recipe.isPrimitive">
                       <firing-card :recipe="recipe"></firing-card>
@@ -142,6 +138,32 @@
                                    :increment="0.01"></star-rating>
                     </div>
                   </div>
+
+                  <table class="material-metadata">
+                    <tbody>
+                    <tr>
+                      <td v-if="recipe.surfaceTypeName">
+                        Surface
+                        <span class="badge badge-info">
+                          {{ recipe.surfaceTypeName }}
+                        </span>
+                      </td>
+                      <td v-if="recipe.transparencyTypeName">
+                        Transparency
+                        <span class="badge badge-info">
+                          {{ recipe.transparencyTypeName }}
+                        </span>
+                      </td>
+                      <td v-if="recipe.countryName">
+                        Country
+                        <span class="badge badge-info">
+                          {{ recipe.countryName }}
+                        </span>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+
                   <p class="card-description">
                     {{ recipe.description }}
                   </p>
@@ -171,7 +193,7 @@
                         <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-eye"></i> Publish</b-button>
                         <b-button class="btn-info" v-if="!(recipe.isPrivate)" v-on:click="unpublishRecipe()"><i class="fa fa-eye-slash"></i> Unpublish</b-button>
                         <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
-                        <b-button class="btn-info" v-on:click="editComponents()"><i class="fa fa-list"></i> Edit Recipe</b-button>
+                        <b-button class="btn-info" v-if="!recipe.isPrimitive" v-on:click="editComponents()"><i class="fa fa-list"></i> Edit Recipe</b-button>
                         <b-button class="btn-danger" v-if="!recipe.isArchived" v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
                       </b-button-group>
 
@@ -829,9 +851,6 @@
     background-color: #efefef;
   }
 
-  .recipe-info-row {
-  }
-
   .recipe-info-card .card-description {
     margin-top: 20px;
   }
@@ -847,6 +866,14 @@
 
   .recipe-action-group .btn {
     padding: 11px 16px;
+  }
+
+  .material-metadata tr td {
+    padding: 0 10px 0 0;
+  }
+
+  .material-metadata .badge {
+    font-size: 14px;
   }
 
   .analysis-tabs .nav-tabs {

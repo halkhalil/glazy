@@ -56,6 +56,7 @@ class MaterialAnalysisTransformer extends Fractal\TransformerAbstract
             $umf_analysis['ROTotal'] = $analysis['RO_umf'];
             $analysis_data['umfAnalysis'] = $umf_analysis;
 
+            $analysis_data['weight'] = $analysis['weight'];
 
         }
 
