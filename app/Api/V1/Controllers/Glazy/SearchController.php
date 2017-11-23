@@ -61,6 +61,8 @@ class SearchController extends ApiBaseController
 
     public function index(Request $request)
     {
+        // DB::enableQueryLog();
+
         $isColorQuery = false;
 
         $page = (int)$request->input('p');
@@ -85,8 +87,8 @@ class SearchController extends ApiBaseController
         $g = null;
         $b = null;
 
-        $sort_order_id = $request->input('sort_order');
-        $view_option = $request->input('view_option');
+        $order_id = $request->input('order');
+        $view_option = $request->input('view');
         $view_option_paginate = $request->input('pag');
 
         $count = $request->input('count');
@@ -114,7 +116,7 @@ class SearchController extends ApiBaseController
             'materials.is_analysis', 'materials.is_theoretical',
             'materials.from_orton_cone_id', 'materials.to_orton_cone_id',
             'materials.surface_type_id', 'materials.transparency_type_id', 'materials.country_id',
-            'materials.rating_total', 'materials.rating_number',
+            'materials.rating_total', 'materials.rating_number', 'materials.rating_average',
             'materials.rgb_r', 'materials.rgb_g', 'materials.rgb_b', 'materials.thumbnail_id',
             'materials.is_private', 'materials.is_archived', 'materials.created_by_user_id',
             'materials.updated_by_user_id', 'materials.created_at', 'materials.updated_at'
@@ -129,7 +131,7 @@ class SearchController extends ApiBaseController
         }
 
         // TODO: Why is query not handling this automatically?
-//todo fixed in model        $query->whereNull('deleted_at');
+        //todo fixed in model        $query->whereNull('deleted_at');
 
         $query->ofUserViewable($current_user_id, $search_user_id);
 
@@ -198,7 +200,33 @@ class SearchController extends ApiBaseController
             }
         }
 
-        $query->orderBy('updated_at', 'DESC');
+        if (!empty($order_id))
+        {
+            if ($order_id == 'oldest')
+            {
+                $query->orderBy('materials.updated_at', 'ASC');
+            }
+            elseif ($order_id == 'best')
+            {
+                $query->orderBy('materials.rating_average', 'DESC');
+                $query->orderBy('materials.rating_number', 'DESC');
+                $query->orderBy('materials.updated_at', 'DESC');
+            }
+            elseif ($order_id == 'worst')
+            {
+                $query->orderBy('materials.rating_average', 'ASC');
+                $query->orderBy('materials.rating_number', 'DESC');
+                $query->orderBy('materials.updated_at', 'DESC');
+            }
+            else
+            {
+                $query->orderBy('materials.updated_at', 'DESC');
+            }
+        }
+        else
+        {
+            $query->orderBy('materials.updated_at', 'DESC');
+        }
 
         if ($count && $count < self::MAX_ITEMS_PER_PAGE) {
             $recipes = $query->paginate($count, ['*'], 'page', $page);
@@ -222,6 +250,9 @@ class SearchController extends ApiBaseController
         if ($jsonUser) {
             $resource->setMetaValue('user', $jsonUser);
         }
+
+        // Log::error('SEARCH: '.print_r(DB::getQueryLog(), true));
+        // DB::disableQueryLog();
 
         return $this->manager->createData($resource)->toArray();
     }

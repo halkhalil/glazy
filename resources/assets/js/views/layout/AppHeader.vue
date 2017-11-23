@@ -121,7 +121,7 @@
           },
           error: function () {
             console.log('ERROR IN LOGOUT')
-            this.$router.push('login')
+            this.$router.push('/login')
           },
           redirect: '/search?logout=true'
         })

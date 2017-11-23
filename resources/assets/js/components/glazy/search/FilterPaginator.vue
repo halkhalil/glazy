@@ -13,11 +13,11 @@
         <div class="col-sm-5 col-md-4 text-right">
 
             <b-button-group class="search-buttons">
-                <b-dropdown size="sm" right text="Newest">
-                    <b-dropdown-item>Oldest</b-dropdown-item>
-                    <b-dropdown-item>Item 2</b-dropdown-item>
-                    <b-dropdown-divider></b-dropdown-divider>
-                    <b-dropdown-item>Item 3</b-dropdown-item>
+                <b-dropdown size="sm" right text="Sort">
+                    <b-dropdown-item @click="orderRequest('newest')">Newest</b-dropdown-item>
+                    <b-dropdown-item @click="orderRequest('oldest')">Oldest</b-dropdown-item>
+                    <b-dropdown-item @click="orderRequest('best')">Best</b-dropdown-item>
+                    <b-dropdown-item @click="orderRequest('worst')">Worst</b-dropdown-item>
                 </b-dropdown>
                 <b-button
                         size="sm"

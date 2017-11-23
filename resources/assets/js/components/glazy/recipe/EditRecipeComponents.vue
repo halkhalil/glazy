@@ -500,7 +500,7 @@
         .catch(response => {
           if (response.response && response.response.status) {
             if (response.response.status === 401) {
-              this.$router.push({ path: 'login', query: { error: 401 }})
+              this.$router.push({ path: '/login', query: { error: 401 }})
             } else {
               this.serverError = response.response.message;
             }
@@ -703,7 +703,7 @@
           .catch(response => {
             if (response.response && response.response.status) {
               if (response.response.status === 401) {
-                this.$router.push({ path: 'login', query: { error: 401 }})
+                this.$router.push({ path: '/login', query: { error: 401 }})
               } else {
                 this.serverError = response.response.message;
               }

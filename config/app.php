@@ -183,6 +183,8 @@ return [
         Intervention\Image\ImageServiceProvider::class,
 
         Nutsweb\LaravelPrerender\LaravelPrerenderServiceProvider::class,
+        // Lanin\Laravel\ApiDebugger\ServiceProvider::class,
+
     ],
 
     /*
@@ -239,7 +241,8 @@ return [
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
 
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
-        'Image' => Intervention\Image\Facades\Image::class
+        'Image' => Intervention\Image\Facades\Image::class,
+        // 'Debugger' => Lanin\Laravel\ApiDebugger\Facade::class,
     ],
 
 ];
