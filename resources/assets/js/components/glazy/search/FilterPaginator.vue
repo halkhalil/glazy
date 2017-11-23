@@ -13,7 +13,7 @@
         <div class="col-sm-5 col-md-4 text-right">
 
             <b-button-group class="search-buttons">
-                <b-dropdown size="sm" right text="Sort">
+                <b-dropdown size="sm" left text="Sort">
                     <b-dropdown-item @click="orderRequest('newest')">Newest</b-dropdown-item>
                     <b-dropdown-item @click="orderRequest('oldest')">Oldest</b-dropdown-item>
                     <b-dropdown-item @click="orderRequest('best')">Best</b-dropdown-item>

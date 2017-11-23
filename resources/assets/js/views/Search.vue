@@ -68,6 +68,11 @@
       <b-alert v-if="serverError" show variant="danger">
         Server Error: {{ serverError }}
       </b-alert>
+      <b-alert :show="actionMessageSeconds"
+               @dismiss-count-down="actionMessageCountdown"
+               variant="info">
+        {{ actionMessage }}
+      </b-alert>
 
       <div class="row">
 
@@ -299,7 +304,7 @@
         materials: null,
         // searchQuery: new SearchQuery(),
         searchQuery: null,
-        // isProcessing: false,
+        isProcessingLocal: false,
         materialTypes: new MaterialTypes(),
         constants: new GlazyConstants(),
         chartHeight: 200,
@@ -325,7 +330,9 @@
         newCollectionName: '',
         minSearchTextLength: 3,
         apiError: null,
-        serverError: null
+        serverError: null,
+        actionMessage: null,
+        actionMessageSeconds: 0
       }
     },
     computed: {
@@ -346,7 +353,7 @@
       },
 
       isProcessing() {
-        return this.$store.getters['search/isProcessing']
+        return this.isProcessingLocal || this.$store.getters['search/isProcessing']
       },
 
       hasResults () {
@@ -544,26 +551,34 @@
 
       },
 
+      actionMessageCountdown(seconds) {
+        this.actionMessageSeconds = seconds
+      },
+
       copyMaterial: function (id) {
         if (!id) {
           return
         }
-        this.isProcessing = true
+        this.isProcessingLocal = true
         Vue.axios.get(Vue.axios.defaults.baseURL + '/recipes/' + id + '/copy')
           .then((response) => {
           if (response.data.error) {
             this.apiError = response.data.error
             console.log(this.apiError)
-            this.isProcessing = false
+            this.isProcessingLocal = false
           } else {
-            this.isProcessing = false
+            this.isProcessingLocal = false
             var materialCopy = response.data.data;
-            this.$router.push({ name: 'recipes', params: { id: materialCopy.id }})
+            this.actionMessage = 'Copied ' + materialCopy.name + ' to your recipes.'
+            this.actionMessageSeconds = 5
+            //this.newSearch()
+            this.$store.dispatch('search/refresh')
+            //this.$router.push({ name: 'recipes', params: { id: materialCopy.id }})
           }
         })
         .catch(response => {
           this.serverError = response;
-          this.isProcessing = false
+          this.isProcessingLocal = false
         })
       },
 
@@ -581,17 +596,20 @@
             if (response.data.error) {
               this.apiError = response.data.error
               console.log(this.apiError)
-              this.isProcessing = false
+              this.isProcessingLocal = false
             } else {
               this.toDeleteMaterialId = 0
-              this.isProcessing = false
-              this.newSearch()
+              this.isProcessingLocal = false
+              this.actionMessage = 'Deleted from your recipes.'
+              this.actionMessageSeconds = 5
+              this.$store.dispatch('search/refresh')
+              // this.newSearch()
             }
           })
           .catch(response => {
             this.toDeleteMaterialId = 0
             this.serverError = response;
-            this.isProcessing = false
+            this.isProcessingLocal = false
           })
         }
       }

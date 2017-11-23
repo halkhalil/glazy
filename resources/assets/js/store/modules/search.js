@@ -61,15 +61,22 @@ const actions = {
     context.commit('setApiError', null)
   },
   search (context, payload) {
-    context.commit('isProcessing')
     context.commit('setQuery', payload.query)
+    context.dispatch('refresh')
+  },
+  refresh (context) {
+    // Let components know we are processing a request
+    context.commit('isProcessing')
+
     // Clear out all old errors and search user
     context.commit('setSearchUser', null)
     context.dispatch('resetError')
 
-    var myQuery = payload.query.getMinimalQuery()
+    var query = context.getters.query
+    var myQuery = query.getMinimalQuery()
+    //var myQuery = payload.query.getMinimalQuery()
 
-    var querystring = payload.query.toQuerystring(myQuery)
+    var querystring = query.toQuerystring(myQuery)
 
     console.log('VUEX SEARCH: ' + querystring)
 
