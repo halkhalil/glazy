@@ -102,12 +102,20 @@
       </router-link>
     </div>
     <div class="card-footer" v-if="$auth.check()">
-      <a @click="collectMaterialRequest(material.id)" class="btn btn-icon btn-neutral"><i class="fa fa-bookmark"></i></a>
-      <a class="btn btn-icon btn-neutral"
-         @click="copyMaterialRequest(material.id)"><i class="fa fa-copy"></i></a>
-      <a v-if="isCanEdit && !material.isArchived"
-         @click="deleteMaterialRequest(material.id)"
-         class="btn btn-icon btn-neutral"><i class="fa fa-trash"></i></a>
+      <b-btn v-if="isViewingSelfCollection"
+             @click="uncollectMaterialRequest(material.id)"
+             v-b-tooltip.hover title="Unbookmark"
+             class="btn btn-icon btn-neutral"><i class="fa fa-remove"></i></b-btn>
+      <b-btn @click="collectMaterialRequest(material.id)"
+             v-b-tooltip.hover title="Bookmark"
+             class="btn btn-icon btn-neutral"><i class="fa fa-bookmark"></i></b-btn>
+      <b-btn class="btn btn-icon btn-neutral"
+             v-b-tooltip.hover title="Copy"
+             @click="copyMaterialRequest(material.id)"><i class="fa fa-copy"></i></b-btn>
+      <b-bnt v-if="isCanEdit && !material.isArchived"
+             v-b-tooltip.hover title="Delete"
+             @click="deleteMaterialRequest(material.id)"
+             class="btn btn-icon btn-neutral"><i class="fa fa-trash"></i></b-bnt>
     </div>
   </div>
 
@@ -133,6 +141,14 @@
       currentMaterialId: {
         type: Number,
         default: 0
+      },
+      isViewingSelf: {
+        type: Boolean,
+        default: false
+      },
+      isViewingSelfCollection: {
+        type: Boolean,
+        default: false
       }
     },
     data() {
@@ -176,6 +192,10 @@
 
       collectMaterialRequest: function (id) {
         this.$emit('collectMaterialRequest', id);
+      },
+
+      uncollectMaterialRequest: function (id) {
+        this.$emit('uncollectMaterialRequest', id);
       },
 
       copyMaterialRequest: function (id) {

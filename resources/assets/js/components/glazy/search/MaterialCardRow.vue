@@ -77,6 +77,14 @@
       material: {
         type: Object,
         default: null
+      },
+      isViewingSelf: {
+        type: Boolean,
+        default: false
+      },
+      isViewingSelfCollection: {
+        type: Boolean,
+        default: false
       }
     },
     data() {

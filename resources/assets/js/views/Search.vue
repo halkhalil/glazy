@@ -134,11 +134,14 @@
              v-for="(material, index) in searchItems">
           <material-card-thumb
                   :material="material"
+                  :isViewingSelf="isViewingSelf"
+                  :isViewingSelfCollection="isViewingSelfCollection"
                   v-on:highlightMaterial="highlightMaterial"
                   v-on:unhighlightMaterial="unhighlightMaterial"
                   v-on:copyMaterialRequest="copyMaterial"
                   v-on:deleteMaterialRequest="confirmDeleteMaterial"
                   v-on:collectMaterialRequest="collectMaterialSelect"
+                  v-on:uncollectMaterialRequest="uncollectMaterial"
           ></material-card-thumb>
         </div>
       </section>
@@ -147,11 +150,14 @@
              v-for="(material, index) in searchItems">
           <material-card-detail
                   :material="material"
+                  :isViewingSelf="isViewingSelf"
+                  :isViewingSelfCollection="isViewingSelfCollection"
                   v-on:highlightMaterial="highlightMaterial"
                   v-on:unhighlightMaterial="unhighlightMaterial"
                   v-on:copyMaterialRequest="copyMaterial"
                   v-on:deleteMaterialRequest="confirmDeleteMaterial"
                   v-on:collectMaterialRequest="collectMaterialSelect"
+                  v-on:uncollectMaterialRequest="uncollectMaterial"
           ></material-card-detail>
         </div>
       </section>
@@ -161,9 +167,12 @@
             <tr is="material-card-row"
                 v-for="(material, index) in searchItems"
                 :material="material"
+                :isViewingSelf="isViewingSelf"
+                :isViewingSelfCollection="isViewingSelfCollection"
                 v-on:highlightMaterial="highlightMaterial"
-                v-on:unhighlightMaterial="unhighlightMaterial">
-            </tr>
+                v-on:unhighlightMaterial="unhighlightMaterial"
+                v-on:uncollectMaterialRequest="uncollectMaterialSelect"
+            ></tr>
           </tbody>
         </table>
       </section>
@@ -351,6 +360,23 @@
 
       searchUser () {
         return this.$store.getters['search/searchUser']
+      },
+
+      isViewingSelf () {
+        var user = this.$auth.user()
+        console.log('USER:')
+        console.log(user)
+        if (user && this.searchUser && user.id === this.searchUser.id) {
+          return true
+        }
+        return false
+      },
+
+      isViewingSelfCollection () {
+        if (this.isViewingSelf && this.searchQuery.params.collection) {
+          return true
+        }
+        return false
       },
 
       isProcessing() {
@@ -542,6 +568,7 @@
         // this.highlightedMaterialId = 0
         this.unHighlightedMaterialId = { id: id }
       },
+
       collectMaterialSelect(id) {
         if (id) {
           this.materialToCollect = id
@@ -599,6 +626,34 @@
           this.isProcessingLocal = false
           this.newCollectionName = ''
           this.materialToCollect = 0
+        })
+      },
+
+      uncollectMaterial(materialId) {
+        if (!materialId || !this.searchQuery.params.collection) {
+          return
+        }
+        this.isProcessingLocal = true
+        Vue.axios.get(Vue.axios.defaults.baseURL +
+          '/collectionmaterials/delete/' +
+          this.searchQuery.params.collection + '/'
+          + materialId)
+          .then((response) => {
+          if (response.data.error) {
+            this.apiError = response.data.error
+            console.log(this.apiError)
+            this.isProcessingLocal = false
+          } else {
+            this.isProcessingLocal = false
+            this.actionMessage = 'Removed from collection.'
+            this.actionMessageSeconds = 5
+            this.$store.dispatch('search/refresh')
+          }
+        })
+        .catch(response => {
+          this.serverError = response
+          console.log(response)
+          this.isProcessingLocal = false
         })
       },
 
