@@ -56,7 +56,6 @@ class CollectionRepository extends Repository
         $collection->collection_type_id = self::USER_COLLECTION_TYPE_ID;
 
         $collection->created_by_user_id = Auth::user()->id;
-//TODO: ???        $collection->created_by_user_id = 1;
 
         $collection->save();
 

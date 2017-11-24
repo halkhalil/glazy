@@ -326,8 +326,9 @@
         highlightedMaterialId: {},
         unHighlightedMaterialId: {},
         selectedCollectionId: 0,
-        toDeleteMaterialId: 0,
         newCollectionName: '',
+        materialToCollect: 0,
+        toDeleteMaterialId: 0,
         minSearchTextLength: 3,
         apiError: null,
         serverError: null,
@@ -543,12 +544,62 @@
       },
       collectMaterialSelect(id) {
         if (id) {
-          this.$refs.collectModal.show();
+          this.materialToCollect = id
+          console.log('want to collect: ' + this.materialToCollect)
+          this.$refs.collectModal.show()
         }
       },
 
-      collectMaterial(id) {
-
+      collectMaterial() {
+        if (!this.materialToCollect) {
+          return
+        }
+        if (!this.selectedCollectionId && !this.newCollectionName) {
+          return
+        }
+        this.isProcessingLocal = true
+        var form = {
+          collectionName: this.newCollectionName,
+          collectionId: this.selectedCollectionId,
+          materialId: this.materialToCollect
+        }
+        Vue.axios.post(Vue.axios.defaults.baseURL + '/collectionmaterials', form)
+          .then((response) => {
+          if (response.data.error) {
+            this.apiError = response.data.error
+            console.log(this.apiError)
+            this.isProcessingLocal = false
+          } else {
+            console.log('return from collecting')
+            this.isProcessingLocal = false
+            this.actionMessage = 'Collected.'
+            this.actionMessageSeconds = 5
+            this.$store.dispatch('search/refresh')
+            if (this.newCollectionName) {
+              console.log('refresh collections')
+              // Refresh user collections
+              this.$auth.fetch({
+                success(res) {
+                  console.log('success fetching user');
+                  console.log(this.$auth.user())
+                  console.log('user id: ' + this.$auth.user().id)
+                },
+                error() {
+                  console.log('error fetching user');
+                }
+              })
+            }
+          }
+          this.newCollectionName = ''
+          this.materialToCollect = 0
+        })
+        .catch(response => {
+          this.serverError = response
+          console.log(response)
+          this.isProcessingLocal = false
+          this.newCollectionName = ''
+          this.materialToCollect = 0
+        })
       },
 
       actionMessageCountdown(seconds) {

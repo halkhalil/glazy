@@ -74,6 +74,12 @@ $api->version('v1', function (Router $api) {
         });
     });
 
+    $api->group(['prefix' => 'collectionmaterials'], function(Router $api) {
+        $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
+            $api->post('/', 'App\\Api\\V1\\Controllers\\Glazy\\CollectionMaterialController@store')->name('store');
+            $api->get('/delete/{collection_id}/{material_id}', 'App\\Api\\V1\\Controllers\\Glazy\\CollectionMaterialController@destroy')->name('destroy');
+        });
+    });
 
     $api->group(['prefix' => 'search'], function(Router $api) {
         $api->get('/', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@index')->name('index');

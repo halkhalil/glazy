@@ -133,7 +133,14 @@ class SearchController extends ApiBaseController
         // TODO: Why is query not handling this automatically?
         //todo fixed in model        $query->whereNull('deleted_at');
 
-        $query->ofUserViewable($current_user_id, $search_user_id);
+        if ($collection_id) {
+            // Collections can contain materials not belonging to the currently viewed user
+            // So don't limit the search by search user's own materials
+            $query->ofUserViewable($current_user_id, null);
+        }
+        else {
+            $query->ofUserViewable($current_user_id, $search_user_id);
+        }
 
         if ($collection_id) {
             $query->ofCollection($collection_id);
