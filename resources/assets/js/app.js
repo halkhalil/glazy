@@ -4,7 +4,7 @@
 // import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
 // import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
 
-window.GLAZY_APP_URL = 'http://homestead.app'
+window.GLAZY_APP_URL = 'http://homestead.test'
 // window.GLAZY_MATERIAL_TYPES = new MaterialTypes()
 // window.GLAZY_CONSTANTS = new GlazyConstants()
 
