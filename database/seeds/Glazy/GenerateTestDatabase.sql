@@ -105,3 +105,32 @@ delete from material_reviews where material_id < 6000;
 delete from materials where id < 6000;
 
 
+
+delete material_analyses
+from material_analyses
+inner join materials
+on material_analyses.material_id = materials.id
+where materials.is_private is true;
+delete material_atmospheres
+from material_atmospheres
+inner join materials
+on material_atmospheres.material_id = materials.id
+where materials.is_private is true;
+delete material_materials
+from material_materials
+inner join materials
+on material_materials.component_material_id = materials.id
+where materials.is_private is true;
+delete material_materials
+from material_materials
+inner join materials
+on material_materials.parent_material_id = materials.id
+where materials.is_private is true;
+delete collection_materials
+from collection_materials
+inner join materials
+on collection_materials.material_id = materials.id
+where materials.is_private is true;
+
+delete from materials where is_private is true;
+
