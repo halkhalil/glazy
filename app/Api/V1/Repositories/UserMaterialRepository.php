@@ -164,66 +164,66 @@ class UserMaterialRepository extends Repository
     }
 
     const DEFAULT_MATERIALS = [
-        12400,    // Silica
-        12457,    // Whiting
-        12137,    // EPK
-        12349,    // Nepheline Syenite (Theoretical)
-        12072,    // Bentonite
-        12135,    // Dolomite
-        12387,    // Red iron oxide
-        12288,    // Kaolin (Theoretical)
-        12131,    // Custer Feldspar
-        12252,    // Gerstley Borate
-        12467,    // Zinc Oxide
-        12433,    // Talc (Theoretical)
-        12120,    // Copper Carbonate
-        12169,    // Frit 3134
-        12393,    // Rutile
-        12458,    // Wollastonite (Theoretical)
-        12323,    // Lithium Carbonate
-        12442,    // Tin Oxide
-        12114,    // Cobalt Carbonate
-        12058,    // Ball Clay (Theoretical)
-        12371,    // Potash Feldspar (Theoretical)
-        12062,    // Barium Carbonate
-        12431,    // Strontium Carbonate
-        12443,    // Titanium Dioxide
-        12298,    // Kentucky OM #4 Ball Clay
-        12469,    // Zircopax
-        12305,    // Kona F-4 feldspar
-        12168,    // Frit 3124
-        12117,    // Cobalt Oxide
-        12080,    // Bone Ash
-        12422,    // Spodumene (Theoretical)
-        12108,    // Chrome Oxide
-        12336,    // Manganese Dioxide
-        12407,    // Soda Feldspar (Theoretical)
-        12406,    // Soda Ash
-        12122,    // Copper Oxide
-        12167,    // Frit 3110
-        12331,    // Magnesium carbonate
-        12249,    // G-200 Feldspar
-        12389,    // Redart
-        12125,    // Cornwall Stone
-        12657,    // Custer Feldspar (1989)
-        12119,    // Colemanite
-        12171,    // Frit 3195
-        12268,    // Grolleg Kaolin
-        12082,    // Borax
-        12470,    // Minspar 200
-        12094,    // Calcined Kaolin
-        12253,    // Gillespie Borate
-        12464,    // Yellow iron oxide
-        12142,    // Feldspar
-        12605,    // New Zealand Halloysite, Kaolin
-        12055,    // Wood ash
-        12015,    // Albany slip
-        12465,    // Yellow Ochre
-        12281,    // Iron oxide
-        12594,    // Tricalcium Phosphate, Synthetic Bone Ash
-        12483,    // Mason stain
-        12637,    // Nepheline Syenite Norwegian
-        12608    // Amtalc-C98 Talc
+        15400,    // Silica
+        15457,    // Whiting
+        15137,    // EPK
+        15349,    // Nepheline Syenite (Theoretical)
+        15072,    // Bentonite
+        15135,    // Dolomite
+        15387,    // Red iron oxide
+        15288,    // Kaolin (Theoretical)
+        15131,    // Custer Feldspar
+        15252,    // Gerstley Borate
+        15467,    // Zinc Oxide
+        15433,    // Talc (Theoretical)
+        15120,    // Copper Carbonate
+        15169,    // Frit 3134
+        15393,    // Rutile
+        15458,    // Wollastonite (Theoretical)
+        15323,    // Lithium Carbonate
+        15442,    // Tin Oxide
+        15114,    // Cobalt Carbonate
+        15058,    // Ball Clay (Theoretical)
+        15371,    // Potash Feldspar (Theoretical)
+        15062,    // Barium Carbonate
+        15431,    // Strontium Carbonate
+        15443,    // Titanium Dioxide
+        15298,    // Kentucky OM #4 Ball Clay
+        15469,    // Zircopax
+        15305,    // Kona F-4 feldspar
+        15168,    // Frit 3124
+        15117,    // Cobalt Oxide
+        15080,    // Bone Ash
+        15422,    // Spodumene (Theoretical)
+        15108,    // Chrome Oxide
+        15336,    // Manganese Dioxide
+        15407,    // Soda Feldspar (Theoretical)
+        15406,    // Soda Ash
+        15122,    // Copper Oxide
+        15167,    // Frit 3110
+        15331,    // Magnesium carbonate
+        15249,    // G-200 Feldspar
+        15389,    // Redart
+        15125,    // Cornwall Stone
+        15657,    // Custer Feldspar (1989)
+        15119,    // Colemanite
+        15171,    // Frit 3195
+        15268,    // Grolleg Kaolin
+        15082,    // Borax
+        15470,    // Minspar 200
+        15094,    // Calcined Kaolin
+        15253,    // Gillespie Borate
+        15464,    // Yellow iron oxide
+        15142,    // Feldspar
+        15605,    // New Zealand Halloysite, Kaolin
+        15055,    // Wood ash
+        15015,    // Albany slip
+        15465,    // Yellow Ochre
+        15281,    // Iron oxide
+        15594,    // Tricalcium Phosphate, Synthetic Bone Ash
+        15483,    // Mason stain
+        15637,    // Nepheline Syenite Norwegian
+        15608     // Amtalc-C98 Talc
     ];
 
 }

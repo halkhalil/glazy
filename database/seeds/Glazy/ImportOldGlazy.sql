@@ -35,7 +35,7 @@ SET FOREIGN_KEY_CHECKS=1;
 
 
 /******************* USERS ***********************/
-INSERT INTO `glazyb`.`users`(
+INSERT INTO `glazyc`.`users`(
 `id`,
 `email`,
 `name`,
@@ -65,9 +65,11 @@ FROM `laravel_glazy`.`users`
 
 WHERE `laravel_glazy`.`users`.`id` > 3;
 
-
+/***
+DELETE unneeded old users id's = 4, 5, 6....
+ */
 /******************* ROLE_USER ***********************/
-INSERT INTO `glazyb`.`role_user`(
+INSERT INTO `glazyc`.`role_user`(
 `user_id`,
 `role_id`
 )
@@ -77,12 +79,12 @@ SELECT
 3
 FROM `laravel_glazy`.`users`
 
-WHERE `laravel_glazy`.`users`.`id` > 3;
+WHERE `laravel_glazy`.`users`.`id` > 6;
 
 
 
 /******************* USER_PROFILES ***********************/
-INSERT INTO `glazyb`.`user_profiles`(
+INSERT INTO `glazyc`.`user_profiles`(
 `id`,
 `user_id`,
 `title`,
@@ -114,13 +116,13 @@ SELECT
 `deleted_at`
 FROM `laravel_glazy`.`user_profiles`
 
-WHERE `laravel_glazy`.`user_profiles`.`user_id` > 3;
+WHERE `laravel_glazy`.`user_profiles`.`user_id` > 6;
 
 
 /******************* MATERIALS (PRIMITIVE) ***********************/
 SET FOREIGN_KEY_CHECKS=0;
 
-INSERT INTO `glazyb`.`materials`(
+INSERT INTO `glazyc`.`materials`(
 `id`,
 `old_id`,
 `parent_id`,
@@ -139,9 +141,9 @@ INSERT INTO `glazyb`.`materials`(
 )
 
 SELECT
-`id` + 12000,
+`id` + 15000,
 `id`,
-`parent_id` + 12000,
+`parent_id` + 15000,
 `short_name`,
 `name`,
 `insight_name`,
@@ -156,10 +158,10 @@ TRUE,
 `deleted_at`
 FROM `laravel_glazy`.`materials`;
 
-UPDATE `glazyb`.`materials`
-  INNER JOIN `glazyb`.`material_types`
-    ON `glazyb`.`materials`.`material_type_id` = `glazyb`.`material_types`.`old_material_type_id`
-SET `glazyb`.`materials`.`material_type_id` = 	`glazyb`.`material_types`.`id`;
+UPDATE `glazyc`.`materials`
+  INNER JOIN `glazyc`.`material_types`
+    ON `glazyc`.`materials`.`material_type_id` = `glazyc`.`material_types`.`old_material_type_id`
+SET `glazyc`.`materials`.`material_type_id` = 	`glazyc`.`material_types`.`id`;
 
 SET FOREIGN_KEY_CHECKS=1;
 
@@ -167,7 +169,7 @@ SET FOREIGN_KEY_CHECKS=1;
 
 /******************* MATERIALS (PRIMITIVE) ANALYSIS ***********************/
 
-INSERT INTO `glazyb`.`material_analyses`(
+INSERT INTO `glazyc`.`material_analyses`(
 `material_id`,
 `SiO2_percent`,
 `Al2O3_percent`,
@@ -237,7 +239,7 @@ INSERT INTO `glazyb`.`material_analyses`(
 )
 
 SELECT
-`id` + 12000,
+`id` + 15000,
 `SiO2_percent`,
 `Al2O3_percent`,
 `B2O3_percent`,
@@ -311,7 +313,7 @@ FROM `laravel_glazy`.`materials`;
 
 /******************* MATERIALS (PRIMITIVE) HAZARDS ***********************/
 
-INSERT INTO `glazyb`.`material_hazards`(
+INSERT INTO `glazyc`.`material_hazards`(
 `material_id`,
 `hmis_health`,
 `hmis_flammability`,
@@ -327,7 +329,7 @@ INSERT INTO `glazyb`.`material_hazards`(
 )
 
 SELECT
-`id` + 12000,
+`id` + 15000,
 `hmis_health`,
 `hmis_flammability`,
 `hmis_physical_hazard`,
@@ -346,7 +348,7 @@ FROM `laravel_glazy`.`materials`;
 /******************* MATERIALS (COMPOSITE) ***********************/
 SET FOREIGN_KEY_CHECKS=0;
 
-INSERT INTO `glazyb`.`materials`(
+INSERT INTO `glazyc`.`materials`(
 `id`,
 `name`,
 `description`,
@@ -404,27 +406,27 @@ FROM `laravel_glazy`.`recipes`;
 
 /******************* UPDATE MATERIAL TYPES FOR COMPOSITE ***********************/
 
-UPDATE `glazyb`.`materials`
-	INNER JOIN `glazyb`.`material_types`
-		ON `glazyb`.`materials`.`material_type_id` = `glazyb`.`material_types`.`old_recipe_type_id`
-SET `glazyb`.`materials`.`material_type_id` = 	`glazyb`.`material_types`.`id`
-WHERE `glazyb`.`materials`.`is_primitive` IS FALSE;
+UPDATE `glazyc`.`materials`
+	INNER JOIN `glazyc`.`material_types`
+		ON `glazyc`.`materials`.`material_type_id` = `glazyc`.`material_types`.`old_recipe_type_id`
+SET `glazyc`.`materials`.`material_type_id` = 	`glazyc`.`material_types`.`id`
+WHERE `glazyc`.`materials`.`is_primitive` IS FALSE;
 
 SET FOREIGN_KEY_CHECKS=1;
 
 /******************* UPDATE MATERIAL NAMES ***********************/
 
-UPDATE `glazyb`.`materials`
-SET `glazyb`.`materials`.`name` = 	`glazyb`.`materials`.`other_names`,
-	`glazyb`.`materials`.`other_names` = NULL
-WHERE `glazyb`.`materials`.`name` IS NULL OR `glazyb`.`materials`.`name` = '';;
+UPDATE `glazyc`.`materials`
+SET `glazyc`.`materials`.`name` = 	`glazyc`.`materials`.`other_names`,
+	`glazyc`.`materials`.`other_names` = NULL
+WHERE `glazyc`.`materials`.`name` IS NULL OR `glazyc`.`materials`.`name` = '';;
 
 
 
 
 /******************* MATERIALS (COMPOSITE) ANALYSIS ***********************/
 
-INSERT INTO `glazyb`.`material_analyses`(
+INSERT INTO `glazyc`.`material_analyses`(
 `material_id`,
 `SiO2_percent`,
 `Al2O3_percent`,
@@ -564,7 +566,7 @@ FROM `laravel_glazy`.`recipes`;
 
 /******************* MATERIALS MATERIALS ***********************/
 
-INSERT INTO `glazyb`.`material_materials`(
+INSERT INTO `glazyc`.`material_materials`(
 	`parent_material_id`,
 	`component_material_id`,
 	`percentage_amount`,
@@ -575,7 +577,7 @@ INSERT INTO `glazyb`.`material_materials`(
 
 SELECT
 	`recipe_id`,
-	`material_id` + 12000,
+	`material_id` + 15000,
 	`percentage_amount`,
 	`is_additional`,
 	`created_at`,
@@ -585,7 +587,7 @@ FROM `laravel_glazy`.`recipe_materials`;
 
 /******************* MATERIAL ATMOSPHERES ***********************/
 
-INSERT INTO `glazyb`.`material_atmospheres`(
+INSERT INTO `glazyc`.`material_atmospheres`(
   `material_id`,
   `atmosphere_id`,
   `created_at`,
@@ -601,7 +603,7 @@ FROM `laravel_glazy`.`recipe_atmospheres`;
 
 /******************* MATERIAL IMAGES ***********************/
 
-INSERT INTO `glazyb`.`material_images`(
+INSERT INTO `glazyc`.`material_images`(
 	`id`,
 	`material_id`,
 	`title`,
@@ -639,7 +641,7 @@ FROM `laravel_glazy`.`recipe_images`;
 
 /******************* COLLECTIONS ***********************/
 
-INSERT INTO `glazyb`.`collections`(
+INSERT INTO `glazyc`.`collections`(
   `id`,
   `collection_type_id`,
   `name`,
@@ -671,7 +673,7 @@ FROM `laravel_glazy`.`collections`;
 
 /******************* COLLECTION MATERIALS ***********************/
 
-INSERT INTO `glazyb`.`collection_materials`(
+INSERT INTO `glazyc`.`collection_materials`(
 	`collection_id`,
 	`material_id`,
 	`created_at`,
@@ -687,7 +689,7 @@ INSERT INTO `glazyb`.`collection_materials`(
 
 /******************* MATERIAL REVIEWS ***********************/
 
-INSERT INTO `glazyb`.`material_reviews`(
+INSERT INTO `glazyc`.`material_reviews`(
 	`material_id`,
 	`user_id`,
 	`title`,

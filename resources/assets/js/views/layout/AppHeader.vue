@@ -36,7 +36,8 @@
                     <b-nav-item :to="{ name: 'materials' }" >
                         <i class="fa fa-flask fa-fw"></i> Materials
                     </b-nav-item>
-                    <b-nav-item :to="{ name: 'calculator' }" >
+                    <b-nav-item v-if="$auth.check()"
+                                :to="{ name: 'calculator' }" >
                         <i class="fa fa-calculator fa-fw"></i> Calc
                     </b-nav-item>
                     <b-nav-item href="#" >
