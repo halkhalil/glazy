@@ -155,7 +155,7 @@
           }.bind(this));
       },
 
-      coneString: function (fromOrtonConeName, toOrtonConeName) {
+      coneString: function(fromOrtonConeName, toOrtonConeName) {
         var coneString = '?';
         if (fromOrtonConeName
           && toOrtonConeName
@@ -173,26 +173,26 @@
         return coneString;
       },
 
-      getImageBin: function (id) {
+      getImageBin: function(id) {
         id = '' + id;
         return id.substr(id.length - 2);
       },
 
-      hasThumbnail: function (recipe) {
+      hasThumbnail: function(recipe) {
         if (recipe.hasOwnProperty('thumbnail')
-          && recipe.thumbnail.hasOwnProperty('url')
-          && recipe.thumbnail.url) {
+          && recipe.thumbnail.hasOwnProperty('filename')
+          && recipe.thumbnail.filename) {
           return true;
         }
         return false;
       },
 
-      getImageUrl: function (recipe, size) {
+      getImageUrl: function(recipe, size) {
         if (this.hasThumbnail(recipe)) {
           var bin = this.getImageBin(recipe.id);
-          return '/storage/uploads/recipes/' + bin + '/' + size + '_' + recipe.thumbnail.url;
+          return '/storage/uploads/recipes/' + bin + '/' + size + '_' + recipe.thumbnail.filename;
         }
-        return '/img/glazy/recipes/black.png';
+        return '/img/recipes/black.png';
       }
 
     }
