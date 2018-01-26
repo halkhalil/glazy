@@ -5,6 +5,13 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <link rel="shortcut icon" href="/img/favicon/favicon.ico" sizes="16x16 32x32 64x64">
+        <link rel="icon" href="/img/favicon/favicon.png" type="image/png">
+        <link rel="apple-touch-icon-precomposed" sizes="57x57" href="/img/favicon/apple-touch-icon-57x57.png">
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/img/favicon/apple-touch-icon-114x114.png">
+        <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/img/favicon/apple-touch-icon-72x72.png">
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/favicon/apple-touch-icon-144x144.png">
+
         <title>{{ config('app.name') }}</title>
 
         <link href="https://fonts.googleapis.com/css?family=Montserrat:700,300,200" rel="stylesheet">
