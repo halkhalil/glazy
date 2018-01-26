@@ -40,9 +40,6 @@
                                 :to="{ name: 'calculator' }" >
                         <i class="fa fa-calculator fa-fw"></i> Calc
                     </b-nav-item>
-                    <b-nav-item href="#" >
-                        <i class="fa fa-question fa-fw"></i> Help</a>
-                    </b-nav-item>
                     <b-nav-item v-if="!$auth.check()"
                                 :to="{ name: 'login' }" >
                         <i class="fa fa-user-circle-o fa-fw"></i> Login</a>
@@ -51,13 +48,20 @@
                                 :to="{ name: 'register' }" >
                         <i class="fa fa-user-plus fa-fw"></i> Join!</a>
                     </b-nav-item>
-
+                    <b-nav-item href="#" >
+                        <i class="fa fa-question fa-fw"></i> Help</a>
+                    </b-nav-item>
                     <b-nav-item-dropdown text="Lang" right>
+                        <b-dropdown-item href="#">BROKEN</b-dropdown-item>
                         <b-dropdown-item href="#">EN</b-dropdown-item>
                         <b-dropdown-item href="#">ES</b-dropdown-item>
                         <b-dropdown-item href="#">RU</b-dropdown-item>
                         <b-dropdown-item href="#">FA</b-dropdown-item>
                     </b-nav-item-dropdown>
+
+                    <b-nav-item href="#" >
+                        MANY THINGS BROKEN! BUT NOTHING WILL BE LOST!
+                    </b-nav-item>
                 </b-navbar-nav>
             </b-collapse>
         </b-navbar>
