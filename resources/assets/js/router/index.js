@@ -75,6 +75,10 @@ export default new Router({
           component: Recipe
         },
         {
+          path: '/recipes/export/:id',
+          redirect: { name: 'recipes' }
+        },
+        {
           path: '/materials/:id',
           name: 'material',
           component: Recipe
