@@ -94,6 +94,13 @@ const app = new Vue({
   components: { GlazyApp }
 })
 
+/* Google Analytics */
+ga('set', 'page', router.currentRoute.path)
+ga('send', 'pageview')
+router.afterEach(( to, from ) => {
+  ga('set', 'page', to.path)
+  ga('send', 'pageview')
+})
 
 //const app = new Vue({
 //  el: '#app'
