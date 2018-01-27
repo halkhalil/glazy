@@ -106,7 +106,8 @@
                         </div>
                       </router-link>
                     </div>
-                    <div class="col-sm-4 float-center">
+                    <div v-if="!recipe.isPrivate"
+                         class="col-sm-4 float-center">
                       <social-sharing :url="this.meta.url"
                                       :title="this.meta.title"
                                       :description="this.meta.description"

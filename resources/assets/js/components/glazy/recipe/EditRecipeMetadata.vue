@@ -27,7 +27,7 @@
             <b-form-group
                     id="groupOtherNames"
                     description="You can also add a Code here."
-                    label="Other Names"
+                    label="Other Names or Code"
             >
                 <b-form-input id="otherNames" v-model.trim="form.otherNames"></b-form-input>
             </b-form-group>
