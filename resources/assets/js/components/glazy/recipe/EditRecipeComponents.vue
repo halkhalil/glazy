@@ -382,7 +382,6 @@
       chartMaterials: function() {
         var chartMaterials = [];
         if (this.originalMaterial && this.newMaterial) {
-          console.log('adding both materials to array')
           chartMaterials.push(this.originalMaterial)
           chartMaterials.push(this.newMaterial)
         }
@@ -488,12 +487,15 @@
           } else {
             this.isProcessing = false
             this.materialLibrary = response.data.data;
-            console.log('GOT MATERIALS LIST LEN: ' + this.materialLibrary.length);
-            this.lookupMaterialLibrary = {};
-            this.selectMaterials = [];
+            this.lookupMaterialLibrary = {}
+            this.selectMaterials = []
             for (var i = 0; i < this.materialLibrary.length; i++) {
-              this.lookupMaterialLibrary[this.materialLibrary[i].id] = this.materialLibrary[i];
-              this.selectMaterials.push({value: this.materialLibrary[i].id, label: this.materialLibrary[i].name});
+              this.lookupMaterialLibrary[this.materialLibrary[i].id] = this.materialLibrary[i]
+              var fullName = this.materialLibrary[i].name
+              if (this.materialLibrary[i].otherNames) {
+                fullName += ', ' + this.materialLibrary[i].otherNames
+              }
+              this.selectMaterials.push({value: this.materialLibrary[i].id, label: fullName})
             }
           }
         })
@@ -599,19 +601,13 @@
             // We are updating the original material
             form._method = 'PATCH';
             // form.materialComponents = JSON.stringify(form.materialComponents)
-            console.log('updating: form:')
-            console.log(form)
-            console.log('url: ' + Vue.axios.defaults.baseURL + '/materialmaterials/' + this.originalMaterial.id)
             Vue.axios.post(Vue.axios.defaults.baseURL + '/materialmaterials/' + this.originalMaterial.id, form)
               .then((response) => {
-              console.log('got response:')
-              console.log(response)
               if (response.data.error) {
                 // error
                 this.apiError = response.data.error
                 console.log(this.apiError)
               } else {
-                console.log('emit updatedRecipeComponents')
                 this.$emit('updatedRecipeComponents');
               }
             })
@@ -630,16 +626,12 @@
             }
             Vue.axios.post(Vue.axios.defaults.baseURL + '/materialmaterials/', form)
               .then((response) => {
-              console.log('got response:')
-              console.log(response)
               if (response.data.error) {
                 // error
                 this.apiError = response.data.error
                 this.isProcessing = false
-                console.log(this.apiError)
               } else {
                 // Success creating recipe, now go to the recipe page:
-                console.log(response)
                 var material = response.data.data
                 this.$router.push({ name: 'recipes', params: { id: material.id }, query: { isEdit: true }})
               }
@@ -684,8 +676,6 @@
           }
         }
         if (form.materialComponents.length > 0) {
-          console.log('query for dups with')
-          console.log(form)
           // Only search if we have at least one material component
           Vue.axios.post(Vue.axios.defaults.baseURL + '/search/similarMaterials', form)
             .then((response) => {
@@ -697,7 +687,6 @@
             } else {
               this.isProcessing = false
               this.similarMaterials = response.data.data;
-              console.log(this.similarMaterials)
             }
           })
           .catch(response => {
