@@ -82,6 +82,13 @@ class MaterialRepository extends Repository
         $data = [];
         $data['id'] = $jsonData['id'];
         $data['name'] = $jsonData['name'];
+        if (array_key_exists('otherNames', $jsonData)) {
+            if ($jsonData['otherNames']) {
+                $data['other_names'] = $jsonData['otherNames'];
+            } else {
+                $data['other_names'] = null;
+            }
+        }
         if (array_key_exists('description', $jsonData)) {
             $data['description'] = $jsonData['description'];
         }

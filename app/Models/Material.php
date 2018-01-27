@@ -23,6 +23,7 @@ class Material extends Model
     const DB_ID = 'id';
     const DB_PARENT_ID = 'parent_id';
     const DB_NAME = 'name';
+    const DB_OTHER_NAMES = 'other_names';
     const DB_DESCRIPTION = 'description';
     const DB_IS_ANALYSIS = 'is_analysis';
     const DB_IS_PRIMITIVE = 'is_primitive';
@@ -59,6 +60,7 @@ class Material extends Model
 
     protected $fillable = [
         'name',
+        'other_names',
         'description',
         'material_type_id',
         'is_analysis',

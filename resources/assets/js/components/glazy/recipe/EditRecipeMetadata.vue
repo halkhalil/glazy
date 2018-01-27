@@ -24,6 +24,13 @@
                 <b-form-input id="name" :state="stateName" v-model.trim="form.name"></b-form-input>
             </b-form-group>
 
+            <b-form-group
+                    id="groupOtherNames"
+                    description="You can also add a Code here."
+                    label="Other Names"
+            >
+                <b-form-input id="otherNames" v-model.trim="form.otherNames"></b-form-input>
+            </b-form-group>
 
             <b-form-group
                     id="groupDescription"
@@ -70,7 +77,7 @@
                             placeholder="Transparency"
                             v-model="form.transparencyTypeId"
                             :options="constants.TRANSPARENCY_SELECT"
-                            @input="search">
+                            >
                         <template slot="first">
                             <option :value="0">All Transparencies</option>
                         </template>
@@ -84,7 +91,7 @@
                             placeholder="Surface"
                             v-model="form.surfaceTypeId"
                             :options="constants.SURFACE_SELECT"
-                            @input="search">
+                            >
                         <template slot="first">
                             <option :value="0">All Surfaces</option>
                         </template>
@@ -203,6 +210,7 @@
       return {
         form: {
           name: '',
+          otherNames: '',
           description: '',
           baseTypeId: null,
           materialTypeId: null,
@@ -234,6 +242,7 @@
           _method: 'PATCH',
           id: this.recipe.id,
           name: this.recipe.name,
+          otherNames: this.recipe.otherNames,
           description: this.recipe.description,
           baseTypeId: this.recipe.baseTypeId,
           materialTypeId: this.recipe.materialTypeId,

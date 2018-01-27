@@ -84,6 +84,9 @@
                            class="fa fa-lock"></i>
                         {{ recipe.name }}
                       </h2>
+                      <span v-if="recipe.otherNames">
+                        Other Names: {{ recipe.otherNames }}
+                      </span>
                     </div>
                     <div class="col-md-3 col-sm-4" v-if="!recipe.isPrimitive">
                       <firing-card :recipe="recipe"></firing-card>
@@ -194,12 +197,12 @@
                         </b-dropdown>
                         <b-button v-on:click="copyRecipe()"><i class="fa fa-copy"></i> Copy</b-button>
                       </b-button-group>
-                      <b-button-group class="recipe-action-group" v-if="canEdit">
+                      <b-button-group class="recipe-action-group" v-if="canEdit && !recipe.isArchived">
                         <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-eye"></i> Publish</b-button>
-                        <b-button class="btn-info" v-if="!(recipe.isPrivate)" v-on:click="unpublishRecipe()"><i class="fa fa-eye-slash"></i> Unpublish</b-button>
+                        <b-button class="btn-info" v-if="!recipe.isPrivate" v-on:click="unpublishRecipe()"><i class="fa fa-eye-slash"></i> Unpublish</b-button>
                         <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
                         <b-button class="btn-info" v-if="!recipe.isPrimitive" v-on:click="editComponents()"><i class="fa fa-list"></i> Edit Recipe</b-button>
-                        <b-button class="btn-danger" v-if="!recipe.isArchived" v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
+                        <b-button class="btn-danger" v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
                       </b-button-group>
 
                       <b-modal v-if="canEdit"
