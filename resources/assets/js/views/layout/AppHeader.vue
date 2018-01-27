@@ -48,15 +48,12 @@
                                 :to="{ name: 'register' }" >
                         <i class="fa fa-user-plus fa-fw"></i> Join!</a>
                     </b-nav-item>
-                    <b-nav-item href="#" >
+                    <b-nav-item href="https://wiki.glazy.org/c/open-source-ceramics/glazy-help" >
                         <i class="fa fa-question fa-fw"></i> Help</a>
                     </b-nav-item>
                     <b-nav-item-dropdown text="Lang" right>
-                        <b-dropdown-item href="#">BROKEN</b-dropdown-item>
+                        <b-dropdown-item href="#">COMING SOON!</b-dropdown-item>
                         <b-dropdown-item href="#">EN</b-dropdown-item>
-                        <b-dropdown-item href="#">ES</b-dropdown-item>
-                        <b-dropdown-item href="#">RU</b-dropdown-item>
-                        <b-dropdown-item href="#">FA</b-dropdown-item>
                     </b-nav-item-dropdown>
 
                     <b-nav-item href="#" >
