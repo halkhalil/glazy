@@ -76,7 +76,7 @@
                                                  :recipe="recipe"></material-type-breadcrumbs>
                       <h2 class="card-title">
                         <i v-if="recipe.isPrivate"
-                           v-b-tooltip.hover title="Archived"
+                           v-b-tooltip.hover title="Private"
                            class="fa fa-eye-slash"></i>
                         <i v-if="recipe.isArchived"
                            v-b-tooltip.hover title="Archived"
@@ -106,9 +106,10 @@
                       <social-sharing :url="this.meta.url"
                                       :title="this.meta.title"
                                       :description="this.meta.description"
+                                      :media="this.meta.image"
                                       hashtags="glaze,ceramics,recipe"
                                       inline-template>
-                        <div>
+                        <div class="btn-group" role="group" aria-label="Social sharing buttons">
 
                           <button class="btn btn-icon btn-neutral btn-default">
                             <network network="email">
@@ -133,14 +134,16 @@
                         </div>
                       </social-sharing>
                     </div>
-                    <div class="col-sm-4 float-right">
-                      <star-rating v-if="recipe.ratingTotal"
-                                   class="recipe-vue-star-rating"
-                                   :rating="Number(recipe.ratingAverage)"
-                                   :read-only="true"
-                                   :star-size="24"
-                                   :show-rating="false"
-                                   :increment="0.01"></star-rating>
+                    <div class="col-sm-4">
+                      <span class="align-middle">
+                          <star-rating v-if="recipe.ratingTotal"
+                                       class="recipe-vue-star-rating"
+                                       :rating="Number(recipe.ratingAverage)"
+                                       :read-only="true"
+                                       :star-size="24"
+                                       :show-rating="false"
+                                       :increment="0.01"></star-rating>
+                      </span>
                     </div>
                   </div>
 
