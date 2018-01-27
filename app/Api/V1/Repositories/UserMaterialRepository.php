@@ -48,6 +48,16 @@ class UserMaterialRepository extends Repository
         return $userMaterials;
     }
 
+    public function getUnauthenticatedMaterialList()
+    {
+        $query = Material::query();
+        $query->whereIn('id', self::DEFAULT_MATERIALS);
+        $query->with('analysis');
+        $query->with('material_type');
+        $query->orderBy('name', 'asc');
+        return $query->get();
+    }
+
     /**
      * @param null $id
      * @return \Illuminate\Database\Eloquent\Collection|static[]

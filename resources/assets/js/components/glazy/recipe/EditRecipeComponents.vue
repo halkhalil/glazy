@@ -226,7 +226,8 @@
       </div>
       <div class="row">
         <div class="col-sm-7">
-          <b-button class="cancel-edit-btn"
+          <b-button v-if="$auth.check()"
+                    class="cancel-edit-btn"
                     size="sm"
                     variant="secondary"
                     @click.prevent="editComponentsCancel"><i class="fa fa-times"></i> Cancel</b-button>
@@ -236,7 +237,8 @@
           <b-button size="sm"
                     variant="info"
                     @click.prevent="checkForDuplicates"><i class="fa fa-search"></i> Search</b-button>
-          <b-button size="sm"
+          <b-button v-if="$auth.check()"
+                    size="sm"
                     variant="info"
                     @click.prevent="store"><i class="fa fa-save"></i> Save</b-button>
         </div>
@@ -271,6 +273,7 @@
               <td>{{ component.material.name }}</td>
             </tr>
           </table>
+          <b-button :href="'/recipes/' + material.id" variant="info">View Recipe</b-button>
         </b-card>
       </div>
     </div>

@@ -52,11 +52,15 @@ class UserMaterialController extends ApiBaseController
 
     public function editMaterialList($id = null)
     {
-        if (!Auth::guard()->user()) {
-            return $this->respondUnauthorized('You must login to do this.');
-        }
+        $userMaterials = null;
 
-        $userMaterials = $this->userMaterialRepository->getEditMaterialList($id);
+        if (Auth::guard()->user()) {
+            $userMaterials = $this->userMaterialRepository->getEditMaterialList($id);
+        }
+        else {
+            // Unauthenticated user is just using the calculator without a recipe
+            $userMaterials = $this->userMaterialRepository->getUnauthenticatedMaterialList();
+        }
 
         $resource = new FractalCollection($userMaterials, new ShallowMaterialTransformer());
 
