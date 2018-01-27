@@ -52,9 +52,9 @@ $api->version('v1', function (Router $api) {
     });
 
     $api->group(['prefix' => 'usermaterials'], function(Router $api) {
+        $api->get('/editList/{id?}', 'App\\Api\\V1\\Controllers\\Glazy\\UserMaterialController@editMaterialList')->name('editList');
         $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
             $api->get('/', 'App\\Api\\V1\\Controllers\\Glazy\\UserMaterialController@index')->name('index');
-            $api->get('/editList/{id?}', 'App\\Api\\V1\\Controllers\\Glazy\\UserMaterialController@editMaterialList')->name('editList');
         });
     });
 
