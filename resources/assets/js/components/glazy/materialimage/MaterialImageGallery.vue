@@ -95,6 +95,19 @@
                         <p class="card-text" v-if="currentImage.description">
                             {{ currentImage.description }}
                         </p>
+                        <p>
+                            <router-link :to="{ name: 'user', params: { id: currentImage.createdByUser.id}}">
+                                <div class="author">
+                                    <img v-if="'profile' in currentImage.createdByUser && 'avatar' in currentImage.createdByUser.profile"
+                                         v-bind:src="currentImage.createdByUser.profile.avatar"
+                                         class="avatar"/>
+                                    <span>
+                                        {{ currentImage.createdByUser.name }},
+                                        <timeago :since="currentImage.updatedAt"></timeago>
+                                    </span>
+                                </div>
+                            </router-link>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -483,7 +496,6 @@
         margin-top: 0;
         margin-bottom: 10px;
     }
-
     .image-gallery-thumb {
         padding: 10px 10px;
     }

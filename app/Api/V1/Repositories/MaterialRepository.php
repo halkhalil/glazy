@@ -38,6 +38,7 @@ class MaterialRepository extends Repository
         return Material::with('analysis')
             ->with('components')
             ->with('thumbnail')
+            ->with('thumbnail.created_by_user')
             ->with('images')
             ->with('reviews')
             ->with('created_by_user')

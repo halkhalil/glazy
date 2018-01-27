@@ -7,6 +7,7 @@ use App\Models\OrtonCone;
 use App\Models\Material;
 use App\Models\MaterialImage;
 use App\Api\V1\Transformers\JsonDateTransformer;
+use App\Api\V1\Transformers\User\UserTransformer;
 
 use League\Fractal;
 
@@ -35,6 +36,10 @@ class MaterialImageTransformer extends Fractal\TransformerAbstract
         MaterialImage::DB_CREATED_BY_USER_ID => 'createdByUserId',
         MaterialImage::DB_CREATED_AT        => 'createdAt',
         MaterialImage::DB_UPDATED_AT        => 'updatedAt'
+    ];
+
+    protected $defaultIncludes = [
+        'createdByUser'
     ];
 
     public function transform(MaterialImage $materialImage)
@@ -98,5 +103,11 @@ class MaterialImageTransformer extends Fractal\TransformerAbstract
 
         return $image_data;
     }
+
+    public function includeCreatedByUser(MaterialImage $materialImage)
+    {
+        return $this->item($materialImage->created_by_user, new UserTransformer());
+    }
+
 
 }
