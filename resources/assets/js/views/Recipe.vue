@@ -21,6 +21,7 @@
           <material-card-detail
                   :material="searchMaterial"
                   :currentMaterialId="recipe.id"
+                  :isEmbedded="true"
           ></material-card-detail>
         </div>
       </section>
@@ -172,8 +173,9 @@
                     </tbody>
                   </table>
 
-                  <p class="card-description">
-                    {{ recipe.description }}
+                  <p class="card-description" v-if="recipe.description">
+                    <span style="white-space: pre-wrap;" v-html="linkify(recipe.description.trim())">
+                    </span>
                   </p>
 
                   <div class="row" v-if="$auth.check()">
@@ -892,6 +894,23 @@
       getImageUrl: function (materialImage, size) {
         var bin = this.getImageBin(materialImage.materialId);
         return GLAZY_APP_URL + '/storage/uploads/recipes/' + bin + '/' + size + '_' + materialImage.filename;
+      },
+
+      linkify: function(content) {
+        if (!content) {
+          return
+        }
+        // https://stackoverflow.com/questions/37684/how-to-replace-plain-urls-with-links
+        // http://, https://, ftp://
+        var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+        // www. sans http:// or https://
+        var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+        // Email addresses
+        var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
+        return content
+          .replace(urlPattern, '<a href="$&">$&</a>')
+          .replace(pseudoUrlPattern, '$1<a href="http://$2">$2</a>')
+          .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
       }
 
     }

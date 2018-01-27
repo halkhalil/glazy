@@ -101,7 +101,7 @@
         </div>
       </router-link>
     </div>
-    <div class="card-footer" v-if="$auth.check()">
+    <div class="card-footer" v-if="$auth.check() && !isEmbedded">
       <b-btn v-if="isViewingSelfCollection"
              @click="uncollectMaterialRequest(material.id)"
              v-b-tooltip.hover title="Unbookmark"
@@ -112,10 +112,10 @@
       <b-btn class="btn btn-icon btn-neutral"
              v-b-tooltip.hover title="Copy"
              @click="copyMaterialRequest(material.id)"><i class="fa fa-copy"></i></b-btn>
-      <b-bnt v-if="isCanEdit && !material.isArchived"
+      <b-btn v-if="isCanEdit && !material.isArchived"
              v-b-tooltip.hover title="Delete"
              @click="deleteMaterialRequest(material.id)"
-             class="btn btn-icon btn-neutral"><i class="fa fa-trash"></i></b-bnt>
+             class="btn btn-icon btn-neutral"><i class="fa fa-trash"></i></b-btn>
     </div>
   </div>
 
@@ -147,6 +147,10 @@
         default: false
       },
       isViewingSelfCollection: {
+        type: Boolean,
+        default: false
+      },
+      isEmbedded: {
         type: Boolean,
         default: false
       }
