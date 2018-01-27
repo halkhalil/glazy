@@ -35,6 +35,11 @@
       <div class="load-container load7 fullscreen" v-if="isProcessing">
         <div class="loader">Loading...</div>
       </div>
+      <b-alert :show="actionMessageSeconds"
+               @dismiss-count-down="actionMessageCountdown"
+               variant="info">
+        {{ actionMessage }}
+      </b-alert>
 
       <div v-if="isEditComponents && isLoaded && !isDeleted">
         <edit-recipe-components :originalMaterial="material"
@@ -173,19 +178,14 @@
                     <div class="col-md-12">
 
                       <b-button-group class="recipe-action-group">
-                        <b-dropdown left>
-                          <span slot=text><i class="fa fa-bookmark" aria-hidden="true"></i> Collect</span>
-                          <b-dropdown-item>Item 1</b-dropdown-item>
-                          <b-dropdown-item>Item 2</b-dropdown-item>
-                          <b-dropdown-divider></b-dropdown-divider>
-                          <b-dropdown-item>Item 3</b-dropdown-item>
-                        </b-dropdown>
+
+                        <b-button @click="collectMaterialSelect(material.id)"
+                               v-b-tooltip.hover title="Bookmark">
+                          <i class="fa fa-bookmark" aria-hidden="true"></i> Bookmark
+                        </b-button>
                         <b-dropdown left>
                           <span slot=text><i class="fa fa-cloud-download" aria-hidden="true"></i> Export</span>
-                          <b-dropdown-item>Item 1</b-dropdown-item>
-                          <b-dropdown-item>Item 2</b-dropdown-item>
-                          <b-dropdown-divider></b-dropdown-divider>
-                          <b-dropdown-item>Item 3</b-dropdown-item>
+                          <b-dropdown-item>To be added!</b-dropdown-item>
                         </b-dropdown>
                         <b-button v-on:click="copyRecipe()"><i class="fa fa-copy"></i> Copy</b-button>
                       </b-button-group>
@@ -368,25 +368,37 @@
           </div>
         </div>
 
-        <div class="modal fade collection-add-recipe-modal" id="addToCollectionModal" tabindex="-1" role="dialog" aria-labelledby="add to collection" aria-hidden="true">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add to Collection</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <collection-add-recipe-form
-                        :recipe="recipe"
-                        :current_user="current_user"
-                        v-on:collectionaddrecipe="collectionaddrecipe"
-                ></collection-add-recipe-form>
-              </div>
-            </div>
+        <b-modal id="collectModal"
+                 ref="collectModal"
+                 title="Collect Recipe"
+                 v-on:ok="collectMaterial"
+                 ok-title="Add"
+        >
+          <p>Collect in:</p>
+          <div v-if="collections && collections.length > 0">
+            <b-form-select v-model="selectedCollectionId"
+                           :options="collections"
+                           text-field="name"
+                           value-field="id">
+              <template slot="first">
+                <option :value="0">-- Select a collection --</option>
+              </template>
+            </b-form-select>
           </div>
-        </div>
+
+          <b-form-group
+                  id="groupName"
+                  label="Create a New Collection:"
+                  :feedback="feedbackCollectionName"
+                  :state="stateCollectionName"
+          >
+            <b-form-input id="name"
+                          :state="stateCollectionName"
+                          v-model.trim="newCollectionName"
+                          placeholder="Collection Name"></b-form-input>
+          </b-form-group>
+
+        </b-modal>
 
         <div class="modal fade" id="materialDeletedModal" tabindex="-1" role="dialog" aria-labelledby="delete recipe" aria-hidden="true">
           <div class="modal-dialog" role="document">
@@ -534,7 +546,12 @@
         serverError: null,
         glazeTypeId: new MaterialTypes().GLAZE_TYPE_ID,
         isEditRequest: false,
-        searchRoute: null
+        searchRoute: null,
+        selectedCollectionId: 0,
+        newCollectionName: '',
+        materialToCollect: 0,
+        actionMessage: null,
+        actionMessageSeconds: 0
       }
     },
 
@@ -600,6 +617,19 @@
       },
       searchItems: function () {
         return this.$store.getters['search/searchItems']
+      },
+      collections () {
+        var user = this.$auth.user()
+        if (user && user.collections && user.collections.length > 0) {
+          return user.collections
+        }
+        return null
+      },
+      feedbackCollectionName() {
+        return this.newCollectionName.length > 0 ? 'Enter at least 3 characters' : 'Please enter a name';
+      },
+      stateCollectionName() {
+        return this.newCollectionName.length > 2 ? 'valid' : 'invalid';
       }
     },
     beforeRouteUpdate (to, from, next) {
@@ -699,19 +729,67 @@
         this.isProcessing = true
       },
 
-      collectionAdd: function (material) {
-        $('#addToCollectionModal').modal('show');
+      collectMaterialSelect(id) {
+        if (id) {
+          this.materialToCollect = id
+          console.log('want to collect: ' + this.materialToCollect)
+          this.$refs.collectModal.show()
+        }
       },
 
-      collectionaddrecipe: function () {
-        $("#addCollectionAlert").show();
-        $('#addToCollectionModal').modal('hide');
-        window.setTimeout(function () {
-          $("#addCollectionAlert").slideUp(500, function() {
-            $("#addCollectionAlert").hide();
-          });
-        }, 5000);
-        this.fetchRecipe();
+      collectMaterial() {
+        if (!this.materialToCollect) {
+          return
+        }
+        if (!this.selectedCollectionId && !this.newCollectionName) {
+          return
+        }
+        this.isProcessingLocal = true
+        var form = {
+          collectionName: this.newCollectionName,
+          collectionId: this.selectedCollectionId,
+          materialId: this.materialToCollect
+        }
+        Vue.axios.post(Vue.axios.defaults.baseURL + '/collectionmaterials', form)
+          .then((response) => {
+          if (response.data.error) {
+            this.apiError = response.data.error
+            console.log(this.apiError)
+            this.isProcessingLocal = false
+          } else {
+            console.log('return from collecting')
+            this.isProcessingLocal = false
+            this.actionMessage = 'Collected.'
+            this.actionMessageSeconds = 5
+            if (this.newCollectionName) {
+              console.log('refresh collections')
+              // Refresh user collections
+              this.$auth.fetch({
+                success(res) {
+                  console.log('success fetching user');
+                  console.log(this.$auth.user())
+                  console.log('user id: ' + this.$auth.user().id)
+                },
+                error() {
+                  console.log('error fetching user');
+                }
+              })
+            }
+          }
+          this.newCollectionName = ''
+          this.materialToCollect = 0
+        })
+        .catch(response => {
+          this.serverError = response
+          console.log(response)
+          this.isProcessingLocal = false
+          this.newCollectionName = ''
+          this.materialToCollect = 0
+        })
+      },
+
+      actionMessageCountdown(seconds) {
+        this.actionMessageSeconds = seconds
       },
 
       reviewsmodified: function () {
