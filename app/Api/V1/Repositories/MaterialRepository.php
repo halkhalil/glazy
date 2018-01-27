@@ -255,6 +255,9 @@ class MaterialRepository extends Repository
         // All copied recipes are private by default
         $copiedMaterial->is_private = true;
 
+        // When copying an archived recipe, make sure the copy is not also archived
+        $copiedMaterial->is_archived = false;
+
         $copiedMaterial->save();
 
         // Copy the analysis
