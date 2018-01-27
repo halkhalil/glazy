@@ -26,10 +26,12 @@ class UserProfileRepository extends Repository
         return UserProfile::where('user_id', $user_id)->with('user')->first();
     }
 
+    /*
     public function getAll()
     {
         return UserProfile::get();
     }
+    */
 
     public function create(array $data)
     {
@@ -50,5 +52,4 @@ class UserProfileRepository extends Repository
 
         return $userProfile;
     }
-
 }

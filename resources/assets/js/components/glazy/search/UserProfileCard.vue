@@ -11,6 +11,12 @@
             <h6 v-if="'profile' in searchUser && searchUser.profile.countryName" class="category text-gray">
                 {{ searchUser.profile.countryName }}
             </h6>
+            <span >
+              <router-link v-if="$auth.check() && $auth.user().id === searchUser.id"
+                           :to="{ name: 'user-edit' }">
+                <i class="fa fa-edit"></i> Edit
+              </router-link>
+            </span>
             <div v-if="'profile' in searchUser">
                 <a v-if="'url' in searchUser.profile && searchUser.profile.url"
                    v-bind:href="'http://' + searchUser.profile.url"

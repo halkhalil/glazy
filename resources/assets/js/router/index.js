@@ -6,11 +6,10 @@ import AppLayoutFull from '../views/layout/AppLayoutFull'
 import Login from '../views/Login'
 import Register from '../views/Register'
 
-// import Home from '../views/Home'
 import Search from '../views/Search'
 import Calculator from '../views/Calculator'
 import Recipe from '../views/Recipe'
-// import RecipeEdit from '../views/RecipeEdit'
+import UserEdit from '../views/UserEdit.vue'
 
 import Error404 from '../views/error/404'
 import Error403 from '../views/error/403'
@@ -82,6 +81,11 @@ export default new Router({
           path: '/materials/:id',
           name: 'material',
           component: Recipe
+        },
+        {
+          path: '/settings',
+          name: 'settings',
+          component: UserEdit
         },
         {
           path: '/404',

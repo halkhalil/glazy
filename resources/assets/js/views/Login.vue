@@ -14,38 +14,34 @@
                     <a @click="loginSocial('google')" class="btn btn-google btn-block btn-sm">
                         <i class="fa fa-google-plus"></i> Login with Google
                     </a>
-                    <b-form-group
-                            id="email"
-                            label="Email Address">
-                        <b-form-input v-model.trim="data.body.email"
-                                      type="email"
-                                      :state="emailState"
-                                      aria-describedby="input-help input-feeback"
-                                      placeholder="jane@doe.com"></b-form-input>
-                        <b-form-feedback id="email-feedback">
-                            Invalid email address
-                        </b-form-feedback>
-                    </b-form-group>
-                    <b-form-group
-                            id="password"
-                            label="Password">
-                        <b-form-input
-                                id="login-form-password"
-                                v-model.trim="data.body.password"
-                                :state="passwordState"
-                                type="password"></b-form-input>
-                        <b-form-feedback id="password-feedback">
-                            Invalid password
-                        </b-form-feedback>
-                    </b-form-group>
-                    <div>
-                        <b-btn size="sm" class="float-left" variant="secondary" @click="cancelLogin()">
-                            Cancel
-                        </b-btn>
-                        <b-btn size="sm" class="float-right" variant="info" @click="login()">
-                            Login
-                        </b-btn>
-                    </div>
+                    <b-form @submit="login" @reset="onReset">
+                        <b-form-group
+                                id="email"
+                                label="Email Address">
+                            <b-form-input v-model.trim="data.body.email"
+                                          type="email"
+                                          :state="emailState"
+                                          aria-describedby="input-help input-feeback"
+                                          placeholder="jane@doe.com"></b-form-input>
+                            <b-form-feedback id="email-feedback">
+                                Invalid email address
+                            </b-form-feedback>
+                        </b-form-group>
+                        <b-form-group
+                                id="password"
+                                label="Password">
+                            <b-form-input
+                                    id="login-form-password"
+                                    v-model.trim="data.body.password"
+                                    :state="passwordState"
+                                    type="password"></b-form-input>
+                            <b-form-feedback id="password-feedback">
+                                Invalid password
+                            </b-form-feedback>
+                        </b-form-group>
+                        <b-button size="sm" class="float-left" type="reset" variant="secondary">Reset</b-button>
+                        <b-button size="sm" class="float-right" type="submit" variant="info">Login</b-button>
+                    </b-form>
                 </div>
                 <div v-show="code && type">
                     Logging you in via {{ type }}...
@@ -119,7 +115,8 @@
 
     },
     methods: {
-      login () {
+      login (evt) {
+        evt.preventDefault();
         var redirect = this.$auth.redirect()
         this.$auth.login({
           data: this.data.body,
@@ -154,6 +151,13 @@
 
       cancelLogin() {
         this.$router.push('search')
+      },
+
+      onReset (evt) {
+        evt.preventDefault();
+          /* Reset our form values */
+        this.data.body.email = null;
+        this.data.body.password = null;
       }
 
     }

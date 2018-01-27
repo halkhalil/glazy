@@ -25,6 +25,11 @@ $api->version('v1', function (Router $api) {
         $api->post('logout', 'App\\Api\\V1\\Controllers\\LogoutController@logout');
         $api->post('refresh', 'App\\Api\\V1\\Controllers\\RefreshController@refresh');
         $api->get('user', 'App\\Api\\V1\\Controllers\\UserController@user');
+
+        $api->post('changePassword', 'App\\Api\\V1\\Controllers\\UserController@changePassword');
+
+        $api->patch('profile', 'App\\Api\\V1\\Controllers\\Glazy\\UserProfileController@update');
+
     });
 
     $api->group(['prefix' => 'recipes'], function(Router $api) {

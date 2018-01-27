@@ -22,7 +22,7 @@
                         <b-dropdown-item :to="{ name: 'user-materials', params: { id: $auth.user().id}}">
                             My Materials
                         </b-dropdown-item>
-                        <b-dropdown-item href="#">
+                        <b-dropdown-item :to="{ name: 'settings' }">
                             Settings
                         </b-dropdown-item>
                         <b-dropdown-item @click="logout">
