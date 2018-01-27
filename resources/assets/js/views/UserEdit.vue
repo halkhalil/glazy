@@ -57,7 +57,7 @@
                         </b-form-textarea>
                     </b-form-group>
 
-                    
+
                     -->
 
                     <b-form-group
@@ -336,8 +336,8 @@
       */
 
       cancelEdit: function () {
-        // todo
-        this.$emit('editUserCancel');
+        //this.$router.push('search')
+        this.$router.go(-1)
       },
 
       actionMessageCountdown(seconds) {
