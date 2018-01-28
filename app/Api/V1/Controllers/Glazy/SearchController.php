@@ -71,7 +71,7 @@ class SearchController extends ApiBaseController
             $page = 1;
         }
 
-        $search_user_id = (int)$request->input('u');
+        $search_user_id = $request->input('u');
         $collection_id = (int)$request->input('collection');
         // $is_primitive = (int)$request->input('is_primitive'); // 0 == false
         $keywords = $request->input('keywords');
@@ -96,10 +96,27 @@ class SearchController extends ApiBaseController
         $jsonUser = null;
         if ($search_user_id) {
             // We're searching within a user's recipes
-            $searchUser = User::with('profile')
-                ->with(['collections' => function ($q) {
-                    $q->orderBy('name', 'asc');
-                }])->find($search_user_id);
+            $searchUser = null;
+
+            if (ctype_digit($search_user_id)) {
+                // this is a primary id for a user
+                $searchUser = User::with('profile')
+                    ->with(['collections' => function ($q) {
+                        $q->orderBy('name', 'asc');
+                    }])->find($search_user_id);
+            } else {
+                // this is an alphanumeric username
+                $searchUser = User::with('profile')
+                    ->with(['collections' => function ($q) {
+                        $q->orderBy('name', 'asc');
+                    }])->whereHas('profile', function($q) use ($search_user_id) {
+                        $q->where('username', $search_user_id);
+                    })->first();
+
+                if ($searchUser) {
+                    $search_user_id = $searchUser->id;
+                }
+            }
 
             if ($searchUser) {
                 $this->manager->parseIncludes(['collections', 'profile']);
