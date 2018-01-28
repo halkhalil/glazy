@@ -38,7 +38,14 @@
           {{ material.name }}
         </router-link>
       </h5>
-      <p class="card-text">{{ material.description }}</p>
+      <star-rating v-if="material.ratingTotal"
+                   class="recipe-vue-star-rating"
+                   :rating="Number(material.ratingAverage)"
+                   :read-only="true"
+                   :star-size="18"
+                   :show-rating="false"
+                   :increment="0.01"></star-rating>
+      <p v-if="material.description" class="card-text">{{ material.description }}</p>
       <router-link :to="{ name: 'user', params: { id: material.createdByUser.id}}">
         <div class="author">
           <img v-if="'profile' in material.createdByUser && 'avatar' in material.createdByUser.profile"
@@ -71,10 +78,12 @@
 <script>
 
   import MaterialHelper from './material-helper'
+  import StarRating from 'vue-star-rating'
 
   export default {
     name: 'MaterialCardThumb',
     components: {
+      StarRating
     },
     props: {
       material: {
@@ -152,7 +161,12 @@
   }
 
   .material-card .card-body {
-    padding: 10px;
+    padding: 10px 10px 0 10px;
+  }
+
+  .material-card .card-body .card-title {
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
 
   .material-card .swatches {
