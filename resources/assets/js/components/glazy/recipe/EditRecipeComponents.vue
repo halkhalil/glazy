@@ -202,6 +202,7 @@
                   @input="focusAmountInput(index)"
                   key="value"
                   label="label"
+                  selectLabel=""
           ></multiselect>
         </div>
 
