@@ -16,10 +16,10 @@
 
                     <b-nav-item-dropdown v-if="$auth.check()"
                                          :text="$auth.user().name" left>
-                        <b-dropdown-item :to="{ name: 'user', params: { id: $auth.user().id}}">
+                        <b-dropdown-item :to="{ name: 'user', params: { id: getUserSearchParam($auth.user()) }}">
                             My Recipes
                         </b-dropdown-item>
-                        <b-dropdown-item :to="{ name: 'user-materials', params: { id: $auth.user().id}}">
+                        <b-dropdown-item :to="{ name: 'user-materials', params: { id: getUserSearchParam($auth.user()) }}">
                             My Materials
                         </b-dropdown-item>
                         <b-dropdown-item :to="{ name: 'settings' }">
@@ -126,7 +126,16 @@
           },
           redirect: '/search?logout=true'
         })
+      },
+
+      getUserSearchParam: function (user) {
+        if (!user) { return }
+        if ('profile' in user && 'username' in user.profile && user.profile.username) {
+          return user.profile.username
+        }
+        return user.id
       }
+
     }
   }
 
