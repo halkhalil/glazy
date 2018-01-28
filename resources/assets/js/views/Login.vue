@@ -6,6 +6,9 @@
                 <b-alert v-if="serverError" show variant="danger">
                     {{ serverError }}
                 </b-alert>
+                <b-alert v-if="firstLogin" show variant="info">
+                    Registration successful!  Please login below.
+                </b-alert>
 
                 <div v-show="!code || !type">
                     <a @click="loginSocial('facebook')" href="#" class="btn btn-facebook btn-block btn-sm">
@@ -72,6 +75,7 @@
         },
         code: this.$route.query.code,
         type: this.$route.params.type,
+        firstLogin: this.$route.query.firstLogin,
         serverError: null,
         errors: null
       }

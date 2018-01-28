@@ -32,6 +32,7 @@ class RefreshController extends Controller
             'status' => 'success',
             'token' => $token,
             'expires_in' => Auth::guard()->factory()->getTTL() * 60,
-        ])->header('Authorization', $token);
+        ])->header('Access-Control-Expose-Headers', 'Authorization')
+            ->header('Authorization', 'Bearer '.$token);
     }
 }

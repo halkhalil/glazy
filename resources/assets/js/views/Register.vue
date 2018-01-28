@@ -113,7 +113,6 @@
           // redirect: { name: 'search' },
           success (res) {
             console.log('success ' + this.context)
-            this.$router.push('search')
           },
           error (res) {
             console.log('error ' + this.context)

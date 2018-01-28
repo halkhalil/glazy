@@ -59,6 +59,7 @@ Vue.use(VueAuth, {
   http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
   router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
   rolesVar: 'role',
+  registerData: {url: 'auth/register', method: 'POST', redirect: '/login?firstLogin=true'},
   facebookData: {url: GLAZY_APP_URL + '/api/auth/login/facebook/callback', method: 'POST', redirect: '/'},
   facebookOauth2Data: {
     clientId: '186121775282852',

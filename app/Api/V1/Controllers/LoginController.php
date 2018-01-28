@@ -142,7 +142,8 @@ class LoginController extends Controller
         return response([
             'status' => 'success',
             'msg' => 'Successfully logged in via ' . $provider . '.'
-        ])->header('Authorization', $token);
+        ])->header('Access-Control-Expose-Headers', 'Authorization')
+            ->header('Authorization', 'Bearer '.$token);
     }
 
     protected function getOriginalAvatar($provider, $avatar) {
@@ -180,12 +181,13 @@ class LoginController extends Controller
         $user->load(['collections' => function ($q) {
             $q->orderBy('name', 'asc');
         }]);
+        $user->load('profile');
 
         return response([
                 'status' => 'success',
-                'token' => $token,
                 'expires_in' => Auth::guard()->factory()->getTTL() * 60,
                 'data' => $user
-        ])->header('Authorization', $token);
+        ])->header('Access-Control-Expose-Headers', 'Authorization')
+            ->header('Authorization', 'Bearer '.$token);
     }
 }
