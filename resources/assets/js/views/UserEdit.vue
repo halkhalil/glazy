@@ -16,6 +16,7 @@
             {{ actionMessage }}
         </b-alert>
     </div>
+
     <div class="col-md-6 col-sm-12">
         <div class="card">
             <div class="card-body">
@@ -34,6 +35,19 @@
                             :state="stateName"
                     >
                         <b-form-input id="name" :state="stateName" v-model.trim="form.name"></b-form-input>
+                    </b-form-group>
+
+                    <b-form-group
+                            id="groupUsername"
+                            description="Please do not include spaces and special characters"
+                            label="Your Glazy Username"
+                            :feedback="feedbackUsername"
+                            :state="stateUsername"
+                    >
+                        <b-form-input id="username"
+                                      :state="stateUsername"
+                                      :formatter="formatUsername"
+                                      v-model.trim="form.username"></b-form-input>
                     </b-form-group>
 
                     <b-form-group
@@ -212,6 +226,7 @@
         }
 
         if ('profile' in this.user) {
+          this.form.username = this.user.profile.username
           this.form.title = this.user.profile.title
           this.form.description = this.user.profile.description
           this.form.url = this.user.profile.url
@@ -234,6 +249,12 @@
       stateName() {
         return this.form.name.length > 2 ? 'valid' : 'invalid';
       },
+      feedbackUsername() {
+        return '';
+      },
+      stateUsername() {
+        return 'valid';
+      }
     },
     methods: {
       updateInfo: function () {
@@ -342,6 +363,11 @@
 
       actionMessageCountdown(seconds) {
         this.actionMessageSeconds = seconds
+      },
+
+      formatUsername (value, event) {
+        value = value.toLowerCase()
+        return value.replace(/[^\w]/gi, '')
       }
 
     }

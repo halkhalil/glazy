@@ -23,6 +23,7 @@ class UserProfile extends Model
     protected $table = 'user_profiles';
 
     protected $fillable = [
+        'username',
         'title',
         'description',
         'country_id',
