@@ -46,7 +46,7 @@
                    :show-rating="false"
                    :increment="0.01"></star-rating>
       <p v-if="material.description" class="card-text">{{ material.description }}</p>
-      <router-link :to="{ name: 'user', params: { id: material.createdByUser.id}}">
+      <router-link :to="{ name: 'user', params: { id: getUserSearchParam(material.createdByUser) }}">
         <div class="author">
           <img v-if="'profile' in material.createdByUser && 'avatar' in material.createdByUser.profile"
                v-bind:src="material.createdByUser.profile.avatar"
@@ -145,6 +145,14 @@
 
       deleteMaterialRequest: function (id) {
         this.$emit('deleteMaterialRequest', id);
+      },
+
+      getUserSearchParam: function (user) {
+        if (!user) { return }
+        if ('profile' in user && 'username' in user.profile && user.profile.username) {
+          return user.profile.username
+        }
+        return user.id
       }
     }
   }
@@ -167,6 +175,10 @@
   .material-card .card-body .card-title {
     margin-top: 5px;
     margin-bottom: 5px;
+  }
+
+  .material-card .card-body .author {
+    margin-bottom: 10px;
   }
 
   .material-card .swatches {

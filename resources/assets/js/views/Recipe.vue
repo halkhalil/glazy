@@ -94,7 +94,7 @@
                   </div>
                   <div class="row">
                     <div class="col-sm-4">
-                      <router-link :to="{ name: 'user', params: { id: recipe.createdByUser.id}}">
+                      <router-link :to="{ name: 'user', params: { id: getUserSearchParam(recipe.createdByUser) }}">
                         <div class="author">
                           <img v-if="'profile' in recipe.createdByUser && 'avatar' in recipe.createdByUser.profile"
                                v-bind:src="recipe.createdByUser.profile.avatar"
@@ -915,6 +915,14 @@
           .replace(urlPattern, '<a href="$&">$&</a>')
           .replace(pseudoUrlPattern, '$1<a href="http://$2">$2</a>')
           .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
+      },
+
+      getUserSearchParam: function (user) {
+        if (!user) { return }
+        if ('profile' in user && 'username' in user.profile && user.profile.username) {
+          return user.profile.username
+        }
+        return user.id
       }
 
     }
