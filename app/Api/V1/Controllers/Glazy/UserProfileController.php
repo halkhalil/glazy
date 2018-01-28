@@ -61,7 +61,7 @@ class UserProfileController extends ApiBaseController
 
         if (! $userProfile) {
             // If a user has never entered user profile data, they might not have a user profile
-            $userProfile = $this->userProfileRepository->create($data);
+            $userProfile = $this->userProfileRepository->create($user, $data);
         }
         else {
             $userProfile = $this->userProfileRepository->update($userProfile, $data);

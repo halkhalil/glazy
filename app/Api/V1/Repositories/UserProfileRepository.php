@@ -6,6 +6,7 @@ use App\Api\V1\Repositories\Repository;
 
 use App\Models\UserProfile;
 
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 
 
@@ -33,11 +34,13 @@ class UserProfileRepository extends Repository
     }
     */
 
-    public function create(array $data)
+    public function create(User $user, array $data)
     {
         $userProfile = $this->getModel();
         
         $userProfile->fill($data);
+
+        $userProfile->user_id = $user->id;
 
         $userProfile->save();
 
