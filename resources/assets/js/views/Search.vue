@@ -431,7 +431,7 @@
           this.searchQuery.params.base_type = 1
         }
       } else if (!this.searchQuery.params.base_type) {
-        this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
+        //this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
       }
       if (this.$route.params && this.$route.params.id) {
         this.searchQuery.params.u = this.$route.params.id
@@ -474,7 +474,7 @@
           }
         } else if (!this.searchQuery.params.base_type) {
           // Composite search
-          this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
+          //this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
         }
         if ('params' in route && route.params.id) {
           this.searchQuery.params.u = route.params.id

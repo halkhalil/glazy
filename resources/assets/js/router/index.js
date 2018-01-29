@@ -29,7 +29,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/search',
+      redirect: { name: 'search', query: { base_type: '460' } },
       name: 'home',
       component: AppLayoutFull,
       children: [
