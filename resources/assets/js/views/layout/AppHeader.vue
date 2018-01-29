@@ -30,7 +30,7 @@
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
 
-                    <b-nav-item :to="{ name: 'search' }" >
+                    <b-nav-item :to="{ name: 'search', query: { base_type: '460' } }" >
                         <i class="fa fa-list fa-fw"></i> Recipes
                     </b-nav-item>
                     <b-nav-item :to="{ name: 'materials' }" >
