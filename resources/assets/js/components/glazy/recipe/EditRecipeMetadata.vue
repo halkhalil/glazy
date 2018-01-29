@@ -320,6 +320,7 @@
     methods: {
       update: function () {
         if (this.isLoaded) {
+          window.scrollTo(0, 0)
           this.$emit('isProcessing');
 
           if (!this.form.materialTypeId && this.form.baseTypeId) {
@@ -348,6 +349,7 @@
       },
 
       cancelEdit: function () {
+        window.scrollTo(0, 0)
         this.$emit('editMetaCancel');
       },
 

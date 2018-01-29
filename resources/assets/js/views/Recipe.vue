@@ -60,7 +60,7 @@
             <div class="card recipe-info-card">
               <div class="card-body">
 
-                <b-alert :show="showRecipeUpdatedSeconds" variant="info">
+                <b-alert :show="infoMessageSeconds" variant="info">
                   Recipe successfully updated.
                 </b-alert>
 
@@ -549,7 +549,7 @@
         isRecipeUpdated: false,
         isEditMeta: false,
         isEditComponents: false,
-        showRecipeUpdatedSeconds: 0,
+        infoMessageSeconds: 0,
         isProcessing: false,
         apiError: null,
         serverError: null,
@@ -701,7 +701,7 @@
       updatedRecipeMeta: function () {
         console.log("calling updatedRecipeMeta")
         this.fetchRecipe()
-        this.showRecipeUpdatedSeconds = 5
+        this.infoMessageSeconds = 5
         this.isRecipeUpdated = true
         this.isEditMeta = false
       },
@@ -709,7 +709,7 @@
       updatedRecipeComponents: function () {
         console.log("calling updatedRecipeComponents")
         this.fetchRecipe()
-        this.showRecipeUpdatedSeconds = 5
+        this.infoMessageSeconds = 5
         this.isRecipeUpdated = true
         this.isEditComponents = false
       },
@@ -720,6 +720,7 @@
 
       editMeta: function () {
         this.isEditMeta = true
+        window.scrollTo(0, 0)
       },
 
       editMetaCancel: function () {
@@ -728,6 +729,7 @@
 
       editComponents: function () {
         this.isEditComponents = true
+        window.scrollTo(0, 0)
       },
 
       editComponentsCancel: function () {

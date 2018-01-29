@@ -39,6 +39,14 @@
                     <b-nav-item :to="{ name: 'calculator' }" >
                         <i class="fa fa-calculator fa-fw"></i> Calc
                     </b-nav-item>
+                    <b-nav-item-dropdown text='<i class="fa fa-plus fa-fw"></i>' right>
+                        <b-dropdown-item :to="{ name: 'calculator' }">
+                            <i class="fa fa-list fa-fw"></i> Recipe
+                        </b-dropdown-item>
+                        <b-dropdown-item :to="{ name: 'materials/create' }">
+                            <i class="fa fa-flask fa-fw"></i> Material
+                        </b-dropdown-item>
+                    </b-nav-item-dropdown>
                     <b-nav-item v-if="!$auth.check()"
                                 :to="{ name: 'login' }" >
                         <i class="fa fa-user-circle-o fa-fw"></i> Login</a>

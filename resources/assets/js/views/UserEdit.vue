@@ -259,6 +259,7 @@
     methods: {
       updateInfo: function () {
         if (this.isLoaded) {
+          window.scrollTo(0, 0)
           this.isProcessing = true
           this.serverError = null
 
@@ -288,6 +289,7 @@
       },
       updatePassword: function () {
         if (this.isLoaded) {
+          window.scrollTo(0, 0)
           this.isProcessing = true
           this.serverError = null
 

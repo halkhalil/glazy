@@ -27,6 +27,13 @@ body {
   font-size: 100%;
 }
 
+.dropdown-item.active, .dropdown-item:active {
+  color: #fff;
+  text-decoration: none;
+  //background-color: #bbbbbb;
+  background-color: rgba(222, 222, 222, 0.3);
+}
+
 // https://www.materialpalette.com/colors
 /* OXIDE COLORS */
 .oxide-colors-R2O    { color: #d32f2f; }
