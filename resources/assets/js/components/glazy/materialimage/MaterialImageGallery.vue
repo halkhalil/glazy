@@ -153,9 +153,11 @@
 
         <!-- Lightbox Modal -->
         <b-modal v-if="currentImage" ref="lightboxModal"
-                 hide-footer
                  hide-header
-                 size="lg">
+                 size="lg"
+                 :ok-only="true"
+                 ok-variant="default"
+                 ok-title="Close Window">
             <div class="d-block text-center">
                 <img class="img-fluid"
                      :src="getImageUrl(currentImage.filename, 'l')"

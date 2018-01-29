@@ -22,6 +22,11 @@ body {
   padding-bottom: 0;
 }
 
+// Make sure form hints are not too small
+.form-text {
+  font-size: 100%;
+}
+
 // https://www.materialpalette.com/colors
 /* OXIDE COLORS */
 .oxide-colors-R2O    { color: #d32f2f; }
