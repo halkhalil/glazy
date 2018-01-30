@@ -9,24 +9,24 @@
                         </a>
                     </li>
                     <li>
-                        <a href="/" class="nav-link">
+                        <a href="https://wiki.glazy.org/t/glazy-help-index" class="nav-link">
                             Help
                         </a>
                     </li>
                     <li>
-                        <a href="/" class="nav-link">
+                        <a href="https://wiki.glazy.org/t/glazy-help-index" class="nav-link">
                             Blog
                         </a>
                     </li>
                     <li>
-                        <a href="/" target="_blank" class="nav-link">
+                        <a href="https://wiki.glazy.org/t/glazy-help-index" target="_blank" class="nav-link">
                             License
                         </a>
                     </li>
                 </ul>
             </nav>
             <div class="copyright">
-                ©2017, <a href="/">Glazy.org</a> Built by <a href="http://derekau.net">Derek Au</a> with love.
+                ©2018, <a href="/">Glazy.org</a>
             </div>
         </div>
     </footer>
