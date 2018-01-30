@@ -57,6 +57,10 @@ class UserProfileController extends ApiBaseController
 
         $data = $request->all();
 
+        if(is_numeric($data['username'])) {
+            return $this->respondWithError('Username cannot be numeric.');
+        }
+
         $userProfile = $user->profile;
 
         if (! $userProfile) {

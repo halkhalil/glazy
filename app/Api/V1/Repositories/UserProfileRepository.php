@@ -49,6 +49,7 @@ class UserProfileRepository extends Repository
 
     public function update(Model $userProfile, array $data)
     {
+        // TODO: Use Request subclass and validation
         $userProfile->fill($data);
 
         $userProfile->save();

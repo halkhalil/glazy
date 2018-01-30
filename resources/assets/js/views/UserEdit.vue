@@ -39,7 +39,7 @@
 
                     <b-form-group
                             id="groupUsername"
-                            description="Please do not include spaces and special characters"
+                            description="Cannot be a number.  Please no spaces or special characters"
                             label="Your Glazy Username"
                             :feedback="feedbackUsername"
                             :state="stateUsername"
@@ -274,10 +274,10 @@
             } else {
               console.log('emit updatedUserProfile')
               this.$emit('updatedUserProfile')
+              this.actionMessage = 'Success: Your user profile was updated.'
+              this.actionMessageSeconds = 5
             }
             this.isProcessing = false
-            this.actionMessage = 'Success: Your user profile was updated.'
-            this.actionMessageSeconds = 5
           })
           .catch(response => {
             this.serverError = response
