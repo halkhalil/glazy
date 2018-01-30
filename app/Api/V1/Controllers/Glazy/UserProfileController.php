@@ -4,6 +4,8 @@ namespace App\Api\V1\Controllers\Glazy;
 
 use App\Api\V1\Repositories\UserProfileRepository;
 use App\Api\V1\Transformers\User\UserTransformer;
+use App\Models\UserProfile;
+use App\User;
 use Illuminate\Http\Request;
 use League\Fractal\Resource\Collection as FractalCollection;
 use League\Fractal\Resource\Item as FractalItem;
@@ -57,8 +59,17 @@ class UserProfileController extends ApiBaseController
 
         $data = $request->all();
 
-        if(is_numeric($data['username'])) {
-            return $this->respondWithError('Username cannot be numeric.');
+        if($data['username']) {
+            if (is_numeric($data['username'])) {
+                return $this->respondWithError('Username cannot be numeric.');
+            }
+            // TODO: Check if username already exists in DB
+            $sameUsernames = UserProfile::where('username', '=', $data['username'])
+                ->where('user_id', '<>', $current_user_id)
+                ->count();
+            if ($sameUsernames) {
+                return $this->respondWithError('Sorry, the username "'.$data['username'].'" is already taken.');
+            }
         }
 
         $userProfile = $user->profile;

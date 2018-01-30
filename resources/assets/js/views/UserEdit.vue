@@ -262,6 +262,7 @@
           window.scrollTo(0, 0)
           this.isProcessing = true
           this.serverError = null
+          this.apiError = null
 
           Vue.axios.post(Vue.axios.defaults.baseURL + '/auth/profile', this.form)
             .then((response) => {
