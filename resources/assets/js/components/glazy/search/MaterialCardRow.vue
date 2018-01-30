@@ -6,14 +6,14 @@
     <td class="material-td">
       <span v-bind:id="'material-card-' + material.id"
         class="material-anchor"></span>
-      <router-link :to="{ name: 'recipes', params: { id: material.id }}">
+      <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}">
         <img :src="materialHelper.getImageUrl()"
              :alt="material.name"
              width="72" height="72" >
       </router-link>
     </td>
     <td class="material-td">
-      <router-link :to="{ name: 'recipes', params: { id: material.id }}">
+      <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}">
         {{ material.name }}
       </router-link>
       <h6 class="category text-primary" v-html="materialHelper.getMaterialTypeString()"></h6>

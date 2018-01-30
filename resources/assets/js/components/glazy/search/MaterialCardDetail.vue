@@ -11,12 +11,13 @@
           <td class="align-top">
             <span v-bind:id="'material-card-' + material.id"
                   class="material-anchor"></span>
-            <h5 v-html="'&#9651;' + materialHelper.getConeString()">
+            <h5 v-if="!material.isPrimitive"
+                v-html="'&#9651;' + materialHelper.getConeString()">
             </h5>
             {{  materialHelper.getAtmospheresString() }}
           </td>
           <td class="align-top text-right">
-            <router-link :to="{ name: 'recipes', params: { id: material.id }}"
+            <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}"
                          class="material-card-img-link">
               <img class="rounded"
                    :src="materialHelper.getImageUrl()"
@@ -29,7 +30,7 @@
       <div>
         <h6 class="category text-primary" v-html="materialHelper.getMaterialTypeString()"></h6>
         <h5 class="card-title">
-          <router-link :to="{ name: 'recipes', params: { id: material.id }}">
+          <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}">
             <i v-if="material.isPrivate" class="fa fa-eye-slash"></i>
             <i v-if="material.isArchived" class="fa fa-lock"></i>
             {{ material.name }}

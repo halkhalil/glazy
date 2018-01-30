@@ -3,7 +3,7 @@
        class="card material-card"
        @mouseover="highlightMaterial(material.id)"
        @mouseleave="unhighlightMaterial(material.id)">
-    <router-link :to="{ name: 'recipes', params: { id: material.id }}"
+    <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}"
       class="material-card-img-link">
       <img class="card-img-top img-fluid w-100"
            :src="materialHelper.getImageUrl()"
@@ -32,7 +32,7 @@
     <div class="card-body">
       <h6 class="category text-primary" v-html="materialHelper.getMaterialTypeString()"></h6>
       <h5 class="card-title">
-        <router-link :to="{ name: 'recipes', params: { id: material.id }}">
+        <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}">
           <i v-if="material.isPrivate" class="fa fa-eye-slash"></i>
           <i v-if="material.isArchived" class="fa fa-lock"></i>
           {{ material.name }}
