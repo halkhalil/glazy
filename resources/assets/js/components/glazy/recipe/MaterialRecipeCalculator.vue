@@ -4,38 +4,68 @@
         <thead>
         <tr>
             <th>Material</th>
-            <th>Amount</th>
-            <th v-if="batchValues">Batch</th>
-            <th v-if="batchValues">Subtotal</th>
+            <th class="text-right">Amount</th>
+            <th v-if="batchValues" class="text-right">Batch</th>
+            <th v-if="batchValues" class="text-right">Subtotal</th>
         </tr>
         </thead>
         <tbody>
         <tr v-for="(materialComponent, index) in this.materialComponents"
-            v-bind:class="{ 'table-info' : materialComponent.isAdditional }">
+            v-if="!materialComponent.isAdditional">
             <td class="align-middle">
                 <img class="rounded-circle"
                      width="40" height="40"
                      v-if="materialComponent.material.thumbnail"
                      :src="getImageUrl(materialComponent.material.thumbnail, 's')"/>
-                <i v-if="materialComponent.isAdditional" class="fa fa-plus"></i>
                 <a v-if="materialComponent.material.isPrimitive" :href="'/materials/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
                 <a v-else :href="'/recipes/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
             </td>
-            <td class="align-middle amount">
+            <td class="text-right amount">
                 {{ parseFloat(materialComponent.percentageAmount) }}
             </td>
             <td v-if="batchValues"
-                class="align-middle batch" :id="'batch_' + materialComponent.material.id">
-                {{ batchValues.batchRows[index] }}
+                class="text-right batch" :id="'batch_' + materialComponent.material.id">
+                {{ parseFloat(batchValues.batchRows[index]) }}
             </td>
             <td v-if="batchValues"
-                class="align-middle subtotal" :id="'subtotal_' + materialComponent.material.id">
-                {{ batchValues.subtotalRows[index] }}
+                class="text-right subtotal" :id="'subtotal_' + materialComponent.material.id">
+                {{ parseFloat(batchValues.subtotalRows[index]) }}
             </td>
         </tr>
+        <tr v-if="hasAdditional" class="align-middle subtotal">
+            <td>Total Base Recipe</td>
+            <td class="text-right">{{ parseFloat(baseRecipeAmount) }}</td>
+            <td v-if="batchValues" colspan="2"></td>
+        </tr>
+
+        <tr v-for="(materialComponent, index) in this.materialComponents"
+            v-if="materialComponent.isAdditional"
+            class="table-info">
+            <td class="align-middle">
+                <img class="rounded-circle"
+                     width="40" height="40"
+                     v-if="materialComponent.material.thumbnail"
+                     :src="getImageUrl(materialComponent.material.thumbnail, 's')"/>
+                <i class="fa fa-plus"></i>
+                <a v-if="materialComponent.material.isPrimitive" :href="'/materials/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
+                <a v-else :href="'/recipes/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
+            </td>
+            <td class="text-right amount">
+                {{ parseFloat(materialComponent.percentageAmount) }}
+            </td>
+            <td v-if="batchValues"
+                class="text-right batch" :id="'batch_' + materialComponent.material.id">
+                {{ parseFloat(batchValues.batchRows[index]) }}
+            </td>
+            <td v-if="batchValues"
+                class="text-right subtotal" :id="'subtotal_' + materialComponent.material.id">
+                {{ parseFloat(batchValues.subtotalRows[index]) }}
+            </td>
+        </tr>
+
         <tr class="align-middle subtotal">
             <td>Total</td>
-            <td>{{ totalAmount }}</td>
+            <td class="text-right">{{ parseFloat(totalRecipeAmount) }}</td>
             <td v-if="batchValues" colspan="2"></td>
         </tr>
         <tr class="batch_form">
@@ -77,15 +107,25 @@ export default {
       }
       return false;
     },
-    totalAmount: function () {
-      var totalAmount = 0.0
+    baseRecipeAmount: function () {
+      var baseRecipeAmount = 0.0
       if (this.materialComponents && this.materialComponents.length > 0) {
         this.materialComponents.forEach(function (materialComponent, index) {
           if (!materialComponent.isAdditional) {
-            totalAmount += parseFloat(materialComponent.percentageAmount);
+            baseRecipeAmount += parseFloat(materialComponent.percentageAmount);
           }
         })
-        return totalAmount.toFixed(2)
+        return baseRecipeAmount.toFixed(2)
+      }
+      return 0
+    },
+    totalRecipeAmount: function () {
+      var totalRecipeAmount = 0.0
+      if (this.materialComponents && this.materialComponents.length > 0) {
+        this.materialComponents.forEach(function (materialComponent, index) {
+          totalRecipeAmount += parseFloat(materialComponent.percentageAmount);
+        })
+        return totalRecipeAmount.toFixed(2)
       }
       return 0
     },
@@ -101,7 +141,7 @@ export default {
         this.materialComponents.forEach(function (materialComponent, index) {
           var value = parseFloat(materialComponent.percentageAmount)
             * parseFloat(this.batchSize)
-            / parseFloat(this.totalAmount)
+            / parseFloat(this.baseRecipeAmount)
           subtotal += value
           batchValues.batchRows[index] = value.toFixed(2)
           batchValues.subtotalRows[index] = subtotal.toFixed(2)
@@ -115,6 +155,15 @@ export default {
         return 4
       }
       return 2
+    },
+    hasAdditional: function () {
+      var hasAdditional = false
+      this.materialComponents.forEach(function (materialComponent, index) {
+        if (materialComponent.isAdditional) {
+          hasAdditional = true
+        }
+      })
+      return hasAdditional
     }
   },
 
@@ -142,8 +191,12 @@ export default {
 
 <style>
 
+    .material-recipe-calculator-table {
+        font-size: 16px;
+    }
+
     .material-recipe-calculator-table tr th {
-        font-size: 10px;
+        font-size: 0.75em;
         padding: 5px;
     }
 
@@ -157,6 +210,8 @@ export default {
 
     .material-recipe-calculator-table tr.subtotal {
         background-color: #efefef;
+        font-size: 0.75em;
+        font-style: italic;
     }
 
     .material-recipe-calculator-table tr.batch_form {
