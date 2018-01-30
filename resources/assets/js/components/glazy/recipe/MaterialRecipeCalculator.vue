@@ -32,7 +32,7 @@
                 {{ parseFloat(batchValues.subtotalRows[index]) }}
             </td>
         </tr>
-        <tr v-if="hasAdditional" class="align-middle subtotal">
+        <tr v-if="hasAdditional" class="align-middle total">
             <td>Total Base Recipe</td>
             <td class="text-right">{{ parseFloat(baseRecipeAmount) }}</td>
             <td v-if="batchValues" colspan="2"></td>
@@ -63,7 +63,7 @@
             </td>
         </tr>
 
-        <tr class="align-middle subtotal">
+        <tr class="align-middle total">
             <td>Total</td>
             <td class="text-right">{{ parseFloat(totalRecipeAmount) }}</td>
             <td v-if="batchValues" colspan="2"></td>
@@ -205,10 +205,14 @@ export default {
     }
 
     .material-recipe-calculator-table tr td.batch {
-        color: #666666;
+        color: #009900;
     }
 
-    .material-recipe-calculator-table tr.subtotal {
+    .material-recipe-calculator-table tr td.subtotal {
+        color: #000099;
+    }
+
+    .material-recipe-calculator-table tr.total {
         background-color: #efefef;
         font-size: 0.75em;
         font-style: italic;
