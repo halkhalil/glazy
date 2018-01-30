@@ -99,6 +99,7 @@ class SearchController extends ApiBaseController
             $searchUser = null;
 
             if (ctype_digit($search_user_id)) {
+                $search_user_id = (int)$search_user_id;
                 // this is a primary id for a user
                 $searchUser = User::with('profile')
                     ->with(['collections' => function ($q) {
@@ -114,7 +115,7 @@ class SearchController extends ApiBaseController
                     })->first();
 
                 if ($searchUser) {
-                    $search_user_id = $searchUser->id;
+                    $search_user_id = (int)$searchUser->id;
                 }
             }
 
