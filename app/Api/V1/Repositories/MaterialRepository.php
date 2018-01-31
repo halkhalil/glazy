@@ -228,6 +228,13 @@ class MaterialRepository extends Repository
             return false;
         }
 
+        if ($material->is_primitive) {
+            // Don't delete a primitive material that is currently being used in recipes.
+            if (MaterialMaterial::where('component_material_id', '=', $material->id)->count() > 0) {
+                return false;
+            }
+        }
+
         if ($material->analysis) {
             $material->analysis->delete();
         }
