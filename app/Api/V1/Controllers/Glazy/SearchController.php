@@ -225,6 +225,18 @@ class SearchController extends ApiBaseController
             }
         }
 
+        /**
+         * TODO: THINK, PROBABLY NOT NEEDED
+        if ($current_user_id) {
+            //$query->select('user_materials.id AS user_materials_id');
+            $query->leftJoin('user_materials', function ($join) use ($current_user_id) {
+                $join->on('materials.id', '=', 'user_materials.material_id')
+                    ->select('user_materials.id AS user_materials_id')
+                    ->where('user_materials.user_id', '=', $current_user_id);
+            });
+        }
+         */
+
         if (!empty($order_id))
         {
             if ($order_id == 'oldest')

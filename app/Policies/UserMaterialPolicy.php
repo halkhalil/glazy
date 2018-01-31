@@ -20,7 +20,7 @@ class UserMaterialPolicy
      */
     public function view(User $user, UserMaterial $userMaterial)
     {
-        if($user->id === $userMaterial->created_by_user_id) {
+        if($user->id === $userMaterial->user_id) {
             return true;
         }
         return false;
@@ -45,7 +45,7 @@ class UserMaterialPolicy
      */
     public function update(User $user, UserMaterial $userMaterial)
     {
-        return $user->id === $userMaterial->created_by_user_id;
+        return $user->id === $userMaterial->user_id;
     }
 
     /**
@@ -57,7 +57,7 @@ class UserMaterialPolicy
      */
     public function delete(User $user, UserMaterial $userMaterial)
     {
-        return $user->id === $userMaterial->created_by_user_id;
+        return $user->id === $userMaterial->user_id;
     }
 
 

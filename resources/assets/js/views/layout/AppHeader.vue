@@ -17,16 +17,29 @@
                     <b-nav-item-dropdown v-if="$auth.check()"
                                          :text="$auth.user().name" left>
                         <b-dropdown-item :to="{ name: 'user', params: { id: getUserSearchParam($auth.user()) }}">
-                            My Recipes
+                            <i class="fa fa-list fa-fw"></i> My Recipes
                         </b-dropdown-item>
                         <b-dropdown-item :to="{ name: 'user-materials', params: { id: getUserSearchParam($auth.user()) }}">
-                            My Materials
+                            <i class="fa fa-flask fa-fw"></i> My Materials
+                        </b-dropdown-item>
+                        <b-dropdown-item :to="{ name: 'inventory' }">
+                            <i class="fa fa-cubes fa-fw"></i> My Inventory
                         </b-dropdown-item>
                         <b-dropdown-item :to="{ name: 'settings' }">
-                            Settings
+                            <i class="fa fa-cog fa-fw"></i> Settings
                         </b-dropdown-item>
                         <b-dropdown-item @click="logout">
-                            Logout
+                            <i class="fa fa-sign-out fa-fw"></i> Logout
+                        </b-dropdown-item>
+                    </b-nav-item-dropdown>
+
+                    <b-nav-item-dropdown v-if="$auth.check()"
+                                         text='<i class="fa fa-plus fa-fw"></i>' right>
+                        <b-dropdown-item :to="{ name: 'calculator' }">
+                            <i class="fa fa-list fa-fw"></i> Add Recipe
+                        </b-dropdown-item>
+                        <b-dropdown-item :to="{ name: 'material-create' }">
+                            <i class="fa fa-flask fa-fw"></i> Add Material
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
 
@@ -39,16 +52,6 @@
                     <b-nav-item :to="{ name: 'calculator' }" >
                         <i class="fa fa-calculator fa-fw"></i> Calc
                     </b-nav-item>
-                    <!--
-                    <b-nav-item-dropdown text='<i class="fa fa-plus fa-fw"></i>' right>
-                        <b-dropdown-item :to="{ name: 'calculator' }">
-                            <i class="fa fa-list fa-fw"></i> Recipe
-                        </b-dropdown-item>
-                        <b-dropdown-item :to="{ name: 'materials/create' }">
-                            <i class="fa fa-flask fa-fw"></i> Material
-                        </b-dropdown-item>
-                    </b-nav-item-dropdown>
-                    -->
                     <b-nav-item v-if="!$auth.check()"
                                 :to="{ name: 'login' }" >
                         <i class="fa fa-user-circle-o fa-fw"></i> Login</a>

@@ -65,10 +65,10 @@
                 </b-alert>
 
                 <div v-if="isEditMeta">
-                  <edit-recipe-metadata :recipe="recipe"
+                  <edit-material-metadata :material="recipe"
                                         v-on:updatedRecipeMeta="updatedRecipeMeta"
                                         v-on:editMetaCancel="editMetaCancel"
-                                        v-on:isProcessing="isProcessingRecipe"></edit-recipe-metadata>
+                                        v-on:isProcessing="isProcessingRecipe"></edit-material-metadata>
                 </div>
                 <div v-show="!(isEditMeta)">
                   <div class="row">
@@ -198,6 +198,12 @@
                         </b-dropdown>
                         <b-button v-on:click="copyRecipe()"><i class="fa fa-copy"></i> Copy</b-button>
                       </b-button-group>
+                      <b-button v-if="isUserMaterial" class="btn-info" :disabled="true">
+                        <i class="fa fa-cubes"></i> In Inventory
+                      </b-button>
+                      <b-button v-else class="btn-info" v-on:click="addUserMaterial()">
+                        <i class="fa fa-cubes"></i> Add to Inventory
+                      </b-button>
                       <b-button-group class="recipe-action-group" v-if="canEdit && !recipe.isArchived">
                         <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-eye"></i> Publish</b-button>
                         <b-button class="btn-info" v-if="!recipe.isPrivate" v-on:click="unpublishRecipe()"><i class="fa fa-eye-slash"></i> Unpublish</b-button>
@@ -452,7 +458,7 @@
   import SimilarBaseComponents from '../components/glazy/recipe/SimilarBaseComponents.vue'
   import SimilarUnityFormula from '../components/glazy/recipe/SimilarUnityFormula.vue'
 
-  import EditRecipeMetadata from '../components/glazy/recipe/EditRecipeMetadata.vue'
+  import EditMaterialMetadata from '../components/glazy/recipe/EditMaterialMetadata.vue'
   import EditRecipeComponents from '../components/glazy/recipe/EditRecipeComponents.vue'
 
   import ReviewsPanel from '../components/glazy/materialreviews/ReviewsPanel.vue'
@@ -523,7 +529,7 @@
       ComponentTable,
       SimilarBaseComponents,
       SimilarUnityFormula,
-      EditRecipeMetadata,
+      EditMaterialMetadata,
       EditRecipeComponents,
       ReviewsPanel,
       VueTimeago,
@@ -639,6 +645,21 @@
       },
       stateCollectionName() {
         return this.newCollectionName.length > 2 ? 'valid' : 'invalid';
+      },
+      isUserMaterial() {
+        if (this.isLoaded && this.recipe.isPrimitive) {
+          var user = this.$auth.user()
+          if (user && user.user_materials && user.user_materials.length > 0) {
+            for (var i = 0, len = user.user_materials.length; i < len; i++) {
+              if (user.user_materials[i].material_id === this.recipe.id) {
+                // This material id is already in the user's inventory
+                return true
+              }
+            }
+          }
+        }
+        // This material is not in the users inventory
+        return false
       }
     },
     beforeRouteUpdate (to, from, next) {
@@ -825,6 +846,41 @@
         })
       },
 
+      addUserMaterial() {
+        this.isProcessingLocal = true
+        Vue.axios.get(Vue.axios.defaults.baseURL + '/usermaterials/addMaterial/' + this.recipe.id)
+          .then((response) => {
+          if (response.data.error) {
+            this.apiError = response.data.error
+            console.log(this.apiError)
+            this.isProcessingLocal = false
+          } else {
+            console.log('return from add user material')
+            this.isProcessingLocal = false
+            this.actionMessage = 'Material added to your inventory.'
+            this.actionMessageSeconds = 5
+            console.log('refresh user materials')
+            // Refresh user inventory materials
+            this.$auth.fetch({
+              success(res) {
+                console.log('success fetching user');
+                console.log(this.$auth.user())
+                console.log('user id: ' + this.$auth.user().id)
+                // Refresh the recipe
+                this.fetchRecipe()
+              },
+              error() {
+              console.log('error fetching user');
+              }
+            })
+          }
+        })
+        .catch(response => {
+          this.serverError = response
+          console.log(response)
+          this.isProcessingLocal = false
+        })
+      },
 
       sendRecipeGetRequest: function (url) {
         this.apiError = null
@@ -882,7 +938,6 @@
         }
         return '/u/' + recipe.createdByUser.id;
       },
-
 
       getDisplayName: function(user) {
         if (user.hasOwnProperty('username') && user.username) {

@@ -36,6 +36,7 @@ $api->version('v1', function (Router $api) {
         $api->get('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialController@show')->name('show');
 
         $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
+            $api->post('/', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialController@store')->name('store');
             $api->patch('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialController@update')->name('update');
             $api->delete('{id}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialController@destroy')->name('destroy');
             $api->get('/{id}/copy', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialController@copy')->name('copy');
@@ -59,7 +60,9 @@ $api->version('v1', function (Router $api) {
     $api->group(['prefix' => 'usermaterials'], function(Router $api) {
         $api->get('/editList/{id?}', 'App\\Api\\V1\\Controllers\\Glazy\\UserMaterialController@editMaterialList')->name('editList');
         $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
+            $api->get('/addMaterial/{materialId}', 'App\\Api\\V1\\Controllers\\Glazy\\UserMaterialController@addMaterial')->name('addMaterial');
             $api->get('/', 'App\\Api\\V1\\Controllers\\Glazy\\UserMaterialController@index')->name('index');
+            $api->delete('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\UserMaterialController@destroy')->name('destroy');
         });
     });
 

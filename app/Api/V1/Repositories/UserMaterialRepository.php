@@ -153,6 +153,23 @@ class UserMaterialRepository extends Repository
         return $userMaterial;
     }
 
+    /**
+     * @param $materialId
+     * @return UserMaterial
+     *
+     * Simply add a material to the current user's inventory without
+     * worring about stock amount, price, etc.
+     */
+    public function addMaterial($materialId) {
+        $userMaterial = new UserMaterial();
+        $userMaterial->user_id = Auth::guard()->user()->id;
+        $userMaterial->material_id = $materialId;
+
+        $userMaterial->save();
+
+        return $userMaterial;
+    }
+
     public function update(Model $userMaterial, array $data)
     {
         $material = Material::find($userMaterial->material_id);

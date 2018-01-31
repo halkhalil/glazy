@@ -7,11 +7,13 @@ use App\Api\V1\Repositories\Repository;
 use App\Models\CollectionMaterial;
 use App\Models\Collection;
 use App\Models\Material;
+use App\Models\MaterialAnalysis;
 use App\Models\MaterialAtmosphere;
 use App\Models\MaterialImage;
 use App\Models\MaterialMaterial;
 use App\Models\MaterialReview;
 
+use DerekPhilipAu\Ceramicscalc\Models\Analysis\Analysis;
 use DerekPhilipAu\Ceramicscalc\Models\Analysis\PercentageAnalysis;
 use DerekPhilipAu\Ceramicscalc\Models\Material\PrimitiveMaterial;
 use Illuminate\Database\Eloquent\Model;
@@ -58,9 +60,6 @@ class MaterialRepository extends Repository
         
         $material->fill($data);
 
-        // TODO: might need to change later for primitive creation
-        $material->is_primitive = false;
-
         // Set this recipe's owner
         $material->created_by_user_id = Auth::guard()->user()->id;
 
@@ -74,15 +73,38 @@ class MaterialRepository extends Repository
 
     public function update(Model $material, array $jsonData)
     {
+        if ($material->created_by_user_id === 1) {
+            // administrator.  turn off timestamps during updates
+            $material->timestamps = false;
+        }
+        $this->createOrUpdate($material, $jsonData);
+    }
+
+    /**
+     * This changing back & forth from camel case to snake case is bullshit
+     */
+    public function createOrUpdate(Model $material, array $jsonData)
+    {
         if ($material->is_archived) {
             // Archived materials cannot be updated
             return false;
+        }
+
+        if ($jsonData['isPrimitive']) {
+            // is_primitive not fillable
+            $material->is_primitive = true;
+            if (!array_key_exists('materialTypeId', $jsonData) || !$jsonData['materialTypeId']) {
+                // No type was set for this primitive material.  Default to 1 (Primitive)
+                // TODO: Get rid of all these special cases
+                $jsonData['materialTypeId'] = 1;
+            }
         }
 
         $data = [];
         $data['id'] = $jsonData['id'];
         $data['name'] = $jsonData['name'];
         if (array_key_exists('otherNames', $jsonData)) {
+            $data['other_names'] = null;
             if ($jsonData['otherNames']) {
                 $data['other_names'] = $jsonData['otherNames'];
             } else {
@@ -139,7 +161,6 @@ class MaterialRepository extends Repository
 
         $material->fill($data);
         if (isset($data['hex_color'])) {
-//            Log::error("HEX COLOR: ".$data['hex_color']);
             $hex_color = $data['hex_color'];
             $material->setRGBFromHex($hex_color);
         }
@@ -167,13 +188,22 @@ class MaterialRepository extends Repository
             $percentageAnalysis->setLOI($jsonData['loi']);
             $primitiveMaterial = new PrimitiveMaterial($material->id);
             $primitiveMaterial->setPercentageAnalysis($percentageAnalysis);
-            $material->analysis->setAnalysis($primitiveMaterial);
 
-            if (array_key_exists('weight', $jsonData)) {
-                $material->analysis['weight'] = $jsonData['weight'];
+            $analysis = null;
+            if ($material->analysis) {
+                $analysis = $material->analysis;
+            } else {
+                $analysis = new MaterialAnalysis();
+                $analysis->material_id = $material->id;
             }
 
-            $material->analysis->save();
+            $analysis->setAnalysis($primitiveMaterial);
+
+            if (array_key_exists('weight', $jsonData)) {
+                $analysis['weight'] = $jsonData['weight'];
+            }
+
+            $analysis->save();
         }
 
         return $material;

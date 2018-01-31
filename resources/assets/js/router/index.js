@@ -9,7 +9,9 @@ import Register from '../views/Register'
 import Search from '../views/Search'
 import Calculator from '../views/Calculator'
 import Recipe from '../views/Recipe'
-import UserEdit from '../views/UserEdit.vue'
+import MaterialCreate from '../views/MaterialCreate'
+import UserMaterial from '../views/UserMaterial'
+import UserEdit from '../views/UserEdit'
 
 import Error404 from '../views/error/404'
 import Error403 from '../views/error/403'
@@ -78,9 +80,19 @@ export default new Router({
           redirect: { name: 'recipes' }
         },
         {
+          path: '/materials/add',
+          name: 'material-create',
+          component: MaterialCreate
+        },
+        {
           path: '/materials/:id',
           name: 'material',
           component: Recipe
+        },
+        {
+          path: '/inventory/',
+          name: 'inventory',
+          component: UserMaterial
         },
         {
           path: '/settings',

@@ -1,5 +1,5 @@
 <template>
-<div class="row edit-recipe-metadata">
+<div class="row edit-material-metadata">
     <div class="col-md-12">
         <b-alert v-if="apiError" show variant="danger">
             API Error: {{ apiError.message }}
@@ -9,7 +9,10 @@
         </b-alert>
         <form  role="form" method="POST" v-if="isLoaded">
             <div>
-                <h3 class="card-title">
+                <h3 v-if="isNewMaterial" class="card-title">
+                    Add New Material
+                </h3>
+                <h3 v-else class="card-title">
                     Edit {{ form.name }}
                 </h3>
             </div>
@@ -17,7 +20,7 @@
             <b-form-group
                     id="groupName"
                     description="No need to add the cone temp here!"
-                    label="Recipe Name"
+                    label="Name"
                     :feedback="feedbackName"
                     :state="stateName"
             >
@@ -27,7 +30,7 @@
             <b-form-group
                     id="groupOtherNames"
                     description="You can also add a Code here."
-                    label="Other Names or Code"
+                    label="Other Names or Code (Optional)"
             >
                 <b-form-input id="otherNames" v-model.trim="form.otherNames"></b-form-input>
             </b-form-group>
@@ -46,7 +49,7 @@
             </b-form-group>
 
             <b-row class="mt-2">
-                <b-col md="6" v-if="!recipe.isPrimitive">
+                <b-col md="6" v-if="!material.isPrimitive">
                     <label for="baseTypeId">Type</label>
                     <b-form-select
                             class="col"
@@ -68,7 +71,7 @@
                 </b-col>
             </b-row>
 
-            <b-row class="mt-2" v-if="!recipe.isPrimitive">
+            <b-row class="mt-2" v-if="!material.isPrimitive">
                 <b-col md="6">
                     <label for="transparencyTypeId">Transparency</label>
                     <b-form-select
@@ -99,7 +102,7 @@
                 </b-col>
             </b-row>
 
-            <b-row class="mt-2" v-if="!recipe.isPrimitive">
+            <b-row class="mt-2" v-if="!material.isPrimitive">
                 <b-col md="4" sm="6">
                     <label for="fromOrtonConeId">Lowest Cone</label>
                     <b-form-select
@@ -120,7 +123,7 @@
                 </b-col>
             </b-row>
 
-            <b-row class="mt-2" v-if="!recipe.isPrimitive">
+            <b-row class="mt-2" v-if="!material.isPrimitive">
                 <b-col md="12">
                     <b-form-group
                             id="groupAtmospheres"
@@ -149,21 +152,21 @@
                 </b-col>
             </b-row>
 
-            <b-row class="mt-2 percent-analysis-oxide"  v-if="recipe.isPrimitive">
-                <b-col lg="3" md="3" sm="6"
+            <b-row class="mt-2 percent-analysis-oxide"  v-if="material.isPrimitive">
+                <b-col lg="2" md="3" sm="4" cols="6"
                        v-for="(oxideName, index) in OXIDE_NAMES" :key="index">
                     <label v-bind:for="oxideName" v-html="OXIDE_NAME_DISPLAY[oxideName]"></label>
                     <b-form-input id="oxideName"
                                   type="number"
                                   v-model.trim="form.analysis[oxideName]"></b-form-input>
                 </b-col>
-                <b-col lg="3" md="3" sm="6">
+                <b-col lg="2" md="3" sm="4" cols="6">
                     <label for="loi">LOI</label>
                     <b-form-input id="loi"
                                   type="number"
                                   v-model.trim="form.loi"></b-form-input>
                 </b-col>
-                <b-col lg="3" md="3" sm="6">
+                <b-col lg="2" md="3" sm="4" cols="6">
                     <label for="weight">Weight</label>
                     <b-form-input id="weight"
                                   type="number"
@@ -175,7 +178,9 @@
                 <b-button class="float-right"
                           size="sm"
                           variant="primary"
-                          @click.prevent="update"><i class="fa fa-save"></i> Update</b-button>
+                          @click.prevent="save">
+                    <i class="fa fa-save"></i> Save
+                </b-button>
                 <b-button class="float-right"
                           size="sm"
                           variant="secondary"
@@ -199,9 +204,13 @@
 
   export default {
     props: {
-      recipe: {
+      material: {
         type: Object,
         default: null
+      },
+      isNewMaterial: {
+        type: Boolean,
+        default: false
       }
     },
     components: {
@@ -209,6 +218,7 @@
     data() {
       return {
         form: {
+          isPrimitive: false,
           name: '',
           otherNames: '',
           description: '',
@@ -237,54 +247,63 @@
       }
     },
     created() {
-      if (this.recipe) {
+      if (this.material) {
         this.form = {
-          _method: 'PATCH',
-          id: this.recipe.id,
-          name: this.recipe.name,
-          otherNames: this.recipe.otherNames,
-          description: this.recipe.description,
-          baseTypeId: this.recipe.baseTypeId,
-          materialTypeId: this.recipe.materialTypeId,
-          transparencyTypeId: this.recipe.transparencyTypeId,
-          surfaceTypeId: this.recipe.surfaceTypeId,
-          fromOrtonConeId: this.recipe.fromOrtonConeId,
-          toOrtonConeId: this.recipe.toOrtonConeId,
+          isPrimitive: this.material.isPrimitive,
+          id: this.material.id,
+          name: this.material.name,
+          otherNames: this.material.otherNames,
+          description: this.material.description,
+          baseTypeId: this.material.baseTypeId,
+          materialTypeId: this.material.materialTypeId,
+          transparencyTypeId: this.material.transparencyTypeId,
+          surfaceTypeId: this.material.surfaceTypeId,
+          fromOrtonConeId: this.material.fromOrtonConeId,
+          toOrtonConeId: this.material.toOrtonConeId,
           atmospheres: [],
-          countryId: this.recipe.countryId,
+          countryId: this.material.countryId,
           analysis: new Analysis(),
-          loi: this.recipe.analysis.percentageAnalysis.loi
+          loi: this.material.analysis.percentageAnalysis.loi
         }
-        this.form.analysis.setOxides(this.recipe.analysis.percentageAnalysis)
+        this.form.analysis.setOxides(this.material.analysis.percentageAnalysis)
+        Analysis.OXIDE_NAMES.forEach((oxideName) => {
+          if (this.form.analysis[oxideName] <= 0) {
+            // don't keep zeros for form
+            this.form.analysis[oxideName] = ''
+          }
+        })
 
         // this.form.analysis.initOxidesNull()
-        if (this.recipe.atmospheres) {
-          for (var i = 0; i < this.recipe.atmospheres.length; i++) {
-            this.form.atmospheres.push(this.recipe.atmospheres[i].id);
+        if (this.material.atmospheres) {
+          for (var i = 0; i < this.material.atmospheres.length; i++) {
+            this.form.atmospheres.push(this.material.atmospheres[i].id);
           }
         }
       }
     },
     computed: {
       isLoaded: function () {
-        if (this.recipe) {
+        if (this.material || this.isNewMaterial) {
           return true;
         }
         return false;
       },
       feedbackName() {
-        return this.form.name.length > 0 ? 'Enter at least 3 characters' : 'Please enter a name';
+        return (this.form.name && this.form.name.length > 0) ?
+          'Enter at least 3 characters' : 'Please enter a name';
       },
       stateName() {
-        return this.form.name.length > 2 ? 'valid' : 'invalid';
+        return (this.form.name && this.form.name.length > 2) ? 'valid' : 'invalid';
       },
       baseTypeOptions: function () {
         return this.materialTypes.getParentTypes();
       },
       subTypeOptions: function () {
         if (this.isLoaded) {
-          if (this.recipe.isPrimitive) {
-            return this.materialTypes.PRIMITIVE_SELECT
+          if (this.material.isPrimitive) {
+            // return this.materialTypes.PRIMITIVE_SELECT
+            return [{ value: 1, text: 'Simple Material' }].concat(this.materialTypes.PRIMITIVE_SELECT)
+            // return this.materialTypes.PRIMITIVE_SELECT.unshift({ value: 1, text: 'Simple Material' })
           } else {
             switch (this.form.baseTypeId) {
               case this.materialTypes.GLAZE_TYPE_ID:
@@ -301,7 +320,7 @@
       /*
       calculated formula weight depends upon unity type..
       formulaWeight: function () {
-        if (this.isLoaded && this.recipe.isPrimitive) {
+        if (this.isLoaded && this.material.isPrimitive) {
           var percentageAnalysis = new PercentageAnalysis()
           percentageAnalysis.setOxides(this.form.analysis)
           percentageAnalysis.setLOI(this.form.loi)
@@ -318,7 +337,7 @@
       */
     },
     methods: {
-      update: function () {
+      save: function () {
         if (this.isLoaded) {
           window.scrollTo(0, 0)
           this.$emit('isProcessing');
@@ -327,7 +346,12 @@
             this.form.materialTypeId = this.form.baseTypeId
           }
 
-          Vue.axios.post(Vue.axios.defaults.baseURL + '/recipes/' + this.recipe.id, this.form)
+          var url = Vue.axios.defaults.baseURL + '/recipes'
+          if (!this.isNewMaterial) {
+            this.form._method = 'PATCH'
+            url = Vue.axios.defaults.baseURL + '/recipes/' + this.material.id
+          }
+          Vue.axios.post(url, this.form)
             .then((response) => {
               console.log('got response:')
               console.log(response)
@@ -375,7 +399,7 @@
 
 <style>
 
-    .edit-recipe-metadata label {
+    .edit-material-metadata label {
         margin-bottom: 0;
     }
 

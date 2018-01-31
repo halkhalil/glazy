@@ -94,9 +94,25 @@ class MaterialController extends ApiBaseController
 
     public function store(CreateRecipeRequest $request)
     {
-        $this->materialRepository->create($request->all());
+        if (!Auth::guard()->user()) {
+            return $this->respondUnauthorized('You must login to create materials.');
+        }
 
-        return $this->respondCreated('Recipe successfully created');
+        $data = $request->all();
+        $material = new Material();
+        $material->created_by_user_id = Auth::guard()->user()->id;
+        // TODO: Properly use store & update methods
+        $material = $this->materialRepository->createOrUpdate($material, $data);
+
+        if (!$material) {
+            // Error updating the material
+            return $this->respondInternalError('Internal Error creating the material');
+        }
+
+        $resource = new FractalItem($material, new MaterialTransformer());
+
+        return $this->manager->createData($resource)->toArray();
+        //        return $this->respondCreated('Recipe successfully created');
     }
 
     public function update($id, UpdateRecipeRequest $request)
@@ -121,6 +137,11 @@ class MaterialController extends ApiBaseController
         }
 
         $material = $this->materialRepository->update($material, $data);
+
+        if (!$material) {
+            // Error updating the material
+            return $this->respondInternalError('Internal Error updating the recipe');
+        }
 
         $resource = new FractalItem($material, new MaterialTransformer());
 
@@ -209,6 +230,10 @@ class MaterialController extends ApiBaseController
             return $this->respondUnauthorized('This recipe does not belong to you.');
         }
 
+        if ($material->is_archived) {
+            return $this->respondUnauthorized('Archived recipes cannot be deleted.');
+        }
+
         $material->is_private = true;
         $material->save();
 
@@ -217,6 +242,20 @@ class MaterialController extends ApiBaseController
         return $this->manager->createData($resource)->toArray();
     }
 
+    /**
+     * @param $id
+     * @return Response
+     *
+     */
+    public function export($id)
+    {
+        $export_type = $request->input('type');
 
+        if ($export_type === 'Card')
+        {
+            // Temporarily just redirect to the recipe page
+            return redirect()->route('profile', ['id' => 1]);
+        }
+    }
 
 }
