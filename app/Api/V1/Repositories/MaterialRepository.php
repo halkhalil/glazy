@@ -77,7 +77,7 @@ class MaterialRepository extends Repository
             // administrator.  turn off timestamps during updates
             $material->timestamps = false;
         }
-        $this->createOrUpdate($material, $jsonData);
+        return $this->createOrUpdate($material, $jsonData);
     }
 
     /**
@@ -90,7 +90,7 @@ class MaterialRepository extends Repository
             return false;
         }
 
-        if ($jsonData['isPrimitive']) {
+        if (array_key_exists('isPrimitive',$jsonData) && $jsonData['isPrimitive']) {
             // is_primitive not fillable
             $material->is_primitive = true;
             if (!array_key_exists('materialTypeId', $jsonData) || !$jsonData['materialTypeId']) {
@@ -181,7 +181,9 @@ class MaterialRepository extends Repository
             }
         }
 
-        if ($material->is_primitive && $jsonData['analysis']) {
+        if ($material->is_primitive
+            && array_key_exists('analysis',$jsonData)
+            && $jsonData['analysis']) {
             // For primitive materials, we also update the analysis
             $percentageAnalysis = new PercentageAnalysis();
             $percentageAnalysis->setOxides($jsonData['analysis']);
@@ -212,8 +214,6 @@ class MaterialRepository extends Repository
 
         return $material;
     }
-
-
 
     public function destroy($id)
     {
