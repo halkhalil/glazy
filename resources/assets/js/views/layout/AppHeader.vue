@@ -143,7 +143,8 @@
 
       getUserSearchParam: function (user) {
         if (!user) { return }
-        if ('profile' in user && 'username' in user.profile && user.profile.username) {
+        if ('profile' in user && user.profile
+          && 'username' in user.profile && user.profile.username) {
           return user.profile.username
         }
         return user.id
