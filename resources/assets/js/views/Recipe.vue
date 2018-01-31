@@ -198,10 +198,10 @@
                         </b-dropdown>
                         <b-button v-on:click="copyRecipe()"><i class="fa fa-copy"></i> Copy</b-button>
                       </b-button-group>
-                      <b-button v-if="isUserMaterial" class="btn-info" :disabled="true">
+                      <b-button v-if="recipe.isPrimitive && isUserMaterial" class="btn-info" :disabled="true">
                         <i class="fa fa-cubes"></i> In Inventory
                       </b-button>
-                      <b-button v-else class="btn-info" v-on:click="addUserMaterial()">
+                      <b-button v-if="recipe.isPrimitive && !isUserMaterial" class="btn-info" v-on:click="addUserMaterial()">
                         <i class="fa fa-cubes"></i> Add to Inventory
                       </b-button>
                       <b-button-group class="recipe-action-group" v-if="canEdit && !recipe.isArchived">
