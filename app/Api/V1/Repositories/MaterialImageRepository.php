@@ -203,10 +203,10 @@ class MaterialImageRepository extends Repository
         $materialImage->description = $data['description'];
         $materialImage->orton_cone_id = null;
         $materialImage->atmosphere_id = null;
-        if ($data['ortonConeId']) {
+        if (array_key_exists('ortonConeId', $data) && $data['ortonConeId']) {
             $materialImage->orton_cone_id = $data['ortonConeId'];
         }
-        if ($data['atmosphereId']) {
+        if (array_key_exists('atmosphereId', $data) && $data['atmosphereId']) {
             $materialImage->atmosphere_id = $data['atmosphereId'];
         }
 
