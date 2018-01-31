@@ -2,6 +2,7 @@
 
 namespace App\Api\V1\Repositories\Filesystem;
 
+use Exception;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 //use Intervention\Image\Facades\Image;
