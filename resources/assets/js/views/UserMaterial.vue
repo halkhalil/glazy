@@ -201,6 +201,20 @@
             this.actionMessage = 'Removed material from inventory.'
             this.actionMessageSeconds = 5
             this.getInventoryMaterials()
+            console.log('refresh user materials')
+            // Refresh user inventory materials
+            this.$auth.fetch({
+              success(res) {
+                console.log('success fetching user');
+                console.log(this.$auth.user())
+                console.log('user id: ' + this.$auth.user().id)
+                // Refresh the recipe
+                this.fetchRecipe()
+              },
+              error() {
+                console.log('error fetching user');
+              }
+            })
           }
         })
         .catch(response => {

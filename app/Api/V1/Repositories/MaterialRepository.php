@@ -204,6 +204,10 @@ class MaterialRepository extends Repository
             }
 
             $analysis->save();
+
+            // For primitive materials, automatically add to this users UserMaterials (Inventory)
+            $userMaterialRepository = new UserMaterialRepository();
+            $userMaterial = $userMaterialRepository->addMaterial($material->id);
         }
 
         return $material;
