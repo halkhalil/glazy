@@ -171,7 +171,7 @@ export default {
       this.files = e.target.files || e.dataTransfer.files;
       if (!this.files.length)
         return;
-      if (!this.hasExtension(['.jpg', '.gif', '.png'])) {
+      if (!this.hasExtension(['.jpg', '.jpeg', '.gif', '.png'])) {
         this.files = null;
         this.errors.imageFile = ['Image file type not supported.'];
         this.hasErrors = true;
