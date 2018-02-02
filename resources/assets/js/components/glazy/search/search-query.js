@@ -9,7 +9,6 @@ export default class SearchQuery {
     this.params = {
       u: 0,
       collection: 0,
-      primitive: null,
       keywords: '',
       base_type: 0,
       type: 0,
@@ -47,9 +46,6 @@ export default class SearchQuery {
     }
     if (this.params.collection) {
       minimalQuery.collection = this.params.collection
-    }
-    if (this.params.primitive) {
-      minimalQuery.primitive = this.params.primitive
     }
     if (this.params.keywords) {
       minimalQuery.keywords = this.params.keywords
@@ -102,9 +98,6 @@ export default class SearchQuery {
       }
       if ('collection' in routerQuery && routerQuery.collection) {
         this.params.collection = Number(routerQuery.collection)
-      }
-      if ('primitive' in routerQuery && routerQuery.primitive) {
-        this.params.primitive = Number(routerQuery.primitive)
       }
       if ('keywords' in routerQuery && routerQuery.keywords) {
         this.params.keywords = routerQuery.keywords

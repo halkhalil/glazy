@@ -73,7 +73,7 @@ class SearchController extends ApiBaseController
 
         $search_user_id = $request->input('u');
         $collection_id = (int)$request->input('collection');
-        // $is_primitive = (int)$request->input('is_primitive'); // 0 == false
+        $is_primitive = (int)$request->input('primitive'); // 0 == false
         $keywords = $request->input('keywords');
         $base_type_id = (int)$request->input('base_type');
         $type_id = (int)$request->input('type');
@@ -188,15 +188,12 @@ class SearchController extends ApiBaseController
         $query->with('created_by_user');
         $query->with('created_by_user.profile');
 
-        // TODO
-        /*
         if ($is_primitive) {
             $query->where('is_primitive', true);
         }
         else {
             $query->where('is_primitive', false);
         }
-        */
 
         if (!empty($hex_color))
         {

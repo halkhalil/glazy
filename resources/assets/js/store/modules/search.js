@@ -1,5 +1,6 @@
 const state = {
   query: null,
+  isPrimitive: false,
   searchItems: [],
   searchPagination: null,
   searchUser: null,
@@ -11,6 +12,9 @@ const state = {
 const getters = {
   query(state) {
     return state.query
+  },
+  isPrimitive(state) {
+    return state.isPrimitive
   },
   searchItems(state) {
     return state.searchItems
@@ -24,12 +28,14 @@ const getters = {
   isProcessing(state) {
     return state.isProcessing
   }
-
 }
 
 const mutations = {
   setQuery(state, payload) {
     state.query = payload
+  },
+  setIsPrimitive(state, payload) {
+    state.isPrimitive = payload
   },
   setSearchItems(state, payload) {
     state.searchItems = payload
@@ -62,6 +68,7 @@ const actions = {
   },
   search (context, payload) {
     context.commit('setQuery', payload.query)
+    context.commit('setIsPrimitive', payload.isPrimitive)
     context.dispatch('refresh')
   },
   refresh (context) {
@@ -76,9 +83,13 @@ const actions = {
     var myQuery = query.getMinimalQuery()
     //var myQuery = payload.query.getMinimalQuery()
 
-    var querystring = query.toQuerystring(myQuery)
+    var isPrimitive = context.getters.isPrimitive
 
-    console.log('VUEX SEARCH: ' + querystring)
+    if (isPrimitive) {
+      myQuery.primitive = 1
+    }
+
+    var querystring = query.toQuerystring(myQuery)
 
     // Make sure itemlist is always defined, and an array
     context.commit('setSearchItems', [])

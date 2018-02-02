@@ -299,12 +299,12 @@
         type: Object,
         default: null
       },
-
+      /*
       isPrimitive: {
         type: Number,
         default: 0
       }
-
+      */
     },
     data() {
       return {
@@ -314,6 +314,7 @@
         // searchQuery: new SearchQuery(),
         searchQuery: null,
         isProcessingLocal: false,
+        //isPrimitive: false,
         materialTypes: new MaterialTypes(),
         constants: new GlazyConstants(),
         chartHeight: 200,
@@ -423,22 +424,17 @@
 
       //this.searchUser = null
       this.searchQuery = new SearchQuery(this.$route.query)
-
+      var isPrimitive = false
       if (this.$route.name === 'materials' ||
         this.$route.name === 'user-materials') {
-        // Primitive search
-        if (!this.searchQuery.params.base_type) {
-          this.searchQuery.params.base_type = 1
-        }
-      } else if (!this.searchQuery.params.base_type) {
-        //this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
+        isPrimitive = true
       }
       if (this.$route.params && this.$route.params.id) {
         this.searchQuery.params.u = this.$route.params.id
       }
 
       this.$store.dispatch('search/search', {
-        query: this.searchQuery
+        query: this.searchQuery, isPrimitive: isPrimitive
       })
     },
     /*
@@ -459,29 +455,24 @@
     */
     watch: {
       $route (route) {
+        console.log('hit route watcher')
         if (route.hash) {
           // This is only an internal link, no need to requery
           return
         }
-        this.searchUser = null
+        //this.searchUser = null
         this.searchQuery = new SearchQuery(route.query)
-
+        var isPrimitive = false
         if (route.name === 'materials' ||
           route.name === 'user-materials') {
-          // Primitive search
-          if (!this.searchQuery.params.base_type) {
-            this.searchQuery.params.base_type = 1
-          }
-        } else if (!this.searchQuery.params.base_type) {
-          // Composite search
-          //this.searchQuery.params.base_type = this.materialTypes.GLAZE_TYPE_ID
+          console.log('hit is primitive ture ')
+          isPrimitive = true
         }
         if ('params' in route && route.params.id) {
           this.searchQuery.params.u = route.params.id
         }
-
         this.$store.dispatch('search/search', {
-          query: this.searchQuery
+          query: this.searchQuery, isPrimitive: isPrimitive
         })
       }
     },
@@ -572,7 +563,6 @@
       collectMaterialSelect(id) {
         if (id) {
           this.materialToCollect = id
-          console.log('want to collect: ' + this.materialToCollect)
           this.$refs.collectModal.show()
         }
       },
@@ -597,18 +587,14 @@
             console.log(this.apiError)
             this.isProcessingLocal = false
           } else {
-            console.log('return from collecting')
             this.isProcessingLocal = false
             this.actionMessage = 'Collected.'
             this.actionMessageSeconds = 5
             this.$store.dispatch('search/refresh')
             if (this.newCollectionName) {
-              console.log('refresh collections')
               // Refresh user collections
               this.$auth.fetch({
                 success(res) {
-                  console.log('success fetching user');
-                  console.log(this.$auth.user())
                   console.log('user id: ' + this.$auth.user().id)
                 },
                 error() {
@@ -622,7 +608,6 @@
         })
         .catch(response => {
           this.serverError = response
-          console.log(response)
           this.isProcessingLocal = false
           this.newCollectionName = ''
           this.materialToCollect = 0
