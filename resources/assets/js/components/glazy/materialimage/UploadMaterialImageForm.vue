@@ -100,6 +100,13 @@ export default {
   },
   data() {
     return {
+      form: {
+        materialId: this.material.id,
+        title: '',
+        description: '',
+        ortonConeId: 0,
+        atmosphereId: 0
+      },
       errors: {},
       hasErrors: false,
       isProcessing: false,
@@ -117,19 +124,6 @@ export default {
         return true;
       }
       return false;
-    },
-    form: function () {
-      var form = {};
-      if (this.isLoaded) {
-        form = {
-          materialId: this.material.id,
-          title: '',
-          description: '',
-          ortonConeId: 0,
-          atmosphereId: 0
-        }
-      }
-      return form;
     }
   },
 

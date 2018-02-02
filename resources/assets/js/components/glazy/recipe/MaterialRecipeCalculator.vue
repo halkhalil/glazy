@@ -175,7 +175,6 @@ export default {
 
     getImageBin: function (id) {
       id = '' + id;
-      console.log("IMAGE BIN: " + id.substr(id.length - 2))
       return id.substr(id.length - 2);
     },
 

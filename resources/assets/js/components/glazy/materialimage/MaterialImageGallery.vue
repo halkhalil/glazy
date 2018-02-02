@@ -291,6 +291,7 @@
 
       imageUpdated: function () {
         this.$refs.updateImageModal.hide();
+        this.selectedImage = null;
         this.$emit('imageupdated');
       },
 

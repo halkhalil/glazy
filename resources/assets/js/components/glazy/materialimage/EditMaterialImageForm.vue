@@ -20,7 +20,7 @@
                     id="photoTitle">
                 <b-form-input
                         id="photoTitleInput"
-                        v-model.trim="form.title"
+                        v-model.trim="myImage.title"
                         placeholder="Photo Caption"
                         type="text"
                 ></b-form-input>
@@ -29,17 +29,17 @@
                     class="col-sm-12"
                     :class="{'has-danger': errors.description}"
                     id="photoDescription">
-                <b-form-textarea id="photoDescriptionTextarea"
-                                 v-model="form.description"
+                <b-textarea id="photoDescriptionTextarea"
+                                 v-model="myImage.description"
                                  placeholder="Optional description. Firing conditions, recipe changes, etc."
                                  :rows="3"
                                  :max-rows="6">
-                </b-form-textarea>
+                </b-textarea>
             </b-form-group>
             <b-form-group class="col-md-6 col-sm-4" id="imageCone">
                 <b-form-select
                         id="ortonConeId"
-                        v-model="form.ortonConeId"
+                        v-model="myImage.ortonConeId"
                         :options="constants.ORTON_CONES_SELECT_TEXT_SIMPLE">
                     <template slot="first">
                         <option :value="0">Temperature</option>
@@ -49,7 +49,7 @@
             <b-form-group class="col-md-6 col-sm-8" id="imageAtmosphere">
                 <b-form-select
                         id="atmosphereId"
-                        v-model="form.atmosphereId"
+                        v-model="myImage.atmosphereId"
                         :options="constants.ATMOSPHERE_SELECT">
                     <template slot="first">
                         <option :value="0">Atmosphere</option>
@@ -89,6 +89,7 @@
     },
     data() {
       return {
+        myImage: Object.assign({}, this.image),
         errors: {},
         hasErrors: false,
         isProcessing: false,
@@ -99,33 +100,32 @@
         serverError: null
       }
     },
+    watch:{
+      image(newImage){
+        this.myImage = Object.assign({}, newImage)
+      }
+    },
     computed: {
       isLoaded: function () {
         if (this.image && this.imageUrl) {
           return true;
         }
         return false;
-      },
-      form: function () {
-        if (this.isLoaded) {
-          var form = {
-            _method: 'PATCH',
-            id: this.image.id,
-            title: this.image.title,
-            description: this.image.description,
-            ortonConeId: this.image.ortonConeId,
-            atmosphereId: this.image.atmosphereId
-          }
-          return form
-        }
-        return []
       }
     },
     methods: {
 
       update: function () {
         this.isProcessing = true;
-        Vue.axios.post(Vue.axios.defaults.baseURL + '/materialimages/' + this.image.id, this.form)
+        var form = {
+          _method: 'PATCH',
+          id: this.myImage.id,
+          title: this.myImage.title,
+          description: this.myImage.description,
+          ortonConeId: this.myImage.ortonConeId,
+          atmosphereId: this.myImage.atmosphereId
+        }
+        Vue.axios.post(Vue.axios.defaults.baseURL + '/materialimages/' + this.image.id, form)
           .then((response) => {
           if (response.data.error) {
             this.apiError = response.data.error
