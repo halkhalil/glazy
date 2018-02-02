@@ -358,16 +358,19 @@
               if (response.data.error) {
                 // error
                 this.apiError = response.data.error
-                console.log(this.apiError)
               } else {
-                console.log('emit updatedRecipeMeta')
                 this.$emit('updatedRecipeMeta')
               }
             })
             .catch(response => {
-              this.serverError = response;
-              console.log('UPDATE ERROR')
-              console.log(response.data)
+              if (response.response && response.response.status) {
+                if (response.response.status === 401) {
+                  this.$router.push({ path: '/login', query: { error: 401 }})
+                } else {
+                  this.serverError = response.response.data.error.message;
+                }
+              }
+              this.isProcessing = false
             })
         }
       },
