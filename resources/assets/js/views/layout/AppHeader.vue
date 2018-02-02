@@ -2,12 +2,7 @@
     <header>
         <b-navbar class="navbar navbar-expand-md fixed-top navbar-light bg-white"
                   toggleable>
-            <b-navbar-brand v-if="$auth.check()"
-                            :to="{ name: 'user', params: { id: $auth.user().id}}">
-                <img src="/img/logo.png" height="26" alt="Glazy">
-            </b-navbar-brand>
-            <b-navbar-brand v-if="!$auth.check()"
-                            :to="{ name: 'search' }">
+            <b-navbar-brand :to="{ name: 'search' }">
                 <img src="/img/logo.png" height="26" alt="Glazy">
             </b-navbar-brand>
             <b-navbar-toggle target="nav_dropdown_collapse"></b-navbar-toggle>
