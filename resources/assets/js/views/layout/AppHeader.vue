@@ -1,7 +1,7 @@
 <template>
     <header>
         <b-navbar class="navbar navbar-expand-md fixed-top navbar-light bg-white"
-                  toggleable>
+                  toggleable="sm">
             <b-navbar-brand :to="{ name: 'search' }">
                 <img src="/img/logo.png" height="26" alt="Glazy">
             </b-navbar-brand>
@@ -66,6 +66,11 @@
                     <b-nav-item href="mailto:derek@glazy.org" >
                         <i class="fa fa-bug fa-fw"></i> Bug?  Contact Us!
                     </b-nav-item>
+
+                    <b-nav-item href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=derek%40derekau%2enet&lc=US&item_name=Glazy&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" target="_blank">
+                        <i class="fa fa-gift fa-fw"></i> Donate!
+                    </b-nav-item>
+
                 </b-navbar-nav>
             </b-collapse>
         </b-navbar>
