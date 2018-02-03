@@ -27,11 +27,14 @@ body {
   font-size: 100%;
 }
 
+.dropdown-item {
+  color: #888;
+}
+
 .dropdown-item.active, .dropdown-item:active {
-  color: #fff;
+  color: #666;
   text-decoration: none;
-  //background-color: #bbbbbb;
-  background-color: rgba(222, 222, 222, 0.3);
+  background-color: #efefef;
 }
 
 // https://www.materialpalette.com/colors
