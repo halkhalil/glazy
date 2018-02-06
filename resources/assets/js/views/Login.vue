@@ -116,7 +116,9 @@
           this.error = 'Unauthorized, please login to perform this function.'
         }
       }
-
+      if(this.firstLogin) {
+          this.cancelLogin();
+      }
     },
     methods: {
       login (evt) {

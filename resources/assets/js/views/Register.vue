@@ -112,8 +112,11 @@
         console.log('going to register')
         this.$auth.register({
           data: this.form,
-          // redirect: { name: 'search' },
+          redirect: null, // overriding the redirect-to-login screen
+          autoLogin: true, // doesn't work
           success (res) {
+              /* Autologin doesn't seem to work, so I'm passing the login request manually using the same form data */
+            this.$auth.login({data: this.form})
             console.log('success ' + this.context)
           },
           error (res) {

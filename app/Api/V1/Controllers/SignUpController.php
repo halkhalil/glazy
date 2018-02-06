@@ -45,7 +45,7 @@ class SignUpController extends Controller
         */
         return response([
             'status' => 'success',
-            //'token' => $token,
+            'token' => $token,
             'expires_in' => Auth::guard()->factory()->getTTL() * 60,
             'data' => $user
         ])->header('Access-Control-Expose-Headers', 'Authorization')
