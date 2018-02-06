@@ -6,6 +6,7 @@ use App\Mail\UserRegistered;
 use Config;
 use App\User;
 use Illuminate\Support\Facades\Mail;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Tymon\JWTAuth\JWTAuth;
 use App\Http\Controllers\Controller;
 use App\Api\V1\Requests\SignUpRequest;
@@ -15,6 +16,13 @@ class SignUpController extends Controller
 {
     public function signUp(SignUpRequest $request, JWTAuth $JWTAuth)
     {
+        $user = User::where('email', $request->input('email'))->first();
+
+        if ($user) {
+            // A user is already registered with this email address
+            throw new AccessDeniedHttpException('This email has already been used to register.');
+        }
+
         $user = new User($request->all());
         if(!$user->save()) {
             throw new HttpException(500);

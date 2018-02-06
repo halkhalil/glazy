@@ -103,6 +103,8 @@
     },
     methods: {
       register () {
+        this.serverError = null
+
         if (!this.aggregateState) {
           console.log('not passing')
           return
@@ -115,9 +117,19 @@
             console.log('success ' + this.context)
           },
           error (res) {
+
+            this.serverError = 'Error Registering.'
+
             console.log('error ' + this.context)
             if (res.response.data && res.response.data.error) {
               this.errors = res.response.data.error.errors
+            }
+            if (res.response.status &&
+              Number(res.response.status) === 500 ) {
+            }
+            if (res.response.status &&
+              Number(res.response.status) === 403 ) {
+              this.serverError = 'This email is already in use.'
             }
           }
         })
