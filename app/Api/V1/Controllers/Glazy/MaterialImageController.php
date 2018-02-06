@@ -98,8 +98,6 @@ class MaterialImageController extends ApiBaseController
 
         $query->orderBy('updated_at', 'DESC');
 
-        Log::error('MATERIALIMAGES: '.$query->toSql());
-
         if ($count && $count < self::MAX_ITEMS_PER_PAGE) {
             $images = $query->paginate($count, ['*'], 'page', $page);
         } else {

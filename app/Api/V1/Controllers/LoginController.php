@@ -116,7 +116,6 @@ class LoginController extends Controller
             $user->save();
 
             $userProfile = UserProfile::query()->firstOrNew(['user_id' => $user->id]);
-            Log::info('trying create new user profile: id: '.$user->id.' avatar:'.$providerUser->getAvatar());
 
             if ($userProfile) {
                 $userProfile->user_id = $user->id;
@@ -130,14 +129,11 @@ class LoginController extends Controller
                 $userProfile->save();
             }
 
-            Log::info('MMMMMM Callback Created User: '.$user->name);
         }
 
         if ( ! $token = $this->jwt->fromUser($user)) {
             throw new AuthorizationException;
         }
-
-        Log::info('MMMMMM Callback Created JWT TOKEN: '.$token);
 
         return response([
             'status' => 'success',

@@ -121,7 +121,6 @@ class MaterialController extends ApiBaseController
             return $this->respondUnauthorized('You must login to edit recipes.');
         }
 
-        Log::info('Arrived update method');
         //$data = $request->get('form', []);
         $data = $request->all();
 

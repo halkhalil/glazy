@@ -285,7 +285,6 @@ class SearchController extends ApiBaseController
             $resource->setMetaValue('user', $jsonUser);
         }
 
-        // Log::error('SEARCH: '.print_r(DB::getQueryLog(), true));
         // DB::disableQueryLog();
 
         return $this->manager->createData($resource)->toArray();

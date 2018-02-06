@@ -352,7 +352,6 @@ class MaterialRepository extends Repository
             $excludeMaterialId = $data['excludeMaterialId'];
         }
         $componentData = $data['materialComponents'];
-        Log::error('POST MAT COMP: '.print_r($componentData, true));
 
         if (count($componentData) < 1) {
             return null;
@@ -387,7 +386,6 @@ class MaterialRepository extends Repository
 
                 $childId = $componentMaterialData['componentMaterialId'];
                 $amount = $componentMaterialData['percentageAmount'];
-                Log::error('ADD: '.$childId.' amount '.$amount);
 
                 $query->whereExists(function ($query) use ($childId, $amount) {
                     $query->select(DB::raw(1))
