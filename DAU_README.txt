@@ -20,15 +20,15 @@ DB_HOST=127.0.0.1
 DB_PORT=8889
 DB_DATABASE=glazyb
 DB_USERNAME=glazyb
-DB_PASSWORD=UmqFttFZpiuiwmDK
+DB_PASSWORD=???
 
 # Socialite Providers
-FACEBOOK_CLIENT_ID=261459590866628
-FACEBOOK_CLIENT_SECRET=b5bc84574bef8226cd04c18e4f197b93
+FACEBOOK_CLIENT_ID=???
+FACEBOOK_CLIENT_SECRET=???
 FACEBOOK_REDIRECT=http://localhost:8888/login/facebook
 
-GOOGLE_CLIENT_ID=927001342736-522sp5s40ecildcdmeq08njcb250o7t0.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=itqGmiQJZNl5N33-2NTxw8w5
+GOOGLE_CLIENT_ID=???.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=???
 GOOGLE_REDIRECT=http://localhost:8888/login/google
 
 #################################
