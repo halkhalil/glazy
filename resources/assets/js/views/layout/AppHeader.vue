@@ -17,6 +17,11 @@
                         <b-dropdown-item :to="{ name: 'user-materials', params: { id: getUserSearchParam($auth.user()) }}">
                             <i class="fa fa-flask fa-fw"></i> My Materials
                         </b-dropdown-item>
+                        <!--
+                        <b-dropdown-item :to="{ name: 'user-collections', params: { id: getUserSearchParam($auth.user()) }}">
+                            <i class="fa fa-flask fa-fw"></i> My Collections
+                        </b-dropdown-item>
+                        -->
                         <b-dropdown-item :to="{ name: 'inventory' }">
                             <i class="fa fa-cubes fa-fw"></i> My Inventory
                         </b-dropdown-item>

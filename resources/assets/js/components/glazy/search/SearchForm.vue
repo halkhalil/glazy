@@ -308,19 +308,22 @@ export default {
     },
 
     collectionsSelect () {
-      // TODO: ensure only user-viewable collections are returned
-      if (this.searchUser && this.searchUser.collections &&
-        this.searchUser.collections.length > 0) {
-        var collections = []
-        this.searchUser.collections.forEach((collection) => {
-          collections.push({
+      //if (this.$route.name === 'collections' ||
+      //  this.$route.name === 'collection') {
+        // TODO: ensure only user-viewable collections are returned
+        if (this.searchUser && this.searchUser.collections &&
+          this.searchUser.collections.length > 0) {
+          var collections = []
+          this.searchUser.collections.forEach((collection) => {
+            collections.push({
             id: collection.id,
             name: collection.name + ' (' + collection.materialCount + ')'
-            })
+          })
         })
-        return collections
-        // return this.searchUser.collections
-      }
+          return collections
+          // return this.searchUser.collections
+        }
+      //}
       return null
     },
 

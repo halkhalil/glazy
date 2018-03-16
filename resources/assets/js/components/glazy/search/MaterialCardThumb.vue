@@ -30,7 +30,7 @@
       </li>
     </ul>
     <div class="card-body">
-      <h6 class="category text-primary" v-html="materialHelper.getMaterialTypeString()"></h6>
+      <h6 class="category text-muted" v-html="materialHelper.getMaterialTypeString()"></h6>
       <h5 class="card-title">
         <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}">
           <i v-if="material.isPrivate" class="fa fa-eye-slash"></i>

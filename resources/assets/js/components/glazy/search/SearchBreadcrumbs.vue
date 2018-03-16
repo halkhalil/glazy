@@ -2,9 +2,14 @@
     <nav aria-label="breadcrumb" role="navigation" id="material-type-breadcrumbs">
         <ol class="breadcrumb">
             <li class="breadcrumb-item" v-for="breadcrumb in breadcrumbs">
-                <router-link :to="{ name: breadcrumb.routeName, query: breadcrumb.query }">
+                <router-link :to="{ name: breadcrumb.routeName, query: breadcrumb.query }"
+                    class="align-middle">
                     {{ breadcrumb.name }}
                 </router-link>
+                <b-btn v-if="isViewingSelfCollection && breadcrumb.type === 'collection'"
+                       v-b-tooltip.hover title="Delete Collection"
+                       @click="deleteCollectionRequest(breadcrumb.query.collection)"
+                       class="btn-icon btn-danger btn-sm breadcrumb-btn"><i class="fa fa-trash"></i></b-btn>
             </li>
         </ol>
     </nav>
@@ -25,6 +30,14 @@
       searchUser: {
         type: Object,
         default: null
+      },
+      isViewingSelf: {
+        type: Boolean,
+        default: false
+      },
+      isViewingSelfCollection: {
+        type: Boolean,
+        default: false
       }
     },
 
@@ -39,20 +52,21 @@
     computed: {
 
       breadcrumbs () {
-        console.log("BREADCRUMBS TYPE " + this.searchQuery.params.type)
         var breadcrumbs = []
 
         if (this.searchUser) {
           breadcrumbs.push({
             name: this.searchUser.name,
             query: { u: this.searchUser.u },
-            routeName: 'user'
+            routeName: 'user',
+            type: 'user'
           })
         } else {
           breadcrumbs.push({
             name: 'All Users',
             query: { },
-            routeName: 'search'
+            routeName: 'search',
+            type: 'search'
           })
         }
 
@@ -67,7 +81,8 @@
             breadcrumbs.push({
               name: collection.name,
               query: { u: this.searchUser.u, collection: collection.id },
-              routeName: 'user'
+              routeName: 'user',
+              type: 'collection'
             })
           }
 
@@ -83,7 +98,8 @@
             breadcrumbs.push({
               name: name,
               query: { cone: this.searchQuery.params.cone },
-              routeName: 'search'
+              routeName: 'search',
+              type: 'search'
             })
           }
 
@@ -96,7 +112,8 @@
                 breadcrumbs.push({
                   name: this.materialTypes.LOOKUP[type],
                   query: { type: type },
-                  routeName: 'search'
+                  routeName: 'search',
+                  type: 'search'
                 })
               }
             })
@@ -105,7 +122,8 @@
             breadcrumbs.push({
               name: this.materialTypes.LOOKUP[this.searchQuery.params.base_type],
               query: { base_type: this.searchQuery.params.base_type },
-              routeName: 'search'
+              routeName: 'search',
+              type: 'search'
             })
           }
 
@@ -115,7 +133,8 @@
             breadcrumbs.push({
               name: this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere],
               query: { atmosphere: this.searchQuery.params.atmosphere },
-              routeName: 'search'
+              routeName: 'search',
+              type: 'search'
             })
           }
 
@@ -125,7 +144,8 @@
             breadcrumbs.push({
               name: this.constants.SURFACE_LOOKUP[this.searchQuery.params.surface],
               query: { surface: this.searchQuery.params.surface },
-              routeName: 'search'
+              routeName: 'search',
+              type: 'search'
             })
           }
 
@@ -135,7 +155,8 @@
             breadcrumbs.push({
               name: this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency ],
               query: { transparency: this.searchQuery.params.transparency },
-              routeName: 'search'
+              routeName: 'search',
+              type: 'search'
             })
           }
 
@@ -145,7 +166,8 @@
             breadcrumbs.push({
               name: '"' + this.searchQuery.params.keywords + '"',
               query: { keywords: this.searchQuery.params.keywords },
-              routeName: 'search'
+              routeName: 'search',
+              type: 'search'
             })
           }
 
@@ -156,9 +178,28 @@
     },
 
     methods: {
-
+      deleteCollectionRequest: function (id) {
+        this.$emit('deleteCollectionRequest', id);
+      }
     }
 
   }
 </script>
 
+<style>
+    .breadcrumb {
+        padding: 10px 15px;
+        margin-bottom: 10px;
+    }
+
+    .breadcrumb-item {
+        height: 30px;
+        line-height:30px;
+        text-align:center;
+    }
+
+    .breadcrumb-btn {
+        margin: 0;
+    }
+
+</style>

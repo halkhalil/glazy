@@ -89,6 +89,18 @@ export default new Router({
           name: 'material',
           component: Recipe
         },
+        /*
+        {
+          path: '/u/:id/collections',
+          name: 'user-collections',
+          component: Search
+        },
+        {
+          path: '/u/:id/collections/:collection_id',
+          name: 'user-collection',
+          component: Search
+        },
+        */
         {
           path: '/inventory/',
           name: 'inventory',

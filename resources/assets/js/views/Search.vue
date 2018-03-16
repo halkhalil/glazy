@@ -83,7 +83,11 @@
 
         <div class="col-sm-12">
           <search-breadcrumbs :searchQuery="searchQuery"
-                              :searchUser="searchUser"></search-breadcrumbs>
+                              :searchUser="searchUser"
+                              :isViewingSelf="isViewingSelf"
+                              :isViewingSelfCollection="isViewingSelfCollection"
+                              v-on:deleteCollectionRequest="confirmDeleteCollection"
+          ></search-breadcrumbs>
         </div>
         <div class="col-sm-12 d-xl-none d-lg-none d-md-none">
           <search-form
@@ -199,6 +203,16 @@
              ok-title="Delete Forever"
     >
       <p>Once deleted, you will not be able to retrieve this recipe!</p>
+    </b-modal>
+
+
+    <b-modal id="deleteCollectionConfirmModal"
+             ref="deleteCollectionConfirmModal"
+             title="Delete Collection?"
+             v-on:ok="deleteCollection"
+             ok-title="Delete Forever"
+    >
+      <p>Once deleted, this collection will be gone forever!</p>
     </b-modal>
 
     <b-modal id="collectModal"
@@ -339,6 +353,7 @@
         newCollectionName: '',
         materialToCollect: 0,
         toDeleteMaterialId: 0,
+        toDeleteCollectionId: 0,
         minSearchTextLength: 3,
         apiError: null,
         serverError: null,
@@ -365,8 +380,6 @@
 
       isViewingSelf () {
         var user = this.$auth.user()
-        console.log('USER:')
-        console.log(user)
         if (user && this.searchUser && user.id === this.searchUser.id) {
           return true
         }
@@ -680,6 +693,13 @@
         }
       },
 
+      confirmDeleteCollection: function(id) {
+        if (id) {
+          this.toDeleteCollectionId = id
+          this.$refs.deleteCollectionConfirmModal.show();
+        }
+      },
+
       deleteMaterial: function() {
         if (this.toDeleteMaterialId) {
           Vue.axios.delete(Vue.axios.defaults.baseURL + '/recipes/' + this.toDeleteMaterialId)
@@ -702,6 +722,41 @@
             this.serverError = response;
             this.isProcessingLocal = false
           })
+        }
+      },
+
+      deleteCollection: function(id) {
+        console.log('delete collection')
+        if (this.toDeleteCollectionId) {
+          Vue.axios.delete(Vue.axios.defaults.baseURL + '/collections/' + this.toDeleteCollectionId)
+            .then((response) => {
+            if (response.data.error) {
+              this.apiError = response.data.error
+              console.log(this.apiError)
+              this.isProcessingLocal = false
+            } else {
+              // Refresh user collections
+              this.$auth.fetch({
+                success(res) {
+                  console.log('user id: ' + this.$auth.user().id)
+                },
+                error() {
+                  console.log('error fetching user');
+                }
+              })
+              this.toDeleteMaterialId = 0
+              this.isProcessingLocal = false
+              this.actionMessage = 'Deleted the collection.'
+              this.actionMessageSeconds = 5
+              // Update the route to default
+              this.$router.push({path: this.$route.path})
+            }
+        })
+        .catch(response => {
+            this.toDeleteCollectionId = 0
+          this.serverError = response;
+          this.isProcessingLocal = false
+        })
         }
       }
 

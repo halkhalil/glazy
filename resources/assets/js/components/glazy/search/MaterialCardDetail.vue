@@ -28,7 +28,7 @@
         </tr>
       </table>
       <div>
-        <h6 class="category text-primary" v-html="materialHelper.getMaterialTypeString()"></h6>
+        <h6 class="category text-muted" v-html="materialHelper.getMaterialTypeString()"></h6>
         <h5 class="card-title">
           <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}">
             <i v-if="material.isPrivate" class="fa fa-eye-slash"></i>
@@ -225,7 +225,8 @@
   }
 
   .material-detail-card-current {
-    border: 2px solid #2CA8FF;
+    /* border: 2px solid #2CA8FF; */
+    border: 1px solid #2488cf;
   }
 
   .material-detail-card .card-body {

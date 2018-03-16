@@ -16,10 +16,34 @@ body {
 
 @import "loader";
 
+a {
+  color: #2488cf;
+}
+a:hover, a:focus {
+  color: #2488cf;
+}
+
+
 .navbar {
   min-height: 50px;
   padding-top: 0;
   padding-bottom: 0;
+}
+
+// make links more visible
+.card a:not(.btn):not(.nav-link):not([data-toggle='collapse']):not(.footer-link){
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  color: #2488cf;
+
+  &:hover,
+  &:focus{
+    border-color: #2488cf;
+  }
+}
+
+.media p {
+  color: #2c2c2c;
 }
 
 // Make sure form hints are not too small

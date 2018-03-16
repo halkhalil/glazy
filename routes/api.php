@@ -89,6 +89,12 @@ $api->version('v1', function (Router $api) {
         });
     });
 
+    $api->group(['prefix' => 'collections'], function(Router $api) {
+        $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
+            $api->delete('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\CollectionController@destroy')->name('destroy');
+        });
+    });
+
     $api->group(['prefix' => 'search'], function(Router $api) {
         $api->get('/', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@index')->name('index');
         $api->get('/nearestXY', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@nearestXY')->name('nearestXY');

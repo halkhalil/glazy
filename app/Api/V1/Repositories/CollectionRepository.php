@@ -5,6 +5,7 @@ namespace App\Api\V1\Repositories;
 use App\Api\V1\Repositories\Repository;
 
 use App\Models\Collection;
+use App\Models\CollectionMaterial;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -76,6 +77,9 @@ class CollectionRepository extends Repository
         if (!$collection) {
             return false;
         }
+
+        // Remove all bookmarks in this collection:
+        CollectionMaterial::where('collection_id', $id)->delete();
 
         $collection->delete();
 
