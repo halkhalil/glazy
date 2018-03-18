@@ -3,7 +3,10 @@
     <div class="card-body">
         <div class="row">
             <div class="col-md-4">
-                <h2 class="card-title">UMF Chart</h2>
+                <h2 class="card-title">
+                    UMF Charts
+                    <a href="https://wiki.glazy.org/t/umf-charts/" target="_blank" class="help-link"><i class="fa fa-question-circle fa-fw"></i></a>
+                </h2>
             </div>
             <div class="col-md-8 text-right">
                 <span v-if="isLoaded && !isProcessing && materialList && materialList.length > 0">

@@ -1,10 +1,16 @@
 <template>
     <div class="card firing-card card-plain">
         <div class="card-body text-center">
+            <p class="firing-type">
+                Orton Cone
+                <a href="https://wiki.glazy.org/t/orton-cones/" target="_blank" class="help-link"><i class="fa fa-question-circle fa-fw"></i></a>
+            </p>
             <h2 class="card-title" v-html="'&#9651;' + coneString"></h2>
-            <p class="firing-cone-type">Orton Cone</p>
-            <p class="card-description">
-                {{ atmospheres }}
+            <p class="firing-type">
+                Atmosphere
+                <a href="https://wiki.glazy.org/t/firing-atmospheres/" target="_blank" class="help-link"><i class="fa fa-question-circle fa-fw"></i></a>
+            </p>
+            <p class="firing-atmospheres" v-html="atmospheres">
             </p>
         </div>
     </div>
@@ -75,7 +81,7 @@
 <style>
 
     .firing-card {
-        background-color: #999999;
+        background-color: #aaa;
         min-width: 8em;
     }
 
@@ -85,19 +91,20 @@
 
     .firing-card .card-body .card-title {
         color: #ffffff;
+        font-size: 38px;
         margin-top: 0;
         margin-bottom: 0;
     }
 
-    .firing-card .card-body .firing-cone-type {
-        font-size: .75rem;
-        color: #666666;
-        margin-bottom: 5px;
+    .firing-card .card-body .firing-type {
+        font-size: 0.8rem;
+        color: #555;
+        margin-bottom: 0px;
     }
-    .firing-card .card-body .card-description {
+    .firing-card .card-body .firing-atmospheres {
         font-size: 1rem;
         color: #333333;
-        margin-bottom: 5px;
+        margin-bottom: 0px;
     }
 
 

@@ -246,7 +246,10 @@
           <div class="col-md-12">
             <div class="card"> <!-- BEGIN Analysis Card -->
               <div class="card-body">
-                <h2 class="card-title">Analysis</h2>
+                <h2 class="card-title">
+                  Analysis
+                  <a href="https://wiki.glazy.org/t/chemical-analysis/" target="_blank" class="help-link"><i class="fa fa-question-circle fa-fw"></i></a>
+                </h2>
                 <!--
                 <view-recipe-materials-analysis
                         :recipe="recipe"></view-recipe-materials-analysis>

@@ -61,6 +61,16 @@ a:hover, a:focus {
   background-color: #efefef;
 }
 
+/* HELP LINK */
+.help-link {
+  color: rgba(0, 0, 0, .2) !important;
+}
+.help-link:hover {
+  color: rgba(0, 0, 0, .4) !important;
+  border-bottom: none !important;
+}
+
+
 // https://www.materialpalette.com/colors
 /* OXIDE COLORS */
 .oxide-colors-R2O    { color: #d32f2f; }
