@@ -11,7 +11,9 @@
                         </a>
                         <div class="media-body">
                             <h5 class="media-heading">
-                                {{ getDisplayName(review.user) }}
+                                <router-link :to="{ name: 'user', params: { id: review.user.id }}">
+                                    {{ getDisplayName(review.user) }}
+                                </router-link>
                                 <small class="text-muted"><timeago :since="review.updatedAt"></timeago></small>
                             </h5>
                             <star-rating :rating="Number(review.rating)"

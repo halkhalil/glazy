@@ -94,17 +94,13 @@
                   </div>
                   <div class="row">
                     <div class="col-sm-4">
-                      <router-link :to="{ name: 'user', params: { id: getUserSearchParam(recipe.createdByUser) }}">
-                        <div class="author">
+                      <div class="author">
+                        <router-link :to="{ name: 'user', params: { id: getUserSearchParam(recipe.createdByUser) }}">
                           <img v-if="'profile' in recipe.createdByUser && 'avatar' in recipe.createdByUser.profile"
                                v-bind:src="recipe.createdByUser.profile.avatar"
-                               class="avatar"/>
-                          <span>
-                            {{ recipe.createdByUser.name }},
-                            <timeago :since="recipe.updatedAt"></timeago>
-                          </span>
-                        </div>
-                      </router-link>
+                               class="avatar"/>{{ recipe.createdByUser.name }}</router-link>,
+                        <timeago :since="recipe.updatedAt"></timeago>
+                      </div>
                     </div>
                     <div v-if="!recipe.isPrivate"
                          class="col-sm-4 float-center">

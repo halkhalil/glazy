@@ -100,6 +100,13 @@ $brand-danger:   theme-color("danger");
 
 @import "nowui/pagination";
 
+.pagination .page-item .page-link{
+    &:hover,
+    &:focus{
+      background-color: $opacity-5;
+    }
+}
+
 $border-thin:                1px !default;
 $border-thick:               2px !default;
 
@@ -242,6 +249,10 @@ $transition-ease:           ease 0s;
 
 @import "nowui/mixins/cards";
 @import "nowui/cards";
+
+.card .author span {
+    color: inherit; // leave links blue
+}
 
 @import "nowui/mixins/inputs";
 //@import "nowui/inputs";
