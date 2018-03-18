@@ -94,6 +94,7 @@
         font-size: 38px;
         margin-top: 0;
         margin-bottom: 0;
+        white-space: nowrap;
     }
 
     .firing-card .card-body .firing-type {

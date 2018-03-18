@@ -38,7 +38,6 @@
           {{ material.name }}
         </router-link>
       </h5>
-      <span>
       <star-rating v-if="material.ratingTotal"
                    class="recipe-vue-star-rating"
                    :rating="Number(material.ratingAverage)"
@@ -46,7 +45,6 @@
                    :star-size="18"
                    :show-rating="false"
                    :increment="0.01"></star-rating>
-      </span>
       <p v-if="material.description" class="card-text">{{ material.description }}</p>
       <router-link :to="{ name: 'user', params: { id: getUserSearchParam(material.createdByUser) }}">
         <div class="author">
