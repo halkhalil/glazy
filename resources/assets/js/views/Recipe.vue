@@ -87,13 +87,22 @@
                       <span v-if="recipe.otherNames">
                         Other Names: {{ recipe.otherNames }}
                       </span>
+                      <span>
+                        <star-rating v-if="recipe.ratingTotal"
+                                     class="recipe-vue-star-rating"
+                                     :rating="Number(recipe.ratingAverage)"
+                                     :read-only="true"
+                                     :star-size="24"
+                                     :show-rating="false"
+                                     :increment="0.01"></star-rating>
+                      </span>
                     </div>
-                    <div class="col-md-3 col-sm-4" v-if="!recipe.isPrimitive">
+                    <div class="col-md-4 col-sm-4" v-if="!recipe.isPrimitive">
                       <firing-card :recipe="recipe"></firing-card>
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-sm-4">
+                    <div class="col-12 col-sm-6">
                       <div class="author">
                         <router-link :to="{ name: 'user', params: { id: getUserSearchParam(recipe.createdByUser) }}">
                           <img v-if="'profile' in recipe.createdByUser && 'avatar' in recipe.createdByUser.profile"
@@ -103,7 +112,8 @@
                       </div>
                     </div>
                     <div v-if="!recipe.isPrivate"
-                         class="col-sm-4 float-center">
+                         class="col-12 col-sm-6 text-right">
+                      Share:
                       <social-sharing :url="this.meta.url"
                                       :title="this.meta.title"
                                       :description="this.meta.description"
@@ -111,7 +121,6 @@
                                       hashtags="glaze,ceramics,recipe"
                                       inline-template>
                         <div class="btn-group" role="group" aria-label="Social sharing buttons">
-
                           <button class="btn btn-icon btn-neutral btn-default">
                             <network network="email">
                               <i class="fa fa-envelope"></i>
@@ -135,43 +144,31 @@
                         </div>
                       </social-sharing>
                     </div>
-                    <div class="col-sm-4">
-                      <span class="align-middle">
-                          <star-rating v-if="recipe.ratingTotal"
-                                       class="recipe-vue-star-rating"
-                                       :rating="Number(recipe.ratingAverage)"
-                                       :read-only="true"
-                                       :star-size="24"
-                                       :show-rating="false"
-                                       :increment="0.01"></star-rating>
-                      </span>
-                    </div>
                   </div>
 
-                  <table class="material-metadata">
-                    <tbody>
-                    <tr>
-                      <td v-if="recipe.surfaceTypeName">
-                        Surface
-                        <span class="badge badge-info">
-                          {{ recipe.surfaceTypeName }}
-                        </span>
-                      </td>
-                      <td v-if="recipe.transparencyTypeName">
-                        Transparency
-                        <span class="badge badge-info">
-                          {{ recipe.transparencyTypeName }}
-                        </span>
-                      </td>
-                      <td v-if="recipe.countryName">
-                        Country
-                        <span class="badge badge-info">
+                  <div class="row material-metadata">
+                    <div class="col-6 col-sm-4" v-if="recipe.surfaceTypeName">
+                      Surface
+                      <br/>
+                      <span class="badge badge-info">
+                    {{ recipe.surfaceTypeName }}
+                    </span>
+                    </div>
+                    <div class="col-6 col-sm-4"  v-if="recipe.transparencyTypeName">
+                      Transparency
+                      <br/>
+                      <span class="badge badge-info">
+                     {{ recipe.transparencyTypeName }}
+                    </span>
+                    </div>
+                    <div class="col-6 col-sm-4" v-if="recipe.countryName">
+                      Country
+                      <br/>
+                      <span class="badge badge-info">
                           {{ recipe.countryName }}
                         </span>
-                      </td>
-                    </tr>
-                    </tbody>
-                  </table>
+                    </div>
+                  </div>
 
                   <p class="card-description" v-if="recipe.description">
                     <span style="white-space: pre-wrap;" v-html="linkify(recipe.description.trim())">
@@ -1049,12 +1046,12 @@
     padding: 11px 16px;
   }
 
-  .material-metadata tr td {
-    padding: 0 10px 0 0;
+  .material-metadata {
+    font-size: 1em;
   }
 
   .material-metadata .badge {
-    font-size: 14px;
+    font-size: 1em;
   }
 
   .analysis-tabs .nav-tabs {
