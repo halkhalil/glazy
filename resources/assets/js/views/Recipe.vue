@@ -331,8 +331,6 @@
           </div>
         </div>
 
-
-
         <div v-if="!recipe.isPrimitive" class="row">
           <div class="col-md-12">
             <div class="card">
@@ -375,6 +373,21 @@
                             :current_user="current_user"
                             :material="recipe"
                     ></reviews-panel>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="recipe.isPrimitive" class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="card-title">Recipes Containing this Material</h2>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <contains-material :material="recipe"></contains-material>
                   </div>
                 </div>
               </div>
@@ -456,6 +469,7 @@
   import UmfChart from '../components/glazy/recipe/UmfChart.vue'
   import SimilarBaseComponents from '../components/glazy/recipe/SimilarBaseComponents.vue'
   import SimilarUnityFormula from '../components/glazy/recipe/SimilarUnityFormula.vue'
+  import ContainsMaterial from '../components/glazy/recipe/ContainsMaterial.vue'
 
   import EditMaterialMetadata from '../components/glazy/recipe/EditMaterialMetadata.vue'
   import EditRecipeComponents from '../components/glazy/recipe/EditRecipeComponents.vue'
@@ -528,6 +542,7 @@
       ComponentTable,
       SimilarBaseComponents,
       SimilarUnityFormula,
+      ContainsMaterial,
       EditMaterialMetadata,
       EditRecipeComponents,
       ReviewsPanel,

@@ -99,6 +99,7 @@ $api->version('v1', function (Router $api) {
         $api->get('/', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@index')->name('index');
         $api->get('/nearestXY', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@nearestXY')->name('nearestXY');
         $api->post('/similarMaterials/{id?}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarMaterials')->name('similarMaterials');
+        $api->post('/containsMaterials', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@containsMaterials')->name('containsMaterials');
         $api->get('/similarBaseComponents/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarBaseComponents')->name('similarBaseComponents');
         $api->get('/similarUnityFormula/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarUnityFormula')->name('similarUnityFormula');
     });

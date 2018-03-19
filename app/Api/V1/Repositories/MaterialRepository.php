@@ -402,6 +402,68 @@ class MaterialRepository extends Repository
         return $query->limit(20)->get();
     }
 
+    public function containsMaterials(array $data) {
+
+        $page = 0;
+        if (array_key_exists('p', $data)) {
+            $page = (int)$data['p'];
+        }
+        if (!$page || $page <= 0) {
+            // if page not specified, start w/ page 1
+            $page = 1;
+        }
+
+        $materialIds = $data['materials'];
+
+        if (count($materialIds) < 1) {
+            return null;
+        }
+
+        $query = Material::query()
+            ->with('analysis')
+            ->with('atmospheres')
+            ->with('material_type')
+            ->with('thumbnail')
+            ->with('components')
+            ->with('created_by_user')
+            ->with('created_by_user.profile');
+
+        $current_user_id = null;
+        if (Auth::check())
+        {
+            $user = Auth::guard('api')->user();
+            $current_user_id = $user->id;
+        }
+
+        $query->ofUserViewable($current_user_id, null);
+
+        foreach ($materialIds as $materialId) {
+            $query->whereExists(function ($query) use ($materialId) {
+                $query->select(DB::raw(1))
+                    ->from('material_materials')
+                    ->whereRaw('material_materials.parent_material_id = materials.id')
+                    ->whereRaw('material_materials.component_material_id = '.$materialId);
+            });
+            // $query->orderBy('material_materials.percentage_amount', 'DESC');
+        }
+
+        /*
+        $query->join('material_materials', 'material_materials.component_material_id', '=', 'materials.id');
+        foreach ($materialIds as $materialId) {
+            // BUG: needs orwhere
+            $query->where('material_materials.component_material_id', $materialId);
+        }
+        $query->orderBy('material_materials.percentage_amount');
+        */
+
+        $query->orderBy('materials.updated_at', 'DESC');
+
+        $materials = $query->paginate(20, ['*'], 'page', $page);
+
+        return $materials;
+    }
+
+
     /*
      * Stupid!  Checking hashes won't work
     */

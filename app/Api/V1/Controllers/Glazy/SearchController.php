@@ -602,6 +602,25 @@ class SearchController extends ApiBaseController
         return $this->manager->createData($resource)->toArray();
     }
 
+    public function containsMaterials(Request $request)
+    {
+        $data = $request->all();
+
+        $materials = $this->materialRepository->containsMaterials($data);
+
+        if (!$materials)
+        {
+            return $this->respondNotFound('No materials found.');
+        }
+
+        $this->manager->parseIncludes(['materialComponents', 'atmospheres', 'thumbnail', 'createdByUser']);
+
+        $resource = new FractalCollection($materials, new ShallowMaterialTransformer());
+        $resource->setPaginator(new IlluminatePaginatorAdapter($materials));
+
+        return $this->manager->createData($resource)->toArray();
+    }
+
     public function similarUnityFormula($material_id)
     {
         $materials = $this->materialRepository->similarUnityFormula($material_id);
