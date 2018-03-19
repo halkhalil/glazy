@@ -47,8 +47,8 @@
             </a>
         </li>
         <li class="page-item totals">
-            {{ pagination.from }}
-            to {{ pagination.to }}
+            {{ paginationFrom }}
+            to {{ paginationTo }}
             of {{ pagination.total }}
             {{ item_type_name }}
         </li>
@@ -88,7 +88,17 @@ export default {
             return false;
         },
 
-        page_links: function() {
+        paginationFrom: function() {
+          return (this.pagination.per_page * this.pagination.current_page) - this.pagination.per_page + 1
+        },
+
+      paginationTo: function() {
+        var myto = this.pagination.per_page * this.pagination.current_page
+        if (myto > this.pagination.total) return this.pagination.total
+        return myto
+      },
+
+      page_links: function() {
             var page_links = {};
 
             if (this.isLoaded) {

@@ -4,14 +4,15 @@
             <div class="loader">Searching...</div>
         </div>
 
-        <div class="table-responsive" v-if="isLoaded && !isProcessing && materialList.length > 1">
+        <paginator
+                v-if="!isProcessing"
+                :pagination="pagination"
+                :num_page_links="5"
+                :item_type_name="item_type_name"
+                v-on:pagerequest="containsMaterials"
+        ></paginator>
 
-            <paginator
-                    :pagination="pagination"
-                    :num_page_links="5"
-                    :item_type_name="item_type_name"
-                    v-on:pagerequest="containsMaterials"
-            ></paginator>
+        <div class="table-responsive" v-if="isLoaded && !isProcessing && materialList.length > 1">
 
             <table class="table table-hover table-sm contains-material-table">
                 <thead>
@@ -44,9 +45,19 @@
                 </tbody>
             </table>
         </div>
+
         <div v-else>
-            <h5>No recipes containing this material found.</h5>
+            <h5 v-if="!isProcessing">No recipes containing this material found.</h5>
         </div>
+
+        <paginator
+                v-if="!isProcessing"
+                :pagination="pagination"
+                :num_page_links="5"
+                :item_type_name="item_type_name"
+                v-on:pagerequest="containsMaterials"
+        ></paginator>
+
     </div>
 
 </template>
