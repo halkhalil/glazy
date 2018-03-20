@@ -118,7 +118,7 @@
                    :class="{ galleryselected: (image.id == currentImage.id) }"
                    href="#">
                     <img class="rounded img-raised"
-                         :src="getImageUrl(image.filename, 's')"
+                         :src="getImageUrl(image.filename, 'm')"
                          :alt="image.title">
                 </a>
             </div>
