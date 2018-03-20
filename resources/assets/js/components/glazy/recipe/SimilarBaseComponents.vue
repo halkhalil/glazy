@@ -4,7 +4,7 @@
             <div class="loader">Searching...</div>
         </div>
 
-        <div class="table-responsive" v-if="isLoaded && !isProcessing && materialList.length > 0">
+        <div class="table-responsive" v-if="isLoaded && !isProcessing && materialList && materialList.length > 0">
 
             <table class="table table-hover table-sm similar-base-components-table">
 
@@ -86,8 +86,6 @@
               Vue.axios.get(Vue.axios.defaults.baseURL + '/search/similarBaseComponents/'  + this.material.id)
                     .then((response) => {
                         this.materialList = response.data.data;
-                        console.log('YYYY')
-                        console.log(this.materialList)
                         this.isLoaded = true
                         this.isProcessing = false
                     })

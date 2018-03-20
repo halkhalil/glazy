@@ -676,6 +676,7 @@
       // Ensure that the back/forward buttons work within this component/route
       this.isEditComponents = false
       this.isEditMeta = false
+      // this.recipe = null
       this.sendRecipeGetRequest('/recipes/' + to.params.id)
       next()
     },
@@ -902,6 +903,7 @@
             this.isProcessing = false
             console.log(this.apiError)
           } else {
+            this.recipe = null
             this.recipe = response.data.data
             this.meta.title = this.recipe.name
             this.meta.description = this.recipe.name

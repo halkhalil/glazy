@@ -3,7 +3,7 @@
         <div class="load-container load7" v-if="isProcessing">
             <div class="loader">Searching...</div>
         </div>
-        <div class="table-responsive" v-if="isLoaded && !isProcessing && materialList.length > 0">
+        <div class="table-responsive" v-if="isLoaded && !isProcessing && materialList && materialList.length > 0">
 
             <table class="table table-bordered table-hover table-sm similar-unity-formula-table">
 
