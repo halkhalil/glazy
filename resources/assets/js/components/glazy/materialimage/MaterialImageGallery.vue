@@ -211,7 +211,11 @@
         serverError: null
       }
     },
-
+    watch: {
+      material: function (val) {
+        this.selectedImage = null
+      }
+    },
     computed: {
 
       isLoaded: function () {
