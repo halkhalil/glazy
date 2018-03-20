@@ -1,8 +1,9 @@
-
 <template>
-
     <div id="similar-unity-formula">
-        <div class="table-responsive" v-if="isLoaded && materialList.length > 1">
+        <div class="load-container load7" v-if="isProcessing">
+            <div class="loader">Searching...</div>
+        </div>
+        <div class="table-responsive" v-if="isLoaded && !isProcessing && materialList.length > 0">
 
             <table class="table table-bordered table-hover table-sm similar-unity-formula-table">
 
@@ -75,8 +76,7 @@
                                 {{ similar.name }}
                             </a>
                         </td>
-                        <td>
-                            {{ coneString(similar.fromOrtonConeName, similar.toOrtonConeName) }}
+                        <td v-html="coneString(similar.fromOrtonConeName, similar.toOrtonConeName)">
                         </td>
 
                         <td>{{ (similar.analysis.umfAnalysis.SiO2Al2O3Ratio) ? Number(similar.analysis.umfAnalysis.SiO2Al2O3Ratio).toFixed(2) : ''  }}</td>
@@ -100,7 +100,7 @@
             </table>
         </div>
         <div v-else>
-            <h5>No recipes with similar UMF formulas found.</h5>
+            <h5 v-if="!isProcessing">No recipes with similar UMF formulas found.</h5>
         </div>
     </div>
 
@@ -120,7 +120,8 @@
 
     data() {
       return {
-        materialList: []
+        materialList: [],
+        isProcessing: false
       }
     },
 
@@ -138,21 +139,21 @@
     },
     methods: {
       fetchSimilarUnityFormula: function () {
-        console.log('Fetching similar unity formulas...');
-        console.log('url: ' + Vue.axios.defaults.baseURL + '/search/similarUnityFormula/' + this.material.id)
+        this.isProcessing = true
         var recipeUrl = Vue.axios.defaults.baseURL + '/search/similarUnityFormula/' + this.material.id;
+
         Vue.axios.get(recipeUrl)
-          .then(function (response) {
-            this.materialList = response.data.data;
-            console.log('response:')
-            console.log(this.materialList)
-            if (!this.materialList) {
-              this.materialList = [];
-            }
-            this.materialList.push(this.material)
-          }.bind(this), function (response) {
-            this.materialList = []
-          }.bind(this));
+          .then((response) => {
+          this.materialList = response.data.data;
+          console.log('YYYY')
+          console.log(this.materialList)
+          this.isProcessing = false
+        })
+        .catch(response => {
+          // Error Handling
+          this.isProcessing = false
+        })
+
       },
 
       coneString: function(fromOrtonConeName, toOrtonConeName) {

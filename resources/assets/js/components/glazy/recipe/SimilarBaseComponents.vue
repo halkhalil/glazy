@@ -1,8 +1,10 @@
-
 <template>
-
     <div id="similar-base-components">
-        <div class="table-responsive" v-if="isLoaded && materialList.length > 1">
+        <div class="load-container load7" v-if="isProcessing">
+            <div class="loader">Searching...</div>
+        </div>
+
+        <div class="table-responsive" v-if="isLoaded && !isProcessing && materialList.length > 0">
 
             <table class="table table-hover table-sm similar-base-components-table">
 
@@ -29,8 +31,7 @@
                                 {{ similar.name }}
                             </a>
                         </td>
-                        <td>
-                            {{ coneString(similar.fromOrtonConeName, similar.toOrtonConeName) }}
+                        <td v-html="coneString(similar.fromOrtonConeName, similar.toOrtonConeName)">
                         </td>
                         <td v-html="getAdditionalComponentsString(similar)">
                         </td>
@@ -40,7 +41,7 @@
             </table>
         </div>
         <div v-else>
-            <h5>No similar base recipes found.</h5>
+            <h5 v-if="!isProcessing">No similar base recipes found.</h5>
         </div>
     </div>
 
@@ -60,7 +61,8 @@
         data() {
             return {
                 materialList : null,
-                isLoaded : false
+                isLoaded : false,
+                isProcessing: false
             };
         },
 
@@ -76,18 +78,19 @@
         methods: {
 
             fetchSimilarBaseComponents : function(){
-                console.log('Fetching similar unity formulas...');
-
+              this.isProcessing = true
               Vue.axios.get(Vue.axios.defaults.baseURL + '/search/similarBaseComponents/'  + this.material.id)
                     .then((response) => {
                         this.materialList = response.data.data;
                         console.log('YYYY')
                         console.log(this.materialList)
-                        this.isLoaded = true;
+                        this.isLoaded = true
+                        this.isProcessing = false
                     })
                     .catch(response => {
                         // Error Handling
-                    });
+                        this.isProcessing = false
+                    })
             },
 
             coneString: function(fromOrtonConeName, toOrtonConeName) {

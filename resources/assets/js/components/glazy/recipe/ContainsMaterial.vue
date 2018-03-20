@@ -12,7 +12,7 @@
                 v-on:pagerequest="containsMaterials"
         ></paginator>
 
-        <div class="table-responsive" v-if="isLoaded && !isProcessing && materialList.length > 1">
+        <div class="table-responsive" v-if="isLoaded && !isProcessing && materialList.length > 0">
 
             <table class="table table-hover table-sm contains-material-table">
                 <thead>

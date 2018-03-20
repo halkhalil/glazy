@@ -46,14 +46,14 @@
                         </div>
                     </div>
                     <!--
-                    <div class="btn-previous-image" v-if="imageList.length > 1">
+                    <div class="btn-previous-image" v-if="imageList.length > 0">
                         <b-button
                                 @click.stop.prevent="previousImage()"
                                 class="gallery-nav-button">
                             <i class="fa fa-chevron-left"></i>
                         </b-button>
                     </div>
-                    <div class="btn-next-image" v-if="imageList.length > 1">
+                    <div class="btn-next-image" v-if="imageList.length > 0">
                         <b-button
                                 @click.stop.prevent="nextImage()"
                                 class="gallery-nav-button">
