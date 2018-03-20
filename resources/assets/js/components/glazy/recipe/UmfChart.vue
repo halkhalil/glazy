@@ -15,7 +15,10 @@
                 </span>
             </div>
         </div>
-        <div v-if="isLoaded" class="row">
+        <div class="load-container load7" v-if="isProcessing">
+            <div class="loader">Searching...</div>
+        </div>
+        <div v-if="isLoaded && !isProcessing" class="row">
             <div class="col-md-12 col-sm-12 mb-2">
                 <img src="/img/charts/recipe.png" height="25"/> Recipe &nbsp;
                 <img src="/img/charts/analysis.png" height="25"/> Analysis &nbsp;
@@ -228,8 +231,19 @@
 
       setTimeout(() => {
         this.handleResize()
-      }, 300);
+      }, 500);
       window.addEventListener('resize', this.handleResize)
+    },
+
+    watch: {
+      material: function (val) {
+        if (this.material) {
+          if (this.material.materialTypeId) {
+            this.materialTypeId = this.material.materialTypeId;
+          }
+          this.fetchRecipeList();
+        }
+      }
     },
 
     methods: {

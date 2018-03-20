@@ -69,10 +69,14 @@
         computed: {
         },
 
+        watch: {
+          material: function (val) {
+            this.fetchSimilarBaseComponents()
+          }
+        },
+
         mounted() {
-            console.log('XXX similar-base-components');
-            console.log(this.material);
-            this.fetchSimilarBaseComponents();
+            this.fetchSimilarBaseComponents()
         },
 
         methods: {

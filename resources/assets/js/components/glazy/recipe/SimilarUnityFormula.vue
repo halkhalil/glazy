@@ -136,6 +136,12 @@
     mounted() {
       this.fetchSimilarUnityFormula();
     },
+    watch: {
+      material: function (val) {
+        this.fetchSimilarUnityFormula()
+      }
+    },
+
     methods: {
       fetchSimilarUnityFormula: function () {
         this.isProcessing = true
