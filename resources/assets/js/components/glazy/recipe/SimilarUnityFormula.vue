@@ -41,8 +41,7 @@
                         <td class="description">
                                 {{ material.name }}
                         </td>
-                        <td>
-                            {{ coneString(material.fromOrtonConeName, material.toOrtonConeName) }}
+                        <td v-html="coneString(material.fromOrtonConeName, material.toOrtonConeName)">
                         </td>
 
                         <td>{{ (material.analysis.umfAnalysis.SiO2Al2O3Ratio) ? Number(material.analysis.umfAnalysis.SiO2Al2O3Ratio).toFixed(2) : ''  }}</td>
