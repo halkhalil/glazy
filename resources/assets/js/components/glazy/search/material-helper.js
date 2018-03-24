@@ -34,12 +34,12 @@ export default class MaterialHelper {
     return false;
   }
 
-  getImageUrl () {
-    if (this.material.thumbnail && this.material.thumbnail.filename) {
+  getImageUrl (image) {
+    if (image && image.filename) {
       var id = '' + this.material.id;
       var bin = id.substr(id.length - 2);
       return GLAZY_APP_URL + '/storage/uploads/recipes/' +
-        bin + '/s_' + this.material.thumbnail.filename;
+        bin + '/s_' + image.filename;
     }
     return '/img/recipes/black.png';
   }

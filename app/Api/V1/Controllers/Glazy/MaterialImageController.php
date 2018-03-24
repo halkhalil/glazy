@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Log;
 
 use League\Fractal\Resource\Item as FractalItem;
 use League\Fractal\Manager as FractalManager;
+use League\Fractal\Resource\Collection as FractalCollection;
 
 use App\Api\V1\Serializers\GlazySerializer;
 
@@ -130,6 +131,19 @@ class MaterialImageController extends ApiBaseController
 
     }
     */
+
+    public function userList($user_id)
+    {
+        $images = $this->materialImageRepository->userList($user_id);
+
+        if (! $images)
+        {
+            return $this->respondNotFound('No Images Found for that User');
+        }
+
+        $resource = new FractalCollection($images, new MaterialImageTransformer());
+        return $this->manager->createData($resource)->toArray();
+    }
 
     public function store(CreateMaterialImageRequest $request)
     {

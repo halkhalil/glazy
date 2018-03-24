@@ -150,6 +150,46 @@ class ShallowMaterialTransformer extends Fractal\TransformerAbstract
         }
 
         $material_data[self::JSON_NAMES[Material::DB_THUMBNAIL_ID]] = $material[Material::DB_THUMBNAIL_ID];
+
+        if ($material['selected_image_filename']) {
+            $material_data['selectedImage']['filename'] = $material['selected_image_filename'];
+            if ($material['selected_image_dominant_rgb_r']) {
+                $material_data['selectedImage']['dominantHexColor'] =
+                    Material::getHexFromRGB(
+                        $material['selected_image_dominant_rgb_r'],
+                        $material['selected_image_dominant_rgb_g'],
+                        $material['selected_image_dominant_rgb_b']
+                    );
+            }
+            if ($material['selected_image_secondary_rgb_r']) {
+                $material_data['selectedImage']['secondaryHexColor'] =
+                    Material::getHexFromRGB(
+                        $material['selected_image_secondary_rgb_r'],
+                        $material['selected_image_secondary_rgb_g'],
+                        $material['selected_image_secondary_rgb_b']
+                    );
+            }
+        }
+        elseif ($material['thumbnail']) {
+            $material_data['selectedImage']['filename'] = $material['thumbnail']['filename'];
+            if ($material['thumbnail']['dominant_rgb_r']) {
+                $material_data['selectedImage']['dominantHexColor'] =
+                    Material::getHexFromRGB(
+                        $material['thumbnail']['dominant_rgb_r'],
+                        $material['thumbnail']['dominant_rgb_g'],
+                        $material['thumbnail']['dominant_rgb_b']
+                    );
+            }
+            if ($material['thumbnail']['secondary_rgb_r']) {
+                $material_data['selectedImage']['secondaryHexColor'] =
+                    Material::getHexFromRGB(
+                        $material['thumbnail']['secondary_rgb_r'],
+                        $material['thumbnail']['secondary_rgb_g'],
+                        $material['thumbnail']['secondary_rgb_b']
+                    );
+            }
+        }
+
         $material_data[self::JSON_NAMES[Material::DB_RATING_TOTAL]] = $material[Material::DB_RATING_TOTAL];
         $material_data[self::JSON_NAMES[Material::DB_RATING_NUMBER]] = $material[Material::DB_RATING_NUMBER];
         $material_data[self::JSON_NAMES[Material::DB_RATING_AVERAGE]] = $material[Material::DB_RATING_AVERAGE];

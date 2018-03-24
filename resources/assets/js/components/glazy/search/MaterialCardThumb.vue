@@ -6,21 +6,21 @@
     <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}"
       class="material-card-img-link">
       <img class="card-img-top img-fluid w-100"
-           :src="materialHelper.getImageUrl()"
+           :src="materialHelper.getImageUrl(material.selectedImage)"
            :alt="material.name">
     </router-link>
     <span v-bind:id="'material-card-' + material.id"
           class="material-anchor"></span>
-    <div class="swatches" v-if="material.thumbnail">
-      <a v-if="material.thumbnail.dominantHexColor"
+    <div class="swatches" v-if="material.selectedImage">
+      <a v-if="material.selectedImage.dominantHexColor"
          role="button" class="btn"
-         :href="'/search?hex_color=' + material.thumbnail.dominantHexColor"
-         :style="'background-color: #' + material.thumbnail.dominantHexColor">
+         :href="'/search?hex_color=' + material.selectedImage.dominantHexColor"
+         :style="'background-color: #' + material.selectedImage.dominantHexColor">
       </a>
-      <a v-if="material.thumbnail.secondaryHexColor"
+      <a v-if="material.selectedImage.secondaryHexColor"
          role="button" class="btn"
-         :href="'/search?hex_color=' + material.thumbnail.secondaryHexColor"
-         :style="'background-color: #' + material.thumbnail.secondaryHexColor">
+         :href="'/search?hex_color=' + material.selectedImage.secondaryHexColor"
+         :style="'background-color: #' + material.selectedImage.secondaryHexColor">
       </a>
     </div>
 

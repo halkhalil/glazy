@@ -7,6 +7,7 @@ use App\Api\V1\Requests\Search\SimilarUnityFormulaRequest;
 
 use App\Api\V1\Transformers\ChartMaterialTransformer;
 use App\Api\V1\Transformers\Material\ChartPointMaterialTransformer;
+use App\Api\V1\Transformers\MaterialImage\MaterialImageTransformer;
 use App\Api\V1\Transformers\NoComponentsMaterialTransformer;
 use App\Api\V1\Transformers\Material\ShallowMaterialFromMaterialImageTransformer;
 use App\Api\V1\Transformers\Material\ShallowMaterialTransformer;
@@ -195,31 +196,69 @@ class SearchController extends ApiBaseController
             $query->where('is_primitive', false);
         }
 
-        if (!empty($hex_color))
-        {
+        $r = null;
+        $g = null;
+        $b = null;
+
+        if (!empty($hex_color)) {
             list($r, $g, $b) = sscanf($hex_color, "%02x%02x%02x");
+        }
 
-            if (is_int($r) && is_int($g) && is_int($b)) {
-                $query->join('material_images', 'material_images.material_id', '=', 'materials.id');
+        if (is_int($r) && is_int($g) && is_int($b)) {
 
-                $selectColor = '((CAST(material_images.dominant_rgb_r AS SIGNED) - '.$r.')*(CAST(material_images.dominant_rgb_r AS SIGNED) - '.$r.'))';
-                $selectColor .= ' + ((CAST(material_images.dominant_rgb_g AS SIGNED) - '.$g.')*(CAST(material_images.dominant_rgb_g AS SIGNED) - '.$g.'))';
-                $selectColor .= ' + ((CAST(material_images.dominant_rgb_b AS SIGNED) - '.$b.')*(CAST(material_images.dominant_rgb_b AS SIGNED) - '.$b.'))';
-                $selectColor .= ' AS colordiff ';
-                $query->selectRaw($selectColor);
+            /*
+            $imageQuery = $this->getImageQuery($query, $r, $g, $b);
 
-                $query->whereNotNull('material_images.dominant_rgb_r');
-
-                $query->with('analysis');
-                $query->with('atmospheres');
-                $query->with('material_type');
-                $query->with('shallowComponents');
-                $query->with('thumbnail');
-                $query->with('created_by_user');
-                $query->with('created_by_user.profile');
-
-                $query->orderByRaw('colordiff ASC');
+            if ($count && $count < self::MAX_ITEMS_PER_PAGE) {
+                $recipes = $imageQuery->paginate($count, ['*'], 'page', $page);
             }
+            else {
+                $recipes = $imageQuery->paginate(self::DEFAULT_ITEMS_PER_PAGE, ['*'], 'page', $page);
+            }
+
+            $this->manager->parseIncludes(['atmospheres', 'materialComponents', 'thumbnail', 'createdByUser']);
+
+            $resource = new FractalCollection($recipes, new MaterialImageTransformer());
+            $resource->setPaginator(new IlluminatePaginatorAdapter($recipes));
+
+            if ($jsonUser) {
+                $resource->setMetaValue('user', $jsonUser);
+            }
+
+            return $this->manager->createData($resource)->toArray();
+            */
+
+            $query->join('material_images', 'material_images.material_id', '=', 'materials.id');
+
+            $selectColor = '((CAST(material_images.dominant_rgb_r AS SIGNED) - '.$r.')*(CAST(material_images.dominant_rgb_r AS SIGNED) - '.$r.'))';
+            $selectColor .= ' + ((CAST(material_images.dominant_rgb_g AS SIGNED) - '.$g.')*(CAST(material_images.dominant_rgb_g AS SIGNED) - '.$g.'))';
+            $selectColor .= ' + ((CAST(material_images.dominant_rgb_b AS SIGNED) - '.$b.')*(CAST(material_images.dominant_rgb_b AS SIGNED) - '.$b.'))';
+            $selectColor .= ' AS colordiff, material_images.filename AS selected_image_filename, ';
+            $selectColor .= ' material_images.dominant_rgb_r AS selected_image_dominant_rgb_r, ';
+            $selectColor .= ' material_images.secondary_rgb_r AS selected_image_secondary_rgb_r';
+
+            $query->selectRaw($selectColor);
+
+            $query->addSelect(
+                'material_images.filename AS selected_image_filename',
+                'material_images.dominant_rgb_r AS selected_image_dominant_rgb_r',
+                'material_images.dominant_rgb_g AS selected_image_dominant_rgb_g',
+                'material_images.dominant_rgb_b AS selected_image_dominant_rgb_b',
+                'material_images.secondary_rgb_r AS selected_image_secondary_rgb_r',
+                'material_images.secondary_rgb_g AS selected_image_secondary_rgb_g',
+                'material_images.secondary_rgb_b AS selected_image_secondary_rgb_b');
+
+            $query->whereNotNull('material_images.dominant_rgb_r');
+
+            $query->with('analysis');
+            $query->with('atmospheres');
+            $query->with('material_type');
+            $query->with('shallowComponents');
+            $query->with('thumbnail');
+            $query->with('created_by_user');
+            $query->with('created_by_user.profile');
+
+            $query->orderByRaw('colordiff ASC');
         }
 
         /**
@@ -276,7 +315,8 @@ class SearchController extends ApiBaseController
         }
         */
 
-        $this->manager->parseIncludes(['atmospheres', 'materialComponents', 'thumbnail', 'createdByUser']);
+        //$this->manager->parseIncludes(['atmospheres', 'materialComponents', 'thumbnail', 'createdByUser']);
+        $this->manager->parseIncludes(['atmospheres', 'materialComponents', 'createdByUser']);
 
         $resource = new FractalCollection($recipes, new ShallowMaterialTransformer());
         $resource->setPaginator(new IlluminatePaginatorAdapter($recipes));
@@ -292,6 +332,7 @@ class SearchController extends ApiBaseController
 
     /*
      * TODO: check query needs optimizing
+     */
     protected function getImageQuery($materialQuery, $r, $g, $b)
     {
         $imageQuery = MaterialImage::query();
@@ -327,7 +368,6 @@ class SearchController extends ApiBaseController
         return $imageQuery;
 
     }
-    */
 
     /**
      * @param $id The Recipe ID

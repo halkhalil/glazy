@@ -71,7 +71,7 @@ class MaterialImageRepository extends Repository
      * @param $user_id
      * @return mixed
      */
-    public function userlist($user_id)
+    public function userList($user_id)
     {
         if (!$user_id) {
             // TODO: should probably also check that user ID exists
@@ -99,6 +99,7 @@ class MaterialImageRepository extends Repository
             ->whereHas('material', function ($q) {
                 $q->where('is_private', false);
             })
+            ->with('material')
             ->with('material.from_orton_cone')
             ->with('material.to_orton_cone')
             ->with('material.atmospheres')

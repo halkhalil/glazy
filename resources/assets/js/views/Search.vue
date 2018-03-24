@@ -149,7 +149,7 @@
           ></material-card-thumb>
         </div>
       </section>
-      <section class="row" v-if="(searchQuery.params.view === 'details') && !isProcessing">
+      <section class="row" v-else-if="(searchQuery.params.view === 'details') && !isProcessing">
         <div v-bind:class="materialCardClass" class=""
              v-for="(material, index) in searchItems">
           <material-card-detail

@@ -67,6 +67,7 @@ $api->version('v1', function (Router $api) {
     });
 
     $api->group(['prefix' => 'materialimages'], function(Router $api) {
+        $api->get('/userList/{user_id}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialImageController@userList')->name('userList');
         $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
             $api->post('/', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialImageController@store')->name('store');
             $api->patch('/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialImageController@update')->name('update');
