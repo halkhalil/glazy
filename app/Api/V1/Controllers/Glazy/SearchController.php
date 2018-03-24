@@ -273,6 +273,8 @@ class SearchController extends ApiBaseController
                 'material_images.secondary_rgb_b AS selected_image_secondary_rgb_b');
 
             $query->where('material_images.created_by_user_id', '=', $search_user_id);
+
+            $query->orderBy('material_images.updated_at', 'DESC');
         }
 
         /**
