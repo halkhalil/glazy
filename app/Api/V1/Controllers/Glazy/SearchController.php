@@ -87,6 +87,7 @@ class SearchController extends ApiBaseController
         $r = null;
         $g = null;
         $b = null;
+        $is_image_search = $request->input('images');
 
         $order_id = $request->input('order');
         $view_option = $request->input('view');
@@ -157,8 +158,11 @@ class SearchController extends ApiBaseController
             // So don't limit the search by search user's own materials
             $query->ofUserViewable($current_user_id, null);
         }
-        else {
+        elseif ($search_user_id && !$is_image_search) {
             $query->ofUserViewable($current_user_id, $search_user_id);
+        }
+        else {
+            $query->ofUserViewable($current_user_id, null);
         }
 
         if ($collection_id) {
@@ -189,16 +193,16 @@ class SearchController extends ApiBaseController
         $query->with('created_by_user');
         $query->with('created_by_user.profile');
 
-        if ($is_primitive) {
-            $query->where('is_primitive', true);
+        // For image searches, we don't care if the materials are primitive or not.
+        // All other searches should filter by primitive:
+        if (!$is_image_search) {
+            if ($is_primitive) {
+                $query->where('is_primitive', true);
+            }
+            else {
+                $query->where('is_primitive', false);
+            }
         }
-        else {
-            $query->where('is_primitive', false);
-        }
-
-        $r = null;
-        $g = null;
-        $b = null;
 
         if (!empty($hex_color)) {
             list($r, $g, $b) = sscanf($hex_color, "%02x%02x%02x");
@@ -250,15 +254,25 @@ class SearchController extends ApiBaseController
 
             $query->whereNotNull('material_images.dominant_rgb_r');
 
-            $query->with('analysis');
-            $query->with('atmospheres');
-            $query->with('material_type');
-            $query->with('shallowComponents');
-            $query->with('thumbnail');
-            $query->with('created_by_user');
-            $query->with('created_by_user.profile');
+            if ($is_image_search && $search_user_id) {
+                $query->where('material_images.created_by_user_id', '=', $search_user_id);
+            }
 
             $query->orderByRaw('colordiff ASC');
+        }
+        elseif ($is_image_search && $search_user_id) {
+            $query->join('material_images', 'material_images.material_id', '=', 'materials.id');
+
+            $query->addSelect(
+                'material_images.filename AS selected_image_filename',
+                'material_images.dominant_rgb_r AS selected_image_dominant_rgb_r',
+                'material_images.dominant_rgb_g AS selected_image_dominant_rgb_g',
+                'material_images.dominant_rgb_b AS selected_image_dominant_rgb_b',
+                'material_images.secondary_rgb_r AS selected_image_secondary_rgb_r',
+                'material_images.secondary_rgb_g AS selected_image_secondary_rgb_g',
+                'material_images.secondary_rgb_b AS selected_image_secondary_rgb_b');
+
+            $query->where('material_images.created_by_user_id', '=', $search_user_id);
         }
 
         /**
@@ -333,6 +347,7 @@ class SearchController extends ApiBaseController
     /*
      * TODO: check query needs optimizing
      */
+    /*
     protected function getImageQuery($materialQuery, $r, $g, $b)
     {
         $imageQuery = MaterialImage::query();
@@ -368,6 +383,7 @@ class SearchController extends ApiBaseController
         return $imageQuery;
 
     }
+    */
 
     /**
      * @param $id The Recipe ID

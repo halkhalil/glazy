@@ -8,7 +8,7 @@
                 v-if="!isProcessing"
                 :pagination="pagination"
                 :num_page_links="5"
-                :item_type_name="item_type_name"
+                :item_type_name="'Recipes'"
                 v-on:pagerequest="containsMaterials"
         ></paginator>
 
@@ -54,7 +54,7 @@
                 v-if="!isProcessing"
                 :pagination="pagination"
                 :num_page_links="5"
-                :item_type_name="item_type_name"
+                :item_type_name="'Recipes'"
                 v-on:pagerequest="containsMaterials"
         ></paginator>
 
@@ -119,13 +119,10 @@
             },
 
             getMaterialAmount : function(materialComponents) {
-              console.log('getmaterialamount1')
               if (materialComponents) {
                 var amount = 0
                 materialComponents.forEach(function (component) {
-                  console.log('getmaterialamount2')
                   if (component.material.id === this.material.id) {
-                    console.log ('FOUND: ' + component.percentageAmount)
                     amount = component.percentageAmount
                   }
                 }.bind(this))

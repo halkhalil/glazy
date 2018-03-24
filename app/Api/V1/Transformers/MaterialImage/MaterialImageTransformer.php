@@ -48,8 +48,6 @@ class MaterialImageTransformer extends Fractal\TransformerAbstract
 
         if ($materialImage)
         {
-            $material_data[self::JSON_NAMES[Material::DB_ID]] = $materialImage[Material::DB_ID];
-
             $image_data[self::JSON_NAMES[MaterialImage::DB_ID]] = $materialImage[MaterialImage::DB_ID];
             $image_data[self::JSON_NAMES[MaterialImage::DB_MATERIAL_ID]] = $materialImage[MaterialImage::DB_MATERIAL_ID];
             $image_data[self::JSON_NAMES[MaterialImage::DB_TITLE]] = $materialImage[MaterialImage::DB_TITLE];

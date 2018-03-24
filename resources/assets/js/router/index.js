@@ -66,6 +66,11 @@ export default new Router({
           component: Search
         },
         {
+          path: '/u/:id/images',
+          name: 'user-images',
+          component: Search
+        },
+        {
           path: '/materials',
           name: 'materials',
           component: Search

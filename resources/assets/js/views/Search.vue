@@ -444,6 +444,9 @@
       }
       if (this.$route.params && this.$route.params.id) {
         this.searchQuery.params.u = this.$route.params.id
+        if (this.$route.name === 'user-images') {
+          this.searchQuery.params.images = 1
+        }
       }
 
       this.$store.dispatch('search/search', {
@@ -478,11 +481,13 @@
         var isPrimitive = false
         if (route.name === 'materials' ||
           route.name === 'user-materials') {
-          console.log('hit is primitive ture ')
           isPrimitive = true
         }
         if ('params' in route && route.params.id) {
           this.searchQuery.params.u = route.params.id
+          if (route.name === 'user-images') {
+            this.searchQuery.params.images = 1
+          }
         }
         this.$store.dispatch('search/search', {
           query: this.searchQuery, isPrimitive: isPrimitive
@@ -501,6 +506,9 @@
         var myQuery = this.searchQuery.getMinimalQuery()
         if ('u' in myQuery) {
           delete myQuery.u // 'u' param is in the route
+        }
+        if ('images' in myQuery) {
+          delete myQuery.images // 'images' param is in the route
         }
         // Update the route.  Actual search triggered in beforeRouteUpdate
         this.$router.push({path: this.$route.path, query: myQuery})

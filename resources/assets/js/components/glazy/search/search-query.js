@@ -23,7 +23,8 @@ export default class SearchQuery {
       view: this.defaultView,
       order: '',
       x: this.defaultX,
-      y: this.defaultY
+      y: this.defaultY,
+      images: 0 // is this an image search? 1 == true
     }
 
     if (params) {
@@ -88,6 +89,9 @@ export default class SearchQuery {
       minimalQuery.y = this.params.y
       minimalQuery.x = this.params.x
     }
+    if (this.params.images) {
+      minimalQuery.images = this.params.images
+    }
     return minimalQuery;
   }
 
@@ -142,6 +146,9 @@ export default class SearchQuery {
       if ('x' in routerQuery && routerQuery.x) {
         this.params.x = routerQuery.x
       }
+      if ('images' in routerQuery && routerQuery.images) {
+        this.params.images = routerQuery.images
+      }
     }
   }
 
@@ -160,6 +167,7 @@ export default class SearchQuery {
       this.params.hex_color = params.hex_color
       this.params.y = params.y
       this.params.x = params.x
+      this.params.images = params.images
     }
   }
 

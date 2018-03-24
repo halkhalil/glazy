@@ -25,6 +25,9 @@
                         <b-dropdown-item :to="{ name: 'inventory' }">
                             <i class="fa fa-cubes fa-fw"></i> My Inventory
                         </b-dropdown-item>
+                        <b-dropdown-item :to="{ name: 'user-images', params: { id: getUserSearchParam($auth.user()) }}">
+                            <i class="fa fa-camera fa-fw"></i> My Images
+                        </b-dropdown-item>
                         <b-dropdown-item :to="{ name: 'settings' }">
                             <i class="fa fa-cog fa-fw"></i> Settings
                         </b-dropdown-item>

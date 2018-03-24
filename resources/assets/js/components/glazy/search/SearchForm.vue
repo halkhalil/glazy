@@ -236,8 +236,6 @@ export default {
       if (this.searchQuery) {
         // var myParams = this.searchQuery.params
         // query.setParams(myParams)
-        console.log('SEARCH FORM UPDAATE SEARCH QUERY:')
-        console.log(this.searchQuery)
         query.setParams(this.searchQuery.params)
         /*
         if (query.params.collection && this.$auth.check()) {
