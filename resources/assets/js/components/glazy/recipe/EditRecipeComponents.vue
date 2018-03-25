@@ -261,7 +261,13 @@
       </div>
     </b-card>
 
-    <div class="row" v-if="similarMaterials">
+    <div class="row" v-if="isProcessingDuplicates">
+      <div class="col-sm-12">
+        <h5>Similar Recipes</h5>
+        <p class="description">Searching for Similar Recipes...</p>
+      </div>
+    </div>
+    <div class="row" v-if="similarMaterials && !isProcessingDuplicates">
       <div class="col-sm-12">
         <h5>Similar Recipes</h5>
         <p v-if="!similarMaterials || !similarMaterials.length" class="description">No similar recipes found.</p>
@@ -334,6 +340,7 @@
         minimumVisibleRows: 1,
         subtotal: 0,
         isProcessing: false,
+        isProcessingDuplicates: false,
         similarMaterials: null,
         chartHeight: 240,
         chartWidth: 0,
@@ -654,7 +661,7 @@
         if (!this.isLoaded) {
           return
         }
-        this.isProcessing = true
+        this.isProcessingDuplicates = true
         this.similarMaterials = null;
 
         var form = {
@@ -687,9 +694,9 @@
               console.log('dups error')
               this.apiError = response.data.error
               console.log(this.apiError)
-              this.isProcessing = false
+              this.isProcessingDuplicates = false
             } else {
-              this.isProcessing = false
+              this.isProcessingDuplicates = false
               this.similarMaterials = response.data.data;
             }
           })
@@ -701,11 +708,11 @@
                 this.serverError = response.response.message;
               }
             }
-            this.isProcessing = false
+            this.isProcessingDuplicates = false
           })
         }
         else {
-          this.isProcessing = false
+          this.isProcessingDuplicates = false
         }
       },
       getImageBin: function(id) {
