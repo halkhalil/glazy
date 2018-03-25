@@ -247,6 +247,7 @@ class MaterialController extends ApiBaseController
         }
 
         $material->is_archived = true;
+        $material->timestamps = false; // Don't update timestamp for an archive
         $material->save();
 
         $resource = new FractalItem($material, new MaterialTransformer());
