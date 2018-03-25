@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Log;
 
 use Illuminate\Http\Request;
 
+use Auth;
+
 /**
  * Class FrontendController
  * @package App\Http\Controllers
@@ -61,7 +63,11 @@ class MaterialMaterialController extends ApiBaseController
 
     public function update($recipeId, UpdateMaterialMaterialRequest $request)
     {
-//        return $this->respondNotFound('Recipe does not exist');
+        $materialRepository = new MaterialRepository();
+        $material = $materialRepository->getWithDetails($recipeId);
+        if (!Auth::guard()->user()->can('update', $material)) {
+            return $this->respondUnauthorized('This recipe does not belong to you.');
+        }
 
         $data = $request->all();
 

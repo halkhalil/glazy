@@ -719,7 +719,7 @@
           this.sendRecipeGetRequest('/recipes/' + this.recipe.id + '/archive', this.materialTypeName + ' Locked!', 5)
         }
       },
-      
+
       copyRecipe: function () {
         if (!this.recipe) {
           return
