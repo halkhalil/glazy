@@ -243,7 +243,7 @@ class MaterialController extends ApiBaseController
         }
 
         if (!Auth::guard()->user()->can('update', $material)) {
-            return $this->respondUnauthorized('This recipe cannot be archived by you.');
+            return $this->respondUnauthorized('This recipe cannot be locked by you.');
         }
 
         $material->is_archived = true;

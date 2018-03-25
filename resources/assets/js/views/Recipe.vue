@@ -80,7 +80,7 @@
                            v-b-tooltip.hover title="Private"
                            class="fa fa-eye-slash"></i>
                         <i v-if="recipe.isArchived"
-                           v-b-tooltip.hover title="Archived"
+                           v-b-tooltip.hover title="Locked"
                            class="fa fa-lock"></i>
                         {{ recipe.name }}
                       </h2>
@@ -200,7 +200,7 @@
                       <b-button-group class="recipe-action-group" v-if="canEdit && !recipe.isArchived">
                         <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-eye"></i> Publish</b-button>
                         <b-button class="btn-info" v-if="!recipe.isPrivate" v-on:click="unpublishRecipe()"><i class="fa fa-eye-slash"></i> Unpublish</b-button>
-                        <b-button class="btn-info" v-if="!recipe.isPrivate" v-b-modal.archiveConfirmModal><i class="fa fa-lock"></i> Archive</b-button>
+                        <b-button class="btn-info" v-if="!recipe.isPrivate" v-b-modal.archiveConfirmModal><i class="fa fa-lock"></i> Lock</b-button>
                         <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
                         <b-button class="btn-info" v-if="!recipe.isPrimitive" v-on:click="editComponents()"><i class="fa fa-list"></i> Edit Recipe</b-button>
                         <b-button class="btn-danger" v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
@@ -217,11 +217,11 @@
 
                       <b-modal v-if="canEdit"
                                id="archiveConfirmModal"
-                               title="Archive Recipe?"
+                               title="Lock Recipe?"
                                v-on:ok="archiveRecipe"
-                               ok-title="Archive"
+                               ok-title="Lock"
                       >
-                        <p>Archived {{ materialTypeName }}s cannot be deleted or changed.  This makes them "safe" for other people to reference.</p>
+                        <p>Locked {{ materialTypeName }}s cannot be deleted or changed.  This makes them "safe" for other people to reference.</p>
                       </b-modal>
 
                     </div>
@@ -716,10 +716,10 @@
 
       archiveRecipe: function () {
         if (this.recipe) {
-          this.sendRecipeGetRequest('/recipes/' + this.recipe.id + '/archive', this.materialTypeName + ' Archived!', 5)
+          this.sendRecipeGetRequest('/recipes/' + this.recipe.id + '/archive', this.materialTypeName + ' Locked!', 5)
         }
       },
-
+      
       copyRecipe: function () {
         if (!this.recipe) {
           return
