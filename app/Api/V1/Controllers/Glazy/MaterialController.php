@@ -157,11 +157,7 @@ class MaterialController extends ApiBaseController
         }
 
         if (!Auth::guard()->user()->can('delete', $material)) {
-            return $this->respondUnauthorized('This recipe does not belong to you.');
-        }
-
-        if ($material->is_archived) {
-            return $this->respondUnauthorized('Archived recipes cannot be deleted.');
+            return $this->respondUnauthorized('This recipe cannot be deleted by you.');
         }
 
         $result = $this->materialRepository->destroy($id);
@@ -205,7 +201,7 @@ class MaterialController extends ApiBaseController
         }
 
         if (!Auth::guard()->user()->can('update', $material)) {
-            return $this->respondUnauthorized('This recipe does not belong to you.');
+            return $this->respondUnauthorized('This recipe cannot be published by you.');
         }
 
         $material->is_private = false;
@@ -226,14 +222,31 @@ class MaterialController extends ApiBaseController
         }
 
         if (!Auth::guard()->user()->can('update', $material)) {
-            return $this->respondUnauthorized('This recipe does not belong to you.');
-        }
-
-        if ($material->is_archived) {
-            return $this->respondUnauthorized('Archived recipes cannot be deleted.');
+            return $this->respondUnauthorized('This recipe cannot be updated by you.');
         }
 
         $material->is_private = true;
+        $material->save();
+
+        $resource = new FractalItem($material, new MaterialTransformer());
+
+        return $this->manager->createData($resource)->toArray();
+    }
+
+    public function archive($id)
+    {
+        $material = $this->materialRepository->getWithDetails($id);
+
+        if (! $material)
+        {
+            return $this->respondNotFound('Recipe does not exist');
+        }
+
+        if (!Auth::guard()->user()->can('update', $material)) {
+            return $this->respondUnauthorized('This recipe cannot be archived by you.');
+        }
+
+        $material->is_archived = true;
         $material->save();
 
         $resource = new FractalItem($material, new MaterialTransformer());

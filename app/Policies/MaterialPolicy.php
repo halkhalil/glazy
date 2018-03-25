@@ -51,6 +51,9 @@ class MaterialPolicy
      */
     public function update(User $user, Material $material)
     {
+        if ($material->is_archived) {
+            return false;
+        }
         return $user->id === $material->created_by_user_id;
     }
 
@@ -63,6 +66,9 @@ class MaterialPolicy
      */
     public function delete(User $user, Material $material)
     {
+        if ($material->is_archived) {
+            return false;
+        }
         return $user->id === $material->created_by_user_id;
     }
 

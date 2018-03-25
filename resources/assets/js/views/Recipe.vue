@@ -200,6 +200,7 @@
                       <b-button-group class="recipe-action-group" v-if="canEdit && !recipe.isArchived">
                         <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-eye"></i> Publish</b-button>
                         <b-button class="btn-info" v-if="!recipe.isPrivate" v-on:click="unpublishRecipe()"><i class="fa fa-eye-slash"></i> Unpublish</b-button>
+                        <b-button class="btn-info" v-if="!recipe.isPrivate" v-b-modal.archiveConfirmModal><i class="fa fa-lock"></i> Archive</b-button>
                         <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
                         <b-button class="btn-info" v-if="!recipe.isPrimitive" v-on:click="editComponents()"><i class="fa fa-list"></i> Edit Recipe</b-button>
                         <b-button class="btn-danger" v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
@@ -212,6 +213,15 @@
                                ok-title="Delete Forever"
                       >
                         <p>Once deleted, you will not be able to retrieve this recipe!</p>
+                      </b-modal>
+
+                      <b-modal v-if="canEdit"
+                               id="archiveConfirmModal"
+                               title="Archive Recipe?"
+                               v-on:ok="archiveRecipe"
+                               ok-title="Archive"
+                      >
+                        <p>Archived {{ materialTypeName }}s cannot be deleted or changed.  This makes them "safe" for other people to reference.</p>
                       </b-modal>
 
                     </div>
@@ -612,6 +622,11 @@
         }
         return false;
       },
+      materialTypeName: function () {
+        if (!this.isLoaded) return ''
+        if (this.recipe.isPrimitive) return 'Material'
+        return 'Recipe'
+      },
       mainClass: function() {
         if (this.searchItems && this.searchItems.length > 0) {
           return 'col-md-9'
@@ -684,18 +699,24 @@
 
       fetchRecipe: function (){
         console.log('--- FETCH: /recipes/' + this.$route.params.id)
-        this.sendRecipeGetRequest('/recipes/' + this.$route.params.id)
+        this.sendRecipeGetRequest('/recipes/' + this.$route.params.id, null, 0)
       },
 
       publishRecipe: function () {
         if (this.recipe) {
-          this.sendRecipeGetRequest('/recipes/' + this.recipe.id + '/publish')
+          this.sendRecipeGetRequest('/recipes/' + this.recipe.id + '/publish', this.materialTypeName + ' Published!', 5)
         }
       },
 
       unpublishRecipe: function () {
         if (this.recipe) {
-          this.sendRecipeGetRequest('/recipes/' + this.recipe.id + '/unpublish')
+          this.sendRecipeGetRequest('/recipes/' + this.recipe.id + '/unpublish', this.materialTypeName + ' Unpublished!', 5)
+        }
+      },
+
+      archiveRecipe: function () {
+        if (this.recipe) {
+          this.sendRecipeGetRequest('/recipes/' + this.recipe.id + '/archive', this.materialTypeName + ' Archived!', 5)
         }
       },
 
@@ -893,14 +914,14 @@
         })
       },
 
-      sendRecipeGetRequest: function (url) {
+      sendRecipeGetRequest: function (url, successMessage, successMessageSeconds) {
         this.apiError = null
         this.isProcessing = true
         Vue.axios.get(Vue.axios.defaults.baseURL + url)
           .then((response) => {
+          this.isProcessing = false
           if (response.data.error) {
             this.apiError = response.data.error
-            this.isProcessing = false
             console.log(this.apiError)
           } else {
             this.recipe = null
@@ -927,8 +948,12 @@
               this.isEditRequest = false
               this.editMeta()
             }
-        }
-          this.isProcessing = false
+
+            if (successMessage && successMessageSeconds) {
+              this.actionMessage = successMessage
+              this.actionMessageSeconds = successMessageSeconds
+            }
+          }
         })
         .catch(response => {
           this.itemlist = null
