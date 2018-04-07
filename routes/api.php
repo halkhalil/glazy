@@ -44,6 +44,7 @@ $api->version('v1', function (Router $api) {
             $api->get('/{id}/unpublish', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialController@unpublish')->name('unpublish');
             $api->get('/{id}/archive', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialController@archive')->name('archive');
             $api->get('/{materialId}/image/{imageId}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialController@thumbnail')->name('thumbnail');
+            $api->get('/{id}/export/{exportType}', 'App\\Api\\V1\\Controllers\\Glazy\\MaterialController@export')->name('export');
         });
     });
 

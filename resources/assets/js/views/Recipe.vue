@@ -187,7 +187,7 @@
                         </b-button>
                         <b-dropdown left>
                           <span slot=text><i class="fa fa-cloud-download" aria-hidden="true"></i> Export</span>
-                          <b-dropdown-item>To be added!</b-dropdown-item>
+                          <b-dropdown-item v-on:click="exportRecipe('GlazeChem')">GlazeChem</b-dropdown-item>
                         </b-dropdown>
                         <b-button v-on:click="copyRecipe()"><i class="fa fa-copy"></i> Copy</b-button>
                       </b-button-group>
@@ -217,11 +217,14 @@
 
                       <b-modal v-if="canEdit"
                                id="archiveConfirmModal"
-                               title="Lock Recipe?"
+                               :title="'Lock ' + materialTypeName"
                                v-on:ok="archiveRecipe"
                                ok-title="Lock"
                       >
-                        <p>Locked {{ materialTypeName }}s cannot be deleted or changed.  This makes them "safe" for other people to reference.</p>
+                        <p>Locking a {{ materialTypeName }} ensures it will not change in the future.
+                          You will not be able to edit, unpublish, or delete this {{ materialTypeName }}
+                          once you lock it. Users will still be able to add photos and reviews.
+                          Are you sure you want to proceed?</p>
                       </b-modal>
 
                     </div>
@@ -598,8 +601,6 @@
     },
 
     beforeRouteEnter (to, from, next) {
-      console.log('BEFORE ENTER ROUTER')
-      console.log(from)
       if (from.name === 'search' || from.name === 'user' ||
         from.name === 'materials' || from.name === 'user-materials') {
         // cache the search route for "back" button
@@ -698,7 +699,6 @@
     methods : {
 
       fetchRecipe: function (){
-        console.log('--- FETCH: /recipes/' + this.$route.params.id)
         this.sendRecipeGetRequest('/recipes/' + this.$route.params.id, null, 0)
       },
 
@@ -718,6 +718,36 @@
         if (this.recipe) {
           this.sendRecipeGetRequest('/recipes/' + this.recipe.id + '/archive', this.materialTypeName + ' Locked!', 5)
         }
+      },
+
+      exportRecipe: function (exportType) {
+        if (!this.recipe) {
+          return
+        }
+        this.isProcessing = true
+        Vue.axios.get(Vue.axios.defaults.baseURL + '/recipes/' + this.recipe.id + '/export/' + exportType)
+          .then((response) => {
+          if (response.data.error) {
+            this.apiError = response.data.error
+            console.log(this.apiError)
+            this.isProcessing = false
+          } else {
+            this.isProcessing = false
+            // https://stackoverflow.com/questions/3665115/create-a-file-in-memory-for-user-to-download-not-through-server
+            var a = window.document.createElement('a');
+            a.href = window.URL.createObjectURL(new Blob([response.data], {type: 'text/text'}));
+            a.download = 'Glazy_ID_' + this.recipe.id + '_GlazeChem.txt';
+            // Append anchor to body.
+            document.body.appendChild(a);
+            a.click();
+            // Remove anchor from body
+            document.body.removeChild(a);
+          }
+        })
+        .catch(response => {
+          this.serverError = response;
+          this.isProcessing = false
+        })
       },
 
       copyRecipe: function () {
@@ -744,15 +774,11 @@
       },
 
       setMaterial: function () {
-        console.log('YYYY');
         var materialObj = new Material();
-        console.log('YYYY MATERIAL');
         this.material = materialObj.createFromJson(this.recipe);
-        console.log('XXXX MATERIAL');
       },
 
       updatedRecipeMeta: function () {
-        console.log("calling updatedRecipeMeta")
         this.fetchRecipe()
         this.infoMessageSeconds = 5
         this.isRecipeUpdated = true
@@ -760,7 +786,6 @@
       },
 
       updatedRecipeComponents: function () {
-        console.log("calling updatedRecipeComponents")
         this.fetchRecipe()
         this.infoMessageSeconds = 5
         this.isRecipeUpdated = true
@@ -796,7 +821,6 @@
       collectMaterialSelect(id) {
         if (id) {
           this.materialToCollect = id
-          console.log('want to collect: ' + this.materialToCollect)
           this.$refs.collectModal.show()
         }
       },
@@ -821,18 +845,13 @@
             console.log(this.apiError)
             this.isProcessingLocal = false
           } else {
-            console.log('return from collecting')
             this.isProcessingLocal = false
             this.actionMessage = 'Collected.'
             this.actionMessageSeconds = 5
             if (this.newCollectionName) {
-              console.log('refresh collections')
               // Refresh user collections
               this.$auth.fetch({
                 success(res) {
-                  console.log('success fetching user');
-                  console.log(this.$auth.user())
-                  console.log('user id: ' + this.$auth.user().id)
                 },
                 error() {
                   console.log('error fetching user');
@@ -845,7 +864,6 @@
         })
         .catch(response => {
           this.serverError = response
-          console.log(response)
           this.isProcessingLocal = false
           this.newCollectionName = ''
           this.materialToCollect = 0
@@ -887,22 +905,17 @@
             console.log(this.apiError)
             this.isProcessingLocal = false
           } else {
-            console.log('return from add user material')
             this.isProcessingLocal = false
             this.actionMessage = 'Material added to your inventory.'
             this.actionMessageSeconds = 5
-            console.log('refresh user materials')
             // Refresh user inventory materials
             this.$auth.fetch({
               success(res) {
-                console.log('success fetching user');
-                console.log(this.$auth.user())
-                console.log('user id: ' + this.$auth.user().id)
                 // Refresh the recipe
                 this.fetchRecipe()
               },
               error() {
-              console.log('error fetching user');
+                console.log('error fetching user');
               }
             })
           }

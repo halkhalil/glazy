@@ -15,6 +15,10 @@ use App\Api\V1\Requests\Recipe\UpdateRecipeRequest;
 
 use App\Models\MaterialImage;
 
+use App\Models\MaterialType;
+use App\Models\OrtonCone;
+use DateTime;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 use League\Fractal\Resource\Item as FractalItem;
@@ -255,20 +259,216 @@ class MaterialController extends ApiBaseController
         return $this->manager->createData($resource)->toArray();
     }
 
-    /**
-     * @param $id
-     * @return Response
-     *
-     */
-    public function export($id)
+    public function export($id, $exportType)
     {
-        $export_type = $request->input('type');
+        $material = $this->materialRepository->getWithDetails($id);
 
-        if ($export_type === 'Card')
+        if (!$material)
         {
-            // Temporarily just redirect to the recipe page
-            return redirect()->route('profile', ['id' => 1]);
+            return $this->respondNotFound('Recipe does not exist');
         }
+
+        if ($material->is_private) {
+            if (!Auth::guard()->user()) {
+                return $this->respondUnauthorized('Recipe is private. Please login.');
+            } else if (!Auth::guard()->user()->can('view', $material)) {
+                return $this->respondUnauthorized('Recipe is private.');
+            }
+        }
+
+        if ($exportType === 'GlazeChem')
+        {
+            $content = $this->glazeChemExport($material);
+            $response = new Response($content, '200');
+            $response->header('Content-Type', 'plain/txt');
+            return $response;
+        }
+        elseif ($exportType === 'Insight')
+        {
+            /*
+            $content = View::make('recipes.export.insight', [
+                'recipe' => $material,
+                'recipeMaterials' => $recipeMaterials,
+                'recipeImages' => $recipeImages,
+                'collections' => $collections,
+                'recipe_subtype_lineage' => $recipe_subtype_lineage,
+                'from_orton_cone' => OrtonCone::getStaticName($recipe->from_orton_cone_id),
+                'to_orton_cone' => OrtonCone::getStaticName($recipe->to_orton_cone_id),
+            ]);
+            $response = new Response($content, '200');
+            $response->header('Cache-Control', 'public');
+            $response->header('Content-Description', 'File Transfer');
+            $response->header('Content-Disposition', 'attachment; filename='.$recipe->id.'.xml');
+            $response->header('Content-Transfer-Encoding', 'binary');
+            $response->header('Content-Type', 'text/xml');
+            return $response;
+            */
+        }
+        elseif ($exportType === 'Card')
+        {
+            /*
+            // Create a recipe card image and return to user
+            return $this->recipeCard($recipe);
+            */
+        }
+
+    }
+
+
+    public function glazeChemExport($material) {
+        $out = "name   = ".strip_tags($material->name)."\n";
+        $out .= "index  = \n";
+        $oDate = new DateTime($material->created_at);
+        $out .= "date   = ".$oDate->format("m/d/Y")."\n";
+        $out .= "source = https://www.glazy.org\n";
+        $type = '';
+
+        $materialType = new MaterialType();
+
+        if ($material->material_type_id)
+        {
+            $type = $materialType->getValue($material->material_type_id);
+            if ($type && isset($type['concatenated_name'])) {
+                $out .= "type   = ".$type['concatenated_name']."\n";
+            }
+        }
+
+        $range = '';
+
+        $cone = new OrtonCone();
+
+        $from_orton_cone = $cone->getValue($material->from_orton_cone_id);
+        $to_orton_cone = $cone->getValue($material->to_orton_cone_id);
+
+        if (!empty($from_orton_cone))
+        {
+            if (!empty($to_orton_cone))
+            {
+                if ($from_orton_cone === $to_orton_cone)
+                {
+                    $range = $from_orton_cone;
+                }
+                else
+                {
+                    $range = $from_orton_cone.'-'.$to_orton_cone;
+                }
+            }
+            else
+            {
+                $range = $from_orton_cone;
+            }
+        }
+        elseif (!empty($to_orton_cone))
+        {
+            $range = $to_orton_cone;
+        }
+        //$range = str_replace('05&#189;', '05 1/2', $range);
+        $out .= "range  = ".$range."\n";
+
+        $firetype = '';
+        if ($material->atmospheres && count($material->atmospheres))
+        {
+            $hasFiretype = false;
+            foreach ($material->atmospheres as $atmosphere)
+            {
+                if ($hasFiretype)
+                {
+                    $firetype .= ', ';
+                }
+                $firetype .= $atmosphere->name;
+
+                $hasFiretype = true;
+            }
+        }
+        $out .= "firetype     = ".$firetype."\n";
+
+        $out .= "color        = ".strip_tags($material->color_name)."\n";
+
+        $out .= "vistexture   = \n";
+
+        if (isset($material->surface_type) && isset($material->surface_type->name))
+        {
+            $out .= "quality      = ".$material->surface_type->name."\n";
+        }
+        else
+        {
+            $out .= "quality      = \n";
+        }
+
+        if (isset($material->transparency_type) && isset($material->transparency_type->name))
+        {
+            $out .= "transparency = ".$material->transparency_type->name."\n";
+        }
+        else
+        {
+            $out .= "transparency = \n";
+        }
+        $out .= "xtals        = \n";
+        $out .= "bubbles      = \n";
+        $out .= "flow         = \n";
+        $out .= "durability   = \n";
+        $out .= "flaws     = \n";
+        $out .= "tested    = \n";
+        $out .= "imagefile = \n";
+        $out .= "notefile  = \n";
+        $out .= "limform   = \n";
+        $out .= "by_vol    = n\n";
+
+        $materials = '';
+        $total_percentage_amount = 0;
+
+        if (isset($material->components)) {
+            foreach ($material->components as $materialComponent)
+            {
+                if ($materialComponent->is_additional) {
+                    $materials .= "addition  = ";
+                }
+                else {
+                    $materials .= "component = ";
+                }
+
+                $materials .= $materialComponent->component_material->name."\n";
+
+                if ($materialComponent->is_additional) {
+                    $materials .= "addamount = ";
+                }
+                else
+                {
+                    $materials .= "amount    = ";
+                }
+                $materials .= (float)$materialComponent->percentage_amount."\n";
+                $total_percentage_amount += $materialComponent->percentage_amount;
+            }
+            $out .= "batchsize = ".(float)$total_percentage_amount."\n";
+            $out .= $materials;
+        }
+
+        $notes = '';
+        $note = '';
+        if (!empty($material->description))
+        {
+            $desc = strip_tags($material->description);
+            $keywords = preg_split("/\s+/", $desc);
+
+            foreach ($keywords as $keyword)
+            {
+                if (strlen($keyword) + strlen($note) < 72)
+                {
+                    $note .= " ".$keyword;
+                }
+                else
+                {
+                    $notes .= "note = |".$note."\n";
+                    $note = " ".$keyword;
+                }
+            }
+        }
+        if (strlen($note) > 0)
+        {
+            $notes .= "note = |".$note."\n";
+        }
+        $out .= $notes;
+        return $out;
     }
 
 }
