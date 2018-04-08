@@ -519,6 +519,14 @@
             'content': this.meta.image
           },
           {
+            'property': 'og:image:width',
+            'content': 800
+          },
+          {
+            'property': 'og:image:height',
+            'content': 800
+          },
+          {
             'property': 'twitter:description',
             'content': this.meta.description
           }
