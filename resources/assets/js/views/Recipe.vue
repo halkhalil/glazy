@@ -389,6 +389,23 @@
           </div>
         </div>
 
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h2 class="card-title">Collections</h2>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <material-collections-panel
+                            :material="recipe"
+                    ></material-collections-panel>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div v-if="recipe.isPrimitive" class="row">
           <div class="col-md-12">
             <div class="card">
@@ -484,6 +501,7 @@
   import EditRecipeComponents from '../components/glazy/recipe/EditRecipeComponents.vue'
 
   import ReviewsPanel from '../components/glazy/materialreviews/ReviewsPanel.vue'
+  import MaterialCollectionsPanel from '../components/glazy/recipe/MaterialCollectionsPanel.vue'
 
   import MaterialCardDetail from '../components/glazy/search/MaterialCardDetail.vue'
 
@@ -562,6 +580,7 @@
       ContainsMaterial,
       EditMaterialMetadata,
       EditRecipeComponents,
+      MaterialCollectionsPanel,
       ReviewsPanel,
       VueTimeago,
       MaterialCardDetail
@@ -856,6 +875,7 @@
             this.isProcessingLocal = false
             this.actionMessage = 'Collected.'
             this.actionMessageSeconds = 5
+            this.fetchRecipe();  // Update Recipe Info
             if (this.newCollectionName) {
               // Refresh user collections
               this.$auth.fetch({

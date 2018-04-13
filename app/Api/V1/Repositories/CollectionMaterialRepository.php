@@ -15,6 +15,16 @@ class CollectionMaterialRepository extends Repository
         return new CollectionMaterial();
     }
 
+    /*
+     * Obtain a material's collections via the MaterialRepository getWithDetails function
+    public function getByMaterialId($material_id)
+    {
+        return CollectionMaterial::with('collection')
+            ->where('material_id', $material_id)
+            ->get();
+    }
+    */
+
     public function create(array $data)
     {
         $collection_id = $data['collection_id'];

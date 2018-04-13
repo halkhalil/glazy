@@ -3,6 +3,7 @@
 namespace App\Api\V1\Transformers\Collection;
 
 use App\Api\V1\Transformers\JsonDateTransformer;
+use App\Api\V1\Transformers\User\UserTransformer;
 use App\Models\Collection;
 
 use League\Fractal;
@@ -10,6 +11,10 @@ use League\Fractal;
 class CollectionTransformer extends Fractal\TransformerAbstract
 {
     use JsonDateTransformer;
+
+    protected $defaultIncludes = [
+        'createdByUser'
+    ];
 
     public function transform(Collection $collection)
     {
@@ -27,4 +32,12 @@ class CollectionTransformer extends Fractal\TransformerAbstract
 
         return $collection_data;
     }
+
+    public function includeCreatedByUser(Collection $collection)
+    {
+        if ($collection->created_by_user) {
+            return $this->item($collection->created_by_user, new UserTransformer());
+        }
+    }
+
 }

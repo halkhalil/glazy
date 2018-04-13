@@ -2,6 +2,7 @@
 
 namespace App\Api\V1\Transformers\Material;
 
+use App\Api\V1\Transformers\Collection\CollectionTransformer;
 use App\Models\Country;
 use App\Models\Material;
 use App\Models\MaterialType;
@@ -67,6 +68,7 @@ class MaterialTransformer extends Fractal\TransformerAbstract
         'images',
         'thumbnail',
         'reviews',
+        'collections',
         'createdByUser'
     ];
 
@@ -199,6 +201,13 @@ class MaterialTransformer extends Fractal\TransformerAbstract
     {
         if ($material->reviews && count($material->reviews) > 0) {
             return $this->collection($material->reviews, new MaterialReviewTransformer());
+        }
+    }
+
+    public function includeCollections(Material $material)
+    {
+        if ($material->collections && count($material->collections) > 0) {
+            return $this->collection($material->collections, new CollectionTransformer());
         }
     }
 

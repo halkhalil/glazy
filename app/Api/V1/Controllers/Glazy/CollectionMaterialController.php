@@ -20,6 +20,26 @@ class CollectionMaterialController extends ApiBaseController
         $this->collectionMaterialRepository = $collectionMaterialRepository;
     }
 
+    /*
+     * Obtain a material's collections via the MaterialRepository getWithDetails function
+    public function collections($material_id) {
+
+        $materialRepository = new MaterialRepository();
+        $material = $materialRepository->get($id);
+
+        if (!$material) {
+            return $this->respondNotFound('Material does not exist');
+        }
+
+        if (!Auth::guard()->user()->can('view', $material)) {
+            return $this->respondUnauthorized('This material cannot be viewed by you.');
+        }
+
+        $collections = $this->collectionMaterialRepository->getByMaterialId($material_id);
+
+    }
+    */
+
     public function store(Request $request)
     {
         $collection_id = (int)$request->input('collectionId');
