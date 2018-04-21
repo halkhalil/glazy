@@ -1,20 +1,6 @@
 <template>
     <form class="search-form">
         <div class="form-row">
-            <div v-if="!isPrimitiveSearch && collectionsSelect && collectionsSelect.length > 0"
-                 v-bind:class="sizeLarge" class="form-group">
-                <b-form-select
-                        size="sm"
-                        v-model="query.params.collection"
-                        :options="collectionsSelect"
-                        value-field="id"
-                        text-field="name"
-                        @input="search">
-                    <template slot="first">
-                        <option :value="0">Choose Collection</option>
-                    </template>
-                </b-form-select>
-            </div>
             <div v-bind:class="sizeLarge" class="form-group">
                 <input type="text"
                        class="form-control form-control-sm"

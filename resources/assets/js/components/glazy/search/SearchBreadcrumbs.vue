@@ -78,12 +78,14 @@
             this.searchUser.collections &&
             this.searchUser.collections.length > 0) {
             var collection = this.searchUser.collections.find(x => x.id === this.searchQuery.params.collection)
-            breadcrumbs.push({
-              name: collection.name,
-              query: { u: this.searchUser.u, collection: collection.id },
-              routeName: 'user',
-              type: 'collection'
-            })
+            if (collection) {
+              breadcrumbs.push({
+                name: collection.name,
+                query: { u: this.searchUser.u, collection: collection.id },
+                routeName: 'user',
+                type: 'collection'
+              })
+            }
           }
 
           // Cone

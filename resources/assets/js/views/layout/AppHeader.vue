@@ -12,10 +12,7 @@
                     <b-nav-item-dropdown v-if="$auth.check()"
                                          :text="$auth.user().name" left>
                         <b-dropdown-item :to="{ name: 'user', params: { id: getUserSearchParam($auth.user()) }}">
-                            <i class="fa fa-list fa-fw"></i> My Recipes
-                        </b-dropdown-item>
-                        <b-dropdown-item :to="{ name: 'user-materials', params: { id: getUserSearchParam($auth.user()) }}">
-                            <i class="fa fa-flask fa-fw"></i> My Materials
+                            <i class="fa fa-home fa-fw"></i> My Home
                         </b-dropdown-item>
                         <!--
                         <b-dropdown-item :to="{ name: 'user-collections', params: { id: getUserSearchParam($auth.user()) }}">
@@ -24,9 +21,6 @@
                         -->
                         <b-dropdown-item :to="{ name: 'inventory' }">
                             <i class="fa fa-cubes fa-fw"></i> My Inventory
-                        </b-dropdown-item>
-                        <b-dropdown-item :to="{ name: 'user-images', params: { id: getUserSearchParam($auth.user()) }}">
-                            <i class="fa fa-camera fa-fw"></i> My Images
                         </b-dropdown-item>
                         <b-dropdown-item :to="{ name: 'settings' }">
                             <i class="fa fa-cog fa-fw"></i> Settings

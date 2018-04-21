@@ -10,6 +10,25 @@
       <user-profile-card v-if="searchUser"
                          :searchUser="searchUser"></user-profile-card>
 
+      <div v-if="searchUser" class="form-group">
+        <label for="collectionsSelectSelect">Recipes, Materials & Bookmarks:</label>
+        <b-form-select
+                id="collectionsSelectSelect"
+                size="sm"
+                v-model="selectedSearchTypeOrCollection"
+                :options="collectionsSelect"
+                value-field="id"
+                text-field="name"
+                @input="selectSearchType">
+          <template slot="first">
+            <option value="recipes">{{ isViewingSelfSelectText }} Recipes</option>
+            <option value="materials">{{ isViewingSelfSelectText }} Materials</option>
+            <option value="images">{{ isViewingSelfSelectText }} Images</option>
+            <option value="null" disabled>-- {{ isViewingSelfSelectText }} Bookmarks: --</option>
+          </template>
+        </b-form-select>
+      </div>
+
       <b-btn
               v-b-tooltip.hover
               :title="expandbuttonTooltip"
@@ -79,6 +98,24 @@
         <div class="col-sm-12 d-xl-none d-lg-none d-md-none">
           <user-profile-card v-if="searchUser"
                              :searchUser="searchUser"></user-profile-card>
+          <div v-if="searchUser" class="form-group">
+            <label for="collectionsSelectSelect">Recipes, Materials & Bookmarks:</label>
+            <b-form-select
+                    id="collectionsSelectSelect"
+                    size="sm"
+                    v-model="selectedSearchTypeOrCollection"
+                    :options="collectionsSelect"
+                    value-field="id"
+                    text-field="name"
+                    @input="selectSearchType">
+              <template slot="first">
+                <option value="recipes">{{ isViewingSelfSelectText }} Recipes</option>
+                <option value="materials">{{ isViewingSelfSelectText }} Materials</option>
+                <option value="images">{{ isViewingSelfSelectText }} Images</option>
+                <option value="null" disabled>{{ isViewingSelfSelectText }} Bookmarks:</option>
+              </template>
+            </b-form-select>
+          </div>
         </div>
 
         <div class="col-sm-12">
@@ -208,41 +245,41 @@
 
     <b-modal id="deleteCollectionConfirmModal"
              ref="deleteCollectionConfirmModal"
-             title="Delete Collection?"
+             title="Delete Bookmark Folder?"
              v-on:ok="deleteCollection"
              ok-title="Delete Forever"
     >
-      <p>Once deleted, this collection will be gone forever!</p>
+      <p>Once deleted, this bookmark folder will be gone forever!</p>
     </b-modal>
 
     <b-modal id="collectModal"
              ref="collectModal"
-             title="Collect Recipe"
+             title="Bookmark Recipe"
              v-on:ok="collectMaterial"
              ok-title="Add"
     >
-      <p>Collect in:</p>
+      <p>Bookmark in:</p>
       <div v-if="collections && collections.length > 0">
         <b-form-select v-model="selectedCollectionId"
                        :options="collections"
                        text-field="name"
                        value-field="id">
           <template slot="first">
-            <option :value="0">-- Select a collection --</option>
+            <option :value="0">-- Select a bookmark folder --</option>
           </template>
         </b-form-select>
       </div>
 
       <b-form-group
               id="groupName"
-              label="Create a New Collection:"
+              label="Create a New Bookmark Folder:"
               :feedback="feedbackCollectionName"
               :state="stateCollectionName"
       >
         <b-form-input id="name"
                       :state="stateCollectionName"
                       v-model.trim="newCollectionName"
-                      placeholder="Collection Name"></b-form-input>
+                      placeholder="Bookmark Folder Name"></b-form-input>
       </b-form-group>
 
     </b-modal>
@@ -358,7 +395,8 @@
         apiError: null,
         serverError: null,
         actionMessage: null,
-        actionMessageSeconds: 0
+        actionMessageSeconds: 0,
+        selectedSearchTypeOrCollection: null
       }
     },
     computed: {
@@ -430,7 +468,40 @@
 
       stateCollectionName() {
         return this.newCollectionName.length > 2 ? 'valid' : 'invalid';
+      },
+
+      collectionsSelect () {
+        // TODO: ensure only user-viewable collections are returned
+        var collections = []
+        if (this.searchUser && this.searchUser.collections &&
+          this.searchUser.collections.length > 0) {
+          this.searchUser.collections.forEach((collection) => {
+            collections.push({
+              id: collection.id,
+              name: collection.name + ' (' + collection.materialCount + ')'
+            })
+          })
+        }
+        return collections
+      },
+
+      isPrimitiveSearch: function () {
+        if (this.$route.name === 'materials' ||
+          this.$route.name === 'user-materials') {
+          return true
+        }
+        return false
+      },
+
+      isViewingSelfSelectText: function () {
+        if (this.searchUser) {
+          if (this.isViewingSelf) {
+            return 'My'
+          }
+          return this.searchUser.name + '\'s'
+        }
       }
+
     },
 
     created() {
@@ -452,6 +523,27 @@
       this.$store.dispatch('search/search', {
         query: this.searchQuery, isPrimitive: isPrimitive
       })
+
+      if (this.$route.name === 'user-materials') {
+        this.selectedSearchTypeOrCollection = 'materials'
+      }
+      else if (this.$route.name === 'user-images') {
+        this.selectedSearchTypeOrCollection = 'images'
+      }
+      else if (this.$route.name === 'user' &&
+        (
+          !('collection' in this.searchQuery.params) ||
+          ('collection' in this.searchQuery.params && !this.searchQuery.params.collection)
+        )
+      ) {
+        this.selectedSearchTypeOrCollection = 'recipes'
+      }
+      else if (this.$route.name === 'user' &&
+        'collection' in this.searchQuery.params &&
+        this.searchQuery.params.collection) {
+        // We're looking at a user collection
+        this.selectedSearchTypeOrCollection = this.searchQuery.params.collection
+      }
     },
     /*
     beforeRouteUpdate (to, from, next) {
@@ -471,7 +563,6 @@
     */
     watch: {
       $route (route) {
-        console.log('hit route watcher')
         if (route.hash) {
           // This is only an internal link, no need to requery
           return
@@ -492,6 +583,27 @@
         this.$store.dispatch('search/search', {
           query: this.searchQuery, isPrimitive: isPrimitive
         })
+
+        if (route.name === 'user-materials') {
+          this.selectedSearchTypeOrCollection = 'materials'
+        }
+        else if (route.name === 'user-images') {
+          this.selectedSearchTypeOrCollection = 'images'
+        }
+        else if (route.name === 'user' &&
+          (
+            !('collection' in this.searchQuery.params) ||
+            ('collection' in this.searchQuery.params && !this.searchQuery.params.collection)
+          )
+        ) {
+          this.selectedSearchTypeOrCollection = 'recipes'
+        }
+        else if (route.name === 'user' &&
+          'collection' in this.searchQuery.params &&
+          this.searchQuery.params.collection) {
+          // We're looking at a user collection
+          this.selectedSearchTypeOrCollection = this.searchQuery.params.collection
+        }
       }
     },
     mounted() {
@@ -513,7 +625,27 @@
         // Update the route.  Actual search triggered in beforeRouteUpdate
         this.$router.push({path: this.$route.path, query: myQuery})
       },
-
+      selectSearchType () {
+        if (this.selectedSearchTypeOrCollection === 'recipes') {
+            this.$router.push({name: 'user'})
+        }
+        else if (this.selectedSearchTypeOrCollection === 'materials') {
+          if (this.$route.name !== 'user-materials') {
+            // Requested user materials route, not already at user materials route
+            this.$router.push({name: 'user-materials'})
+          }
+        }
+        else if (this.selectedSearchTypeOrCollection === 'images') {
+          if (this.$route.name !== 'user-images') {
+            // Requested user route, not already at user route
+            this.$router.push({name: 'user-images'})
+          }
+        }
+        else if (this.selectedSearchTypeOrCollection) {
+          // Request a general collection
+          this.$router.push({name: 'user', query: { collection: this.selectedSearchTypeOrCollection }})
+        }
+      },
       search (query) {
         this.searchQuery.setFromSearchForm(query.params)
 
@@ -609,7 +741,7 @@
             this.isProcessingLocal = false
           } else {
             this.isProcessingLocal = false
-            this.actionMessage = 'Collected.'
+            this.actionMessage = 'Bookmarked.'
             this.actionMessageSeconds = 5
             this.$store.dispatch('search/refresh')
             if (this.newCollectionName) {
@@ -785,14 +917,14 @@
     bottom: 0;
     left: 0;
     z-index: 1000;
-    padding: 15px 15px;
+    padding: 0 10px 10px 10px;
     overflow-x: hidden;
     overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   }
 
   .expand-button {
     position: absolute;
-    top: 144px;
+    top: 24px;
     right: -4px;
     z-index: 1001;
     font-size: 1.25rem;
@@ -801,6 +933,7 @@
 
   #umf-d3-chart-container {
     /* need fix tip bug position: relative; */
+    margin-top: 10px;
   }
 
   .chart-form {

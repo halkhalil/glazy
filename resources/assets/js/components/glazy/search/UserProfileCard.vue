@@ -1,13 +1,13 @@
 <template>
-    <div v-if="searchUser" class="card card-glazy-profile">
+    <div v-if="searchUser" class="card-glazy-profile">
         <div v-if="'profile' in searchUser && searchUser.profile.avatar"
              class="card-avatar">
             <img v-bind:src="searchUser.profile.avatar"
                  v-bind:alt="searchUser.name"
                  class="rounded-circle">
         </div>
-        <div class="card-body">
-            <h4 class="card-title">{{ searchUser.name }}</h4>
+        <div class="card-glazy-profile-body">
+            <h4 class="card-glazy-profile-title">{{ searchUser.name }}</h4>
             <h6 v-if="'profile' in searchUser && searchUser.profile.countryName" class="category text-gray">
                 {{ searchUser.profile.countryName }}
             </h6>
@@ -61,7 +61,6 @@
 <style>
     .card-glazy-profile {
         margin-top: 0;
-        margin-bottom: 10px;
     }
 
     .card-glazy-profile .card-avatar {
@@ -71,19 +70,20 @@
 
     .card-glazy-profile .card-avatar img {
         float: left;
-        margin: 10px;
+        margin: 0 10px 0 0;
     }
 
-    .card-glazy-profile .card-body {
+    .card-glazy-profile .card-glazy-profile-body {
         padding: 0 10px;
     }
 
-    .card-glazy-profile .card-body .card-title {
+    .card-glazy-profile .card-glazy-profile-body .card-glazy-profile-title {
         margin-top: 10px;
+        margin-bottom: 10px;
         font-size: 1.25em;
     }
 
-    .card-glazy-profile .card-body .btn {
+    .card-glazy-profile .card-glazy-profile-body .btn {
         margin: 0 1px 10px 1px;
     }
 </style>
