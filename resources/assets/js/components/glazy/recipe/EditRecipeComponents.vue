@@ -267,21 +267,18 @@
         <p class="description">Searching for Similar Recipes...</p>
       </div>
     </div>
+
     <div class="row" v-if="similarMaterials && !isProcessingDuplicates">
       <div class="col-sm-12">
         <h5>Similar Recipes</h5>
         <p v-if="!similarMaterials || !similarMaterials.length" class="description">No similar recipes found.</p>
       </div>
       <div class="col-md-4 col-sm-6" v-for="material in similarMaterials">
-        <b-card v-bind:title="material.name">
-          <table class="table table-sm">
-            <tr v-for="component in material.materialComponents">
-              <th>{{ Number(component.percentageAmount).toFixed(2) }}</th>
-              <td>{{ component.material.name }}</td>
-            </tr>
-          </table>
-          <b-button :href="'/recipes/' + material.id" variant="info">View Recipe</b-button>
-        </b-card>
+        <material-card-detail
+                :material="material"
+                :isEmbedded="true"
+                :showCollapse="true"
+        ></material-card-detail>
       </div>
     </div>
   </div>
@@ -296,15 +293,17 @@
 
   import UmfD3Chart from 'vue-d3-stull-charts/src/components/UmfD3Chart.vue'
 
-  import MaterialAnalysisTableCompare from '../analysis/MaterialAnalysisTableCompare.vue';
-  import MaterialAnalysisUmfSpark2Single from '../analysis/MaterialAnalysisUmfSpark2Single.vue';
-  import MaterialAnalysisPercentTableCompare from '../analysis/MaterialAnalysisPercentTableCompare.vue';
+  import MaterialAnalysisTableCompare from '../analysis/MaterialAnalysisTableCompare.vue'
+  import MaterialAnalysisUmfSpark2Single from '../analysis/MaterialAnalysisUmfSpark2Single.vue'
+  import MaterialAnalysisPercentTableCompare from '../analysis/MaterialAnalysisPercentTableCompare.vue'
   import JsonUmfSparkSvg from '../analysis/JsonUmfSparkSvg.vue'
-  import UmfTraditionalNotation from '../analysis/UmfTraditionalNotation.vue';
+  import UmfTraditionalNotation from '../analysis/UmfTraditionalNotation.vue'
 
-  import Multiselect from 'vue-multiselect';
+  import MaterialCardDetail from '../search/MaterialCardDetail.vue'
 
-  import { focus } from 'vue-focus';
+  import Multiselect from 'vue-multiselect'
+
+  import { focus } from 'vue-focus'
 
   export default {
     name: 'EditRecipeComponents',
@@ -314,7 +313,8 @@
       MaterialAnalysisTableCompare,
       MaterialAnalysisPercentTableCompare,
       JsonUmfSparkSvg,
-      UmfTraditionalNotation
+      UmfTraditionalNotation,
+      MaterialCardDetail
     },
     props: {
       originalMaterial: {

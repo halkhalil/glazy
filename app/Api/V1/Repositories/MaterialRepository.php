@@ -364,6 +364,7 @@ class MaterialRepository extends Repository
         $query->with('analysis');
         $query->with('atmospheres');
         $query->with('material_type');
+        $query->with('shallowComponents');
         $query->with('thumbnail');
         $query->with('created_by_user');
         $query->with('created_by_user.profile');
@@ -415,7 +416,11 @@ class MaterialRepository extends Repository
 
         $query->orderBy('updated_at', 'DESC');
 
-        return $query->limit(40)->get();
+        $page = 1;
+        if (isset($data['p']) && (int)$data['p']) {
+            $page = (int)$data['p'];
+        }
+        return $query->paginate(40, ['*'], 'page', $page);
     }
 
     public function containsMaterials(array $data) {

@@ -45,7 +45,7 @@
         <span class="when-closed"><i class="fa fa-chevron-down"></i> More Info</span>
       </b-btn>
 
-      <b-collapse v-bind:id="'detail-collapse-' + material.id">
+      <b-collapse v-model="showCollapse" v-bind:id="'detail-collapse-' + material.id">
 
         <umf-traditional-notation
                 :material="material"
@@ -152,6 +152,10 @@
         default: false
       },
       isEmbedded: {
+        type: Boolean,
+        default: false
+      },
+      showCollapse: {
         type: Boolean,
         default: false
       }

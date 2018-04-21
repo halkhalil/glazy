@@ -653,9 +653,9 @@ class SearchController extends ApiBaseController
             return $this->respondNotFound('No materials found.');
         }
 
-        $this->manager->parseIncludes(['materialComponents', 'atmospheres', 'thumbnail', 'createdByUser']);
-
+        $this->manager->parseIncludes(['atmospheres', 'materialComponents', 'createdByUser']);
         $resource = new FractalCollection($materials, new ShallowMaterialTransformer());
+        $resource->setPaginator(new IlluminatePaginatorAdapter($materials));
 
         return $this->manager->createData($resource)->toArray();
     }
