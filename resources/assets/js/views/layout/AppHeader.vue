@@ -60,15 +60,12 @@
                     <b-nav-item href="https://wiki.glazy.org/t/glazy-help-index/" >
                         <i class="fa fa-question fa-fw"></i> Help</a>
                     </b-nav-item>
+                    <!--
                     <b-nav-item-dropdown text="Lang" right>
                         <b-dropdown-item href="#">COMING SOON!</b-dropdown-item>
                         <b-dropdown-item href="#">EN</b-dropdown-item>
                     </b-nav-item-dropdown>
-
-                    <b-nav-item href="mailto:derek@glazy.org" >
-                        <i class="fa fa-bug fa-fw"></i> Bug?  Contact Us!
-                    </b-nav-item>
-
+                    -->
                     <b-nav-item href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=derek%40derekau%2enet&lc=US&item_name=Glazy&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted" target="_blank">
                         <i class="fa fa-gift fa-fw"></i> Donate!
                     </b-nav-item>

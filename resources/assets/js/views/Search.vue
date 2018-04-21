@@ -143,7 +143,7 @@
               :pagination="searchPagination"
               :view="searchQuery.params.view"
               :order="order"
-              :item_type_name="'materials'"
+              :item_type_name="itemTypeName"
               v-on:pagerequest="pageRequest"
               v-on:orderrequest="orderRequest"
               v-on:viewrequest="viewRequest">
@@ -223,7 +223,7 @@
               :pagination="searchPagination"
               :view="searchQuery.params.view"
               :order="order"
-              :item_type_name="'materials'"
+              :item_type_name="itemTypeName"
               v-on:pagerequest="pageRequest"
               v-on:orderrequest="orderRequest"
               v-on:viewrequest="viewRequest">
@@ -500,6 +500,16 @@
           }
           return this.searchUser.name + '\'s'
         }
+      },
+
+      itemTypeName: function () {
+        if (this.isPrimitiveSearch) {
+          return 'materials'
+        }
+        if (this.$route.name === 'user-images') {
+          return 'images'
+        }
+        return 'recipes'
       }
 
     },

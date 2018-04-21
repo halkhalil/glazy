@@ -270,7 +270,7 @@
 
     <div class="row" v-if="similarMaterials && !isProcessingDuplicates">
       <div class="col-sm-12">
-        <h5>Similar Recipes</h5>
+        <h5>Similar Recipes <em>(Limited to first 40 recipes)</em></h5>
         <p v-if="!similarMaterials || !similarMaterials.length" class="description">No similar recipes found.</p>
       </div>
       <div class="col-md-4 col-sm-6" v-for="material in similarMaterials">
