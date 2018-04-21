@@ -415,7 +415,7 @@ class MaterialRepository extends Repository
 
         $query->orderBy('updated_at', 'DESC');
 
-        return $query->limit(20)->get();
+        return $query->limit(40)->get();
     }
 
     public function containsMaterials(array $data) {
