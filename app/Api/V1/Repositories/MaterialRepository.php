@@ -381,22 +381,35 @@ class MaterialRepository extends Repository
             $query->where('id', '<>', $excludeMaterialId);
         }
 
+        $query->where('is_primitive', false);
+
         foreach ($componentData as $componentMaterialData) {
-            if (isset($componentMaterialData['componentMaterialId'])
-                && isset($componentMaterialData['percentageAmount'])
-                && $componentMaterialData['percentageAmount'] > 0
-            ) {
+            if (isset($componentMaterialData['componentMaterialId']) &&
+                $componentMaterialData['componentMaterialId']) {
 
                 $childId = $componentMaterialData['componentMaterialId'];
-                $amount = $componentMaterialData['percentageAmount'];
+                $amount = 0;
+                if (isset($componentMaterialData['percentageAmount']) &&
+                    $componentMaterialData['percentageAmount']) {
+                    $amount = $componentMaterialData['percentageAmount'];
+                }
 
-                $query->whereExists(function ($query) use ($childId, $amount) {
-                    $query->select(DB::raw(1))
-                        ->from('material_materials')
-                        ->whereRaw('material_materials.parent_material_id = materials.id')
-                        ->whereRaw('material_materials.component_material_id = '.$childId)
-                        ->whereRaw('material_materials.percentage_amount = '.$amount);
-                });
+                if ($amount) {
+                    $query->whereExists(function ($query) use ($childId, $amount) {
+                        $query->select(DB::raw(1))
+                            ->from('material_materials')
+                            ->whereRaw('material_materials.parent_material_id = materials.id')
+                            ->whereRaw('material_materials.component_material_id = '.$childId)
+                            ->whereRaw('material_materials.percentage_amount = '.$amount);
+                    });
+                } else {
+                    $query->whereExists(function ($query) use ($childId, $amount) {
+                        $query->select(DB::raw(1))
+                            ->from('material_materials')
+                            ->whereRaw('material_materials.parent_material_id = materials.id')
+                            ->whereRaw('material_materials.component_material_id = '.$childId);
+                    });
+                }
             }
         }
 

@@ -675,15 +675,20 @@
 
         // Check each material component for id and amount
         for (var i = 0; i < this.materialFieldsId.length; i++) {
-          if (this.materialFieldsId[i] && this.materialFieldsId[i].value
-            && !isNaN(this.materialFieldsAmount[i]
-              && Number(this.materialFieldsAmount[i]) > 0)
-          ) {
-            form.materialComponents.push({
-              componentMaterialId: this.materialFieldsId[i].value,
-              percentageAmount: Number(this.materialFieldsAmount[i]),
-              isAdditional: this.materialFieldsIsAdditional[i],
-            });
+          if (this.materialFieldsId[i] && this.materialFieldsId[i].value) {
+            if (!isNaN(this.materialFieldsAmount[i] && Number(this.materialFieldsAmount[i]) > 0)) {
+              form.materialComponents.push({
+                componentMaterialId: this.materialFieldsId[i].value,
+                percentageAmount: Number(this.materialFieldsAmount[i]),
+                isAdditional: this.materialFieldsIsAdditional[i]
+              });
+            } else {
+              form.materialComponents.push({
+                componentMaterialId: this.materialFieldsId[i].value,
+                percentageAmount: 0,
+                isAdditional: false
+              });
+            }
           }
         }
         if (form.materialComponents.length > 0) {
