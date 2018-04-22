@@ -29,20 +29,34 @@ class UserMaterialRepository extends Repository
         return UserMaterial::with('material')->with('user')->find($id);
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     *
+     * Get all the materials in this user's inventory.
+     * Need a join with materials table in order to sort by material name.
+     */
     public function getByUserId()
     {
         $user_id =  Auth::user()->id;
-        $userMaterials = UserMaterial::with('material')
+
+        $query = UserMaterial::query();
+
+        $query->join('materials as mat', 'mat.id', '=', 'user_materials.material_id')
+            ->select('user_materials.*')
+            ->with('material')
             ->with('material.analysis')
+            ->with('material.material_type')
+            ->with('material.thumbnail')
+            ->with('material.created_by_user')
+            ->with('material.created_by_user.profile')
             ->where('user_id', $user_id)
-            ->get();
+            ->orderBy('mat.name', 'ASC');
+
+        $userMaterials = $query->get();
 
         if (!$userMaterials->count()) {
             $this->initializeUserMaterials();
-            $userMaterials = UserMaterial::with('material')
-                ->with('material.analysis')
-                ->where('user_id', $user_id)
-                ->get();
+            $userMaterials = $query->get();
         }
 
         return $userMaterials;

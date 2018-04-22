@@ -190,6 +190,9 @@
         if (!inventoryId) {
           return
         }
+
+        console.log('remove inventory id: ' + inventoryId)
+
         this.isProcessing = true
         Vue.axios.delete(Vue.axios.defaults.baseURL + '/usermaterials/' + inventoryId)
           .then((response) => {

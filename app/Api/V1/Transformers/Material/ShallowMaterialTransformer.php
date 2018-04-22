@@ -62,12 +62,12 @@ class ShallowMaterialTransformer extends Fractal\TransformerAbstract
     protected $availableIncludes = [
         'atmospheres',
         'materialComponents',
-        'thumbnail',
-        'createdByUser'
+        'thumbnail'
     ];
 
     protected $defaultIncludes = [
-        'analysis'
+        'analysis',
+        'createdByUser'
     ];
 
     public function transform($material)
@@ -99,13 +99,13 @@ class ShallowMaterialTransformer extends Fractal\TransformerAbstract
 
         $ortonCones = new OrtonCone();
 
-        if ($material[Material::DB_FROM_ORTON_CONE]) {
+        if ($material[Material::DB_FROM_ORTON_CONE_ID]) {
             $material_data[self::JSON_NAMES[Material::DB_FROM_ORTON_CONE_ID]] =
                 $material[Material::DB_FROM_ORTON_CONE_ID];
             $material_data[self::FROM_ORTON_CONE_NAME] =
                 $ortonCones->getValue($material[Material::DB_FROM_ORTON_CONE_ID]);
         }
-        if ($material[Material::DB_TO_ORTON_CONE]) {
+        if ($material[Material::DB_TO_ORTON_CONE_ID]) {
             $material_data[self::JSON_NAMES[Material::DB_TO_ORTON_CONE_ID]] = $material[Material::DB_TO_ORTON_CONE_ID];
             $material_data[self::TO_ORTON_CONE_NAME] =
                 $ortonCones->getValue($material[Material::DB_TO_ORTON_CONE_ID]);
@@ -198,8 +198,12 @@ class ShallowMaterialTransformer extends Fractal\TransformerAbstract
         $material_data[self::JSON_NAMES[Material::DB_CREATED_AT]] = $this->jsonDate($material[Material::DB_CREATED_AT]);
         $material_data[self::JSON_NAMES[Material::DB_UPDATED_AT]] = $this->jsonDate($material[Material::DB_UPDATED_AT]);
 
-        $material_data[self::MATERIAL_COMPONENT_TOTAL_AMOUNT] =
-            $this->getMaterialComponentTotalAmount($material->shallowComponents);
+        // Do not lazy-load material components accidentally
+        // by referencing the shallowComponents key
+        if (array_key_exists('shallowComponents', $material)) {
+            $material_data[self::MATERIAL_COMPONENT_TOTAL_AMOUNT] =
+                $this->getMaterialComponentTotalAmount($material->shallowComponents);
+        }
 
         return $material_data;
     }

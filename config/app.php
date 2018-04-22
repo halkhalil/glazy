@@ -183,7 +183,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
 
         Nutsweb\LaravelPrerender\LaravelPrerenderServiceProvider::class,
-        // Lanin\Laravel\ApiDebugger\ServiceProvider::class,
+        // Clockwork\Support\Laravel\ClockworkServiceProvider::class,
 
     ],
 
@@ -242,7 +242,6 @@ return [
 
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'Image' => Intervention\Image\Facades\Image::class,
-        // 'Debugger' => Lanin\Laravel\ApiDebugger\Facade::class,
     ],
 
 ];
