@@ -122,6 +122,8 @@ class Material extends Model
             ->with('component_material')
             ->with('component_material.analysis')
             ->with('component_material.thumbnail')
+            // ->with('component_material.thumbnail.created_by_user')
+            // ->with('component_material.thumbnail.created_by_user.profile')
             ->orderBy('is_additional', 'asc')
             ->orderBy('percentage_amount', 'desc')
             ->orderBy('id', 'asc');

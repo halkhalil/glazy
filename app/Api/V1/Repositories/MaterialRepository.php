@@ -42,10 +42,14 @@ class MaterialRepository extends Repository
             ->with('thumbnail')
             ->with('thumbnail.created_by_user')
             ->with('images')
+            ->with('images.created_by_user')
+            ->with('images.created_by_user.profile')
             ->with('reviews')
             ->with('reviews.user') // TODO: ???
+            ->with('reviews.user.profile') // TODO: ???
             ->with('collections')
             ->with('collections.created_by_user') // TODO: ???
+            ->with('collections.created_by_user.profile')
             ->with('created_by_user')
             ->with('created_by_user.profile')
             // ->where('is_primitive', false)

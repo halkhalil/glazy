@@ -98,13 +98,13 @@ class MaterialTransformer extends Fractal\TransformerAbstract
 
         $ortonCones = new OrtonCone();
 
-        if ($material[Material::DB_FROM_ORTON_CONE]) {
+        if ($material[Material::DB_FROM_ORTON_CONE_ID]) {
             $material_data[self::JSON_NAMES[Material::DB_FROM_ORTON_CONE_ID]] =
                 $material[Material::DB_FROM_ORTON_CONE_ID];
             $material_data[self::FROM_ORTON_CONE_NAME] =
                 $ortonCones->getValue($material[Material::DB_FROM_ORTON_CONE_ID]);
         }
-        if ($material[Material::DB_TO_ORTON_CONE]) {
+        if ($material[Material::DB_TO_ORTON_CONE_ID]) {
             $material_data[self::JSON_NAMES[Material::DB_TO_ORTON_CONE_ID]] = $material[Material::DB_TO_ORTON_CONE_ID];
             $material_data[self::TO_ORTON_CONE_NAME] =
                 $ortonCones->getValue($material[Material::DB_TO_ORTON_CONE_ID]);

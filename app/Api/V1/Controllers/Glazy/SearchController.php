@@ -459,6 +459,7 @@ class SearchController extends ApiBaseController
         $query->select(DB::raw($selectFields));
 
         $query->with('material_type');
+        $query->with('atmospheres');
         $query->with('analysis');
         $query->with('thumbnail');
         $query->with('created_by_user');

@@ -5,7 +5,7 @@ namespace App\Api\V1\Transformers\Material;
 use App\Api\V1\Transformers\Atmosphere\SimpleAtmosphereTransformer;
 use App\Api\V1\Transformers\MaterialAnalysis\MaterialAnalysisTransformer;
 use App\Api\V1\Transformers\MaterialComponent\ShallowMaterialComponentTransformer;
-use App\Api\V1\Transformers\MaterialImage\MaterialImageTransformer;
+use App\Api\V1\Transformers\MaterialImage\ShallowMaterialImageTransformer;
 use App\Api\V1\Transformers\User\UserTransformer;
 use App\Models\Material;
 use App\Models\MaterialType;
@@ -89,13 +89,13 @@ class ChartPointMaterialTransformer extends Fractal\TransformerAbstract
 
         $ortonCones = new OrtonCone();
 
-        if ($material[Material::DB_FROM_ORTON_CONE]) {
+        if ($material[Material::DB_FROM_ORTON_CONE_ID]) {
             $material_data[self::JSON_NAMES[Material::DB_FROM_ORTON_CONE_ID]] =
                 $material[Material::DB_FROM_ORTON_CONE_ID];
             $material_data[self::FROM_ORTON_CONE_NAME] =
                 $ortonCones->getValue($material[Material::DB_FROM_ORTON_CONE_ID]);
         }
-        if ($material[Material::DB_TO_ORTON_CONE]) {
+        if ($material[Material::DB_TO_ORTON_CONE_ID]) {
             $material_data[self::JSON_NAMES[Material::DB_TO_ORTON_CONE_ID]] = $material[Material::DB_TO_ORTON_CONE_ID];
             $material_data[self::TO_ORTON_CONE_NAME] =
                 $ortonCones->getValue($material[Material::DB_TO_ORTON_CONE_ID]);
@@ -158,7 +158,7 @@ class ChartPointMaterialTransformer extends Fractal\TransformerAbstract
     {
         // TODO: add thumbnail url & info
         if ($material->thumbnail) {
-            return $this->item($material->thumbnail, new MaterialImageTransformer());
+            return $this->item($material->thumbnail, new ShallowMaterialImageTransformer());
         }
     }
 

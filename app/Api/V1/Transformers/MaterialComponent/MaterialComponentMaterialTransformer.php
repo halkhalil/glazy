@@ -3,7 +3,7 @@
 namespace App\Api\V1\Transformers\MaterialComponent;
 
 use App\Api\V1\Transformers\MaterialAnalysis\MaterialAnalysisTransformer;
-use App\Api\V1\Transformers\MaterialImage\MaterialImageTransformer;
+use App\Api\V1\Transformers\MaterialImage\ShallowMaterialImageTransformer;
 use App\Models\Material;
 
 use League\Fractal;
@@ -50,7 +50,7 @@ class MaterialComponentMaterialTransformer extends Fractal\TransformerAbstract
     public function includeThumbnail(Material $material)
     {
         if ($material->thumbnail_id && $material->thumbnail) {
-            return $this->item($material->thumbnail, new MaterialImageTransformer());
+            return $this->item($material->thumbnail, new ShallowMaterialImageTransformer());
         }
     }
 

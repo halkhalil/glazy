@@ -5,7 +5,7 @@ namespace App\Api\V1\Transformers\Material;
 use App\Api\V1\Transformers\Atmosphere\SimpleAtmosphereTransformer;
 use App\Api\V1\Transformers\MaterialAnalysis\MaterialAnalysisTransformer;
 use App\Api\V1\Transformers\MaterialComponent\ShallowMaterialComponentTransformer;
-use App\Api\V1\Transformers\MaterialImage\MaterialImageTransformer;
+use App\Api\V1\Transformers\MaterialImage\ShallowMaterialImageTransformer;
 use App\Api\V1\Transformers\User\UserTransformer;
 use App\Models\Material;
 use App\Models\MaterialType;
@@ -231,7 +231,7 @@ class ShallowMaterialTransformer extends Fractal\TransformerAbstract
     {
         // TODO: add thumbnail url & info
         if ($material->thumbnail) {
-            return $this->item($material->thumbnail, new MaterialImageTransformer());
+            return $this->item($material->thumbnail, new ShallowMaterialImageTransformer());
         }
     }
 
