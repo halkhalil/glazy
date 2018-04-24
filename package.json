@@ -11,9 +11,9 @@
     "lint": "eslint resources/assets/js"
   },
   "dependencies": {
-    "@websanova/vue-auth": "^2.21.1-beta",
-    "axios": "^0.16.2",
-    "bootstrap": "4.0.0-beta.2",
+    "@websanova/vue-auth": "^2.21.8-beta",
+    "axios": "^0.17.1",
+    "bootstrap": "^4.1.0",
     "ceramicscalc-js": "github:derekphilipau/ceramicscalc-js",
     "js-cookie": "^2.1.4",
     "popper.js": "^1.14.3",

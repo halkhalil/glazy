@@ -72,7 +72,7 @@ Vue.use(VueAuth, {
     redirect: function () { return this.options.getUrl() + '/login/google'; },
     scope: 'profile email'
   }
-});
+})
 
 Vue.config.productionTip = false
 
