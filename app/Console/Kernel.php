@@ -16,7 +16,8 @@ class Kernel extends ConsoleKernel
         // DAU
         Commands\UpdateRecipeAnalyses::class,
         Commands\UpdateMaterialHashes::class,
-        Commands\DeletePrivateMaterials::class
+        Commands\DeletePrivateMaterials::class,
+        Commands\CreatePreloadImages::class
     ];
 
     /**

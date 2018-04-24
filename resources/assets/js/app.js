@@ -86,6 +86,11 @@ Vue.use(VueTimeago, {
   }
 })
 
+import VueProgressiveImage from 'vue-progressive-image'
+Vue.use(VueProgressiveImage, {
+  blur: 10
+})
+
 /* eslint-disable no-new */
 const app = new Vue({
   el: '#app',

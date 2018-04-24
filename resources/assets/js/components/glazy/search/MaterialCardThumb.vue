@@ -5,9 +5,12 @@
        @mouseleave="unhighlightMaterial(material.id)">
     <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}"
       class="material-card-img-link">
-      <img class="card-img-top img-fluid w-100"
-           :src="materialHelper.getImageUrl(material.selectedImage)"
-           :alt="material.name">
+      <progressive-img
+              class="card-img-top img-fluid w-100"
+              :src="materialHelper.getSmallImageUrl(material.selectedImage)"
+              :placeholder="materialHelper.getPreImageUrl(material.selectedImage)"
+              :alt="material.name"
+      />
     </router-link>
     <span v-bind:id="'material-card-' + material.id"
           class="material-anchor"></span>
@@ -187,6 +190,7 @@
     right: 5px;
     padding: 0;
     margin: 0;
+    z-index: 2;
   }
 
   .material-card .material-card-img-link {

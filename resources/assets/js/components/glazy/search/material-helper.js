@@ -34,14 +34,22 @@ export default class MaterialHelper {
     return false;
   }
 
-  getImageUrl (image) {
+  getImageUrl (image, size) {
     if (image && image.filename) {
       var id = '' + this.material.id;
       var bin = id.substr(id.length - 2);
       return GLAZY_APP_URL + '/storage/uploads/recipes/' +
-        bin + '/s_' + image.filename;
+        bin + size + image.filename;
     }
     return '/img/recipes/black.png';
+  }
+
+  getSmallImageUrl (image) {
+    return this.getImageUrl(image, '/s_')
+  }
+
+  getPreImageUrl (image) {
+    return this.getImageUrl(image, '/p_')
   }
 
   getConeString () {

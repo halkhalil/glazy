@@ -19,6 +19,7 @@ class GlazyImageFile
     const LARGE_IMAGE_PREFIX = 'l_';
     const MEDIUM_IMAGE_PREFIX = 'm_';
     const SMALL_IMAGE_PREFIX = 's_';
+    const PRELOAD_IMAGE_PREFIX = 'p_';
 
 /*
  * Legacy sizes
@@ -30,6 +31,9 @@ class GlazyImageFile
     const IMAGE_SIZE_LARGE = 2500;
     const IMAGE_SIZE_MEDIUM = 800;
     const IMAGE_SIZE_SMALL = 300;
+    const IMAGE_SIZE_PRELOAD = 20;
+
+    const IMAGE_QUALITY_PRELOAD = 20;
 
     const IMAGE_URL_PATH = '/storage/uploads';
 
@@ -92,6 +96,7 @@ class GlazyImageFile
         $this->createLargeImage();
         $this->createMediumImage();
         $this->createSmallImage();
+        $this->createPreloadImage();
 
         $this->image->destroy();    // Free up memory
 
@@ -189,6 +194,14 @@ class GlazyImageFile
         $filename = $this->getFullPathImageFilename(self::SMALL_IMAGE_PREFIX);
         $this->image->fit(self::IMAGE_SIZE_SMALL, self::IMAGE_SIZE_SMALL);
         $this->image->save($filename);
+    }
+
+    protected function createPreloadImage()
+    {
+        $filename = $this->getFullPathImageFilename(self::PRELOAD_IMAGE_PREFIX);
+        $this->image->fit(self::IMAGE_SIZE_PRELOAD, self::IMAGE_SIZE_PRELOAD);
+        $this->image->getCore()->stripImage();
+        $this->image->save($filename, GlazyImageFile::IMAGE_QUALITY_PRELOAD);
     }
 
     protected function setDominantColors()
