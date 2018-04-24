@@ -10,6 +10,7 @@
               :src="materialHelper.getSmallImageUrl(material.selectedImage)"
               :placeholder="materialHelper.getPreImageUrl(material.selectedImage)"
               :alt="material.name"
+              aspect-ratio="1"
       />
     </router-link>
     <span v-bind:id="'material-card-' + material.id"

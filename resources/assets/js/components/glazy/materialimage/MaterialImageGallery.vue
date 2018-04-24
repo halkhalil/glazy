@@ -6,9 +6,14 @@
                 <div class="card image-gallery-card text-center">
                     <div class="card-image">
                         <a @click.stop.prevent="lightbox()" href="#">
-                            <img class="img rounded"
-                                 :src="getImageUrl(currentImage.filename, 'm')"
-                                 :alt="currentImage.title">
+                            <progressive-img
+                                    class="img rounded"
+                                    :src="getImageUrl(currentImage.filename, 'm')"
+                                    :placeholder="getImageUrl(currentImage.filename, 'p')"
+                                    :alt="currentImage.title"
+                                    aspect-ratio="1"
+                            />
+
                         </a>
 
                         <div v-if="currentUser" class="gallery-actions">
@@ -117,9 +122,13 @@
                 <a @click.stop.prevent="selectImage(image)"
                    :class="{ galleryselected: (image.id == currentImage.id) }"
                    href="#">
-                    <img class="rounded img-raised"
-                         :src="getImageUrl(image.filename, 'm')"
-                         :alt="image.title">
+                    <progressive-img
+                            class="rounded img-raised"
+                            :src="getImageUrl(image.filename, 'm')"
+                            :placeholder="getImageUrl(image.filename, 'p')"
+                            :alt="image.title"
+                            aspect-ratio="1"
+                    />
                 </a>
             </div>
         </div>
@@ -506,25 +515,13 @@
         padding: 10px 10px;
     }
 
-    /**/
-
-    .glazy-gallery-thumbs {
-    }
-
-    /*
-    .gallery-swatches {
-        position: absolute;
-        top: 0;
-        width: 100%;
-    }
-    */
-
     .gallery-swatches {
         position: absolute;
         top: 10px;
         right: 10px;
         padding: 0;
         margin: 0;
+        z-index: 2;
     }
 
     .gallery-swatches .btn {
