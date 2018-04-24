@@ -20,7 +20,7 @@
             <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}"
                          class="material-card-img-link">
               <img class="rounded"
-                   :src="materialHelper.getImageUrl(material.selectedImage)"
+                   :src="materialHelper.getSmallImageUrl(material.selectedImage)"
                    :alt="material.name"
                    height="72" width="72">
             </router-link>

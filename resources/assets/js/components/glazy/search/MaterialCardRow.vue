@@ -7,7 +7,7 @@
       <span v-bind:id="'material-card-' + material.id"
         class="material-anchor"></span>
       <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}">
-        <img :src="materialHelper.getImageUrl(material.selectedImage)"
+        <img :src="materialHelper.getSmallImageUrl(material.selectedImage)"
              :alt="material.name"
              width="72" height="72" >
       </router-link>
