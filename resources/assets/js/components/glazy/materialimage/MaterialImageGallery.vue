@@ -11,7 +11,7 @@
                                     :src="getImageUrl(currentImage.filename, 'm')"
                                     :placeholder="getImageUrl(currentImage.filename, 'p')"
                                     :alt="currentImage.title"
-                                    aspect-ratio="1"
+                                    :aspect-ratio="1"
                             />
 
                         </a>
@@ -127,7 +127,7 @@
                             :src="getImageUrl(image.filename, 'm')"
                             :placeholder="getImageUrl(image.filename, 'p')"
                             :alt="image.title"
-                            aspect-ratio="1"
+                            :aspect-ratio="1"
                     />
                 </a>
             </div>
@@ -135,7 +135,7 @@
         <div v-if="$auth.check()" class="row">
             <div class="col-sm-12">
                 <button type="button" class="btn btn-info btn-block btn-sm"  v-on:click="imageUpload()">
-                    <i class="fa fa-camera-retro"></i> Upload Photo
+                    <i class="fa fa-camera"></i> Upload Photo
                 </button>
             </div>
         </div>

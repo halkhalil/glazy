@@ -4,16 +4,31 @@
     <ul class="pagination">
 
         <li class="page-item disabled"
-            v-if="page_links.current_page == page_links.start_page">
+            v-if="page_links.current_page == 1">
             <span class="page-link">
-                <i class="fa fa-chevron-left"></i>
+                <i class="fa fa-angle-double-left fa-fw"></i>
+                <span class="sr-only">First</span>
+            </span>
+        </li>
+        <li class="page-item"
+            v-else>
+            <a class="page-link" @click.prevent="pageRequest(1)">
+                <i class="fa fa-angle-double-left fa-fw"></i>
+                <span class="sr-only">First</span>
+            </a>
+        </li>
+
+        <li class="page-item disabled"
+            v-if="page_links.current_page == 1">
+            <span class="page-link">
+                <i class="fa fa-angle-left"></i>
                 <span class="sr-only">Previous</span>
             </span>
         </li>
         <li class="page-item"
             v-else>
             <a class="page-link" @click.prevent="pageRequest(page_links.current_page - 1)">
-                <i class="fa fa-chevron-left"></i>
+                <i class="fa fa-angle-left"></i>
                 <span class="sr-only">Previous</span>
             </a>
         </li>
@@ -35,17 +50,33 @@
         <li class="page-item disabled"
             v-if="page_links.current_page == page_links.end_page">
             <span class="page-link">
-                <i class="fa fa-chevron-right"></i>
+                <i class="fa fa-angle-right"></i>
                 <span class="sr-only">Next</span>
             </span>
         </li>
         <li class="page-item"
             v-else>
             <a class="page-link" @click.prevent="pageRequest(page_links.current_page + 1)">
-                <i class="fa fa-chevron-right"></i>
+                <i class="fa fa-angle-right"></i>
                 <span class="sr-only">Next</span>
             </a>
         </li>
+
+        <li class="page-item disabled"
+            v-if="page_links.current_page == pagination.total_pages">
+            <span class="page-link">
+                <i class="fa fa-angle-double-right"></i>
+                <span class="sr-only">Last</span>
+            </span>
+        </li>
+        <li class="page-item"
+            v-else>
+            <a class="page-link" @click.prevent="pageRequest(pagination.total_pages)">
+                <i class="fa fa-angle-double-right"></i>
+                <span class="sr-only">Last</span>
+            </a>
+        </li>
+
         <li class="page-item totals">
             {{ paginationFrom }}
             to {{ paginationTo }}
