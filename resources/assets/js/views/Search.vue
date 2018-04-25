@@ -377,7 +377,7 @@
           bottom: 12
         },
         isMapExpanded: false,
-        expandButtonText: '<i class="fa fa-angle-double-right"></i>',
+        expandButtonText: '<i class="fa fa-resize-full"></i>',
         expandbuttonTooltip: 'Show More Map',
         sidebarClass: 'col-md-3',
         mainClass: 'col-md-9',
@@ -677,14 +677,14 @@
       },
       toggleExpandMap () {
         if (this.isMapExpanded) {
-          this.expandButtonText = '<i class="fa fa-angle-double-right"></i>'
+          this.expandButtonText = '<i class="fa fa-resize-full"></i>'
           this.expandbuttonTooltip = 'Show More Map'
           this.sidebarClass = 'col-md-3'
           this.mainClass = 'col-md-9'
           this.materialCardClass = 'col-lg-3 col-md-4 col-sm-6 col-6'
           this.chartHeight = 200
         } else {
-          this.expandButtonText = '<i class="fa fa-angle-double-left"></i>'
+          this.expandButtonText = '<i class="fa fa-resize-small"></i>'
           this.expandbuttonTooltip = 'Show Less Map'
           this.sidebarClass = 'col-md-6'
           this.mainClass = 'col-md-6'
