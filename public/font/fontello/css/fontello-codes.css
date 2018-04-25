@@ -76,6 +76,9 @@
 .icon-gift:before { content: '\e84a'; } /* '' */
 .icon-align-justify:before { content: '\e84b'; } /* '' */
 .icon-list:before { content: '\e84c'; } /* '' */
+.icon-pencil:before { content: '\e84d'; } /* '' */
+.icon-edit:before { content: '\e84e'; } /* '' */
+.icon-save:before { content: '\e84f'; } /* '' */
 .icon-move:before { content: '\f047'; } /* '' */
 .icon-link-ext:before { content: '\f08e'; } /* '' */
 .icon-bookmark-empty:before { content: '\f097'; } /* '' */
@@ -129,6 +132,7 @@
 .icon-minus-squared:before { content: '\f146'; } /* '' */
 .icon-minus-squared-alt:before { content: '\f147'; } /* '' */
 .icon-ok-squared:before { content: '\f14a'; } /* '' */
+.icon-pencil-squared:before { content: '\f14b'; } /* '' */
 .icon-link-ext-alt:before { content: '\f14c'; } /* '' */
 .icon-doc-inv:before { content: '\f15b'; } /* '' */
 .icon-doc-text-inv:before { content: '\f15c'; } /* '' */

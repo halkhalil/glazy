@@ -937,8 +937,6 @@
     top: 24px;
     right: -4px;
     z-index: 1001;
-    font-size: 1.25rem;
-    line-height: 1;
   }
 
   #umf-d3-chart-container {
