@@ -13,11 +13,10 @@
                                     :alt="currentImage.title"
                                     :aspect-ratio="1"
                             />
-
                         </a>
 
                         <div v-if="currentUser" class="gallery-actions">
-                            <b-button v-if="(currentUser.id == material.createdByUserId) && (currentImage.id !== material.thumbnailId)"
+                            <b-button v-if="(currentUser.id == material.createdByUserId) && (currentImage.id !== material.thumbnailId) && !material.isArchived"
                                       @click.stop.prevent="setThumbnail()"
                                       v-b-tooltip.hover
                                       title="Set as recipe thumbnail"
@@ -503,6 +502,7 @@
         right: 10px;
         padding: 0;
         margin: 0;
+        z-index: 2;
     }
     .image-gallery-card .card-body {
         padding: 10px;

@@ -87,7 +87,7 @@ class MaterialController extends ApiBaseController
         }
 
         if (!Auth::guard()->user()->can('update', $material)) {
-            return $this->respondUnauthorized('This recipe does not belong to you.');
+            return $this->respondUnauthorized('This recipe cannot be edited by you.');
         }
 
         $material->thumbnail_id = $image->id;
