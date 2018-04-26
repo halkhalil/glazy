@@ -200,7 +200,8 @@ class ShallowMaterialTransformer extends Fractal\TransformerAbstract
 
         // Do not lazy-load material components accidentally
         // by referencing the shallowComponents key
-        if (array_key_exists('shallowComponents', $material)) {
+        // if (array_key_exists('shallowComponents', $material)) {
+        if ($material->relationLoaded('shallowComponents')) {
             $material_data[self::MATERIAL_COMPONENT_TOTAL_AMOUNT] =
                 $this->getMaterialComponentTotalAmount($material->shallowComponents);
         }
