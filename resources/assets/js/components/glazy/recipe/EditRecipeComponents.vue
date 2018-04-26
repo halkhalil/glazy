@@ -221,8 +221,8 @@
         <div class="col-sm-2">
           <b-form-checkbox id="index + '_add'"
                            v-model="materialFieldsIsAdditional[index]"
-                           @input="updateMaterial">
-          </b-form-checkbox>
+                           @input="updateMaterial"
+                           plain />
         </div>
       </div>
       <div class="row">

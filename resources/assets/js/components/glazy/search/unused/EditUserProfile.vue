@@ -89,8 +89,8 @@
             >
                 <b-form-checkbox-group id="atmospheres"
                                        v-model="form.atmospheres"
-                                       :options="atmospheres">
-                </b-form-checkbox-group>
+                                       :options="atmospheres"
+                                       plain />
             </b-form-group>
 
 
