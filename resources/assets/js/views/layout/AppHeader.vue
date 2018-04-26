@@ -3,7 +3,7 @@
         <b-navbar class="navbar navbar-expand-md fixed-top navbar-light bg-white"
                   toggleable="sm">
             <b-navbar-brand :to="{ name: 'search' }">
-                <img src="/img/logo.png" height="26" alt="Glazy">
+                <i class="fa fa-glazy glazy-logo"></i>
             </b-navbar-brand>
             <b-navbar-toggle target="nav_dropdown_collapse"></b-navbar-toggle>
             <b-collapse is-nav id="nav_dropdown_collapse">
@@ -155,4 +155,10 @@
 </script>
 
 <style>
+
+    .glazy-logo {
+        font-size: 26px;
+        /* color: #ff5e00; */
+        color: #ff7d00;
+    }
 </style>
