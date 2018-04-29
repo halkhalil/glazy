@@ -21,6 +21,7 @@
                     id="groupName"
                     description="No need to add the cone temp here!"
                     label="Name"
+                    label-for="name"
                     :feedback="feedbackName"
                     :state="stateName"
             >
@@ -31,6 +32,7 @@
                     id="groupOtherNames"
                     description="You can also add a Code here."
                     label="Other Names or Code (Optional)"
+                    label-for="otherNames"
             >
                 <b-form-input id="otherNames" v-model.trim="form.otherNames"></b-form-input>
             </b-form-group>
@@ -39,6 +41,7 @@
                     id="groupDescription"
                     description="Here you can add glaze preparation, firing notes, etc."
                     label="Description (Optional)"
+                    label-for="description"
             >
                 <b-form-textarea id="description"
                                  v-model="form.description"
@@ -127,7 +130,9 @@
                 <b-col md="12">
                     <b-form-group
                             id="groupAtmospheres"
-                            label="Atmospheres (Optional)">
+                            label="Atmospheres (Optional)"
+                            label-for="atmospheres"
+                    >
                         <b-form-checkbox-group id="atmospheres"
                                                v-model="form.atmospheres"
                                                :options="atmospheres"

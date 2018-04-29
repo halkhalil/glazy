@@ -31,6 +31,7 @@
                             id="groupName"
                             description="Your full name or handle"
                             label="Your Name"
+                            label-for="name"
                             :feedback="feedbackName"
                             :state="stateName"
                     >
@@ -41,6 +42,7 @@
                             id="groupUsername"
                             description="Cannot be a number.  Please no spaces or special characters"
                             label="Your Glazy Username"
+                            label-for="username"
                             :feedback="feedbackUsername"
                             :state="stateUsername"
                     >
@@ -54,6 +56,7 @@
                             id="groupTitle"
                             description="Short description or quote about yourself"
                             label="Quote"
+                            label-for="title"
                     >
                         <b-form-input id="title" v-model.trim="form.title"></b-form-input>
                     </b-form-group>
@@ -78,6 +81,7 @@
                             id="groupUrl"
                             description="Your website address, without the http://"
                             label="Website"
+                            label-for="url"
                     >
                         <b-form-input id="url" v-model.trim="form.url"></b-form-input>
                     </b-form-group>
@@ -86,6 +90,7 @@
                             id="groupPinterest"
                             description="Your Pinterest username can be found in the URL, e.g. https://www.pinterest.com/your_username/"
                             label="Pinterest Username"
+                            label-for="pinterest"
                     >
                         <b-form-input id="pinterest" v-model.trim="form.pinterest"></b-form-input>
                     </b-form-group>
@@ -93,6 +98,7 @@
                     <b-form-group
                             id="groupFacebook"
                             label="Facebook Username"
+                            label-for="facebook"
                     >
                         <b-form-input id="facebook" v-model.trim="form.facebook"></b-form-input>
                     </b-form-group>
@@ -100,6 +106,7 @@
                     <b-form-group
                             id="groupInstagram"
                             label="Instagram Username"
+                            label-for="instagram"
                     >
                         <b-form-input id="instagram" v-model.trim="form.instagram"></b-form-input>
                     </b-form-group>
@@ -131,8 +138,11 @@
 
                     <b-form-group
                             id="email"
-                            label="Email Address">
-                        <b-form-input v-model.trim="passwordForm.email"
+                            label="Email Address"
+                            label-for="email"
+                    >
+                        <b-form-input id="email"
+                                      v-model.trim="passwordForm.email"
                                       type="email"
                                       autocomplete="username"
                                       aria-describedby="input-help input-feeback"
@@ -142,6 +152,7 @@
                     <b-form-group
                             id="groupCurrentPassword"
                             label="Current Password"
+                            label-for="currentPassword"
                     >
                         <b-form-input id="currentPassword"
                                       type="password"
@@ -152,6 +163,7 @@
                     <b-form-group
                             id="groupNewPassword"
                             label="New Password"
+                            label-for="newPassword"
                     >
                         <b-form-input id="newPassword"
                                       type="password"
@@ -162,6 +174,7 @@
                     <b-form-group
                             id="groupNewPasswordAgain"
                             label="New Password (Again)"
+                            label-for="newPasswordAgain"
                     >
                         <b-form-input id="newPasswordAgain"
                                       type="password"
