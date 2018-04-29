@@ -242,6 +242,7 @@
                     size="sm"
                     variant="info"
                     @click.prevent="store"><i class="fa fa-save"></i> Save</b-button>
+          <br/>Can't find a material?  <a href="https://wiki.glazy.org/t/calculator/" target="_blank">How to add a material to the calculator.</a>
         </div>
         <div class="col-sm-3">
           <b-form-input v-model="subtotal"
@@ -253,10 +254,6 @@
                     @click.prevent="setTo100">Set 100%</b-button>
         </div>
         <div class="col-sm-2">
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
         </div>
       </div>
     </b-card>
