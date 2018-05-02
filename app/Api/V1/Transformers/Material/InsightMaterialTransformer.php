@@ -6,6 +6,7 @@ use App\Models\Material;
 use DateTime;
 use App\Models\MaterialType;
 use App\Models\OrtonCone;
+use DerekPhilipAu\Ceramicscalc\Models\Analysis\Analysis;
 
 /**
  * Created by PhpStorm.
@@ -17,6 +18,59 @@ use App\Models\OrtonCone;
 class InsightMaterialTransformer
 {
     public static function transform(Material $material)
+    {
+        if ($material->is_primitive || $material->is_analysis) {
+            return self::transformSimpleMaterial($material);
+        }
+        else {
+            return self::transformCompositeMaterial($material);
+        }
+    }
+
+    public static function transformSimpleMaterial(Material $material)
+    {
+        $url_type = "materials";
+        if ($material->is_analysis) {
+            $url_type = "analyses";
+        }
+
+        $out = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL;
+        $out .= "<material name=\"".strip_tags($material->name).' (Glazy ID '.$material->id.')" ';
+        if ($material->description) {
+            $out .= 'descrip="'.substr(preg_replace('/[^a-zA-Z0-9\s]/', '', strip_tags($material->description)),0,250).'" ';
+        }
+        if ($material->analysis && $material->analysis['loi']) {
+            $out .= 'loi="'.(float)$material->analysis['loi'].'" ';
+        }
+        $out .= '>'.PHP_EOL;
+
+        if ($material->analysis) {
+            $oxides = '';
+            foreach (Analysis::OXIDE_NAMES as $oxide_name) {
+                $percent_oxide_name = $oxide_name . '_percent';
+                if ($material->analysis[$percent_oxide_name] > 0) {
+                    $oxides .= "\t\t<oxide symbol=\"".$oxide_name."\" percent=\"".$material->analysis[$percent_oxide_name]."\" tolerance=\"\"/>".PHP_EOL;
+                }
+            }
+
+            if (strlen($oxides)) {
+                $out .= "\t<oxides>".PHP_EOL;
+                $out .= $oxides;
+                $out .= "\t</oxides>".PHP_EOL;
+            }
+
+            if ($material->analysis['loi']) {
+                $out .= "\t<volatiles>".PHP_EOL;
+                $out .= "\t\t<volatile symbol=\"LOI\" name=\"Loss on Ignition\" percent=\"".$material->analysis['loi']."\" tolerance=\"\" />".PHP_EOL;
+                $out .= "\t</volatiles>".PHP_EOL;
+            }
+        }
+        $out .= "</material>".PHP_EOL;
+
+        return $out;
+    }
+
+    public static function transformCompositeMaterial(Material $material)
     {
         $oDate = new DateTime($material->created_at);
         $date = $oDate->format("Y-m-d");
@@ -59,7 +113,7 @@ class InsightMaterialTransformer
 
         $out = '<?xml version="1.0"?>'.PHP_EOL;
         $out .= '<recipes version="1.0" encoding="UTF-8">'.PHP_EOL;
-        $out .= "\t<recipe name=\"".strip_tags($material->name).'" date="'.$date.'" ';
+        $out .= "\t<recipe name=\"".strip_tags($material->name).' (Glazy ID '.$material->id.')" date="'.$date.'" ';
         $out .= 'id="'.$material->id.'" ';
         if ($material->code) {
             $out .= 'codenum="'.$material->code.'" ';
