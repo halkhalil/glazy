@@ -5,6 +5,8 @@ namespace App\Api\V1\Controllers\Glazy;
 //use App\Api\V1\Controllers\ApiController;
 
 use App\Api\V1\Transformers\Material\MaterialTransformer;
+use App\Api\V1\Transformers\Material\GlazeChemMaterialTransformer;
+use App\Api\V1\Transformers\Material\InsightMaterialTransformer;
 
 use App\Api\V1\Repositories\MaterialRepository;
 
@@ -14,8 +16,6 @@ use App\Api\V1\Requests\Recipe\CreateRecipeRequest;
 use App\Api\V1\Requests\Recipe\UpdateRecipeRequest;
 
 use App\Models\MaterialImage;
-
-use App\Api\V1\Transformers\Material\GlazeChemMaterialTransformer;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -284,24 +284,10 @@ class MaterialController extends ApiBaseController
         }
         elseif ($exportType === 'Insight')
         {
-            /*
-            $content = View::make('recipes.export.insight', [
-                'recipe' => $material,
-                'recipeMaterials' => $recipeMaterials,
-                'recipeImages' => $recipeImages,
-                'collections' => $collections,
-                'recipe_subtype_lineage' => $recipe_subtype_lineage,
-                'from_orton_cone' => OrtonCone::getStaticName($recipe->from_orton_cone_id),
-                'to_orton_cone' => OrtonCone::getStaticName($recipe->to_orton_cone_id),
-            ]);
+            $content = InsightMaterialTransformer::transform($material);
             $response = new Response($content, '200');
-            $response->header('Cache-Control', 'public');
-            $response->header('Content-Description', 'File Transfer');
-            $response->header('Content-Disposition', 'attachment; filename='.$recipe->id.'.xml');
-            $response->header('Content-Transfer-Encoding', 'binary');
-            $response->header('Content-Type', 'text/xml');
+            $response->header('Content-Type', 'plain/txt');
             return $response;
-            */
         }
         elseif ($exportType === 'Card')
         {
