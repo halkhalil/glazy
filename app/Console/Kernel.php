@@ -17,7 +17,8 @@ class Kernel extends ConsoleKernel
         Commands\UpdateRecipeAnalyses::class,
         Commands\UpdateMaterialHashes::class,
         Commands\DeletePrivateMaterials::class,
-        Commands\CreatePreloadImages::class
+        Commands\CreatePreloadImages::class,
+        Commands\UpdateUserMaterials::class
     ];
 
     /**
