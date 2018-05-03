@@ -153,8 +153,14 @@ export default new Router({
         },
         {
           path: '*',
-          redirect: '404'
+          redirect: { name: 'search', query: { base_type: '460' } }
         }
+        /*
+        {
+          path: '*',
+          redirect: '/404'
+        }
+        */
       ]
     },
   ]
