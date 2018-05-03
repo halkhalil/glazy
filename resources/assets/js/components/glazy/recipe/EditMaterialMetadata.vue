@@ -74,8 +74,6 @@
                             v-model="form.materialTypeId"
                             :options="subTypeOptions">
                     </b-form-select>
-                    <div>Selected: <strong>{{ form.materialTypeId }}</strong></div>
-
                 </b-col>
             </b-row>
 

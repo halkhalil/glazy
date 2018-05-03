@@ -73,8 +73,7 @@
                 <div v-show="!(isEditMeta)">
                   <div class="row">
                     <div class="col">
-                      <material-type-breadcrumbs v-if="!recipe.isPrimitive"
-                                                 :recipe="recipe"></material-type-breadcrumbs>
+                      <material-type-breadcrumbs :recipe="recipe"></material-type-breadcrumbs>
                       <h2 class="card-title">
                         <i v-if="recipe.isPrivate"
                            v-b-tooltip.hover title="Private"

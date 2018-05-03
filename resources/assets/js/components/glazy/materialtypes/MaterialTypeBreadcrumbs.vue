@@ -3,11 +3,11 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item" v-for="type in types" :class="{ active: type.isActive }">
                 <router-link v-if="type.isBaseType"
-                             :to="{ path: '/search', query: { base_type: type.id }}">
+                             :to="{ name: linkName, query: { base_type: type.id }}">
                     {{ materialTypes.LOOKUP[type.id] }}
                 </router-link>
                 <router-link v-else
-                             :to="{ path: '/search', query: { type: type.id }}">
+                             :to="{ name: linkName, query: { type: type.id }}">
                     {{ materialTypes.LOOKUP[type.id] }}
                 </router-link>
             </li>
@@ -43,6 +43,16 @@
                     return true;
                 }
                 return false;
+            },
+
+            linkName: function () {
+                if (this.recipe.isPrimitive) {
+                  return 'materials'
+                }
+                else if (this.recipe.isAnalysis) {
+                  return 'analyses'
+                }
+                return 'search'
             },
 
             types: function() {
