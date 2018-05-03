@@ -150,6 +150,10 @@ export default new Router({
           path: '/502',
           name: 'error-502',
           component: Error502
+        },
+        {
+          path: '*',
+          redirect: '404'
         }
       ]
     },
