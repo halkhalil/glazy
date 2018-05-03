@@ -1,6 +1,7 @@
 const state = {
   query: null,
   isPrimitive: false,
+  isAnalysis: false,
   searchItems: [],
   searchPagination: null,
   searchUser: null,
@@ -15,6 +16,9 @@ const getters = {
   },
   isPrimitive(state) {
     return state.isPrimitive
+  },
+  isAnalysis(state) {
+    return state.isAnalysis
   },
   searchItems(state) {
     return state.searchItems
@@ -36,6 +40,9 @@ const mutations = {
   },
   setIsPrimitive(state, payload) {
     state.isPrimitive = payload
+  },
+  setIsAnalysis(state, payload) {
+    state.isAnalysis = payload
   },
   setSearchItems(state, payload) {
     state.searchItems = payload
@@ -69,6 +76,7 @@ const actions = {
   search (context, payload) {
     context.commit('setQuery', payload.query)
     context.commit('setIsPrimitive', payload.isPrimitive)
+    context.commit('setIsAnalysis', payload.isAnalysis)
     context.dispatch('refresh')
   },
   refresh (context) {
@@ -87,6 +95,12 @@ const actions = {
 
     if (isPrimitive) {
       myQuery.primitive = 1
+    }
+
+    var isAnalysis = context.getters.isAnalysis
+
+    if (isAnalysis) {
+      myQuery.analysis = 1
     }
 
     var querystring = query.toQuerystring(myQuery)

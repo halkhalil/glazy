@@ -106,6 +106,10 @@ class MaterialRepository extends Repository
                 $jsonData['materialTypeId'] = 1;
             }
         }
+        elseif (array_key_exists('isAnalysis',$jsonData) && $jsonData['isAnalysis']) {
+            // is_analysis not fillable
+            $material->is_analysis = true;
+        }
 
         $data = [];
         $data['id'] = $jsonData['id'];
@@ -188,10 +192,10 @@ class MaterialRepository extends Repository
             }
         }
 
-        if ($material->is_primitive
+        if (($material->is_primitive || $material->is_analysis)
             && array_key_exists('analysis',$jsonData)
             && $jsonData['analysis']) {
-            // For primitive materials, we also update the analysis
+            // For primitive materials & analyses, we also update the analysis
             $percentageAnalysis = new PercentageAnalysis();
             $percentageAnalysis->setOxides($jsonData['analysis']);
             $percentageAnalysis->setLOI($jsonData['loi']);

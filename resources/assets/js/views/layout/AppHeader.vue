@@ -38,6 +38,9 @@
                         <b-dropdown-item :to="{ name: 'material-create' }">
                             <i class="fa fa-flask fa-fw"></i> Add Material
                         </b-dropdown-item>
+                        <b-dropdown-item :to="{ name: 'analysis-create' }">
+                            <i class="fa fa-flask fa-fw"></i> Add Analysis
+                        </b-dropdown-item>
                     </b-nav-item-dropdown>
 
                     <b-nav-item :to="{ name: 'search', query: { base_type: '460' } }" >

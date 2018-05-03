@@ -75,6 +75,7 @@ class SearchController extends ApiBaseController
         $search_user_id = $request->input('u');
         $collection_id = (int)$request->input('collection');
         $is_primitive = (int)$request->input('primitive'); // 0 == false
+        $is_analysis = (int)$request->input('analysis'); // 0 == false
         $keywords = $request->input('keywords');
         $base_type_id = (int)$request->input('base_type');
         $type_id = (int)$request->input('type');
@@ -197,10 +198,16 @@ class SearchController extends ApiBaseController
         // All other searches should filter by primitive:
         if (!$is_image_search) {
             if ($is_primitive) {
-                $query->where('is_primitive', true);
+                $query->where('materials.is_primitive', true);
             }
             else {
-                $query->where('is_primitive', false);
+                $query->where('materials.is_primitive', false);
+            }
+            if ($is_analysis) {
+                $query->where('materials.is_analysis', true);
+            }
+            else {
+                $query->where('materials.is_analysis', false);
             }
         }
 

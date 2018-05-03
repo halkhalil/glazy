@@ -66,23 +66,23 @@ export default new Router({
           component: Search
         },
         {
+          path: '/u/:id/analyses',
+          name: 'user-analyses',
+          component: Search
+        },
+        {
           path: '/u/:id/images',
           name: 'user-images',
           component: Search
         },
         {
-          path: '/materials',
-          name: 'materials',
-          component: Search
+          path: '/recipes/export/:id',
+          redirect: { name: 'recipes' }
         },
         {
           path: '/recipes/:id',
           name: 'recipes',
           component: Recipe
-        },
-        {
-          path: '/recipes/export/:id',
-          redirect: { name: 'recipes' }
         },
         {
           path: '/materials/add',
@@ -93,6 +93,26 @@ export default new Router({
           path: '/materials/:id',
           name: 'material',
           component: Recipe
+        },
+        {
+          path: '/materials',
+          name: 'materials',
+          component: Search
+        },
+        {
+          path: '/analyses/add',
+          name: 'analysis-create',
+          component: MaterialCreate
+        },
+        {
+          path: '/analyses/:id',
+          name: 'analysis',
+          component: Recipe
+        },
+        {
+          path: '/analyses',
+          name: 'analyses',
+          component: Search
         },
         /*
         {

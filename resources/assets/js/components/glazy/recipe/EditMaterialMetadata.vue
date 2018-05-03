@@ -12,6 +12,9 @@
                 <h3 v-if="isNewMaterial" class="card-title">
                     Add New Material
                 </h3>
+                <h3 v-else-if="isNewAnalysis" class="card-title">
+                    Add New Analysis
+                </h3>
                 <h3 v-else class="card-title">
                     Edit {{ form.name }}
                 </h3>
@@ -64,13 +67,15 @@
                     </b-form-select>
                 </b-col>
                 <b-col md="6" v-if="subTypeOptions && subTypeOptions.length > 0">
-                    <label for="materialTypeId">Subtype</label>
+                    <label for="materialTypeIdSelect">Subtype</label>
                     <b-form-select
                             class="col"
-                            id="materialTypeId"
+                            id="materialTypeIdSelect"
                             v-model="form.materialTypeId"
                             :options="subTypeOptions">
                     </b-form-select>
+                    <div>Selected: <strong>{{ form.materialTypeId }}</strong></div>
+
                 </b-col>
             </b-row>
 
@@ -157,21 +162,21 @@
                 </b-col>
             </b-row>
 
-            <b-row class="mt-2 percent-analysis-oxide"  v-if="material.isPrimitive">
-                <b-col lg="2" md="3" sm="4" cols="6"
+            <b-row class="mt-2 percent-analysis-oxide"  v-if="material.isPrimitive || material.isAnalysis">
+                <b-col lg="3" md="3" sm="4" cols="6"
                        v-for="(oxideName, index) in OXIDE_NAMES" :key="index">
                     <label v-bind:for="oxideName" v-html="OXIDE_NAME_DISPLAY[oxideName]"></label>
                     <b-form-input id="oxideName"
                                   type="number"
                                   v-model.trim="form.analysis[oxideName]"></b-form-input>
                 </b-col>
-                <b-col lg="2" md="3" sm="4" cols="6">
+                <b-col lg="3" md="3" sm="4" cols="6">
                     <label for="loi">LOI</label>
                     <b-form-input id="loi"
                                   type="number"
                                   v-model.trim="form.loi"></b-form-input>
                 </b-col>
-                <b-col lg="2" md="3" sm="4" cols="6">
+                <b-col lg="3" md="3" sm="4" cols="6">
                     <label for="weight">Weight</label>
                     <b-form-input id="weight"
                                   type="number"
@@ -216,6 +221,10 @@
       isNewMaterial: {
         type: Boolean,
         default: false
+      },
+      isNewAnalysis: {
+        type: Boolean,
+        default: false
       }
     },
     components: {
@@ -224,6 +233,7 @@
       return {
         form: {
           isPrimitive: false,
+          isAnalysis: false,
           name: '',
           otherNames: '',
           description: '',
@@ -255,6 +265,7 @@
       if (this.material) {
         this.form = {
           isPrimitive: this.material.isPrimitive,
+          isAnalysis: this.material.isAnalysis,
           id: this.material.id,
           name: this.material.name,
           otherNames: this.material.otherNames,
@@ -275,6 +286,8 @@
           if (this.form.analysis[oxideName] <= 0) {
             // don't keep zeros for form
             this.form.analysis[oxideName] = ''
+          } else {
+            this.form.analysis[oxideName] = parseFloat(this.form.analysis[oxideName])
           }
         })
 
@@ -286,9 +299,48 @@
         }
       }
     },
+    watch: {
+      material (newMaterial) {
+        if (newMaterial) {
+          this.form = {
+            isPrimitive: newMaterial.isPrimitive,
+            isAnalysis: newMaterial.isAnalysis,
+            id: newMaterial.id,
+            name: newMaterial.name,
+            otherNames: newMaterial.otherNames,
+            description: newMaterial.description,
+            baseTypeId: newMaterial.baseTypeId,
+            materialTypeId: newMaterial.materialTypeId,
+            transparencyTypeId: newMaterial.transparencyTypeId,
+            surfaceTypeId: newMaterial.surfaceTypeId,
+            fromOrtonConeId: newMaterial.fromOrtonConeId,
+            toOrtonConeId: newMaterial.toOrtonConeId,
+            atmospheres: [],
+            countryId: newMaterial.countryId,
+            analysis: new Analysis(),
+            loi: newMaterial.analysis.percentageAnalysis.loi
+          }
+          this.form.analysis.setOxides(newMaterial.analysis.percentageAnalysis)
+          Analysis.OXIDE_NAMES.forEach((oxideName) => {
+            if (this.form.analysis[oxideName] <= 0) {
+              // don't keep zeros for form
+              this.form.analysis[oxideName] = ''
+            }
+          })
+
+          // this.form.analysis.initOxidesNull()
+          if (newMaterial.atmospheres) {
+            for (var i = 0; i < newMaterial.atmospheres.length; i++) {
+              this.form.atmospheres.push(newMaterial.atmospheres[i].id);
+            }
+          }
+        }
+      }
+    },
     computed: {
       isLoaded: function () {
-        if (this.material || this.isNewMaterial) {
+        //if (this.material || this.isNewMaterial || this.isNewAnalysis) {
+        if (this.material) {
           return true;
         }
         return false;
@@ -329,11 +381,7 @@
           var percentageAnalysis = new PercentageAnalysis()
           percentageAnalysis.setOxides(this.form.analysis)
           percentageAnalysis.setLOI(this.form.loi)
-          console.log("PERCENT")
-          console.log(percentageAnalysis)
           var formulaAnalysis = FormulaAnalysis.createNoUnityFormula(percentageAnalysis)
-          console.log("FORMULA")
-          console.log(formulaAnalysis)
 
           return formulaAnalysis.getFormulaWeight()
         }
@@ -352,19 +400,32 @@
           }
 
           var url = Vue.axios.defaults.baseURL + '/recipes'
-          if (!this.isNewMaterial) {
+          if (!this.isNewMaterial && !this.isNewAnalysis) {
             this.form._method = 'PATCH'
             url = Vue.axios.defaults.baseURL + '/recipes/' + this.material.id
           }
           Vue.axios.post(url, this.form)
             .then((response) => {
-              console.log('got response:')
-              console.log(response)
               if (response.data.error) {
                 // error
                 this.apiError = response.data.error
               } else {
-                this.$emit('updatedRecipeMeta')
+                this.recipe = null
+                this.recipe = response.data.data
+                if ('data' in response.data && 'id' in response.data.data) {
+                  // Emit with the ID of the updated/saved recipe/material/analysis
+                  var recipeType = 'recipes'
+                  if (this.isNewMaterial) {
+                    recipeType = 'material'
+                  }
+                  else if (this.isNewAnalysis) {
+                    recipeType = 'analysis'
+                  }
+                  this.$emit('updatedRecipeMeta', response.data.data.id, recipeType)
+                }
+                else {
+                  this.$emit('updatedRecipeMeta')
+                }
               }
             })
             .catch(response => {

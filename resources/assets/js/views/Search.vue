@@ -23,6 +23,7 @@
           <template slot="first">
             <option value="recipes">{{ isViewingSelfSelectText }} Recipes</option>
             <option value="materials">{{ isViewingSelfSelectText }} Materials</option>
+            <option value="analyses">{{ isViewingSelfSelectText }} Analyses</option>
             <option value="images">{{ isViewingSelfSelectText }} Images</option>
             <option value="null" disabled>-- {{ isViewingSelfSelectText }} Bookmarks: --</option>
           </template>
@@ -111,6 +112,7 @@
               <template slot="first">
                 <option value="recipes">{{ isViewingSelfSelectText }} Recipes</option>
                 <option value="materials">{{ isViewingSelfSelectText }} Materials</option>
+                <option value="analyses">{{ isViewingSelfSelectText }} Analyses</option>
                 <option value="images">{{ isViewingSelfSelectText }} Images</option>
                 <option value="null" disabled>{{ isViewingSelfSelectText }} Bookmarks:</option>
               </template>
@@ -258,9 +260,14 @@
              v-on:ok="collectMaterial"
              ok-title="Add"
     >
-      <p>Bookmark in:</p>
-      <div v-if="collections && collections.length > 0">
-        <b-form-select v-model="selectedCollectionId"
+      <b-form-group
+              v-if="collections && collections.length > 0"
+              id="groupBookmarkCollections"
+              label="Bookmark in:"
+              label-for="bookmarkInCollection"
+      >
+        <b-form-select id="bookmarkInCollection"
+                        v-model="selectedCollectionId"
                        :options="collections"
                        text-field="name"
                        value-field="id">
@@ -268,15 +275,16 @@
             <option :value="0">-- Select a bookmark folder --</option>
           </template>
         </b-form-select>
-      </div>
+      </b-form-group>
 
       <b-form-group
               id="groupName"
               label="Create a New Bookmark Folder:"
+              label-for="collectionName"
               :feedback="feedbackCollectionName"
               :state="stateCollectionName"
       >
-        <b-form-input id="name"
+        <b-form-input id="collectionName"
                       :state="stateCollectionName"
                       v-model.trim="newCollectionName"
                       placeholder="Bookmark Folder Name"></b-form-input>
@@ -519,9 +527,14 @@
       //this.searchUser = null
       this.searchQuery = new SearchQuery(this.$route.query)
       var isPrimitive = false
+      var isAnalysis = false
       if (this.$route.name === 'materials' ||
         this.$route.name === 'user-materials') {
         isPrimitive = true
+      }
+      if (this.$route.name === 'analyses' ||
+        this.$route.name === 'user-analyses') {
+        isAnalysis = true
       }
       if (this.$route.params && this.$route.params.id) {
         this.searchQuery.params.u = this.$route.params.id
@@ -531,11 +544,14 @@
       }
 
       this.$store.dispatch('search/search', {
-        query: this.searchQuery, isPrimitive: isPrimitive
+        query: this.searchQuery, isPrimitive: isPrimitive, isAnalysis: isAnalysis
       })
 
       if (this.$route.name === 'user-materials') {
         this.selectedSearchTypeOrCollection = 'materials'
+      }
+      else if (this.$route.name === 'user-analyses') {
+        this.selectedSearchTypeOrCollection = 'analyses'
       }
       else if (this.$route.name === 'user-images') {
         this.selectedSearchTypeOrCollection = 'images'
@@ -580,9 +596,14 @@
         //this.searchUser = null
         this.searchQuery = new SearchQuery(route.query)
         var isPrimitive = false
+        var isAnalysis = false
         if (route.name === 'materials' ||
           route.name === 'user-materials') {
           isPrimitive = true
+        }
+        if (route.name === 'analyses' ||
+          route.name === 'user-analyses') {
+          isAnalysis = true
         }
         if ('params' in route && route.params.id) {
           this.searchQuery.params.u = route.params.id
@@ -591,11 +612,14 @@
           }
         }
         this.$store.dispatch('search/search', {
-          query: this.searchQuery, isPrimitive: isPrimitive
+          query: this.searchQuery, isPrimitive: isPrimitive, isAnalysis: isAnalysis
         })
 
         if (route.name === 'user-materials') {
           this.selectedSearchTypeOrCollection = 'materials'
+        }
+        else if (route.name === 'user-analyses') {
+          this.selectedSearchTypeOrCollection = 'analyses'
         }
         else if (route.name === 'user-images') {
           this.selectedSearchTypeOrCollection = 'images'
@@ -643,6 +667,12 @@
           if (this.$route.name !== 'user-materials') {
             // Requested user materials route, not already at user materials route
             this.$router.push({name: 'user-materials'})
+          }
+        }
+        else if (this.selectedSearchTypeOrCollection === 'analyses') {
+          if (this.$route.name !== 'user-analyses') {
+            // Requested user analyses route, not already at user materials route
+            this.$router.push({name: 'user-analyses'})
           }
         }
         else if (this.selectedSearchTypeOrCollection === 'images') {

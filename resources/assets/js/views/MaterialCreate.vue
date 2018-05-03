@@ -4,11 +4,14 @@
         <div class="col-lg-12">
           <div class="card mt-4">
             <div class="card-body">
-              <edit-material-metadata :material="material"
-                                    :isNewMaterial="true"
-                                    v-on:updatedRecipeMeta="updatedRecipeMeta"
-                                    v-on:editMetaCancel="editMetaCancel"
-                                    v-on:isProcessing="isProcessingRecipe"></edit-material-metadata>
+              <edit-material-metadata
+                      :material="material"
+                      :isNewMaterial="isNewMaterial"
+                      :isNewAnalysis="isNewAnalysis"
+                      v-on:updatedRecipeMeta="updatedRecipeMeta"
+                      v-on:editMetaCancel="editMetaCancel"
+                      v-on:isProcessing="isProcessingRecipe"
+              ></edit-material-metadata>
             </div>
           </div>
         </div>
@@ -65,11 +68,45 @@
         apiError: null,
         serverError: null,
         actionMessage: null,
-        actionMessageSeconds: 0
+        actionMessageSeconds: 0,
+        isNewMaterial: false,
+        isNewAnalysis: false
       }
     },
 
-    mounted() {
+    created() {
+
+      if (this.$route.name === 'material-create') {
+        this.isNewMaterial = true
+        this.isNewAnalysis = false
+        this.material.isPrimitive = true
+        this.material.isAnalysis = false
+      }
+      else {
+        this.isNewMaterial = false
+        this.isNewAnalysis = true
+        this.material.isAnalysis = true
+        this.material.isPrimitive = false
+      }
+
+    },
+
+    watch: {
+      $route (route) {
+        this.material = new Material()
+        if (route.name === 'material-create') {
+          this.isNewMaterial = true
+          this.isNewAnalysis = false
+          this.material.isPrimitive = true
+          this.material.isAnalysis = false
+        }
+        else {
+          this.isNewMaterial = false
+          this.isNewAnalysis = true
+          this.material.isAnalysis = true
+          this.material.isPrimitive = false
+        }
+      }
     },
 
     computed : {
@@ -81,10 +118,8 @@
       actionMessageCountdown(seconds) {
         this.actionMessageSeconds = seconds
       },
-      updatedRecipeMeta: function () {
-        this.$router.push({ name: 'user-materials' })
-        // TODO
-        // this.$router.push({ name: 'material', params: { id: recipeCopy.id }})
+      updatedRecipeMeta: function (id, recipeType) {
+        this.$router.push({ name: recipeType, params: { id: id }})
       },
       editMetaCancel: function () {
         this.$router.push({ name: 'user-materials' })
