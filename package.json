@@ -11,7 +11,7 @@
     "lint": "eslint resources/assets/js"
   },
   "dependencies": {
-    "@websanova/vue-auth": "^2.21.8-beta",
+    "@websanova/vue-auth": "^2.21.9-beta",
     "axios": "^0.17.1",
     "bootstrap": "^4.1.0",
     "ceramicscalc-js": "github:derekphilipau/ceramicscalc-js",
@@ -43,8 +43,8 @@
     "vue-axios": "^2.1.1",
     "vue-color": "https://github.com/derekphilipau/vue-color/tarball/36d1969b0d9298e310f24c9734c485eff6b61693",
     "vue-multiselect": "^2.1.0",
-    "vue-progressive-image": "^2.4.4",
-    "vue-star-rating": "^1.4.0",
+    "vue-progressive-image": "^2.5.0",
+    "vue-star-rating": "^1.6.0",
     "vue-template-compiler": "^2.5.16",
     "webpack-bundle-analyzer": "^2.11.1"
   }
