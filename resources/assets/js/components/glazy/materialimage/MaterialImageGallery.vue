@@ -117,7 +117,7 @@
             </div>
         </div>
         <div v-if="currentImage && imageList.length > 1" class="row">
-            <div class="col-md-4 col-sm-6 image-gallery-thumb" v-for="image in imageList">
+            <div class="col-md-4 col-sm-6 col-6 image-gallery-thumb" v-for="image in imageList">
                 <a @click.stop.prevent="selectImage(image)"
                    :class="{ galleryselected: (image.id == currentImage.id) }"
                    href="#">
