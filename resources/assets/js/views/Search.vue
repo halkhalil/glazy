@@ -37,7 +37,7 @@
               type="reset"
               variant="secondary"
               @click.prevent="toggleExpandMap"
-              class="btn-sm expand-button"
+              class="expand-button"
               v-html="expandButtonText">
       </b-btn>
 
@@ -172,7 +172,7 @@
         </div>
       </div>
 
-      <section class="row" v-if="(searchQuery.params.view === 'cards') && !isProcessing">
+      <section class="row search-results-row" v-if="(searchQuery.params.view === 'cards') && !isProcessing">
         <div v-bind:class="materialCardClass" class=""
              v-for="(material, index) in searchItems">
           <material-card-thumb
@@ -389,7 +389,7 @@
         expandbuttonTooltip: 'Show More Map',
         sidebarClass: 'col-md-3',
         mainClass: 'col-md-9',
-        materialCardClass: 'col-lg-3 col-md-4 col-sm-6 col-6',
+        materialCardClass: 'col-lg-3 col-md-4 col-sm-6 col-6 search-col',
         currentPage: null,
         isThumbnailView: true,
         highlightedMaterialId: {},
@@ -711,14 +711,14 @@
           this.expandbuttonTooltip = 'Show More Map'
           this.sidebarClass = 'col-md-3'
           this.mainClass = 'col-md-9'
-          this.materialCardClass = 'col-lg-3 col-md-4 col-sm-6 col-6'
+          this.materialCardClass = 'col-lg-3 col-md-4 col-sm-6 col-6 search-col'
           this.chartHeight = 200
         } else {
           this.expandButtonText = '<i class="fa fa-resize-small"></i>'
           this.expandbuttonTooltip = 'Show Less Map'
           this.sidebarClass = 'col-md-6'
           this.mainClass = 'col-md-6'
-          this.materialCardClass = 'col-lg-4 col-md-6 col-sm-6 col-6'
+          this.materialCardClass = 'col-lg-4 col-md-6 col-sm-6 col-6 search-col'
           this.chartHeight = 300
         }
         this.isMapExpanded = !this.isMapExpanded
@@ -950,6 +950,16 @@
     background-color: #dedede;
   }
 
+  .search-results-row {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .search-col {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
   .sidebar {
     background-color: #efefef;
     position: fixed;
@@ -967,6 +977,7 @@
     top: 24px;
     right: -4px;
     z-index: 1001;
+    padding: 5px;
   }
 
   #umf-d3-chart-container {
