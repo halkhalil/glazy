@@ -46,7 +46,7 @@ import VueAuth from '@websanova/vue-auth'
 
 import { store } from './store/store'
 
-require('vue-multiselect/dist/vue-multiselect.min.css')
+//require('vue-multiselect/dist/vue-multiselect.min.css')
 
 Vue.use(VueAxios, axios)
 
