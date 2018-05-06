@@ -54,6 +54,7 @@
                 :colortype="'r2o'"
                 :showRecipes="true"
                 :showCones="false"
+                :showImages="isShowChartImages"
                 :showStullChart="true"
                 :showStullLabels="false"
                 :showZoomButtons="false"
@@ -69,6 +70,17 @@
 
       <div class="row">
         <div class="col-md-12">
+
+          <div v-if="hasResults && isMapExpanded" class="form-row">
+            <div class="col-md-12">
+              <b-form-checkbox id="isShowChartImagesCheckbox"
+                               v-model="isShowChartImages"
+                               plain>
+                Show images
+              </b-form-checkbox>
+            </div>
+          </div>
+
           <search-form
                   v-if="searchQuery"
                   :searchQuery="searchQuery"
@@ -384,6 +396,7 @@
           top: 0,
           bottom: 12
         },
+        isShowChartImages: false,
         isMapExpanded: false,
         expandButtonText: '<i class="fa fa-resize-full"></i>',
         expandbuttonTooltip: 'Show More Map',
@@ -713,12 +726,13 @@
           this.mainClass = 'col-md-9'
           this.materialCardClass = 'col-lg-3 col-md-4 col-sm-6 col-6 search-col'
           this.chartHeight = 200
+          this.isShowChartImages = false
         } else {
           this.expandButtonText = '<i class="fa fa-resize-small"></i>'
           this.expandbuttonTooltip = 'Show Less Map'
-          this.sidebarClass = 'col-md-6'
-          this.mainClass = 'col-md-6'
-          this.materialCardClass = 'col-lg-4 col-md-6 col-sm-6 col-6 search-col'
+          this.sidebarClass = 'col-md-9'
+          this.mainClass = 'col-md-3'
+          this.materialCardClass = 'col-12 search-col'
           this.chartHeight = 300
         }
         this.isMapExpanded = !this.isMapExpanded

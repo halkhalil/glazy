@@ -179,10 +179,10 @@ export default {
     'chrome-picker': Chrome
   },
   props: {
-      isLarge: {
-        type: Boolean,
-        default: false
-      },
+    isLarge: {
+      type: Boolean,
+      default: false
+    },
     searchQuery: {
       type: Object,
       default: null
