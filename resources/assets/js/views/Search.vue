@@ -157,7 +157,8 @@
               :pagination="searchPagination"
               :view="searchQuery.params.view"
               :order="order"
-              :item_type_name="itemTypeName"
+              :itemTypeName="itemTypeName"
+              :isCompact="isMapExpanded"
               v-on:pagerequest="pageRequest"
               v-on:orderrequest="orderRequest"
               v-on:viewrequest="viewRequest">
@@ -237,7 +238,9 @@
               :pagination="searchPagination"
               :view="searchQuery.params.view"
               :order="order"
-              :item_type_name="itemTypeName"
+              :itemTypeName="itemTypeName"
+              :isCompact="isMapExpanded"
+              :showTotals="true"
               v-on:pagerequest="pageRequest"
               v-on:orderrequest="orderRequest"
               v-on:viewrequest="viewRequest">

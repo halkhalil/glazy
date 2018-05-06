@@ -1,17 +1,17 @@
 <template>
 
     <div class="row pagination-row" v-if="isLoaded">
-
-        <div class="col-sm-7 col-md-8">
+        <div class="col-md-8 col-sm-7 col-12">
             <paginator
                     :pagination="pagination"
-                    :num_page_links="5"
-                    :item_type_name="item_type_name"
+                    :numPageLinks="5"
+                    :itemTypeName="itemTypeName"
+                    :isCompact="isCompact"
+                    :showTotals="showTotals"
                     v-on:pagerequest="pageRequest"
             ></paginator>
         </div>
-        <div class="col-sm-5 col-md-4 text-right">
-
+        <div v-if="!isCompact" class="col-md-4 col-sm-5 col-12 text-right">
             <b-button-group class="search-buttons">
                 <b-dropdown size="sm" left text="Sort">
                     <b-dropdown-item @click="orderRequest('newest')">Newest</b-dropdown-item>
@@ -39,7 +39,6 @@
                 </b-button>
                 -->
             </b-button-group>
-
         </div>
     </div>
 
@@ -69,9 +68,17 @@
         type: String,
         default: null
       },
-      item_type_name: {
+      itemTypeName: {
         type: String,
         default: null
+      },
+      isCompact: {
+        type: Boolean,
+        default: false
+      },
+      showTotals: {
+        type: Boolean,
+        default: false
       }
     },
 

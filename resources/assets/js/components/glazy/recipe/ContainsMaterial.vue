@@ -7,8 +7,8 @@
         <paginator
                 v-if="!isProcessing"
                 :pagination="pagination"
-                :num_page_links="5"
-                :item_type_name="'Recipes'"
+                :numPageLinks="5"
+                :itemTypeName="'Recipes'"
                 v-on:pagerequest="containsMaterials"
         ></paginator>
 
@@ -53,8 +53,8 @@
         <paginator
                 v-if="!isProcessing"
                 :pagination="pagination"
-                :num_page_links="5"
-                :item_type_name="'Recipes'"
+                :numPageLinks="5"
+                :itemTypeName="'Recipes'"
                 v-on:pagerequest="containsMaterials"
         ></paginator>
 
