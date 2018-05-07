@@ -58,7 +58,7 @@ class ChartPointMaterialTransformer extends Fractal\TransformerAbstract
     protected $defaultIncludes = [
         'atmospheres',
         'analysis',
-        'thumbnail',
+        // 'thumbnail',
         'createdByUser'
     ];
 
@@ -133,6 +133,26 @@ class ChartPointMaterialTransformer extends Fractal\TransformerAbstract
             $material_data[self::HEX_COLOR] = $r.$g.$b;
         }
 
+        if ($material['thumbnail']) {
+            $material_data['selectedImage']['filename'] = $material['thumbnail']['filename'];
+            if ($material['thumbnail']['dominant_rgb_r']) {
+                $material_data['selectedImage']['dominantHexColor'] =
+                    Material::getHexFromRGB(
+                        $material['thumbnail']['dominant_rgb_r'],
+                        $material['thumbnail']['dominant_rgb_g'],
+                        $material['thumbnail']['dominant_rgb_b']
+                    );
+            }
+            if ($material['thumbnail']['secondary_rgb_r']) {
+                $material_data['selectedImage']['secondaryHexColor'] =
+                    Material::getHexFromRGB(
+                        $material['thumbnail']['secondary_rgb_r'],
+                        $material['thumbnail']['secondary_rgb_g'],
+                        $material['thumbnail']['secondary_rgb_b']
+                    );
+            }
+        }
+
         $material_data[self::JSON_NAMES[Material::DB_THUMBNAIL_ID]] = $material[Material::DB_THUMBNAIL_ID];
         $material_data[self::JSON_NAMES[Material::DB_IS_PRIVATE]] = (boolean) $material[Material::DB_IS_PRIVATE];
         $material_data[self::JSON_NAMES[Material::DB_CREATED_BY_USER_ID]] = $material[Material::DB_CREATED_BY_USER_ID];
@@ -154,6 +174,7 @@ class ChartPointMaterialTransformer extends Fractal\TransformerAbstract
         return $this->item($material->analysis, new MaterialAnalysisTransformer());
     }
 
+    /*
     public function includeThumbnail(Material $material)
     {
         // TODO: add thumbnail url & info
@@ -161,6 +182,7 @@ class ChartPointMaterialTransformer extends Fractal\TransformerAbstract
             return $this->item($material->thumbnail, new ShallowMaterialImageTransformer());
         }
     }
+    */
 
     public function includeCreatedByUser(Material $material)
     {

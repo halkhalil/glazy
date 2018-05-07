@@ -26,6 +26,11 @@
                 R<sub>2</sub>O:RO Scale <img src="/img/charts/ror2oscale.png" height="37" width="365"/>
             </div>
             <div class="col-md-8">
+                <div class="zoom-buttons" >
+                    <b-button @click="toggleZoomable" variant="info" v-if="!isZoomable">
+                        <i class="fa fa-search-plus" aria-hidden="true"></i> Allow Pinch & Drag Zoom
+                    </b-button>
+                </div>
                 <div id="umf-d3-chart-container" class="w-100">
                     <umf-d3-chart
                             :recipeData="materialList"
@@ -42,6 +47,8 @@
                             :showStullLabels="true"
                             :showZoomButtons="false"
                             :showAxesLabels="true"
+                            :showImages="isShowClosestChartImages"
+                            :isZoomable="isZoomable"
                             :highlightedRecipeId="{highlightedRecipeId}"
                             :unHighlightedRecipeId="{unHighlightedRecipeId}"
                             :xoxide="xOxide"
@@ -98,6 +105,15 @@
                                 class="col">
                         </b-form-select>
                     </div>
+
+                    <div class="col-md-12 form-group">
+                        <b-form-checkbox id="isShowClosestChartImagesCheckbox"
+                                         v-model="isShowClosestChartImages"
+                                         plain>
+                            Show images
+                        </b-form-checkbox>
+                    </div>
+
                 </div>
                 <div class="col-sm-12">
                     <div v-if="clickedRecipe"
@@ -154,6 +170,8 @@
         noZeros: false,
         isThreeAxes: false,
         showStullChart: true,
+        isZoomable: false,
+        isShowClosestChartImages: false,
         chartHeight: 340,
         chartWidth: 0,
         chartMargin: {
@@ -168,7 +186,6 @@
         unHighlightedRecipeId: 0,
         showModeBar: 'false',
         clickedRecipe: null,
-
         currentPage: 1
       }
     },
@@ -183,7 +200,6 @@
       hasRecipeList: function () {
 
       },
-
 
       materialTypeOptions: function () {
         if (this.material.baseTypeId) {
@@ -239,9 +255,10 @@
       material: function (val) {
         if (this.material) {
           if (this.material.materialTypeId) {
-            this.materialTypeId = this.material.materialTypeId;
+            this.materialTypeId = this.material.materialTypeId
           }
-          this.fetchRecipeList();
+          this.isZoomable = false
+          this.fetchRecipeList()
         }
       }
     },
@@ -292,6 +309,10 @@
           // this.chartHeight = document.getElementById('umf-d3-chart-container').clientHeight
           this.chartWidth = document.getElementById('umf-d3-chart-container').clientWidth
         }
+      },
+
+      toggleZoomable: function (d) {
+        this.isZoomable = !this.isZoomable
       },
 
       coneString: function(fromOrtonConeName, toOrtonConeName) {
