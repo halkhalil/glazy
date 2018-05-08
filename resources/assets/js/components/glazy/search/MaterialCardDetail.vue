@@ -106,7 +106,7 @@
       <b-btn v-if="isViewingSelfCollection"
              @click="uncollectMaterialRequest(material.id)"
              v-b-tooltip.hover title="Unbookmark"
-             class="btn btn-icon btn-neutral"><i class="fa fa-remove"></i></b-btn>
+             class="btn btn-icon btn-neutral"><i class="fa fa-times"></i></b-btn>
       <b-btn @click="collectMaterialRequest(material.id)"
              v-b-tooltip.hover title="Bookmark"
              class="btn btn-icon btn-neutral"><i class="fa fa-bookmark"></i></b-btn>
