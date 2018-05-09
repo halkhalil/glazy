@@ -59,7 +59,7 @@ class UserProfileController extends ApiBaseController
 
         $data = $request->all();
 
-        if($data['username']) {
+        if(array_key_exists('username', $data) && $data['username']) {
             if (is_numeric($data['username'])) {
                 return $this->respondWithError('Username cannot be numeric.');
             }
@@ -82,7 +82,7 @@ class UserProfileController extends ApiBaseController
             $userProfile = $this->userProfileRepository->update($userProfile, $data);
         }
 
-        if ($data['name'] && $data['name'] !== $user->name) {
+        if (array_key_exists('name', $data) && $data['name'] && $data['name'] !== $user->name) {
             // User's name has also been changed
             $user->name = $data['name'];
             $user->save();
