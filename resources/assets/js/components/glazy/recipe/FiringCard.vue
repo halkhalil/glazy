@@ -3,12 +3,12 @@
         <div class="card-body text-center">
             <p class="firing-type">
                 Orton Cone
-                <a href="https://wiki.glazy.org/t/orton-cones/" target="_blank" class="help-link"><i class="fa fa-question-circle fa-fw"></i></a>
+                <a href="http://help.glazy.org/concepts/temperature/" target="_blank" class="help-link"><i class="fa fa-question-circle fa-fw"></i></a>
             </p>
             <h2 class="card-title" v-html="'&#9651;' + coneString"></h2>
             <p class="firing-type">
                 Atmosphere
-                <a href="https://wiki.glazy.org/t/firing-atmospheres/" target="_blank" class="help-link"><i class="fa fa-question-circle fa-fw"></i></a>
+                <a href="http://help.glazy.org/concepts/firing/#firing-atmosphere" target="_blank" class="help-link"><i class="fa fa-question-circle fa-fw"></i></a>
             </p>
             <p class="firing-atmospheres" v-html="atmospheres">
             </p>

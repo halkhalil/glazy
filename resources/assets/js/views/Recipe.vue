@@ -258,7 +258,7 @@
               <div class="card-body">
                 <h2 class="card-title">
                   Analysis
-                  <a href="https://wiki.glazy.org/t/chemical-analysis/" target="_blank" class="help-link"><i class="fa fa-question-circle fa-fw"></i></a>
+                  <a href="http://help.glazy.org/concepts/analysis/" target="_blank" class="help-link"><i class="fa fa-question-circle fa-fw"></i></a>
                 </h2>
                 <!--
                 <view-recipe-materials-analysis

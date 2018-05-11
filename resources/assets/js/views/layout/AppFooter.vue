@@ -9,18 +9,23 @@
                         </a>
                     </li>
                     <li>
-                        <a href="https://wiki.glazy.org/t/glazy-help-index" class="nav-link">
+                        <a href="http://help.glazy.org" class="nav-link">
                             Help
                         </a>
                     </li>
                     <li>
-                        <a href="https://wiki.glazy.org/t/glazy-help-index" class="nav-link">
-                            Blog
+                        <a href="http://help.glazy.org/support.html#how-to-support-glazy" target="_blank" class="nav-link">
+                            Donate
                         </a>
                     </li>
                     <li>
-                        <a href="https://wiki.glazy.org/t/glazy-help-index" target="_blank" class="nav-link">
-                            License
+                        <a href="http://help.glazy.org/about/terms-of-service.html" class="nav-link">
+                            Terms of Service
+                        </a>
+                    </li>
+                    <li>
+                        <a href="http://help.glazy.org/about/privacy.html" target="_blank" class="nav-link">
+                            Privacy
                         </a>
                     </li>
                 </ul>
