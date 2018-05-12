@@ -168,7 +168,7 @@ export default {
   },
 
   mounted() {
-    console.log('Materials Calculator Component mounted.');
+    // console.log('Materials Calculator Component mounted.');
   },
 
   methods: {

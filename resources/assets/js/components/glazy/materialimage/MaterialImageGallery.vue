@@ -91,8 +91,7 @@
                         </li>
                     </ul>
 
-                    <div v-if="currentImage.title || currentImage.description"
-                            class="card-body">
+                    <div class="card-body">
                         <h6 class="card-title" v-if="currentImage.title">
                             {{ currentImage.title }}
                         </h6>
@@ -402,66 +401,6 @@
     }
 
   }
-
-    /*
-
-     "images": [
-     {
-     "id": 1,
-     "materialId": 102,
-     "title": "",
-     "description": "",
-     "dominant_rgb_r": 68,
-     "dominant_rgb_g": 69,
-     "dominant_rgb_b": 71,
-     "dominant_hex_color": "444547",
-     "secondary_rgb_r": 182,
-     "secondary_rgb_g": 178,
-     "secondary_rgb_b": 171,
-     "secondary_hex_color": "b6b2ab",
-     "url": "102.588f065774ad3.jpg",
-     "is_private": false,
-     "createdByUserId": null,
-     "created_at": {
-     "date": "2017-01-30 09:24:40.000000",
-     "timezone_type": 3,
-     "timezone": "UTC"
-     },
-     "updated_at": {
-     "date": "2017-01-30 09:24:40.000000",
-     "timezone_type": 3,
-     "timezone": "UTC"
-     }
-     },
-     {
-     "id": 2,
-     "materialId": 102,
-     "title": "",
-     "description": "",
-     "dominant_rgb_r": 68,
-     "dominant_rgb_g": 69,
-     "dominant_rgb_b": 71,
-     "dominant_hex_color": "444547",
-     "secondary_rgb_r": 182,
-     "secondary_rgb_g": 178,
-     "secondary_rgb_b": 171,
-     "secondary_hex_color": "b6b2ab",
-     "url": "102.588f0681eccc6.jpg",
-     "is_private": false,
-     "createdByUserId": null,
-     "created_at": {
-     "date": "2017-01-30 09:25:23.000000",
-     "timezone_type": 3,
-     "timezone": "UTC"
-     },
-     "updated_at": {
-     "date": "2017-01-30 09:25:23.000000",
-     "timezone_type": 3,
-     "timezone": "UTC"
-     }
-     }
-     */
-
 </script>
 
 <style>
@@ -510,6 +449,10 @@
     .image-gallery-card .card-body .card-title {
         margin-top: 0;
         margin-bottom: 10px;
+        text-transform: none;
+    }
+    .image-gallery-card .card-body .author {
+        font-size: 14px;
     }
     .image-gallery-thumb {
         padding: 10px 10px;

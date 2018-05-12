@@ -106,8 +106,6 @@
                 .then((response) => {
                 this.materialList = response.data.data
                 this.pagination = response.data.meta.pagination
-                console.log('YYYY')
-                console.log(this.materialList)
                 this.isLoaded = true
                 this.isProcessing = false
             })

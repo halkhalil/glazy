@@ -150,8 +150,6 @@
         Vue.axios.get(recipeUrl)
           .then((response) => {
           this.materialList = response.data.data;
-          console.log('YYYY')
-          console.log(this.materialList)
           this.isProcessing = false
         })
         .catch(response => {
