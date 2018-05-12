@@ -36,6 +36,10 @@
                    class="btn btn-icon btn-sm btn-round btn-pinterest">
                     <i class="fa fa-pinterest"></i>
                 </a>
+                <a v-if="'artaxis' in searchUser.profile && searchUser.profile.artaxis"
+                   v-bind:href="'https://artaxis.org/' + searchUser.profile.artaxis"
+                   target="_blank"
+                   class="btn btn-icon btn-sm btn-round btn-artaxis">a</a>
             </div>
         </div>
     </div>
@@ -85,5 +89,12 @@
 
     .card-glazy-profile .card-glazy-profile-body .btn {
         margin: 0 1px 10px 1px;
+    }
+
+    .btn-artaxis {
+        background-color: #9a9901;
+        color: #ffffff;
+        font-size: 16px !important;
+        line-height: 28px !important;
     }
 </style>

@@ -19,6 +19,7 @@ class UserProfileTransformer extends Fractal\TransformerAbstract
     const DB_PINTEREST = 'pinterest';
     const DB_FACEBOOK = 'facebook';
     const DB_INSTAGRAM = 'instagram';
+    const DB_ARTAXIS = 'artaxis';
 
     const JSON_NAMES = [
         UserProfile::DB_USERNAME        => 'username',
@@ -30,7 +31,8 @@ class UserProfileTransformer extends Fractal\TransformerAbstract
         UserProfile::DB_URL             => 'url',
         UserProfile::DB_PINTEREST       => 'pinterest',
         UserProfile::DB_FACEBOOK        => 'facebook',
-        UserProfile::DB_INSTAGRAM       => 'instagram'
+        UserProfile::DB_INSTAGRAM       => 'instagram',
+        UserProfile::DB_ARTAXIS         => 'artaxis'
     ];
 
     public function transform(UserProfile $user_profile)
@@ -60,11 +62,11 @@ class UserProfileTransformer extends Fractal\TransformerAbstract
         $countryLookup = new Country();
         $user_profile_data['countryName'] = $countryLookup->getValue($user_profile[UserProfile::DB_COUNTRY_ID]);
 
-
         $user_profile_data[self::JSON_NAMES[UserProfile::DB_URL]] = $user_profile[UserProfile::DB_URL];
         $user_profile_data[self::JSON_NAMES[UserProfile::DB_PINTEREST]] = $user_profile[UserProfile::DB_PINTEREST];
         $user_profile_data[self::JSON_NAMES[UserProfile::DB_FACEBOOK]] = $user_profile[UserProfile::DB_FACEBOOK];
         $user_profile_data[self::JSON_NAMES[UserProfile::DB_INSTAGRAM]] = $user_profile[UserProfile::DB_INSTAGRAM];
+        $user_profile_data[self::JSON_NAMES[UserProfile::DB_ARTAXIS]] = $user_profile[UserProfile::DB_ARTAXIS];
 
         // TODO
         // if ($user_profile->thumbnail_filename) {

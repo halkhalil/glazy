@@ -19,6 +19,7 @@ class UserProfile extends Model
     const DB_PINTEREST = 'pinterest';
     const DB_FACEBOOK = 'facebook';
     const DB_INSTAGRAM = 'instagram';
+    const DB_ARTAXIS = 'artaxis';
 
     protected $table = 'user_profiles';
 
@@ -31,6 +32,7 @@ class UserProfile extends Model
         'pinterest',
         'facebook',
         'instagram',
+        'artaxis',
     ];
 
     public function user()

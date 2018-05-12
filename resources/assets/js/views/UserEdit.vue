@@ -111,6 +111,15 @@
                         <b-form-input id="instagram" v-model.trim="form.instagram"></b-form-input>
                     </b-form-group>
 
+                    <b-form-group
+                            id="groupArtaxis"
+                            label="Artaxis Username"
+                            label-for="artaxis"
+                            description="Your Artaxis username can be found in the URL, e.g. https://artaxis.org/your-name/"
+                    >
+                        <b-form-input id="artaxis" v-model.trim="form.artaxis"></b-form-input>
+                    </b-form-group>
+
                     <b-form-group id="groupButtons1">
                         <b-button class="float-right"
                                   size="sm"
@@ -246,6 +255,7 @@
           this.form.pinterest = this.user.profile.pinterest
           this.form.facebook = this.user.profile.facebook
           this.form.instagram = this.user.profile.instagram
+          this.form.artaxis = this.user.profile.artaxis
         }
       }
     },
