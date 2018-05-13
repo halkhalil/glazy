@@ -11,6 +11,8 @@ use App\Models\MaterialImage;
 use App\Policies\MaterialImagePolicy;
 use App\Models\MaterialReview;
 use App\Policies\MaterialReviewPolicy;
+use App\Models\MaterialComment;
+use App\Policies\MaterialCommentPolicy;
 use App\Models\UserProfile;
 use App\Policies\UserProfilePolicy;
 use App\Models\Collection;
@@ -30,6 +32,7 @@ class AuthServiceProvider extends ServiceProvider
         Material::class => MaterialPolicy::class,
         MaterialImage::class => MaterialImagePolicy::class,
         MaterialReview::class => MaterialReviewPolicy::class,
+        MaterialComment::class => MaterialCommentPolicy::class,
         UserProfile::class => UserProfilePolicy::class,
         Collection::class => CollectionPolicy::class,
         UserMaterial::class => UserMaterialPolicy::class,

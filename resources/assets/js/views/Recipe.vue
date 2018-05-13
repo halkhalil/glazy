@@ -256,10 +256,10 @@
           <div class="col-md-12">
             <div class="card"> <!-- BEGIN Analysis Card -->
               <div class="card-body">
-                <h2 class="card-title">
+                <h3>
                   Analysis
                   <a href="http://help.glazy.org/concepts/analysis/" target="_blank" class="help-link"><i class="fa fa-question-circle fa-fw"></i></a>
-                </h2>
+                </h3>
                 <!--
                 <view-recipe-materials-analysis
                         :recipe="recipe"></view-recipe-materials-analysis>
@@ -344,7 +344,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-body">
-                <h2 class="card-title">Similar Base Recipes</h2>
+                <h3>Similar Base Recipes</h3>
                 <div class="row">
                   <div class="col-sm-12">
                     <similar-base-components :material="recipe"></similar-base-components>
@@ -359,7 +359,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-body">
-                <h2 class="card-title">Similar Unity Formula</h2>
+                <h3>Similar Unity Formula</h3>
                 <div class="row">
                   <div class="col-sm-12">
                     <similar-unity-formula :material="recipe"></similar-unity-formula>
@@ -374,7 +374,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-body">
-                <h2 class="card-title">Reviews</h2>
+                <h3>Reviews</h3>
                 <div class="row">
                   <div class="col-sm-12">
                     <reviews-panel
@@ -393,7 +393,26 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-body">
-                <h2 class="card-title">Collections</h2>
+                <h3>Comments & Questions</h3>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <comments-panel
+                            v-on:commentsmodified="fetchRecipe"
+                            :currentUser="current_user"
+                            :material="recipe"
+                    ></comments-panel>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h3>Collections</h3>
                 <div class="row">
                   <div class="col-sm-12">
                     <material-collections-panel
@@ -501,6 +520,7 @@
   import EditRecipeComponents from '../components/glazy/recipe/EditRecipeComponents.vue'
 
   import ReviewsPanel from '../components/glazy/materialreviews/ReviewsPanel.vue'
+  import CommentsPanel from '../components/glazy/materialcomments/CommentsPanel.vue'
   import MaterialCollectionsPanel from '../components/glazy/recipe/MaterialCollectionsPanel.vue'
 
   import MaterialCardDetail from '../components/glazy/search/MaterialCardDetail.vue'
@@ -582,6 +602,7 @@
       EditRecipeComponents,
       MaterialCollectionsPanel,
       ReviewsPanel,
+      CommentsPanel,
       VueTimeago,
       MaterialCardDetail
     },

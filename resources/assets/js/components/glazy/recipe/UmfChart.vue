@@ -3,10 +3,10 @@
     <div class="card-body">
         <div class="row">
             <div class="col-md-4">
-                <h2 class="card-title">
+                <h3>
                     UMF Charts
                     <a href="http://help.glazy.org/concepts/analysis/#unity-molecular-formula-umf" target="_blank" class="help-link"><i class="fa fa-question-circle fa-fw"></i></a>
-                </h2>
+                </h3>
             </div>
             <div class="col-md-8 text-right">
                 <span v-if="isLoaded && !isProcessing && materialList && materialList.length > 0">

@@ -13,6 +13,7 @@ use App\Models\TransparencyType;
 use App\Api\V1\Transformers\Atmosphere\SimpleAtmosphereTransformer;
 use App\Api\V1\Transformers\MaterialImage\MaterialImageTransformer;
 use App\Api\V1\Transformers\MaterialReview\MaterialReviewTransformer;
+use App\Api\V1\Transformers\MaterialComment\MaterialCommentTransformer;
 use App\Api\V1\Transformers\MaterialAnalysis\MaterialAnalysisTransformer;
 use App\Api\V1\Transformers\MaterialComponent\MaterialComponentTransformer;
 use App\Api\V1\Transformers\User\UserTransformer;
@@ -68,6 +69,7 @@ class MaterialTransformer extends Fractal\TransformerAbstract
         'images',
         'thumbnail',
         'reviews',
+        'comments',
         'collections',
         'createdByUser'
     ];
@@ -201,6 +203,13 @@ class MaterialTransformer extends Fractal\TransformerAbstract
     {
         if ($material->reviews && count($material->reviews) > 0) {
             return $this->collection($material->reviews, new MaterialReviewTransformer());
+        }
+    }
+
+    public function includeComments(Material $material)
+    {
+        if ($material->comments && count($material->comments) > 0) {
+            return $this->collection($material->comments, new MaterialCommentTransformer());
         }
     }
 

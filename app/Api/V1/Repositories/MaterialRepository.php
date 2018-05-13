@@ -47,6 +47,9 @@ class MaterialRepository extends Repository
             ->with('reviews')
             ->with('reviews.user') // TODO: ???
             ->with('reviews.user.profile') // TODO: ???
+            ->with('comments')
+            ->with('comments.user') // TODO: ???
+            ->with('comments.user.profile') // TODO: ???
             ->with('collections')
             ->with('collections.created_by_user') // TODO: ???
             ->with('collections.created_by_user.profile')

@@ -26,9 +26,9 @@
                             </p>
                             <div v-if="currentUserReview && currentUserReview.id == review.id && !editOwnReview">
                                 <button @click="clickEditOwnReview"
-                                        class="btn btn-info"><i class="fa fa-edit"></i> Edit Review</button>
+                                        class="btn btn-info"><i class="fa fa-edit"></i> Edit</button>
                                 <button @click="clickDeleteOwnReview"
-                                        class="btn btn-danger"><i class="fa fa-trash"></i> Delete Review</button>
+                                        class="btn btn-danger"><i class="fa fa-trash"></i> Delete</button>
                             </div>
                         </div>
                     </div>
@@ -74,8 +74,8 @@
                 <button v-if="form.rating > 0 && form.description"
                         @click.prevent="submitReview" class="btn btn-info">
                     <i class="fa fa-save"></i>
-                    <span v-if="currentUserReview">Update Your Review</span>
-                    <span v-else>Add Review</span>
+                    <span v-if="currentUserReview">Update</span>
+                    <span v-else>Save</span>
                 </button>
             </div>
         </div>

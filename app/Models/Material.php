@@ -185,6 +185,11 @@ class Material extends Model
         return $this->hasMany('App\Models\MaterialReview', 'material_id');
     }
 
+    public function comments()
+    {
+        return $this->hasMany('App\Models\MaterialComment', 'material_id');
+    }
+
     public function created_by_user()
     {
         return $this->belongsTo('App\User');
