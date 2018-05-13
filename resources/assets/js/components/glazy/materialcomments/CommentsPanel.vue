@@ -67,7 +67,7 @@
             <h5>No comments found</h5>
         </div>
 
-        <form v-if="$auth.user()">
+        <form v-if="$auth.check()">
             <div class="row">
                 <div class="col-sm-12">
                     <h4>Your comment or question:</h4>
