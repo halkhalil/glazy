@@ -45,7 +45,10 @@ class MaterialCommentRepository extends Repository
         $material_id = $data['material_id'];
         $user_id =  Auth::user()->id;
 
-        $material = Material::with('created_by_user')->find($material_id);
+        $material = Material::with('created_by_user')
+            ->with('comments')
+            ->with('comments.user')
+            ->find($material_id);
 
         if (!$material) {
             return false;
@@ -63,20 +66,17 @@ class MaterialCommentRepository extends Repository
         // Set the material as updated
         $material->touch();
 
-        // Notify the creator of this material that a new comment has
-        // been added
-        $material->created_by_user->notify(new MaterialCommentAdded(
-            $material,
-            Auth::user(),
-            $materialComment
-        ));
+        $this->sendCommentAddedNotifications($materialComment, $material);
 
         return $materialComment;
     }
 
     public function update(Model $materialComment, array $data)
     {
-        $material = Material::with('created_by_user')->find($materialComment->material_id);
+        $material = Material::with('created_by_user')
+            ->with('comments')
+            ->with('comments.user')
+            ->find($materialComment->material_id);
 
         $user_id =  Auth::user()->id;
 
@@ -89,13 +89,7 @@ class MaterialCommentRepository extends Repository
 
         $material->touch();
 
-        // Notify the creator of this material that a new comment has
-        // been added
-        $material->created_by_user->notify(new MaterialCommentAdded(
-            $material,
-            Auth::user(),
-            $materialComment
-        ));
+        $this->sendCommentAddedNotifications($materialComment, $material);
 
         return $materialComment;
     }
@@ -111,4 +105,35 @@ class MaterialCommentRepository extends Repository
         $materialComment->delete();
     }
 
+    protected function sendCommentAddedNotifications(MaterialComment $materialComment, Material $material) {
+        $currentUser = Auth::user();
+        $creatorNotificationSent = false;
+
+        $notifiedUsers = [ $material->created_by_user->id => true ];
+
+        foreach($material->comments as $comment) {
+            if ($comment->user &&
+                !array_key_exists($comment->user->id, $notifiedUsers)) {
+                if ($currentUser->id !== $comment->user->id) {
+                    // Notifiy all other users who've commented in this material
+                    // (But don't notify the person who made the comment.)
+                    $comment->user->notify(new MaterialCommentAdded(
+                        $material,
+                        $currentUser,
+                        $materialComment
+                    ));
+                }
+                $notifiedUsers[$comment->user->id] = true;
+            }
+        }
+        // Notify the creator of this material that a new comment has been added
+        if ($currentUser->id !== $material->created_by_user->id) {
+            // But don't notify if the creator is the one who made the comment
+            $material->created_by_user->notify(new MaterialCommentAdded(
+                $material,
+                $currentUser,
+                $materialComment
+            ));
+        }
+    }
 }
