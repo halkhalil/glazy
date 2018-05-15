@@ -2,6 +2,7 @@
 
 namespace App\Api\V1\Transformers\User;
 
+use App\Api\V1\Transformers\Notification\NotificationTransformer;
 use App\User;
 
 use App\Api\V1\Transformers\UserProfile\UserProfileTransformer;
@@ -29,7 +30,8 @@ class UserTransformer extends Fractal\TransformerAbstract
     ];
 
     protected $availableIncludes = [
-        'collections'
+        'collections',
+        'notifications'
     ];
 
     protected $defaultIncludes = [
@@ -62,4 +64,12 @@ class UserTransformer extends Fractal\TransformerAbstract
             return $this->collection($user->collections, new CollectionTransformer());
         }
     }
+
+    public function includeNotifications(User $user)
+    {
+        if ($user->unreadNotifications && count($user->unreadNotifications) > 0) {
+            return $this->collection($user->unreadNotifications, new NotificationTransformer());
+        }
+    }
+
 }

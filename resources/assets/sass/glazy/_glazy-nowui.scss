@@ -260,8 +260,10 @@ $transition-ease:           ease 0s;
 //@import "nowui/checkboxes-radio";
 
 // 20180203 removed, interfering with mobile:
-//@import "nowui/mixins/_dropdown.scss";
+@import "nowui/mixins/_dropdown.scss";
 //@import "nowui/dropdown";
+// 20180514 added back in with trouble spots commented out
+@import "nowui/glazy_dropdown";
 
 $line-height-nav-link:       1.625rem       !default;
 

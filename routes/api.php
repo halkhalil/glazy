@@ -115,6 +115,12 @@ $api->version('v1', function (Router $api) {
         $api->get('/similarUnityFormula/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarUnityFormula')->name('similarUnityFormula');
     });
 
+    $api->group(['prefix' => 'notifications'], function(Router $api) {
+        $api->group(['middleware' => 'jwt.auth'], function (Router $api) {
+            $api->get('/markAsRead', 'App\\Api\\V1\\Controllers\\Glazy\\NotificationController@markAsRead')->name('markAsRead');
+        });
+    });
+
     $api->group(['middleware' => 'jwt.auth'], function(Router $api) {
         $api->get('protected', function() {
             return response()->json([

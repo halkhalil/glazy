@@ -30,8 +30,12 @@
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
 
+                    <notifications-dropdown
+                            v-on:notificationsUpdated="fetchUser"
+                    ></notifications-dropdown>
+
                     <b-nav-item-dropdown v-if="$auth.check()"
-                                         text='<i class="fa fa-plus fa-fw"></i>' right>
+                                         text='<i class="fa fa-plus fa-fw"></i>'>
                         <b-dropdown-item :to="{ name: 'calculator' }">
                             <i class="fa fa-list fa-fw"></i> Add Recipe
                         </b-dropdown-item>
@@ -81,10 +85,14 @@
 
 <script>
 
+  import NotificationsDropdown from '../../components/glazy/notifications/NotificationsDropdown'
+
   export default {
 
     name: 'AppHeader',
-
+    components: {
+      NotificationsDropdown
+    },
     props: {
     },
 

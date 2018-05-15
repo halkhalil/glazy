@@ -181,7 +181,10 @@ class LoginController extends Controller
         */
         $user->load(['collections' => function ($q) {
             $q->orderBy('name', 'asc');
-        }])->load('user_materials')->load('profile');
+        }])
+            ->load('user_materials')
+            ->load('profile')
+            ->load('unreadNotifications');
 
         return response([
                 'status' => 'success',

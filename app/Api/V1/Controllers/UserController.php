@@ -36,7 +36,10 @@ class UserController extends Controller
         //$user->load('collections');
         $user->load(['collections' => function ($q) {
             $q->orderBy('name', 'asc');
-        }])->load('user_materials')->load('profile');
+        }])
+        ->load('user_materials')
+        ->load('profile')
+        ->load('unreadNotifications');
         //$user->load('profile');
 
         // return response()->json(['data' => Auth::guard()->user()]);

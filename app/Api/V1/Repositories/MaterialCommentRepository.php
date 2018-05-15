@@ -8,7 +8,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-use App\Api\V1\Repositories\Repository;
+use App\Notifications\MaterialCommentAdded;
 
 use App\Models\MaterialComment;
 
@@ -45,7 +45,7 @@ class MaterialCommentRepository extends Repository
         $material_id = $data['material_id'];
         $user_id =  Auth::user()->id;
 
-        $material = Material::find($material_id);
+        $material = Material::with('created_by_user')->find($material_id);
 
         if (!$material) {
             return false;
@@ -63,12 +63,20 @@ class MaterialCommentRepository extends Repository
         // Set the material as updated
         $material->touch();
 
+        // Notify the creator of this material that a new comment has
+        // been added
+        $material->created_by_user->notify(new MaterialCommentAdded(
+            $material,
+            Auth::user(),
+            $materialComment
+        ));
+
         return $materialComment;
     }
 
     public function update(Model $materialComment, array $data)
     {
-        $material = Material::find($materialComment->material_id);
+        $material = Material::with('created_by_user')->find($materialComment->material_id);
 
         $user_id =  Auth::user()->id;
 
@@ -80,6 +88,14 @@ class MaterialCommentRepository extends Repository
         $materialComment->save();
 
         $material->touch();
+
+        // Notify the creator of this material that a new comment has
+        // been added
+        $material->created_by_user->notify(new MaterialCommentAdded(
+            $material,
+            Auth::user(),
+            $materialComment
+        ));
 
         return $materialComment;
     }

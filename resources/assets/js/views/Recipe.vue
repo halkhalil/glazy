@@ -374,7 +374,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-body">
-                <h3>Reviews</h3>
+                <h3 id="reviews">Reviews</h3>
                 <div class="row">
                   <div class="col-sm-12">
                     <reviews-panel
@@ -393,7 +393,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-body">
-                <h3>Comments & Questions</h3>
+                <h3 id="comments">Comments & Questions</h3>
                 <div class="row">
                   <div class="col-sm-12">
                     <comments-panel
@@ -412,7 +412,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-body">
-                <h3>Collections</h3>
+                <h3 id="collections">Collections</h3>
                 <div class="row">
                   <div class="col-sm-12">
                     <material-collections-panel
