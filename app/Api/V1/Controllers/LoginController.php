@@ -176,15 +176,25 @@ class LoginController extends Controller
         /*
         $user->load(['collections' => function ($q) {
             $q->orderBy('name', 'asc');
-        }]);
-        $user->load('profile');
-        */
-        $user->load(['collections' => function ($q) {
-            $q->orderBy('name', 'asc');
         }])
             ->load('user_materials')
             ->load('profile')
             ->load('unreadNotifications');
+        */
+
+        // Reload the user with required relationships
+        // Todo: Move to User class as method
+        $user = User::with(['collections' =>
+            function ($q) {
+                $q->orderBy('name', 'asc');
+            }])
+            ->with('user_materials')
+            ->with('profile')
+            ->with(['unreadNotifications' =>
+                function ($q) {
+                    $q->limit(10);
+                }])
+            ->find($user->id);
 
         return response([
                 'status' => 'success',

@@ -107,7 +107,6 @@ class MaterialCommentRepository extends Repository
 
     protected function sendCommentAddedNotifications(MaterialComment $materialComment, Material $material) {
         $currentUser = Auth::user();
-        $creatorNotificationSent = false;
 
         $notifiedUsers = [ $material->created_by_user->id => true ];
 

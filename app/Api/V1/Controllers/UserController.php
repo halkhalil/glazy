@@ -2,6 +2,7 @@
 
 namespace App\Api\V1\Controllers;
 
+use App\User;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tymon\JWTAuth\JWTAuth;
@@ -34,6 +35,8 @@ class UserController extends Controller
     {
         $user = Auth::guard()->user();
         //$user->load('collections');
+
+        /*
         $user->load(['collections' => function ($q) {
             $q->orderBy('name', 'asc');
         }])
@@ -41,6 +44,21 @@ class UserController extends Controller
         ->load('profile')
         ->load('unreadNotifications');
         //$user->load('profile');
+        */
+
+        // Reload the user with required relationships
+        // Todo: Move to User class as method
+        $user = User::with(['collections' =>
+            function ($q) {
+                $q->orderBy('name', 'asc');
+            }])
+            ->with('user_materials')
+            ->with('profile')
+            ->with(['unreadNotifications' =>
+                function ($q) {
+                    $q->limit(10);
+                }])
+            ->find($user->id);
 
         // return response()->json(['data' => Auth::guard()->user()]);
         return response()->json(['data' => $user]);
