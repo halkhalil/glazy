@@ -24,7 +24,7 @@
                         <b-form-group
                                 id="email"
                                 label="Email Address">
-                            <b-form-input v-model.trim="data.body.email"
+                            <b-form-input v-model="data.body.email"
                                           type="email"
                                           :state="emailState"
                                           aria-describedby="input-help input-feeback"
@@ -35,7 +35,7 @@
                                 label="Password">
                             <b-form-input
                                     id="login-form-password"
-                                    v-model.trim="data.body.password"
+                                    v-model="data.body.password"
                                     :state="passwordState"
                                     type="password"></b-form-input>
                         </b-form-group>
