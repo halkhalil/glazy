@@ -29,9 +29,6 @@
                                           :state="emailState"
                                           aria-describedby="input-help input-feeback"
                                           placeholder="jane@doe.com"></b-form-input>
-                            <b-form-feedback id="email-feedback">
-                                Invalid email address
-                            </b-form-feedback>
                         </b-form-group>
                         <b-form-group
                                 id="password"
@@ -41,9 +38,6 @@
                                     v-model.trim="data.body.password"
                                     :state="passwordState"
                                     type="password"></b-form-input>
-                            <b-form-feedback id="password-feedback">
-                                Invalid password
-                            </b-form-feedback>
                         </b-form-group>
                         <b-button size="sm" class="float-left" type="reset" variant="secondary">Reset</b-button>
                         <b-button size="sm" class="float-right" type="submit" variant="info">Login</b-button>
