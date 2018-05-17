@@ -536,4 +536,20 @@ class Material extends Model
         return $query;
     }
 
+    public function scopeOfUser($query, $username)
+    {
+        if (!empty($username)) {
+            if (is_numeric($username) && is_int($username + 0)) {
+                $query->where('materials.created_by_user_id', $username);
+            }
+            else {
+                $query->with('created_by_user')->whereHas('created_by_user', function($query) use ($username) {
+                    $query->where('users.name', 'like', '%'.$username.'%');
+                });
+            }
+        }
+
+        return $query;
+    }
+
 }

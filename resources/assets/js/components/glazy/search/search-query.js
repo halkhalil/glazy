@@ -10,6 +10,7 @@ export default class SearchQuery {
       u: 0,
       collection: 0,
       keywords: '',
+      username: '',
       base_type: 0,
       type: 0,
       cone: 0,
@@ -50,6 +51,9 @@ export default class SearchQuery {
     }
     if (this.params.keywords) {
       minimalQuery.keywords = this.params.keywords
+    }
+    if (this.params.username) {
+      minimalQuery.username = this.params.username
     }
     if (this.params.base_type) {
       minimalQuery.base_type = this.params.base_type
@@ -106,6 +110,9 @@ export default class SearchQuery {
       if ('keywords' in routerQuery && routerQuery.keywords) {
         this.params.keywords = routerQuery.keywords
       }
+      if ('username' in routerQuery && routerQuery.username) {
+        this.params.username = routerQuery.username
+      }
       if ('base_type' in routerQuery && routerQuery.base_type) {
         this.params.base_type = Number(routerQuery.base_type)
       }
@@ -157,6 +164,7 @@ export default class SearchQuery {
       this.params.u = Number(params.u)
       this.params.collection = Number(params.collection)
       this.params.keywords = params.keywords
+      this.params.username = params.username
       this.params.base_type = Number(params.base_type)
       this.params.type = Number(params.type)
       this.params.cone = params.cone

@@ -108,6 +108,14 @@
                     </template>
                 </b-form-select>
             </div>
+            <div v-bind:class="sizeMedium" class="form-group">
+                <input type="text"
+                       class="form-control form-control-sm"
+                       v-model="query.params.username"
+                       placeholder="User's Name (e.g. Jane)"
+                       @input="updateUsername"
+                       @keydown.enter.prevent="updateUsername">
+            </div>
             <div class="form-group col">
                 <b-form-select
                         size="sm"
@@ -359,6 +367,19 @@ export default {
         this.search()
       }
     }, 1000),
+
+    updateUsername: _.debounce(function (e) {
+      if (this.query.params.username.length >= this.minSearchTextLength) {
+        this.query.params.username = e.target.value
+        this.search()
+      } else if (!e.target.value && this.$route.query && 'username' in this.$route.query) {
+        // There was a username search, but now there is not
+        // So we still need to search
+        this.query.params.username = ''
+        this.search()
+      }
+    }, 1000),
+
     searchBaseType: function () {
       this.query.params.type = 0
       this.search()

@@ -84,6 +84,7 @@ class SearchController extends ApiBaseController
         $surface_type_id = (int)$request->input('surface');
         $transparency_type_id = (int)$request->input('transparency');
         $country_id = (int)$request->input('country');
+        $username = $request->input('username');
         $hex_color = $request->input('hex_color');
         $r = null;
         $g = null;
@@ -183,6 +184,8 @@ class SearchController extends ApiBaseController
         $query->ofTransparencyType($transparency_type_id);
 
         $query->ofCountry($country_id);
+
+        $query->ofUser($username);
 
 //        $query->where('materials.is_analysis', false);
 
