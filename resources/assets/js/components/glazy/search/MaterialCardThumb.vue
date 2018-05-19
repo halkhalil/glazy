@@ -1,5 +1,5 @@
 <template>
-  <div v-if="materialHelper"
+  <div v-if="material"
        class="card material-card"
        @mouseover="highlightMaterial(material.id)"
        @mouseleave="unhighlightMaterial(material.id)">
@@ -7,8 +7,8 @@
       class="material-card-img-link">
       <progressive-img
               class="card-img-top img-fluid w-100"
-              :src="materialHelper.getSmallImageUrl(material.selectedImage)"
-              :placeholder="materialHelper.getPreImageUrl(material.selectedImage)"
+              :src="glazyHelper.getSmallImageUrl(material, material.selectedImage)"
+              :placeholder="glazyHelper.getPreImageUrl(material, material.selectedImage)"
               :alt="material.name"
               :aspect-ratio="1"
       />
@@ -30,11 +30,11 @@
 
     <ul v-if="!material.isPrimitive" class="list-group list-group-flush list-group-cone">
       <li class="list-group-item"
-          v-html="'&#9651;' + materialHelper.getConeString() + ' ' + materialHelper.getAtmospheresString()">
+          v-html="'&#9651;' + glazyHelper.getConeString(material) + ' ' + glazyHelper.getAtmospheresString(material)">
       </li>
     </ul>
     <div class="card-body">
-      <h6 class="category text-muted" v-html="materialHelper.getMaterialTypeString()"></h6>
+      <h6 class="category text-muted" v-html="glazyHelper.getMaterialTypeString(material)"></h6>
       <h5 class="card-title">
         <router-link :to="{ name: linkName, params: { id: material.id }}">
           <i v-if="material.isPrivate" class="fa fa-eye-slash"></i>
@@ -81,7 +81,7 @@
 
 <script>
 
-  import MaterialHelper from './material-helper'
+  import GlazyHelper from '../helpers/glazy-helper'
   import StarRating from 'vue-star-rating'
 
   export default {
@@ -105,6 +105,7 @@
   },
     data() {
       return {
+        glazyHelper: new GlazyHelper()
       }
     },
     computed : {
@@ -127,15 +128,8 @@
           }
           return 'recipes'
         }
-      },
-
-      materialHelper: function () {
-        var materialHelper = null
-        if (this.material) {
-          materialHelper = new MaterialHelper(this.material)
-        }
-        return materialHelper
       }
+
     },
     methods: {
 

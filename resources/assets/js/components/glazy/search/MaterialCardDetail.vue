@@ -1,6 +1,6 @@
 <template>
 
-  <div v-if="materialHelper"
+  <div v-if="material"
        class="card material-detail-card"
        v-bind:class="materialCardClass"
        @mouseover="highlightMaterial(material.id)"
@@ -12,15 +12,15 @@
             <span v-bind:id="'material-card-' + material.id"
                   class="material-anchor"></span>
             <h5 v-if="!material.isPrimitive"
-                v-html="'&#9651;' + materialHelper.getConeString()">
+                v-html="'&#9651;' + materialHelper.getConeString(material)">
             </h5>
-            {{  materialHelper.getAtmospheresString() }}
+            {{  materialHelper.getAtmospheresString(material) }}
           </td>
           <td class="align-top text-right">
             <router-link :to="{ name: linkName, params: { id: material.id }}"
                          class="material-card-img-link">
               <img class="rounded"
-                   :src="materialHelper.getSmallImageUrl(material.selectedImage)"
+                   :src="materialHelper.getSmallImageUrl(material, material.selectedImage)"
                    :alt="material.name"
                    height="72" width="72">
             </router-link>
@@ -28,7 +28,7 @@
         </tr>
       </table>
       <div>
-        <h6 class="category text-muted" v-html="materialHelper.getMaterialTypeString()"></h6>
+        <h6 class="category text-muted" v-html="materialHelper.getMaterialTypeString(material)"></h6>
         <h5 class="card-title">
           <router-link :to="{ name: linkName, params: { id: material.id }}">
             <i v-if="material.isPrivate" class="fa fa-eye-slash"></i>
@@ -124,7 +124,7 @@
 
 <script>
   import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
-  import MaterialHelper from './material-helper'
+  import GlazyHelper from '../helpers/glazy-helper'
 
   // import MaterialAnalysisVerticalTable from '../analysis/MaterialAnalysisVerticalTable.vue'
   import UmfTraditionalNotation from '../analysis/UmfTraditionalNotation.vue';
@@ -162,6 +162,7 @@
     },
     data() {
       return {
+        materialHelper: new GlazyHelper()
       }
     },
     computed : {
@@ -184,14 +185,6 @@
           }
           return 'recipes'
         }
-      },
-
-      materialHelper: function () {
-        var materialHelper = null
-        if (this.material) {
-          materialHelper = new MaterialHelper(this.material)
-        }
-        return materialHelper
       },
 
       materialCardClass: function () {

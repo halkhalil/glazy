@@ -1,5 +1,5 @@
 <template>
-  <tr v-if="materialHelper"
+  <tr v-if="material"
       class="material-tr"
       @mouseover="highlightMaterial(material.id)"
       @mouseleave="unhighlightMaterial(material.id)">
@@ -7,7 +7,7 @@
       <span v-bind:id="'material-card-' + material.id"
         class="material-anchor"></span>
       <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}">
-        <img :src="materialHelper.getSmallImageUrl(material.selectedImage)"
+        <img :src="glazyHelper.getSmallImageUrl(material, material.selectedImage)"
              :alt="material.name"
              width="72" height="72" >
       </router-link>
@@ -16,7 +16,7 @@
       <router-link :to="{ name: (material.isPrimitive ? 'material' : 'recipes'), params: { id: material.id }}">
         {{ material.name }}
       </router-link>
-      <h6 class="category text-primary" v-html="materialHelper.getMaterialTypeString()"></h6>
+      <h6 class="category text-primary" v-html="glazyHelper.getMaterialTypeString(material)"></h6>
       <JsonUmfSparkSvg
               :material="material"
               :showOxideList="false"
@@ -48,7 +48,7 @@
     </td>
     <td nowrap class="material-td">
       <span class="badge badge-default"
-            v-html="materialHelper.getR2ORORatioString()">
+            v-html="glazyHelper.getR2ORORatioString(material)">
       </span>
     </td>
     <td class="material-td">
@@ -66,7 +66,7 @@
   import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
 
   import JsonUmfSparkSvg from '../analysis/JsonUmfSparkSvg.vue'
-  import MaterialHelper from './material-helper'
+  import GlazyHelper from '../helpers/glazy-helper'
 
   export default {
     name: 'MaterialCardRow',
@@ -89,17 +89,11 @@
     },
     data() {
       return {
-        oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT
+        oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
+        glazyHelper: new GlazyHelper()
       }
     },
     computed : {
-      materialHelper: function () {
-        var materialHelper = null
-        if (this.material) {
-          materialHelper = new MaterialHelper(this.material)
-        }
-        return materialHelper
-      }
     },
     methods: {
 
