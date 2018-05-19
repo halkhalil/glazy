@@ -21,29 +21,46 @@ export default class GlazyHelper {
 
   hasThumbnail (material) {
     if (material.hasOwnProperty('thumbnail')
-      && material.thumbnail.hasOwnProperty('url')
-      && material.thumbnail.url) {
+      && material.thumbnail.hasOwnProperty('filename')
+      && material.thumbnail.filename) {
       return true;
     }
     return false;
   }
 
   getImageUrl (material, image, size) {
-    if (image && image.filename) {
+    if (image && 
+      'filename' in image &&
+      image.filename) {
       var id = '' + material.id;
       var bin = id.substr(id.length - 2);
       return GLAZY_APP_URL + '/storage/uploads/recipes/' +
-        bin + size + image.filename;
+        bin + '/' + size + '_' + image.filename;
     }
     return '/img/recipes/black.png';
   }
 
-  getSmallImageUrl (material, image) {
-    return this.getImageUrl(material, image, '/s_')
+  getPreImageUrl (material, image) {
+    return this.getImageUrl(material, image, 'p')
   }
 
-  getPreImageUrl (material, image) {
-    return this.getImageUrl(material, image, '/p_')
+  getSmallImageUrl (material, image) {
+    return this.getImageUrl(material, image, 's')
+  }
+
+  getSmallThumbnailUrl (material) {
+    if (this.hasThumbnail(material)) {
+      return this.getImageUrl(material, material.thumbnail, 's')
+    }
+    return '/img/recipes/black.png';
+  }
+
+  getMediumImageUrl (material, image) {
+    return this.getImageUrl(material, image, 'm')
+  }
+
+  getLargeImageUrl (material, image) {
+    return this.getImageUrl(material, image, 'l')
   }
 
   getConeString (material) {
@@ -65,6 +82,27 @@ export default class GlazyHelper {
     return coneString
   }
 
+  /*
+            coneString: function(fromOrtonConeName, toOrtonConeName) {
+                var coneString = '?';
+                if (fromOrtonConeName
+                    && toOrtonConeName
+                    && fromOrtonConeName != toOrtonConeName) {
+                    return fromOrtonConeName + "-" + toOrtonConeName;
+                }
+
+                if (fromOrtonConeName) {
+                    return coneString = fromOrtonConeName;
+                }
+
+                if (toOrtonConeName) {
+                    coneString = toOrtonConeName;
+                }
+                return coneString;
+            }
+
+  */
+
   getAtmospheresString (material) {
     var str = '';
     if (material.atmospheres) {
@@ -78,17 +116,22 @@ export default class GlazyHelper {
     return str
   }
 
-  getUserProfileUrl (user) {
+  getUserProfileUrlId (user) {
     if (user.hasOwnProperty('profile') &&
       user.profile.hasOwnProperty('username') &&
       user.profile.username) {
-      return '/u/' + user.profile.username;
+      return user.profile.username;
     }
-    return '/u/' + user.id;
+    return user.id;
+  }
+
+  getUserProfileUrl (user) {
+    return '/u/' + this.getUserProfileUrlId(user)
   }
 
   getUserDisplayName (user) {
-    if (user.hasOwnProperty('profile') &&
+    if (user &&
+      user.hasOwnProperty('profile') &&
       user.profile.hasOwnProperty('username') &&
       user.profile.username) {
       return user.profile.username;
@@ -96,13 +139,38 @@ export default class GlazyHelper {
     return user.name;
   }
 
-  getUserAvatar (user) {
-    if (user.hasOwnProperty('profile') &&
-      user.hasOwnProperty('avatar') && 
+  hasUserAvatar (user) {
+    if (user &&
+      user.hasOwnProperty('profile') &&
+      user.profile.hasOwnProperty('avatar') && 
       user.profile.avatar) {
+      return true
+    }
+    return false
+  }
+
+  getUserAvatar (user) {
+    if (this.hasUserAvatar(user)) {
       return user.profile.avatar;
     }
     return 'http://www.gravatar.com/avatar/?d=mm';
+  }
+
+  getLinkifiedText (content) {
+    if (!content) {
+      return
+    }
+    // https://stackoverflow.com/questions/37684/how-to-replace-plain-urls-with-links
+    // http://, https://, ftp://
+    var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
+    // www. sans http:// or https://
+    var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+    // Email addresses
+    var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
+    return content
+      .replace(urlPattern, '<a href="$&">$&</a>')
+      .replace(pseudoUrlPattern, '$1<a href="http://$2">$2</a>')
+      .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
   }
 
 }

@@ -12,15 +12,15 @@
             <span v-bind:id="'material-card-' + material.id"
                   class="material-anchor"></span>
             <h5 v-if="!material.isPrimitive"
-                v-html="'&#9651;' + materialHelper.getConeString(material)">
+                v-html="'&#9651;' + glazyHelper.getConeString(material)">
             </h5>
-            {{  materialHelper.getAtmospheresString(material) }}
+            {{  glazyHelper.getAtmospheresString(material) }}
           </td>
           <td class="align-top text-right">
             <router-link :to="{ name: linkName, params: { id: material.id }}"
                          class="material-card-img-link">
               <img class="rounded"
-                   :src="materialHelper.getSmallImageUrl(material, material.selectedImage)"
+                   :src="glazyHelper.getSmallImageUrl(material, material.selectedImage)"
                    :alt="material.name"
                    height="72" width="72">
             </router-link>
@@ -28,7 +28,7 @@
         </tr>
       </table>
       <div>
-        <h6 class="category text-muted" v-html="materialHelper.getMaterialTypeString(material)"></h6>
+        <h6 class="category text-muted" v-html="glazyHelper.getMaterialTypeString(material)"></h6>
         <h5 class="card-title">
           <router-link :to="{ name: linkName, params: { id: material.id }}">
             <i v-if="material.isPrivate" class="fa fa-eye-slash"></i>
@@ -92,13 +92,11 @@
 
       </b-collapse>
 
-
-      <router-link :to="{ name: 'user', params: { id: material.createdByUser.id}}">
+      <router-link :to="{ name: 'user', params: { id: glazyHelper.getUserProfileUrlId(material.createdByUser)}}">
         <div class="author">
-          <img v-if="'profile' in material.createdByUser && 'avatar' in material.createdByUser.profile"
-               v-bind:src="material.createdByUser.profile.avatar"
+          <img v-bind:src="glazyHelper.getUserAvatar(material.createdByUser)"
                class="avatar"/>
-          <span>{{ material.createdByUser.name }}</span>
+          <span>{{ glazyHelper.getUserDisplayName(material.createdByUser) }}</span>
         </div>
       </router-link>
     </div>
@@ -162,7 +160,7 @@
     },
     data() {
       return {
-        materialHelper: new GlazyHelper()
+        glazyHelper: new GlazyHelper()
       }
     },
     computed : {

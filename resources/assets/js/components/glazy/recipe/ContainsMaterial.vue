@@ -28,7 +28,7 @@
                             <a :href="'/recipes/' + containsMaterial.id">
                                 <img class="img-fluid"
                                      :alt="containsMaterial.name"
-                                     :src="getImageUrl(containsMaterial, 's')"
+                                     :src="glazyHelper.getSmallThumbnailUrl(containsMaterial)"
                                      width="72" height="72">
                             </a>
                         </td>
@@ -37,7 +37,7 @@
                                 {{ containsMaterial.name }}
                             </a>
                         </td>
-                        <td v-html="coneString(containsMaterial.fromOrtonConeName, containsMaterial.toOrtonConeName)">
+                        <td v-html="glazyHelper.getConeString(containsMaterial)">
                         </td>
                         <td v-html="parseFloat(getMaterialAmount(containsMaterial.materialComponents))">
                         </td>
@@ -68,6 +68,8 @@
 
   import Paginator from '../search/Paginator.vue'
 
+  import GlazyHelper from '../helpers/glazy-helper'
+
   export default {
 
     name: 'ContainsMaterial',
@@ -79,98 +81,53 @@
       return {
         materialList : null,
         pagination : null,
+        glazyHelper: new GlazyHelper(),
         isLoaded : false,
         isProcessing: false
       }
     },
     mounted() {
-      console.log('XXX contains-material');
-      console.log(this.material);
       this.containsMaterials();
     },
     methods: {
+        containsMaterials : function(page_num){
+            this.isProcessing = true
+            // console.log('Searching for recipes containing material...');
 
-            containsMaterials : function(page_num){
-              this.isProcessing = true
-              console.log('Searching for recipes containing material...');
+            var form = {
+            materials: [this.material.id]
+            }
 
-              var form = {
-                materials: [this.material.id]
-              }
+            if (page_num) {
+            form.p = page_num
+            }
 
-              if (page_num) {
-                form.p = page_num
-              }
-
-              Vue.axios.post(Vue.axios.defaults.baseURL + '/search/containsMaterials', form)
+            Vue.axios.post(Vue.axios.defaults.baseURL + '/search/containsMaterials', form)
                 .then((response) => {
                 this.materialList = response.data.data
                 this.pagination = response.data.meta.pagination
                 this.isLoaded = true
                 this.isProcessing = false
             })
-              .catch(response => {
+            .catch(response => {
                 // Error Handling
                 this.isProcessing = false
             })
 
-            },
+        },
 
-            getMaterialAmount : function(materialComponents) {
-              if (materialComponents) {
-                var amount = 0
-                materialComponents.forEach(function (component) {
-                  if (component.material.id === this.material.id) {
-                    amount = component.percentageAmount
-                  }
-                }.bind(this))
-                return amount
-              }
-            },
-
-            coneString: function(fromOrtonConeName, toOrtonConeName) {
-                var coneString = '?';
-                if (fromOrtonConeName
-                    && toOrtonConeName
-                    && fromOrtonConeName != toOrtonConeName) {
-                    return fromOrtonConeName + "-" + toOrtonConeName;
+        getMaterialAmount : function(materialComponents) {
+            if (materialComponents) {
+            var amount = 0
+            materialComponents.forEach(function (component) {
+                if (component.material.id === this.material.id) {
+                amount = component.percentageAmount
                 }
-
-                if (fromOrtonConeName) {
-                    return coneString = fromOrtonConeName;
-                }
-
-                if (toOrtonConeName) {
-                    coneString = toOrtonConeName;
-                }
-                return coneString;
-            },
-
-            getImageBin: function(id) {
-                id = '' + id;
-                return id.substr(id.length - 2);
-            },
-
-            hasThumbnail: function(recipe) {
-                if (recipe.hasOwnProperty('thumbnail')
-                    && recipe.thumbnail.hasOwnProperty('filename')
-                    && recipe.thumbnail.filename) {
-                    return true;
-                }
-                return false;
-            },
-
-            getImageUrl: function(recipe, size) {
-                if (this.hasThumbnail(recipe)) {
-                    var bin = this.getImageBin(recipe.id);
-                    return '/storage/uploads/recipes/' + bin + '/' + size + '_' + recipe.thumbnail.filename;
-                }
-                return '/img/recipes/black.png';
+            }.bind(this))
+            return amount
             }
-
-
+        }
     }
-
   }
 
 </script>

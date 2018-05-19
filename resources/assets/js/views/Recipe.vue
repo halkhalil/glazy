@@ -103,10 +103,10 @@
                   <div class="row">
                     <div class="col-12 col-sm-6">
                       <div class="author">
-                        <router-link :to="{ name: 'user', params: { id: getUserSearchParam(recipe.createdByUser) }}">
-                          <img v-if="'profile' in recipe.createdByUser && 'avatar' in recipe.createdByUser.profile"
-                               v-bind:src="recipe.createdByUser.profile.avatar"
-                               class="avatar"/>{{ recipe.createdByUser.name }}</router-link>,
+                        <router-link :to="{ name: 'user', params: { id: glazyHelper.getUserProfileUrlId(recipe.createdByUser) }}">
+                          <img v-bind:src="glazyHelper.getUserAvatar(recipe.createdByUser)"
+                               class="avatar"/> {{ recipe.createdByUser.name }}
+                        </router-link>,
                         <timeago :since="recipe.updatedAt"></timeago>
                       </div>
                     </div>
@@ -170,7 +170,7 @@
                   </div>
 
                   <p class="card-description" v-if="recipe.description">
-                    <span style="white-space: pre-wrap;" v-html="linkify(recipe.description.trim())">
+                    <span style="white-space: pre-wrap;" v-html="glazyHelper.getLinkifiedText(recipe.description.trim())">
                     </span>
                   </p>
 
@@ -516,6 +516,8 @@
   import SimilarUnityFormula from '../components/glazy/recipe/SimilarUnityFormula.vue'
   import ContainsMaterial from '../components/glazy/recipe/ContainsMaterial.vue'
 
+  import GlazyHelper from '../components/glazy/helpers/glazy-helper'
+
   import EditMaterialMetadata from '../components/glazy/recipe/EditMaterialMetadata.vue'
   import EditRecipeComponents from '../components/glazy/recipe/EditRecipeComponents.vue'
 
@@ -631,6 +633,7 @@
         apiError: null,
         serverError: null,
         glazeTypeId: new MaterialTypes().GLAZE_TYPE_ID,
+        glazyHelper: new GlazyHelper(),
         isEditRequest: false,
         searchRoute: null,
         selectedCollectionId: 0,
@@ -697,10 +700,10 @@
           url: GLAZY_APP_URL + this.$route.fullPath,
           image: ''
         }
-        if (this.recipe) {
-          if (this.recipe.thumbnail) {
-            meta.image = this.getImageUrl(this.recipe.thumbnail, 'm')
-          }
+        if (this.recipe &&
+          'thumbnail' in this.recipe &&
+          this.recipe.thumbnail) {
+          meta.image = this.glazyHelper.getMediumImageUrl(this.recipe, this.recipe.thumbnail)
         }
         return meta
       },
@@ -1032,56 +1035,6 @@
           }
           this.isProcessing = false
         })
-      },
-
-      getUserProfileUrl: function(recipe) {
-        if (recipe.createdByUser.hasOwnProperty('username')
-          && recipe.createdByUser.username) {
-          return '/u/' + recipe.createdByUser.username;
-        }
-        return '/u/' + recipe.createdByUser.id;
-      },
-
-      getDisplayName: function(user) {
-        if (user.hasOwnProperty('username') && user.username) {
-          return user.username;
-        }
-        return user.name;
-      },
-
-      getImageBin: function (id) {
-        id = '' + id;
-        return id.substr(id.length - 2);
-      },
-
-      getImageUrl: function (materialImage, size) {
-        var bin = this.getImageBin(materialImage.materialId);
-        return GLAZY_APP_URL + '/storage/uploads/recipes/' + bin + '/' + size + '_' + materialImage.filename;
-      },
-
-      linkify: function(content) {
-        if (!content) {
-          return
-        }
-        // https://stackoverflow.com/questions/37684/how-to-replace-plain-urls-with-links
-        // http://, https://, ftp://
-        var urlPattern = /\b(?:https?|ftp):\/\/[a-z0-9-+&@#\/%?=~_|!:,.;]*[a-z0-9-+&@#\/%=~_|]/gim;
-        // www. sans http:// or https://
-        var pseudoUrlPattern = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-        // Email addresses
-        var emailAddressPattern = /[\w.]+@[a-zA-Z_-]+?(?:\.[a-zA-Z]{2,6})+/gim;
-        return content
-          .replace(urlPattern, '<a href="$&">$&</a>')
-          .replace(pseudoUrlPattern, '$1<a href="http://$2">$2</a>')
-          .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
-      },
-
-      getUserSearchParam: function (user) {
-        if (!user) { return }
-        if ('profile' in user && 'username' in user.profile && user.profile.username) {
-          return user.profile.username
-        }
-        return user.id
       }
 
     }
