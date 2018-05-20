@@ -16,7 +16,7 @@
                 <img class="rounded-circle"
                      width="40" height="40"
                      v-if="materialComponent.material.thumbnail"
-                     :src="getImageUrl(materialComponent.material.thumbnail, 's')"/>
+                     :src="glazyHelper.getSmallImageUrl(materialComponent.material, materialComponent.material.thumbnail)"/>
                 <a v-if="materialComponent.material.isPrimitive" :href="'/materials/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
                 <a v-else :href="'/recipes/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
             </td>
@@ -45,7 +45,7 @@
                 <img class="rounded-circle"
                      width="40" height="40"
                      v-if="materialComponent.material.thumbnail"
-                     :src="getImageUrl(materialComponent.material.thumbnail, 's')"/>
+                     :src="glazyHelper.getSmallImageUrl(materialComponent.material, materialComponent.material.thumbnail)"/>
                 <i class="fa fa-plus"></i>
                 <a v-if="materialComponent.material.isPrimitive" :href="'/materials/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
                 <a v-else :href="'/recipes/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
@@ -84,6 +84,8 @@
 </template>
 
 <script>
+import GlazyHelper from '../helpers/glazy-helper'
+
 export default {
   name: 'MaterialRecipeCalculator',
 
@@ -96,6 +98,7 @@ export default {
 
   data() {
     return {
+      glazyHelper: new GlazyHelper(),
       batchSize: null
     }
   },
@@ -165,25 +168,7 @@ export default {
       })
       return hasAdditional
     }
-  },
-
-  mounted() {
-    // console.log('Materials Calculator Component mounted.');
-  },
-
-  methods: {
-
-    getImageBin: function (id) {
-      id = '' + id;
-      return id.substr(id.length - 2);
-    },
-
-    getImageUrl: function (materialImage, size) {
-      var bin = this.getImageBin(materialImage.materialId);
-      return GLAZY_APP_URL + '/storage/uploads/recipes/' + bin + '/' + size + '_' + materialImage.filename;
-    }
   }
-
 }
 
 </script>

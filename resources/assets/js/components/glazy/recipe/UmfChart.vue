@@ -134,11 +134,11 @@
 
 <script>
 
+  import Vue from 'vue'
   import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
   import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
   import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
   import UmfD3Chart from 'vue-d3-stull-charts/src/components/UmfD3Chart.vue'
-  import Vue from 'vue'
 
   export default {
 
@@ -331,28 +331,6 @@
           coneString = toOrtonConeName;
         }
         return coneString;
-      },
-
-      getImageBin: function(id) {
-        id = '' + id;
-        return id.substr(id.length - 2);
-      },
-
-      hasThumbnail: function(recipe) {
-        if (recipe.hasOwnProperty('thumbnail')
-          && recipe.thumbnail.hasOwnProperty('filename')
-          && recipe.thumbnail.filename) {
-          return true;
-        }
-        return false;
-      },
-
-      getImageUrl: function(recipe, size) {
-        if (this.hasThumbnail(recipe)) {
-          var bin = this.getImageBin(recipe.id);
-          return '/storage/uploads/recipes/' + bin + '/' + size + '_' + recipe.thumbnail.filename;
-        }
-        return '/img/recipes/black.png';
       }
     }
 }

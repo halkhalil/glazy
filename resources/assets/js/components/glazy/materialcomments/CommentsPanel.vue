@@ -13,15 +13,15 @@
             <div class="row">
                 <div class="col-12">
                     <div class="media" v-for="comment in commentList">
-                        <a class="pull-left" :href="getUserProfileUrl(comment.user)">
+                        <a class="pull-left" :href="glazyHelper.getUserProfileUrl(comment.user)">
                             <div class="avatar">
-                                <img class="media-object img-raised" :src="getUserAvatar(comment.user)" alt="...">
+                                <img class="media-object img-raised" :src="glazyHelper.getUserAvatar(comment.user)" alt="...">
                             </div>
                         </a>
                         <div class="media-body">
                             <h5 class="media-heading">
-                                <a :href="getUserProfileUrl(comment.user)">
-                                    {{ getDisplayName(comment.user) }}
+                                <a :href="glazyHelper.getUserProfileUrl(comment.user)">
+                                    {{ glazyHelper.getUserDisplayName(comment.user) }}
                                 </a>
                                 <small class="text-muted"> <timeago :since="comment.updatedAt"></timeago></small>
                             </h5>
@@ -89,6 +89,7 @@
 </template>
 <script>
   import VueTimeago from 'vue-timeago'
+  import GlazyHelper from '../helpers/glazy-helper'
 
   export default {
     name: 'CommentsPanel',
@@ -110,7 +111,8 @@
         editingCommentId: null,
         isProcessing: false,
         serverError: null,
-        apiError: null
+        apiError: null,
+        glazyHelper: new GlazyHelper()
       }
     },
     computed: {
@@ -214,33 +216,6 @@
 
       resetForm: function () {
         this.form.content = null;
-      },
-
-      getUserProfileUrl: function (user) {
-        if (user.hasOwnProperty('username')
-          && user.username) {
-          return '/u/' + user.username;
-        }
-        return '/u/' + user.id;
-      },
-
-      getUserAvatar: function (user) {
-        if (user.hasOwnProperty('avatar') && user.avatar) {
-          return user.avatar;
-        }
-        else if (user.hasOwnProperty('gravatar') && user.gravatar) {
-          return user.gravatar;
-        }
-        else {
-          return 'http://www.gravatar.com/avatar/?d=mm';
-        }
-      },
-
-      getDisplayName: function (user) {
-        if (user.hasOwnProperty('username') && user.username) {
-          return user.username;
-        }
-        return user.name;
       }
 
     }

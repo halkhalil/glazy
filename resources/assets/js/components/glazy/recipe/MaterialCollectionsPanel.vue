@@ -5,19 +5,18 @@
                 <div class="card material-collection-card">
                     <div class="card-body">
                         <h5 class="card-title">
-                            <router-link :to="{ name: 'user', params: { id: getUserSearchParam(collection.createdByUser) }, query: { collection: collection.id }}">
+                            <router-link :to="{ name: 'user', params: { id: glazyHelper.getUserProfileUrlId(collection.createdByUser) }, query: { collection: collection.id }}">
                                 {{ collection.name }}
                                 <span class="badge badge-info">
                                     {{ collection.materialCount }}
                                 </span>
                             </router-link>
                         </h5>
-                        <router-link :to="{ name: 'user', params: { id: getUserSearchParam(collection.createdByUser) }}">
+                        <router-link :to="{ name: 'user', params: { id: glazyHelper.getUserProfileUrlId(collection.createdByUser) }}">
                             <div class="author">
-                                <img v-if="'profile' in collection.createdByUser && 'avatar' in collection.createdByUser.profile"
-                                     v-bind:src="collection.createdByUser.profile.avatar"
+                                <img v-bind:src="glazyHelper.getUserAvatar(collection.createdByUser)"
                                      class="avatar"/>
-                                <span>{{ collection.createdByUser.name }}</span>
+                                <span>{{ glazyHelper.getUserDisplayName(collection.createdByUser) }}</span>
                             </div>
                         </router-link>
                     </div>
@@ -30,6 +29,8 @@
     </div>
 </template>
 <script>
+  import GlazyHelper from '../helpers/glazy-helper'
+
   export default {
     name: 'MaterialCollectionsPanel',
     props: {
@@ -37,6 +38,11 @@
         type: Object,
         default: null
       },
+    },
+    data() {
+      return {
+        glazyHelper: new GlazyHelper()
+      }
     },
     computed: {
       isLoaded: function () {
@@ -53,45 +59,6 @@
           }
         }
         return [];
-      },
-
-    },
-
-    methods: {
-
-      getUserProfileUrl: function (user) {
-        if (user.hasOwnProperty('username')
-          && user.username) {
-          return '/u/' + user.username;
-        }
-        return '/u/' + user.id;
-      },
-
-      getUserAvatar: function (user) {
-        if (user.hasOwnProperty('avatar') && user.avatar) {
-          return user.avatar;
-        }
-        else if (user.hasOwnProperty('gravatar') && user.gravatar) {
-          return user.gravatar;
-        }
-        else {
-          return 'http://www.gravatar.com/avatar/?d=mm';
-        }
-      },
-
-      getDisplayName: function (user) {
-        if (user.hasOwnProperty('username') && user.username) {
-          return user.username;
-        }
-        return user.name;
-      },
-
-      getUserSearchParam: function (user) {
-        if (!user) { return }
-        if ('profile' in user && 'username' in user.profile && user.profile.username) {
-          return user.profile.username
-        }
-        return user.id
       }
 
     }

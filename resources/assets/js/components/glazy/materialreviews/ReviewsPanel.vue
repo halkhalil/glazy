@@ -4,15 +4,15 @@
             <div class="row" v-for="review in reviewList">
                 <div class="col-sm-12">
                     <div class="media">
-                        <a class="pull-left" :href="getUserProfileUrl(review.user)">
+                        <a class="pull-left" :href="glazyHelper.getUserProfileUrl(review.user)">
                             <div class="avatar">
-                                <img :src="getUserAvatar(review.user)" class="media-object img-raised"  />
+                                <img :src="glazyHelper.getUserAvatar(review.user)" class="media-object img-raised"  />
                             </div>
                         </a>
                         <div class="media-body">
                             <h5 class="media-heading">
                                 <router-link :to="{ name: 'user', params: { id: review.user.id }}">
-                                    {{ getDisplayName(review.user) }}
+                                    {{ glazyHelper.getUserDisplayName(review.user) }}
                                 </router-link>
                                 <small class="text-muted"><timeago :since="review.updatedAt"></timeago></small>
                             </h5>
@@ -85,6 +85,7 @@
 <script>
   import StarRating from 'vue-star-rating'
   import VueTimeago from 'vue-timeago'
+  import GlazyHelper from '../helpers/glazy-helper'
 
   export default {
     name: 'ReviewsPanel',
@@ -105,7 +106,8 @@
           rating: 0
         },
         editOwnReview: false,
-        isProcessing: false
+        isProcessing: false,
+        glazyHelper: new GlazyHelper()
       }
     },
     computed: {
@@ -153,33 +155,6 @@
     },
 
     methods: {
-
-      getUserProfileUrl: function (user) {
-        if (user.hasOwnProperty('username')
-          && user.username) {
-          return '/u/' + user.username;
-        }
-        return '/u/' + user.id;
-      },
-
-      getUserAvatar: function (user) {
-        if (user.hasOwnProperty('avatar') && user.avatar) {
-          return user.avatar;
-        }
-        else if (user.hasOwnProperty('gravatar') && user.gravatar) {
-          return user.gravatar;
-        }
-        else {
-          return 'http://www.gravatar.com/avatar/?d=mm';
-        }
-      },
-
-      getDisplayName: function (user) {
-        if (user.hasOwnProperty('username') && user.username) {
-          return user.username;
-        }
-        return user.name;
-      },
 
       syncRating(rating) {
         this.form.rating = rating;

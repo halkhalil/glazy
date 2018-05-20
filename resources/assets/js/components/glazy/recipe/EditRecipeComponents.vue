@@ -717,27 +717,6 @@
           this.isProcessingDuplicates = false
         }
       },
-      getImageBin: function(id) {
-        id = '' + id;
-        return id.substr(id.length - 2);
-      },
-
-      hasThumbnail: function(recipe) {
-        if (recipe.hasOwnProperty('thumbnail')
-          && recipe.thumbnail.hasOwnProperty('url')
-          && recipe.thumbnail.url) {
-          return true;
-        }
-        return false;
-      },
-
-      getImageUrl: function(recipe, size) {
-        if (this.hasThumbnail(recipe)) {
-          var bin = this.getImageBin(recipe.id);
-          return '/storage/uploads/recipes/' + bin + '/' + size + '_' + recipe.thumbnail.url;
-        }
-        return '/img/glazy/recipes/black.png';
-      },
 
       handleResize: function () {
         if (this.isLoaded) {

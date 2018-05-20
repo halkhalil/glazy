@@ -22,7 +22,7 @@
                             <a :href="'/recipes/' + similar.id">
                                 <img class="img-fluid"
                                      :alt="similar.name"
-                                     :src="getImageUrl(similar, 's')"
+                                     :src="glazyHelper.getSmallThumbnailUrl(similar)"
                                      width="72" height="72">
                             </a>
                         </td>
@@ -52,6 +52,7 @@
 <script>
 
   import Vue from 'vue'
+  import GlazyHelper from '../helpers/glazy-helper'
 
   export default {
 
@@ -61,6 +62,7 @@
         data() {
             return {
                 materialList : null,
+                glazyHelper: new GlazyHelper(),
                 isLoaded : false,
                 isProcessing: false
             };
@@ -111,28 +113,6 @@
                     coneString = toOrtonConeName;
                 }
                 return coneString;
-            },
-
-            getImageBin: function(id) {
-                id = '' + id;
-                return id.substr(id.length - 2);
-            },
-
-            hasThumbnail: function(recipe) {
-                if (recipe.hasOwnProperty('thumbnail')
-                    && recipe.thumbnail.hasOwnProperty('filename')
-                    && recipe.thumbnail.filename) {
-                    return true;
-                }
-                return false;
-            },
-
-            getImageUrl: function(recipe, size) {
-                if (this.hasThumbnail(recipe)) {
-                    var bin = this.getImageBin(recipe.id);
-                    return '/storage/uploads/recipes/' + bin + '/' + size + '_' + recipe.thumbnail.filename;
-                }
-                return '/img/recipes/black.png';
             },
 
           getAdditionalComponentsString: function (similar) {

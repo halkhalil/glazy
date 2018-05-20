@@ -34,14 +34,14 @@
                             <a :href="'/recipes/' + material.id">
                                 <img class="img-fluid"
                                      :alt="material.name"
-                                     :src="getImageUrl(material, 's')"
+                                     :src="glazyHelper.getSmallThumbnailUrl(material)"
                                      width="40" height="40">
                             </a>
                         </td>
                         <td class="description">
                                 {{ material.name }}
                         </td>
-                        <td v-html="coneString(material.fromOrtonConeName, material.toOrtonConeName)">
+                        <td v-html="glazyHelper.getConeString(material)">
                         </td>
 
                         <td>{{ (material.analysis.umfAnalysis.SiO2Al2O3Ratio) ? Number(material.analysis.umfAnalysis.SiO2Al2O3Ratio).toFixed(2) : ''  }}</td>
@@ -66,7 +66,7 @@
                             <a :href="'/recipes/' + similar.id">
                                 <img class="img-fluid"
                                      :alt="similar.name"
-                                     :src="getImageUrl(similar, 's')"
+                                     :src="glazyHelper.getSmallThumbnailUrl(similar)"
                                      width="40" height="40">
                             </a>
                         </td>
@@ -75,7 +75,7 @@
                                 {{ similar.name }}
                             </a>
                         </td>
-                        <td v-html="coneString(similar.fromOrtonConeName, similar.toOrtonConeName)">
+                        <td v-html="glazyHelper.getConeString(similar)">
                         </td>
 
                         <td>{{ (similar.analysis.umfAnalysis.SiO2Al2O3Ratio) ? Number(similar.analysis.umfAnalysis.SiO2Al2O3Ratio).toFixed(2) : ''  }}</td>
@@ -108,6 +108,8 @@
 </template>
 
 <script>
+  import GlazyHelper from '../helpers/glazy-helper'
+
   export default {
     name: 'SimilarUnityFormula',
     props: {
@@ -120,6 +122,7 @@
     data() {
       return {
         materialList: [],
+        glazyHelper: new GlazyHelper(),
         isProcessing: false
       }
     },
@@ -157,48 +160,7 @@
           this.isProcessing = false
         })
 
-      },
-
-      coneString: function(fromOrtonConeName, toOrtonConeName) {
-        var coneString = '?';
-        if (fromOrtonConeName
-          && toOrtonConeName
-          && fromOrtonConeName != toOrtonConeName) {
-          return fromOrtonConeName + "-" + toOrtonConeName;
-        }
-
-        if (fromOrtonConeName) {
-          return coneString = fromOrtonConeName;
-        }
-
-        if (toOrtonConeName) {
-          coneString = toOrtonConeName;
-        }
-        return coneString;
-      },
-
-      getImageBin: function(id) {
-        id = '' + id;
-        return id.substr(id.length - 2);
-      },
-
-      hasThumbnail: function(recipe) {
-        if (recipe.hasOwnProperty('thumbnail')
-          && recipe.thumbnail.hasOwnProperty('filename')
-          && recipe.thumbnail.filename) {
-          return true;
-        }
-        return false;
-      },
-
-      getImageUrl: function(recipe, size) {
-        if (this.hasThumbnail(recipe)) {
-          var bin = this.getImageBin(recipe.id);
-          return '/storage/uploads/recipes/' + bin + '/' + size + '_' + recipe.thumbnail.filename;
-        }
-        return '/img/recipes/black.png';
       }
-
     }
 
   }

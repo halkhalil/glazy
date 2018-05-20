@@ -50,12 +50,11 @@
                    :show-rating="false"
                    :increment="0.01"></star-rating>
       <p v-if="material.description" class="card-text">{{ material.description }}</p>
-      <router-link :to="{ name: 'user', params: { id: getUserSearchParam(material.createdByUser) }}">
+      <router-link :to="{ name: 'user', params: { id: glazyHelper.getUserProfileUrlId(material.createdByUser) }}">
         <div class="author">
-          <img v-if="'profile' in material.createdByUser && 'avatar' in material.createdByUser.profile"
-               v-bind:src="material.createdByUser.profile.avatar"
+          <img v-bind:src="glazyHelper.getUserAvatar(material.createdByUser)"
                class="avatar"/>
-          <span>{{ material.createdByUser.name }}</span>
+          <span>{{ glazyHelper.getUserDisplayName(material.createdByUser) }}</span>
         </div>
       </router-link>
     </div>
@@ -155,14 +154,6 @@
 
       deleteMaterialRequest: function (id) {
         this.$emit('deleteMaterialRequest', id);
-      },
-
-      getUserSearchParam: function (user) {
-        if (!user) { return }
-        if ('profile' in user && 'username' in user.profile && user.profile.username) {
-          return user.profile.username
-        }
-        return user.id
       }
     }
   }

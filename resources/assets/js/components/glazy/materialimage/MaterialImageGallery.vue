@@ -8,8 +8,8 @@
                         <a @click.stop.prevent="lightbox()" href="#">
                             <progressive-img
                                     class="img rounded"
-                                    :src="getImageUrl(currentImage.filename, 'm')"
-                                    :placeholder="getImageUrl(currentImage.filename, 'p')"
+                                    :src="glazyHelper.getMediumImageUrl(material, currentImage)"
+                                    :placeholder="glazyHelper.getPreImageUrl(material, currentImage)"
                                     :alt="currentImage.title"
                                     :aspect-ratio="1"
                             />
@@ -101,11 +101,10 @@
                         <p>
                             <router-link :to="{ name: 'user', params: { id: currentImage.createdByUser.id}}">
                                 <div class="author">
-                                    <img v-if="'profile' in currentImage.createdByUser && 'avatar' in currentImage.createdByUser.profile"
-                                         v-bind:src="currentImage.createdByUser.profile.avatar"
+                                    <img v-bind:src="glazyHelper.getUserAvatar(currentImage.createdByUser)"
                                          class="avatar"/>
                                     <span>
-                                        {{ currentImage.createdByUser.name }},
+                                        {{ glazyHelper.getUserDisplayName(currentImage.createdByUser) }},
                                         <timeago :since="currentImage.updatedAt"></timeago>
                                     </span>
                                 </div>
@@ -122,8 +121,8 @@
                    href="#">
                     <progressive-img
                             class="rounded img-raised"
-                            :src="getImageUrl(image.filename, 'm')"
-                            :placeholder="getImageUrl(image.filename, 'p')"
+                            :src="glazyHelper.getMediumImageUrl(material, image)"
+                            :placeholder="glazyHelper.getPreImageUrl(material, image)"
                             :alt="image.title"
                             :aspect-ratio="1"
                     />
@@ -152,7 +151,7 @@
         <b-modal v-if="currentImage" ref="updateImageModal" hide-footer id="updateImageModal" title="Update Photo">
             <edit-material-image-form
                     :image="currentImage"
-                    :imageUrl="getImageUrl(currentImage.filename, 'm')"
+                    :imageUrl="glazyHelper.getMediumImageUrl(material, currentImage)"
                     v-on:imageupdatecancel="imageUpdateCancel"
                     v-on:imageupdated="imageUpdated">
             </edit-material-image-form>
@@ -167,7 +166,7 @@
                  ok-title="Close Window">
             <div class="d-block text-center">
                 <img class="img-fluid"
-                     :src="getImageUrl(currentImage.filename, 'l')"
+                     :src="glazyHelper.getLargeImageUrl(material, currentImage)"
                      :alt="currentImage.title">
                 <h6 class="mt-2" v-if="currentImage.title">
                     {{ currentImage.title }}
@@ -196,6 +195,7 @@
   import UploadMaterialImageForm from './UploadMaterialImageForm.vue'
   import EditMaterialImageForm from './EditMaterialImageForm.vue'
   import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
+  import GlazyHelper from '../helpers/glazy-helper'
 
   export default {
 
@@ -214,6 +214,7 @@
       return {
         selectedImage: null,
         constants: new GlazyConstants(),
+        glazyHelper: new GlazyHelper(),
         apiError: null,
         serverError: null
       }
@@ -304,17 +305,6 @@
         this.$refs.updateImageModal.hide();
         this.selectedImage = null;
         this.$emit('imageupdated');
-      },
-
-      getImageBin: function (id) {
-        id = '' + id;
-        return id.substr(id.length - 2);
-      },
-
-      getImageUrl: function (filename, size) {
-        var bin = this.getImageBin(this.material.id);
-
-        return GLAZY_APP_URL + '/storage/uploads/recipes/' + bin + '/' + size + '_' + filename;
       },
 
       selectImage: function (image) {

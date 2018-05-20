@@ -64,22 +64,21 @@ export default class GlazyHelper {
   }
 
   getConeString (material) {
-    var coneString = '?'
-    if (material.fromOrtonConeId
-      && material.toOrtonConeId
-      && material.fromOrtonConeId != material.toOrtonConeId) {
+    if ('fromOrtonConeId' in material &&
+      'toOrtonConeId' in material &&
+      material.fromOrtonConeId &&
+      material.toOrtonConeId &&
+      material.fromOrtonConeId != material.toOrtonConeId) {
       return GlazyHelper.CONSTANTS.ORTON_CONES_LOOKUP[material.fromOrtonConeId] +
         "-" + GlazyHelper.CONSTANTS.ORTON_CONES_LOOKUP[material.toOrtonConeId]
     }
-
-    if (material.fromOrtonConeId) {
-      return coneString = GlazyHelper.CONSTANTS.ORTON_CONES_LOOKUP[material.fromOrtonConeId]
+    else if ('fromOrtonConeId' in material && material.fromOrtonConeId) {
+      return GlazyHelper.CONSTANTS.ORTON_CONES_LOOKUP[material.fromOrtonConeId]
     }
-
-    if (material.toOrtonConeId) {
-      coneString = GlazyHelper.CONSTANTS.ORTON_CONES_LOOKUP[material.toOrtonConeId]
+    else if ('toOrtonConeId' in material && material.toOrtonConeId) {
+      return GlazyHelper.CONSTANTS.ORTON_CONES_LOOKUP[material.toOrtonConeId]
     }
-    return coneString
+    return '?'
   }
 
   /*
@@ -130,11 +129,21 @@ export default class GlazyHelper {
   }
 
   getUserDisplayName (user) {
+    /*
     if (user &&
       user.hasOwnProperty('profile') &&
       user.profile.hasOwnProperty('username') &&
       user.profile.username) {
       return user.profile.username;
+    }
+    return user.name;
+    */
+    // Only return profile username if name not found 
+    if (!user.name && 
+      (user.hasOwnProperty('profile') && 
+      user.profile.hasOwnProperty('username') &&
+      user.profile.username)) {
+        return user.profile.username;
     }
     return user.name;
   }
@@ -153,7 +162,7 @@ export default class GlazyHelper {
     if (this.hasUserAvatar(user)) {
       return user.profile.avatar;
     }
-    return 'http://www.gravatar.com/avatar/?d=mm';
+    return 'https://www.gravatar.com/avatar/?d=mm';
   }
 
   getLinkifiedText (content) {
