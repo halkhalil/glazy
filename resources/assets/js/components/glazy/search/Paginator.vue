@@ -3,14 +3,14 @@
 <nav aria-label="page navigation" v-if="isLoaded">
     <ul class="pagination">
 
-        <li class="page-item disabled"
+        <li class="page-item disabled d-none d-sm-block"
             v-if="page_links.current_page == 1 && !isCompact">
             <span class="page-link">
                 <i class="fa fa-angle-double-left fa-fw"></i>
                 <span class="sr-only">First</span>
             </span>
         </li>
-        <li class="page-item"
+        <li class="page-item d-none d-sm-block"
             v-else-if="!isCompact">
             <a class="page-link" @click.prevent="pageRequest(1)">
                 <i class="fa fa-angle-double-left fa-fw"></i>
@@ -62,14 +62,14 @@
             </a>
         </li>
 
-        <li class="page-item disabled"
+        <li class="page-item disabled d-none d-sm-block"
             v-if="page_links.current_page == pagination.total_pages && !isCompact">
             <span class="page-link">
                 <i class="fa fa-angle-double-right"></i>
                 <span class="sr-only">Last</span>
             </span>
         </li>
-        <li class="page-item"
+        <li class="page-item d-none d-sm-block"
             v-else-if="!isCompact">
             <a class="page-link" @click.prevent="pageRequest(pagination.total_pages)">
                 <i class="fa fa-angle-double-right"></i>

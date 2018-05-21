@@ -185,7 +185,7 @@
         </div>
       </div>
 
-      <section class="row search-results-row" v-if="(searchQuery.params.view === 'cards') && !isProcessing">
+      <section class="row search-results-row" v-if="(searchQuery.params.view === 'cards')">
         <div v-bind:class="materialCardClass" class=""
              v-for="(material, index) in searchItems">
           <material-card-thumb
@@ -201,7 +201,7 @@
           ></material-card-thumb>
         </div>
       </section>
-      <section class="row" v-else-if="(searchQuery.params.view === 'details') && !isProcessing">
+      <section class="row" v-else-if="(searchQuery.params.view === 'details')">
         <div v-bind:class="materialCardClass" class=""
              v-for="(material, index) in searchItems">
           <material-card-detail
@@ -217,7 +217,7 @@
           ></material-card-detail>
         </div>
       </section>
-      <section class="row" v-else-if="(searchQuery.params.view === 'rows') && !isProcessing">
+      <section class="row" v-else-if="(searchQuery.params.view === 'rows')">
         <table class="table table-hover material-detail-table">
           <tbody>
             <tr is="material-card-row"
@@ -234,7 +234,7 @@
       </section>
 
       <filter-paginator
-              v-if="hasResults && hasPagination && !isProcessing"
+              v-if="hasResults && hasPagination"
               :pagination="searchPagination"
               :view="searchQuery.params.view"
               :order="order"
