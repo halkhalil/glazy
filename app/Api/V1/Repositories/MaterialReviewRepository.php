@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Api\V1\Repositories\Repository;
 
 use App\Models\MaterialReview;
+use App\Notifications\MaterialReviewAdded;
 
 class MaterialReviewRepository extends Repository
 {
@@ -44,7 +45,12 @@ class MaterialReviewRepository extends Repository
         $material_id = $data['material_id'];
         $user_id =  Auth::user()->id;
 
-        $material = Material::find($material_id);
+        $material = Material::with('created_by_user')
+        ->with('reviews')
+        ->with('reviews.user')
+        ->with('comments')
+        ->with('comments.user')
+        ->find($material_id);
 
         if (!$material) {
             return false;
@@ -65,6 +71,8 @@ class MaterialReviewRepository extends Repository
         $material->rating_number += 1;
         $material->rating_average = $material->rating_total / $material->rating_number;
         $material->save();
+
+        $this->sendReviewAddedNotifications($materialReview, $material);
 
         return $materialReview;
     }
@@ -115,4 +123,51 @@ class MaterialReviewRepository extends Repository
         $materialReview->delete();
     }
 
+    protected function sendReviewAddedNotifications(MaterialReview $materialReview, Material $material) {
+        $currentUser = Auth::user();
+
+        $notifiedUsers = [ $material->created_by_user->id => true ];
+
+        foreach($material->reviews as $review) {
+            if ($review->user &&
+                !array_key_exists($review->user->id, $notifiedUsers)) {
+                if ($currentUser->id !== $review->user->id) {
+                    // Notifiy all other users who've reviewed in this material
+                    // (But don't notify the person who made the review.)
+                    $review->user->notify(new MaterialReviewAdded(
+                        $material,
+                        $currentUser,
+                        $materialReview
+                    ));
+                }
+                $notifiedUsers[$review->user->id] = true;
+            }
+        }
+
+        foreach($material->comments as $comment) {
+            if ($comment->user &&
+                !array_key_exists($comment->user->id, $notifiedUsers)) {
+                if ($currentUser->id !== $comment->user->id) {
+                    // Notifiy all other users who've commented in this material
+                    // (But don't notify the person who made the comment.)
+                    $comment->user->notify(new MaterialReviewAdded(
+                        $material,
+                        $currentUser,
+                        $materialReview
+                    ));
+                }
+                $notifiedUsers[$comment->user->id] = true;
+            }
+        }
+
+        // Notify the creator of this material that a new review has been added
+        if ($currentUser->id !== $material->created_by_user->id) {
+            // But don't notify if the creator is the one who made the review
+            $material->created_by_user->notify(new MaterialReviewAdded(
+                $material,
+                $currentUser,
+                $materialReview
+            ));
+        }
+    }
 }

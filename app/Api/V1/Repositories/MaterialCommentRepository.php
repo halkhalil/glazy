@@ -46,6 +46,8 @@ class MaterialCommentRepository extends Repository
         $user_id =  Auth::user()->id;
 
         $material = Material::with('created_by_user')
+            ->with('reviews')
+            ->with('reviews.user')
             ->with('comments')
             ->with('comments.user')
             ->find($material_id);
@@ -74,6 +76,8 @@ class MaterialCommentRepository extends Repository
     public function update(Model $materialComment, array $data)
     {
         $material = Material::with('created_by_user')
+            ->with('reviews')
+            ->with('reviews.user')
             ->with('comments')
             ->with('comments.user')
             ->find($materialComment->material_id);
@@ -125,6 +129,23 @@ class MaterialCommentRepository extends Repository
                 $notifiedUsers[$comment->user->id] = true;
             }
         }
+
+        foreach($material->reviews as $review) {
+            if ($review->user &&
+                !array_key_exists($review->user->id, $notifiedUsers)) {
+                if ($currentUser->id !== $review->user->id) {
+                    // Notifiy all other users who've reviewed in this material
+                    // (But don't notify the person who made the review.)
+                    $review->user->notify(new MaterialCommentAdded(
+                        $material,
+                        $currentUser,
+                        $materialComment
+                    ));
+                }
+                $notifiedUsers[$review->user->id] = true;
+            }
+        }
+
         // Notify the creator of this material that a new comment has been added
         if ($currentUser->id !== $material->created_by_user->id) {
             // But don't notify if the creator is the one who made the comment
