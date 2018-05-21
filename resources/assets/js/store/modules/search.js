@@ -84,12 +84,11 @@ const actions = {
     context.commit('isProcessing')
 
     // Clear out all old errors and search user
-    context.commit('setSearchUser', null)
+    // context.commit('setSearchUser', null)
     context.dispatch('resetError')
 
     var query = context.getters.query
     var myQuery = query.getMinimalQuery()
-    //var myQuery = payload.query.getMinimalQuery()
 
     var isPrimitive = context.getters.isPrimitive
 
@@ -105,14 +104,18 @@ const actions = {
 
     var querystring = query.toQuerystring(myQuery)
 
-    // Make sure itemlist is always defined, and an array
-    context.commit('setSearchItems', [])
     Vue.axios.get(Vue.axios.defaults.baseURL + '/search?' + querystring)
       .then((response) => {
       if (response.data.error) {
+        // Reset both search items & search user
+        context.commit('setSearchItems', [])
+        context.commit('setSearchUser', null)
         context.commit('setApiError', response.data.error)
         context.commit('isNotProcessing')
       } else {
+        // Reset both search items & search user
+        context.commit('setSearchItems', [])
+        context.commit('setSearchUser', null)
         if (response.data.data) {
           context.commit('setSearchItems', response.data.data)
         }
@@ -124,6 +127,9 @@ const actions = {
       }
     })
     .catch(response => {
+      // Reset both search items & search user
+      context.commit('setSearchItems', [])
+      context.commit('setSearchUser', null)
       if (response.response && response.response.status) {
         if (response.response.status === 401) {
           this.$auth.refresh() // attempt refresh
