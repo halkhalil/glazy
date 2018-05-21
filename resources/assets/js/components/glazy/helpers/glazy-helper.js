@@ -182,7 +182,39 @@ export default class GlazyHelper {
       .replace(emailAddressPattern, '<a href="mailto:$&">$&</a>');
   }
 
+  /**
+   * FILE UPLOAD METHODS
+   */
+
+  hasImageFileExtension (file) {
+    if (file && 'name' in file) {
+      return this.hasExtension(file.name, ['.jpg', '.jpeg', '.gif', '.png'])
+    }
+    return false
+  }
+
+  hasExtension (filename, exts) {
+    // http://stackoverflow.com/questions/4234589/validation-of-file-extension-before-uploading-file
+    return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$', "i")).test(filename);
+  }
+
+  isUnderMaxFileSize (file) {
+    if (file && 'size' in file) {
+      return this.checkFileSize(file.size)
+    }
+    return false
+  }
+
+  checkFileSize (filesize) {
+    if ((filesize / 1048576) > GlazyHelper.MAX_UPLOAD_SIZE_MB) {
+      return false;
+    }
+    return true;
+  }
+
 }
 
 GlazyHelper.MATERIAL_TYPES = new MaterialTypes()
 GlazyHelper.CONSTANTS = new GlazyConstants()
+GlazyHelper.MAX_UPLOAD_SIZE_MB = 6
+GlazyHelper.AVATAR_URL = 'https://www.gravatar.com/avatar/?d=mm'

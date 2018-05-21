@@ -21,10 +21,9 @@
                 <input @change="onFileChange" type="file" id="imageFile"
                        name="imageFile" class="form-control-file"
                        aria-describedby="fileHelp">
-                <small v-if="errors.imageFile" class="form-control-feedback">
+                <div v-if="errors.imageFile" class="form-control-feedback">
                     <span v-for="error in errors.imageFile">{{ error }}</span>
-                </small>
-                </span>
+                </div>
             </div>
         </div>
         <b-form-group
@@ -75,7 +74,7 @@
                     @click.prevent="cancelEdit">
                 Cancel
             </button>
-            <button v-if="files"
+            <button v-if="files && !hasErrors"
                     class="btn btn-info btn-sm"
                     @click.prevent="upload">
                 <i class="fa fa-cloud-upload"></i> Upload Image
@@ -89,6 +88,7 @@
 <script>
 
 import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
+import GlazyHelper from '../helpers/glazy-helper'
 
 export default {
   name: 'UploadMaterialImageForm',
@@ -113,7 +113,7 @@ export default {
       constants: new GlazyConstants(),
       files: null,
       image: '',
-      maxUploadSizeMB: 6,
+      glazyHelper: new GlazyHelper(),
       apiError: null,
       serverError: null
     }
@@ -165,13 +165,16 @@ export default {
       this.files = e.target.files || e.dataTransfer.files;
       if (!this.files.length)
         return;
-      if (!this.hasExtension(['.jpg', '.jpeg', '.gif', '.png'])) {
+      if (!this.glazyHelper.hasImageFileExtension(this.files[0])) {
+        this.image = ''
         this.files = null;
         this.errors.imageFile = ['Image file type not supported.'];
         this.hasErrors = true;
       }
-      else if (!this.checkFileSize()) {
-        this.errors.imageFile = ['File size must be less than ' + this.maxUploadSizeMB + 'MB.'];
+      else if (!this.glazyHelper.isUnderMaxFileSize(this.files[0])) {
+        this.image = ''
+        this.files = null;
+        this.errors.imageFile = ['File size must be less than ' + GlazyHelper.MAX_UPLOAD_SIZE_MB + 'MB.'];
         this.hasErrors = true;
       }
       else {
@@ -180,17 +183,6 @@ export default {
         this.hasErrors = false;
         this.createImage(this.files[0]);
       }
-    },
-
-    createImage: function (file) {
-      var image = new Image();
-      var reader = new FileReader();
-      var vm = this;
-
-      reader.onload = (e) => {
-        vm.image = e.target.result;
-      }
-      reader.readAsDataURL(file);
     },
 
     resetForm: function () {
@@ -202,6 +194,16 @@ export default {
       this.form.atmosphereId = 0
     },
 
+    createImage: function (file) {
+      var reader = new FileReader();
+      var vm = this;
+
+      reader.onload = (e) => {
+        vm.image = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    },
+
     removeImage: function (e) {
       this.image = '';
       this.files = null;
@@ -210,25 +212,6 @@ export default {
     cancelEdit: function () {
       this.resetForm();
       this.$emit('imageuploadcancel');
-    },
-
-    hasExtension: function (exts) {
-      // http://stackoverflow.com/questions/4234589/validation-of-file-extension-before-uploading-file
-      if (!this.files.length) {
-        return false;
-      }
-      return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$', "i")).test(this.files[0].name);
-    },
-
-    checkFileSize: function () {
-      console.log('FILE SIZE: ' + (this.files[0].size / 1048576));
-      if (!this.files.length) {
-        return false;
-      }
-      if ((this.files[0].size / 1048576) > this.maxUploadSizeMB) {
-        return false;
-      }
-      return true;
     }
   }
 }

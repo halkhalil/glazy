@@ -29,6 +29,7 @@ $api->version('v1', function (Router $api) {
         $api->post('changePassword', 'App\\Api\\V1\\Controllers\\UserController@changePassword');
 
         $api->patch('profile', 'App\\Api\\V1\\Controllers\\Glazy\\UserProfileController@update');
+        $api->post('createAvatar', 'App\\Api\\V1\\Controllers\\Glazy\\UserProfileController@createAvatar');
 
     });
 

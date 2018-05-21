@@ -205,21 +205,62 @@
                 </form>
             </div>
         </div>
+        <div class="card">
+            <div class="card-body">
+                <form role="form" method="POST" v-if="isLoaded">
+                    <h3 class="card-title">
+                        Profile Photo
+                    </h3>
+                    <b-alert v-if="formErrors" show variant="danger">
+                      Errors were found in the form below.
+                    </b-alert>
+                    <b-alert v-if="avatarSuccess" show variant="info">
+                      Your profile photo was successfully changed.
+                    </b-alert>
+
+                    <div v-if="avatar" class="avatar-container">
+                        <img class="img-raised" :src="avatar" />
+                    </div>
+
+                    <b-form-group
+                            id="groupImage"
+                            label="Choose a Photo (.jpg, .gif, or .png)"
+                            label-for="avatarFileInput"
+                            description=""
+                    >
+                        <input @change="onFileChange" type="file" id="avatarFileInput"
+                              name="avatarFile" class="form-control-file"
+                              aria-describedby="fileHelp">
+                        <div v-if="formErrors && 'avatarFile' in formErrors" class="form-control-feedback">
+                            <span v-for="error in formErrors.avatarFile">{{ error }}</span>
+                        </div>
+                    </b-form-group>
+                    <b-form-group
+                            id="groupAvatarButtons"
+                            description=""
+                    >
+                      <button class="btn btn-cancel btn-sm"
+                              @click.prevent="resetAvatar">
+                          Reset
+                      </button>
+                      <button v-if="files && !formErrors"
+                              class="btn btn-info btn-sm"
+                              @click.prevent="uploadAvatar">
+                          <i class="fa fa-cloud-upload"></i> Upload Photo
+                      </button>
+                    </b-form-group>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 </template>
 
 
 <script>
+  import GlazyHelper from '../components/glazy/helpers/glazy-helper'
+
   export default {
-    props: {
-      recipe: {
-        type: Object,
-        default: null
-      }
-    },
-    components: {
-    },
     data() {
       return {
         user: null,
@@ -230,12 +271,16 @@
           password: '',
           password_confirmation: ''
         },
-        errors: [],
+        formErrors: null,
         apiError: null,
         serverError: null,
         isProcessing: false,
         actionMessage: null,
-        actionMessageSeconds: 0
+        actionMessageSeconds: 0,
+        files: null,
+        avatar: null,
+        avatarSuccess: false,
+        glazyHelper: new GlazyHelper()
       }
     },
     created() {
@@ -247,6 +292,8 @@
           name: this.user.name,
         }
 
+        this.avatar = GlazyHelper.AVATAR_URL
+
         if ('profile' in this.user) {
           this.form.username = this.user.profile.username
           this.form.title = this.user.profile.title
@@ -256,6 +303,17 @@
           this.form.facebook = this.user.profile.facebook
           this.form.instagram = this.user.profile.instagram
           this.form.artaxis = this.user.profile.artaxis
+
+          if (this.user.profile.image_filename) {
+              var id = '' + this.user.profile.id;
+              var bin = id.substr(id.length - 2);
+              this.avatar = GLAZY_APP_URL + '/storage/uploads/profiles/' +
+                bin + '/s_' + this.user.profile.image_filename;
+          } else if (this.user.profile.facebook_avatar) {
+              this.avatar = this.user.profile.facebook_avatar;
+          } else if (this.user.profile.google_avatar) {
+              this.avatar = this.user.profile.google_avatar;
+          }
         }
       }
     },
@@ -315,7 +373,8 @@
         if (this.isLoaded) {
           window.scrollTo(0, 0)
           this.isProcessing = true
-          this.serverError = null
+          this.serverError = null;
+          this.apiError = null;
 
           Vue.axios.post(Vue.axios.defaults.baseURL + '/auth/changePassword', this.passwordForm)
             .then((response) => {
@@ -394,8 +453,71 @@
       formatUsername (value, event) {
         value = value.toLowerCase()
         return value.replace(/[^\w]/gi, '')
-      }
+      },
 
+      onFileChange(e) {
+        this.files = e.target.files || e.dataTransfer.files;
+        if (!this.files.length)
+          return;
+        if (!this.glazyHelper.hasImageFileExtension(this.files[0])) {
+          this.files = []
+          this.formErrors = {
+            avatarFile: ['Image file type not supported.']
+          }
+        }
+        else if (!this.glazyHelper.isUnderMaxFileSize(this.files[0])) {
+          this.files = []
+          this.formErrors = {
+            avatarFile: ['File size must be less than ' + GlazyHelper.MAX_UPLOAD_SIZE_MB + 'MB.']
+          }
+        }
+        else {
+          this.formErrors = null
+          this.createImage(this.files[0])
+        }
+      },
+
+      createImage: function (file) {
+        var reader = new FileReader();
+        var vm = this;
+
+        reader.onload = (e) => {
+          vm.avatar = e.target.result;
+        }
+        reader.readAsDataURL(file);
+      },
+
+      resetAvatar: function () {
+        this.avatar = ''
+        this.files = []
+      },
+
+      uploadAvatar: function () {
+        this.avatarSuccess = false;
+        this.serverError = null;
+        this.apiError = null;
+        this.isProcessing = true;
+        var formData = new FormData();
+        formData.append('imageFile', this.files[0]);
+
+        Vue.axios.post(Vue.axios.defaults.baseURL + '/auth/createAvatar', formData)
+          .then((response) => {
+          if (response.data.error) {
+            this.apiError = response.data.error
+            this.isProcessing = false
+            console.log(this.apiError)
+          }
+          else {
+            this.isProcessing = false
+            this.avatarSuccess = true
+          }
+        }).catch(response => {
+          this.serverError = response
+          console.log('upload error:')
+          console.log(response)
+          this.isProcessing = false
+        })
+      }
     }
   }
 </script>
@@ -403,5 +525,11 @@
 <style>
     .edit-user {
         padding-top: 15px;
+    }
+
+    .avatar-container {
+      width: 200px;
+      margin-bottom: 20px;
+      box-shadow: 0px 10px 20px 0px rgba(0, 0, 0, 0.3);
     }
 </style>

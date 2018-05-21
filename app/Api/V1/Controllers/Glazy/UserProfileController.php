@@ -93,4 +93,27 @@ class UserProfileController extends ApiBaseController
         return $this->manager->createData($resource)->toArray();
     }
 
+    public function createAvatar(Request $request)
+    {
+        $data = $request->all();
+        
+        if (!Auth::guard()->user()) {
+            return $this->respondUnauthorized('You must login to do this.');
+        }
+
+        $user = Auth::guard('api')->user();
+        $userProfile = $user->profile;
+
+        if (! $userProfile) {
+            // If a user has never entered user profile data, they might not have a user profile
+            $userProfile = $this->userProfileRepository->create($user, []);
+        }
+
+        $userProfile = $this->userProfileRepository->createAvatar($userProfile, $data);
+
+        $resource = new FractalItem($user, new UserTransformer());
+
+        return $this->manager->createData($resource)->toArray();
+    }
+
 }
