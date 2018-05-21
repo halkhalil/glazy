@@ -354,10 +354,17 @@
               this.apiError = response.data.error
               console.log(this.apiError)
             } else {
-              console.log('emit updatedUserProfile')
               this.$emit('updatedUserProfile')
               this.actionMessage = 'Success: Your user profile was updated.'
               this.actionMessageSeconds = 5
+              // Refresh the user (and user's profile)
+              this.$auth.fetch({
+                success(res) {
+                },
+                error() {
+                  console.log('error fetching user');
+                }
+              })
             }
             this.isProcessing = false
           })
@@ -510,6 +517,14 @@
           else {
             this.isProcessing = false
             this.avatarSuccess = true
+            // Refresh the user (and user's profile)
+            this.$auth.fetch({
+              success(res) {
+              },
+              error() {
+                console.log('error fetching user');
+              }
+            })
           }
         }).catch(response => {
           this.serverError = response
