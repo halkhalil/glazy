@@ -21,8 +21,9 @@
                                          :star-size="24"
                                          :show-rating="false"
                                          :increment="0.01"></star-rating>
-                            <p>
-                                {{ review.description }}
+                            <p v-if="'description' in review && review.description"
+                                style="white-space: pre-wrap;" 
+                                v-html="glazyHelper.getLinkifiedText(review.description.trim())">
                             </p>
                             <div v-if="currentUserReview && currentUserReview.id == review.id && !editOwnReview">
                                 <button @click="clickEditOwnReview"

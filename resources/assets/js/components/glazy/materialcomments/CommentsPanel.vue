@@ -42,8 +42,9 @@
                                     Cancel
                                 </button>
                             </form>
-                            <p v-show="!showEditComment(comment.id)">
-                                {{ comment.content }}
+                            <p v-show="!showEditComment(comment.id)"
+                                style="white-space: pre-wrap;" 
+                                v-html="glazyHelper.getLinkifiedText(comment.content.trim())">
                             </p>
                             <div v-if="!showEditComment(comment.id) && $auth.check() && $auth.user().id === comment.userId"
                                  class="media-footer  pull-right">
