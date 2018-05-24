@@ -1,6 +1,13 @@
 <template>
 <div class="row edit-user">
     <div class="col-md-12">
+        <b-alert show variant="warning">
+            If you wish to completely delete all of your user data,
+            or if you wish to receive a copy of all of your data,
+            <a href="mailto:derek@glazy.org?Subject=Delete%20User" target="_top">please click here to email your request</a>.
+            Your data request will be fulfilled within 48 hours.
+        </b-alert>
+
         <b-alert v-if="apiError" show variant="danger">
             API Error: {{ apiError.message }}
         </b-alert>
