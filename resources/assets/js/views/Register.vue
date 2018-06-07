@@ -9,10 +9,12 @@
 
                 <div>
                     <b-form-group
-                            id="name"
+                            id="nameGroup"
+                            label-for="name"
                             label="Your Name">
                         <b-form-input v-model.trim="form.name"
                                       type="text"
+                                      id="name"
                                       :state="nameState"
                                       aria-describedby="input-help input-feeback"
                                       placeholder="Jane Doe"></b-form-input>
@@ -21,10 +23,12 @@
                         </b-form-feedback>
                     </b-form-group>
                     <b-form-group
-                            id="email"
+                            id="emailGroup"
+                            label-for="email"
                             label="Email Address">
                         <b-form-input v-model.trim="form.email"
                                       type="email"
+                                      id="email"
                                       :state="emailState"
                                       aria-describedby="input-help input-feeback"
                                       placeholder="jane@doe.com"></b-form-input>
@@ -33,10 +37,11 @@
                         </b-form-feedback>
                     </b-form-group>
                     <b-form-group
-                            id="password"
+                            id="passwordGroup"
+                            label-for="password"
                             label="Password">
                         <b-form-input
-                                id="login-form-password"
+                                id="password"
                                 v-model.trim="form.password"
                                 :state="passwordState"
                                 aria-describedby="input-help input-feeback"
@@ -45,11 +50,23 @@
                             Enter at least six characters.
                         </b-form-feedback>
                     </b-form-group>
+                    <b-form-group
+                            id="allowContactGroup"
+                            label-for="accept-terms"
+                            label="Accept <a href='http://help.glazy.org/about/terms-of-service.html'>Terms of Service</a> and <a href='http://help.glazy.org/about/privacy.html'>Privacy Policy</a> (Required.)">
+                        <b-form-checkbox plain 
+                                          id="accept-terms"
+                                          v-model="form.acceptTerms"
+                                          value="accepted"
+                                          unchecked-value="not_accepted">
+                                        I accept
+                        </b-form-checkbox>
+                    </b-form-group>
                     <div>
                         <b-btn size="sm" class="float-left" variant="secondary" @click="cancelRegister()">
                             Cancel
                         </b-btn>
-                        <b-btn size="sm" class="float-right" variant="info" @click="register()">
+                        <b-btn v-if="form.acceptTerms" size="sm" class="float-right" variant="info" @click="register()">
                             Join Now!
                         </b-btn>
                     </div>
@@ -72,7 +89,8 @@
         form: {
           name: '',
           email: '',
-          password: ''
+          password: '',
+          acceptTerms: false
         },
         serverError: null,
         errors: null

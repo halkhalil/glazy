@@ -13,7 +13,7 @@
   "dependencies": {
     "@websanova/vue-auth": "^2.21.10-beta",
     "axios": "^0.17.1",
-    "bootstrap": "^4.1.0",
+    "bootstrap": "4.1.0",
     "ceramicscalc-js": "github:derekphilipau/ceramicscalc-js",
     "js-cookie": "^2.1.4",
     "popper.js": "^1.14.3",
@@ -21,7 +21,7 @@
     "vform": "^0.8.2",
     "vue": "^2.5.16",
     "vue-focus": "^2.1.0",
-    "vue-i18n": "^7.6.0",
+    "vue-i18n": "^7.8.0",
     "vue-meta": "^1.5.0",
     "vue-router": "^3.0.1",
     "vue-social-sharing": "^2.3.3",
@@ -34,11 +34,11 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-stage-2": "^6.24.1",
     "bootstrap-vue": "^1.5.1",
-    "cross-env": "^5.1.4",
+    "cross-env": "^5.1.6",
     "eslint": "^3.19.0",
     "eslint-plugin-vue-libs": "^1.2.1",
     "laravel-mix": "^1.7.2",
-    "svg-sprite-loader": "^3.7.3",
+    "svg-sprite-loader": "^3.8.0",
     "vue-axios": "^2.1.1",
     "vue-color": "https://github.com/derekphilipau/vue-color/tarball/36d1969b0d9298e310f24c9734c485eff6b61693",
     "vue-d3-stull-charts": "github:derekphilipau/vue-d3-stull-charts",
@@ -46,6 +46,6 @@
     "vue-progressive-image": "^2.5.0",
     "vue-star-rating": "^1.6.0",
     "vue-template-compiler": "^2.5.16",
-    "webpack-bundle-analyzer": "^2.11.1"
+    "webpack-bundle-analyzer": "^2.13.1"
   }
 }

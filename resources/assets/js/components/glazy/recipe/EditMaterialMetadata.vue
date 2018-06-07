@@ -161,24 +161,92 @@
             </b-row>
 
             <b-row class="mt-2 percent-analysis-oxide"  v-if="material.isPrimitive || material.isAnalysis">
-                <b-col lg="3" md="3" sm="4" cols="6"
-                       v-for="(oxideName, index) in OXIDE_NAMES" :key="index">
-                    <label v-bind:for="oxideName" v-html="OXIDE_NAME_DISPLAY[oxideName]"></label>
-                    <b-form-input id="oxideName"
-                                  type="number"
-                                  v-model.trim="form.analysis[oxideName]"></b-form-input>
+                <b-col cols="12" class="mt-4">
+                  <h3>Analysis</h3>
                 </b-col>
-                <b-col lg="3" md="3" sm="4" cols="6">
-                    <label for="loi">LOI</label>
-                    <b-form-input id="loi"
-                                  type="number"
-                                  v-model.trim="form.loi"></b-form-input>
-                </b-col>
-                <b-col lg="3" md="3" sm="4" cols="6">
-                    <label for="weight">Weight</label>
-                    <b-form-input id="weight"
-                                  type="number"
-                                  v-model.trim="form.weight"></b-form-input>
+                <b-col cols="12">
+                  <b-row class="mt-2">
+                    <b-col cols="12">
+                      <b-form-group>
+                        <b-form-radio-group 
+                          id="analysisTypeRadios" 
+                          v-model="enteringFormulaType" 
+                          name="analysisTypeRadioGroup"
+                          plain>
+                          <b-form-radio value="percentage">Percentage Analysis</b-form-radio>
+                          <b-form-radio value="formula">Formula Analysis</b-form-radio>
+                        </b-form-radio-group>
+                      </b-form-group>
+                    </b-col>
+                  </b-row>
+
+                  <b-row class="loiRow">
+                    <b-col cols="2">
+                      <label for="loi">LOI</label>
+                    </b-col>
+                    <b-col cols="5">
+                      <b-form-input id="loi"
+                                    type="number"
+                                    size="sm"
+                                    v-model.trim="form.loi"
+                                    ></b-form-input>                        
+                    </b-col>
+                  </b-row>
+
+                  <b-row class="weightRow">
+                    <b-col cols="2">
+                      <label for="weight">Weight</label>
+                    </b-col>
+                    <b-col cols="5">
+                      <b-form-input id="weight"
+                                    type="number"
+                                    size="sm"
+                                    v-model.trim="form.weight"
+                                    ></b-form-input>
+                    </b-col>
+                  </b-row>
+
+                  <b-row class="mt-2">
+                    <table class="table table-sm">
+                      <thead>
+                        <tr>
+                          <th>Oxide</th>
+                          <th>% Analysis</th>
+                          <th>Formula</th>
+                          <th>UMF</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      <tr v-for="(oxideName, index) in OXIDE_NAMES" :key="index">
+                        <td>
+                          <span v-bind:class="'oxide-colors-' + oxideName"
+                              v-html="OXIDE_NAME_DISPLAY[oxideName]"></span>
+                        </td>
+                        <td>
+                          <b-form-input id="oxideName"
+                                        type="number"
+                                        size="sm"
+                                        v-model="percentageAnalysis[oxideName]"
+                                        :disabled="(enteringFormulaType === 'formula')"
+                                        @change="updateAnalysis"
+                                        ></b-form-input>
+                        </td>
+                        <td>
+                          <b-form-input id="oxideName"
+                                        type="number"
+                                        size="sm"
+                                        v-model="formulaAnalysis[oxideName]"
+                                        :disabled="(enteringFormulaType === 'percentage')"
+                                        @change="updateFormula"
+                                        ></b-form-input>
+                        </td>
+                        <td
+                          v-html="umfAnalysis[oxideName]">
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </b-row>
                 </b-col>
             </b-row>
 
@@ -206,6 +274,7 @@
   import Analysis from 'ceramicscalc-js/src/analysis/Analysis'
   import FormulaAnalysis from 'ceramicscalc-js/src/analysis/FormulaAnalysis'
   import PercentageAnalysis from 'ceramicscalc-js/src/analysis/PercentageAnalysis'
+  import Material from 'ceramicscalc-js/src/material/Material'
 
   import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
   import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
@@ -247,6 +316,11 @@
           loi: null,
           weight: null
         },
+        ceramicsCalcMaterial: null,        
+        percentageAnalysis: null,
+        formulaAnalysis: null,
+        umfAnalysis: null,
+        enteringFormulaType: 'percentage',
         // isPrimitive: false,
         errors: [],
         apiError: null,
@@ -279,17 +353,12 @@
           analysis: new Analysis(),
           loi: this.material.analysis.percentageAnalysis.loi
         }
-        this.form.analysis.setOxides(this.material.analysis.percentageAnalysis)
-        Analysis.OXIDE_NAMES.forEach((oxideName) => {
-          if (this.form.analysis[oxideName] <= 0) {
-            // don't keep zeros for form
-            this.form.analysis[oxideName] = ''
-          } else {
-            this.form.analysis[oxideName] = parseFloat(this.form.analysis[oxideName])
-          }
-        })
+        this.ceramicsCalcMaterial = Material.createFromJson(this.material)
+        this.percentageAnalysis = this.ceramicsCalcMaterial.getPercentageAnalysis()
+        this.formulaAnalysis = this.ceramicsCalcMaterial.getFormulaAnalysis()
+        this.umfAnalysis = FormulaAnalysis.createROR2OUnityFormulaAnalysis(this.percentageAnalysis)
+        this.formatOxideArrays()
 
-        // this.form.analysis.initOxidesNull()
         if (this.material.atmospheres) {
           for (var i = 0; i < this.material.atmospheres.length; i++) {
             this.form.atmospheres.push(this.material.atmospheres[i].id);
@@ -298,42 +367,6 @@
       }
     },
     watch: {
-      material (newMaterial) {
-        if (newMaterial) {
-          this.form = {
-            isPrimitive: newMaterial.isPrimitive,
-            isAnalysis: newMaterial.isAnalysis,
-            id: newMaterial.id,
-            name: newMaterial.name,
-            otherNames: newMaterial.otherNames,
-            description: newMaterial.description,
-            baseTypeId: newMaterial.baseTypeId,
-            materialTypeId: newMaterial.materialTypeId,
-            transparencyTypeId: newMaterial.transparencyTypeId,
-            surfaceTypeId: newMaterial.surfaceTypeId,
-            fromOrtonConeId: newMaterial.fromOrtonConeId,
-            toOrtonConeId: newMaterial.toOrtonConeId,
-            atmospheres: [],
-            countryId: newMaterial.countryId,
-            analysis: new Analysis(),
-            loi: newMaterial.analysis.percentageAnalysis.loi
-          }
-          this.form.analysis.setOxides(newMaterial.analysis.percentageAnalysis)
-          Analysis.OXIDE_NAMES.forEach((oxideName) => {
-            if (this.form.analysis[oxideName] <= 0) {
-              // don't keep zeros for form
-              this.form.analysis[oxideName] = ''
-            }
-          })
-
-          // this.form.analysis.initOxidesNull()
-          if (newMaterial.atmospheres) {
-            for (var i = 0; i < newMaterial.atmospheres.length; i++) {
-              this.form.atmospheres.push(newMaterial.atmospheres[i].id);
-            }
-          }
-        }
-      }
     },
     computed: {
       isLoaded: function () {
@@ -402,6 +435,20 @@
             this.form._method = 'PATCH'
             url = Vue.axios.defaults.baseURL + '/recipes/' + this.material.id
           }
+
+          if ((this.material.isPrimitive || this.material.isAnalysis) &&
+              (this.percentageAnalysis || this.formulaAnalysis)) {
+            // Set the form's analysis (currently only accepts percentage)
+            console.log('copy over analysis')
+            if (this.enteringFormulaType === 'percentage') {
+              this.form.analysis = this.percentageAnalysis
+            }
+            else {
+              this.form.analysis = PercentageAnalysis.createPercentageAnalysis(this.formulaAnalysis, this.form.loi)
+            }
+            delete this.form.analysis['loi'];
+          }
+
           Vue.axios.post(url, this.form)
             .then((response) => {
               if (response.data.error) {
@@ -458,8 +505,40 @@
         if (this.form.fromOrtonConeId && this.form.fromOrtonConeId > this.form.toOrtonConeId) {
           this.form.fromOrtonConeId = this.form.toOrtonConeId
         }
-      }
+      },
 
+      updateAnalysis () {
+        this.ceramicsCalcMaterial.setPercentageAnalysis(this.percentageAnalysis)
+        this.formulaAnalysis = this.ceramicsCalcMaterial.getFormulaAnalysis()
+        this.umfAnalysis = this.ceramicsCalcMaterial.getUmfAnalysis()
+        this.formatOxideArray(this.formulaAnalysis)
+        this.formatOxideArray(this.umfAnalysis)
+      },
+
+      updateFormula () {
+        this.ceramicsCalcMaterial.setFormulaAnalysis(this.formulaAnalysis, this.form.loi)
+        this.percentageAnalysis = this.ceramicsCalcMaterial.getPercentageAnalysis()
+        this.umfAnalysis = this.ceramicsCalcMaterial.getUmfAnalysis()
+        this.formatOxideArray(this.percentageAnalysis)
+        this.formatOxideArray(this.umfAnalysis)
+      },
+
+      formatOxideArrays() {
+        this.formatOxideArray(this.percentageAnalysis)
+        this.formatOxideArray(this.formulaAnalysis)
+        this.formatOxideArray(this.umfAnalysis)
+      },
+
+      formatOxideArray (myOxides) {
+        Analysis.OXIDE_NAMES.forEach((oxideName) => {
+          if (myOxides[oxideName] <= 0) {
+            // don't keep zeros for form
+            myOxides[oxideName] = ''
+          } else {
+            myOxides[oxideName] = Number(myOxides[oxideName]).toFixed(3)
+          }
+        })
+      }
     }
   }
 </script>
