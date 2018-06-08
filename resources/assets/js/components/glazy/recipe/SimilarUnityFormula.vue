@@ -9,22 +9,22 @@
 
                 <thead>
                 <tr>
-                    <th class="description" colspan="2">Recipe</th>
-                    <th><small>&Delta;Temp</small></th>
-                    <th><small>SiO<sub>2</sub></small>:<small>Al<sub>2</sub>O<sub>3</sub></small></th>
-                    <th><small>SiO<sub>2</sub></small></th>
-                    <th><small>Al<sub>2</sub>O<sub>3</sub></small></th>
-                    <th><small>B<sub>2</sub>O<sub>3</sub></small></th>
+                    <th colspan="2">Recipe</th>
+                    <th>&Delta;Temp</th>
+                    <th>SiO<sub>2</sub>:Al<sub>2</sub>O<sub>3</sub></th>
+                    <th class="oxide-colors-SiO2">SiO<sub>2</sub></th>
+                    <th class="oxide-colors-Al2O3">Al<sub>2</sub>O<sub>3</sub></th>
+                    <th class="oxide-colors-B2O3">B<sub>2</sub>O<sub>3</sub></th>
 
-                    <th><small>Li<sub>2</sub>O</small></th>
-                    <th><small>Na<sub>2</sub>O</small></th>
-                    <th><small>K<sub>2</sub>O</small></th>
-                    <th><small>KNaO</small></th>
+                    <th class="oxide-colors-Li2O">Li<sub>2</sub>O</th>
+                    <th class="oxide-colors-Na2O">Na<sub>2</sub>O</th>
+                    <th class="oxide-colors-K2O">K<sub>2</sub>O</th>
+                    <th class="oxide-colors-KNaO">KNaO</th>
 
-                    <th><small>MgO</small></th>
-                    <th><small>CaO</small></th>
-                    <th><small>SrO</small></th>
-                    <th><small>BaO</small></th>
+                    <th class="oxide-colors-MgO">MgO</th>
+                    <th class="oxide-colors-CaO">CaO</th>
+                    <th class="oxide-colors-SrO">SrO</th>
+                    <th class="oxide-colors-BaO">BaO</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -166,3 +166,15 @@
   }
 
 </script>
+
+<style>
+    .similar-unity-formula-table tr th {
+        font-size: 12px;
+    }
+    .similar-unity-formula-table tr td, .similar-unity-formula-table tr th {
+        text-align: right;
+    }
+    .similar-unity-formula-table tr td.amount {
+        font-weight: bold;
+    }
+</style>

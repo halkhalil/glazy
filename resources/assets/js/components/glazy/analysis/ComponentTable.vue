@@ -6,7 +6,8 @@
                 <th>Material</th>
                 <th>% Amount</th>
                 <th v-for="oxideName in presentOxides">
-                    <a :href="'/oxides/' + oxideName" v-html="OXIDE_NAME_DISPLAY[oxideName]"></a>
+                    <span v-html="OXIDE_NAME_DISPLAY[oxideName]"
+                        v-bind:class="'oxide-colors-' + oxideName"></span>
                 </th>
                 <th v-if="!isFormula">LOI</th>
             </tr>
