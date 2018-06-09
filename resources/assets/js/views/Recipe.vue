@@ -265,16 +265,17 @@
                         :recipe="recipe"></view-recipe-materials-analysis>
                 -->
                 <div class="row" v-if="!recipe.isPrimitive && recipe.baseTypeId == glazeTypeId">
-                  <div class="col-12 col-sm-8">
+                  <div class="col-12 col-sm-12 col-md-auto mb-2">
                     <umf-traditional-notation
                             :material="material"
                             :showOxideList="false"
                             :squareSize="100">
                     </umf-traditional-notation>
                   </div>
-                  <div v-if="'analysis' in recipe && 'umfAnalysis' in recipe.analysis"  class="col-12 col-sm-4">
+                  <div v-if="'analysis' in recipe && 'umfAnalysis' in recipe.analysis"  
+                      class="col-12 col-sm-12 col-md-auto">
                     <div class="row">
-                      <div class="col-6 col-sm-12 text-right">
+                      <div class="col-6 col-sm-6 col-md-12">
                         <div class="card card-umf-info card-plain">
                           <div class="card-body">
                             <h6 class="card-title">R<sub>2</sub>O : RO</h6>
@@ -290,7 +291,7 @@
                           </div>
                         </div>
                       </div>
-                      <div class="col-6 col-sm-12 text-right">
+                      <div class="col-6 col-sm-6 col-md-12">
                         <div class="card card-umf-info card-plain">
                           <div class="card-body">
                             <h6 class="card-title">SiO<sub>2</sub> : Al<sub>2</sub>O<sub>3</sub></h6>
@@ -1044,10 +1045,6 @@
 
 <style>
 
-  .recipe-component {
-    // padding-top: 15px;
-  }
-
   .sidebar {
     background-color: #efefef;
     position: fixed;
@@ -1142,7 +1139,7 @@
   }
 
   .card-umf-info .card-body .card-text {
-    font-size: 2em;
+    font-size: 1.825em;
   }
 
 </style>

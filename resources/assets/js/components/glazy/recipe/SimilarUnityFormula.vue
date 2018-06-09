@@ -19,7 +19,7 @@
                     <th class="oxide-colors-Li2O">Li<sub>2</sub>O</th>
                     <th class="oxide-colors-Na2O">Na<sub>2</sub>O</th>
                     <th class="oxide-colors-K2O">K<sub>2</sub>O</th>
-                    <th class="oxide-colors-KNaO">KNaO</th>
+                    <th class="oxide-colors-K2O">KNaO</th>
 
                     <th class="oxide-colors-MgO">MgO</th>
                     <th class="oxide-colors-CaO">CaO</th>
