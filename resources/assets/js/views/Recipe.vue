@@ -275,7 +275,7 @@
                   <div v-if="'analysis' in recipe && 'umfAnalysis' in recipe.analysis"  
                       class="col-12 col-sm-12 col-md-auto">
                     <div class="row">
-                      <div class="col-6 col-sm-6 col-md-12">
+                      <div class="col-6 col-md-12 col-umf-r2oro">
                         <div class="card card-umf-info card-plain">
                           <div class="card-body">
                             <h6 class="card-title">R<sub>2</sub>O : RO</h6>
@@ -291,7 +291,7 @@
                           </div>
                         </div>
                       </div>
-                      <div class="col-6 col-sm-6 col-md-12">
+                      <div class="col-6 col-md-12">
                         <div class="card card-umf-info card-plain">
                           <div class="card-body">
                             <h6 class="card-title">SiO<sub>2</sub> : Al<sub>2</sub>O<sub>3</sub></h6>
@@ -489,6 +489,9 @@
           </div>
         </div>
       </div>
+
+      <AppFooter/>
+
     </main>
 
   </div>
@@ -527,6 +530,8 @@
   import MaterialCollectionsPanel from '../components/glazy/recipe/MaterialCollectionsPanel.vue'
 
   import MaterialCardDetail from '../components/glazy/search/MaterialCardDetail.vue'
+
+  import AppFooter from './layout/AppFooter.vue'
 
   import VueTimeago from 'vue-timeago'
 
@@ -607,7 +612,8 @@
       ReviewsPanel,
       CommentsPanel,
       VueTimeago,
-      MaterialCardDetail
+      MaterialCardDetail,
+      AppFooter
     },
     props: {
       recipe_id: {
@@ -1119,6 +1125,10 @@
 
   .analysis-layout-table tr td {
     padding: 0;
+  }
+
+  .col-umf-r2oro {
+    padding-right: 0;
   }
 
   .card-umf-info {
