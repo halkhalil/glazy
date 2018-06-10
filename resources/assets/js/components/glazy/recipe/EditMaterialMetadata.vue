@@ -164,89 +164,111 @@
                 <b-col cols="12" class="mt-4">
                   <h3>Analysis</h3>
                 </b-col>
+
                 <b-col cols="12">
-                  <b-row class="mt-2">
-                    <b-col cols="12">
-                      <b-form-group>
-                        <b-form-radio-group 
-                          id="analysisTypeRadios" 
-                          v-model="enteringFormulaType" 
-                          name="analysisTypeRadioGroup"
-                          plain>
-                          <b-form-radio value="percentage">Percentage Analysis</b-form-radio>
-                          <b-form-radio value="formula">Formula Analysis</b-form-radio>
-                        </b-form-radio-group>
-                      </b-form-group>
-                    </b-col>
-                  </b-row>
+                  <b-form-group label="Analysis Type:" label-for="analysisTypeRadios">
+                    <b-form-radio-group 
+                      id="analysisTypeRadios" 
+                      v-model="enteringFormulaType" 
+                      name="analysisTypeRadioGroup"
+                      plain>
+                      <b-form-radio value="percentage">Percentage Analysis</b-form-radio>
+                      <b-form-radio value="formula">Formula</b-form-radio>
+                    </b-form-radio-group>
+                  </b-form-group>
+                </b-col>
 
-                  <b-row class="loiRow">
-                    <b-col cols="2">
-                      <label for="loi">LOI</label>
-                    </b-col>
-                    <b-col cols="5">
-                      <b-form-input id="loi"
-                                    type="number"
-                                    size="sm"
-                                    v-model.trim="form.loi"
-                                    ></b-form-input>                        
-                    </b-col>
-                  </b-row>
+                <b-col cols="12" v-if="enteringFormulaType === 'percentage'">
+                  <b-form-group label="Unity Type for Formula:" label-for="unityTypeSelect">
+                    <b-form-select
+                        id="unityTypeSelect" 
+                        @input="updateAnalysis"
+                        v-model="unityType">
+                      <option value="auto" selected>Automatically determine unity</option>
+                      <option value="ror2o">RO/R2O Unity (Flux, UMF)</option>
+                      <option value="r2o3">R2O3 Unity</option>
+                      <option value="none">No Unity</option>
+                    </b-form-select>
+                  </b-form-group>
+                </b-col>
 
-                  <b-row class="weightRow">
-                    <b-col cols="2">
-                      <label for="weight">Weight</label>
-                    </b-col>
-                    <b-col cols="5">
-                      <b-form-input id="weight"
-                                    type="number"
-                                    size="sm"
-                                    v-model.trim="form.weight"
-                                    ></b-form-input>
-                    </b-col>
-                  </b-row>
-
-                  <b-row class="mt-2">
-                    <table class="table table-sm">
-                      <thead>
-                        <tr>
-                          <th>Oxide</th>
-                          <th>% Analysis</th>
-                          <th>Formula</th>
-                          <th>UMF</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <tr v-for="(oxideName, index) in OXIDE_NAMES" :key="index">
-                        <td>
-                          <span v-bind:class="'oxide-colors-' + oxideName"
-                              v-html="OXIDE_NAME_DISPLAY[oxideName]"></span>
-                        </td>
-                        <td>
-                          <b-form-input id="oxideName"
-                                        type="number"
-                                        size="sm"
-                                        v-model="percentageAnalysis[oxideName]"
-                                        :disabled="(enteringFormulaType === 'formula')"
-                                        @change="updateAnalysis"
-                                        ></b-form-input>
-                        </td>
-                        <td>
-                          <b-form-input id="oxideName"
-                                        type="number"
-                                        size="sm"
-                                        v-model="formulaAnalysis[oxideName]"
-                                        :disabled="(enteringFormulaType === 'percentage')"
-                                        @change="updateFormula"
-                                        ></b-form-input>
-                        </td>
-                        <td
-                          v-html="umfAnalysis[oxideName]">
-                        </td>
+                <b-col cols="12">
+                  <b-form-group label="Enter either LOI or Weight:" label-for="loiWeightRadios">
+                      <b-form-radio-group 
+                        id="loiWeightRadios" 
+                        v-model="loiWeightSelector" 
+                        name="loiWeightRadioGroup"
+                        plain>
+                        <b-form-radio value="loi">
+                          LOI
+                          <b-form-input id="loi"
+                          type="number"
+                          size="sm"
+                          v-model.trim="form.loi"
+                          @change="updateAnalysis"
+                          :disabled="!(loiWeightSelector === 'loi')"
+                          ></b-form-input>                        
+                        </b-form-radio>
+                        <b-form-radio value="weight">
+                          Weight
+                          <b-form-input id="weight"
+                            type="number"
+                            size="sm"
+                            v-model.trim="form.weight"
+                            @change="updateAnalysis"
+                            :disabled="!(loiWeightSelector === 'weight')"
+                          ></b-form-input>
+                        </b-form-radio>
+                      </b-form-radio-group>
+                  </b-form-group>
+                </b-col>
+                <b-col cols="12">
+                  Calculated Oxide Weight: {{ Number(oxideWeight).toFixed(3) }}
+                </b-col>
+                <b-col cols="12" class="mt-2">
+                  <table class="">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>% Analysis</th>
+                        <th>
+                          Formula
+                          <span v-if="enteringFormulaType === 'percentage'">
+                            <span v-if="unityType === 'auto'">(Auto)</span>
+                            <span v-else-if="unityType === 'ror2o'">(UMF)</span>
+                            <span v-else-if="unityType === 'r2o3'">(R2O3)</span>
+                            <span v-else>(No Unity)</span>
+                          </span>
+                        </th>
                       </tr>
-                      </tbody>
-                    </table>
-                  </b-row>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(oxideName, index) in OXIDE_NAMES" :key="index">
+                      <td>
+                        <span v-bind:class="'oxide-colors-' + oxideName"
+                            v-html="OXIDE_NAME_DISPLAY[oxideName]"></span>
+                      </td>
+                      <td>
+                        <b-form-input id="oxideName"
+                                      type="number"
+                                      size="sm"
+                                      v-model="percentageAnalysis[oxideName]"
+                                      :disabled="(enteringFormulaType === 'formula')"
+                                      @change="updateAnalysis"
+                                      ></b-form-input>
+                      </td>
+                      <td>
+                        <b-form-input id="oxideName"
+                                      type="number"
+                                      size="sm"
+                                      v-model="formulaAnalysis[oxideName]"
+                                      :disabled="(enteringFormulaType === 'percentage')"
+                                      @change="updateAnalysis"
+                                      ></b-form-input>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
                 </b-col>
             </b-row>
 
@@ -312,15 +334,18 @@
           toOrtonConeId: null,
           atmospheres: [],
           countryId: null,
-          analysis: new Analysis(),
+          analysis: null,
+          formula: null,
           loi: null,
           weight: null
         },
         ceramicsCalcMaterial: null,        
         percentageAnalysis: null,
         formulaAnalysis: null,
-        umfAnalysis: null,
         enteringFormulaType: 'percentage',
+        loiWeightSelector: 'loi',
+        oxideWeight: 0.0,
+        unityType: 'auto',
         // isPrimitive: false,
         errors: [],
         apiError: null,
@@ -350,13 +375,12 @@
           toOrtonConeId: this.material.toOrtonConeId,
           atmospheres: [],
           countryId: this.material.countryId,
-          analysis: new Analysis(),
-          loi: this.material.analysis.percentageAnalysis.loi
+          loi: this.material.analysis.percentageAnalysis.loi,
+          weight: this.material.analysis.weight
         }
         this.ceramicsCalcMaterial = Material.createFromJson(this.material)
         this.percentageAnalysis = this.ceramicsCalcMaterial.getPercentageAnalysis()
         this.formulaAnalysis = this.ceramicsCalcMaterial.getFormulaAnalysis()
-        this.umfAnalysis = FormulaAnalysis.createROR2OUnityFormulaAnalysis(this.percentageAnalysis)
         this.formatOxideArrays()
 
         if (this.material.atmospheres) {
@@ -407,7 +431,7 @@
       }
       /*
       calculated formula weight depends upon unity type..
-      formulaWeight: function () {
+      oxideWeight: function () {
         if (this.isLoaded && this.material.isPrimitive) {
           var percentageAnalysis = new PercentageAnalysis()
           percentageAnalysis.setOxides(this.form.analysis)
@@ -438,15 +462,24 @@
 
           if ((this.material.isPrimitive || this.material.isAnalysis) &&
               (this.percentageAnalysis || this.formulaAnalysis)) {
-            // Set the form's analysis (currently only accepts percentage)
-            console.log('copy over analysis')
             if (this.enteringFormulaType === 'percentage') {
               this.form.analysis = this.percentageAnalysis
+              // Remove loi from analysis (already set in form.loi):
+              delete this.form.analysis['loi'];
+              // How should the formula be made?
+              this.form.unityType = this.unityType;
             }
             else {
-              this.form.analysis = PercentageAnalysis.createPercentageAnalysis(this.formulaAnalysis, this.form.loi)
+              this.form.formula = this.formulaAnalysis
             }
-            delete this.form.analysis['loi'];
+            if (this.loiWeightSelector === 'weight') {
+              // Don't include calculated LOI, use weight directly inputted by user
+              this.form.loi = null
+            }
+            else {
+              // Don't include calculated weight, use LOI directly inputted by user
+              this.form.weight = null
+            }
           }
 
           Vue.axios.post(url, this.form)
@@ -508,25 +541,50 @@
       },
 
       updateAnalysis () {
-        this.ceramicsCalcMaterial.setPercentageAnalysis(this.percentageAnalysis)
-        this.formulaAnalysis = this.ceramicsCalcMaterial.getFormulaAnalysis()
-        this.umfAnalysis = this.ceramicsCalcMaterial.getUmfAnalysis()
-        this.formatOxideArray(this.formulaAnalysis)
-        this.formatOxideArray(this.umfAnalysis)
-      },
-
-      updateFormula () {
-        this.ceramicsCalcMaterial.setFormulaAnalysis(this.formulaAnalysis, this.form.loi)
-        this.percentageAnalysis = this.ceramicsCalcMaterial.getPercentageAnalysis()
-        this.umfAnalysis = this.ceramicsCalcMaterial.getUmfAnalysis()
-        this.formatOxideArray(this.percentageAnalysis)
-        this.formatOxideArray(this.umfAnalysis)
+        if (this.enteringFormulaType === 'percentage') {
+          this.ceramicsCalcMaterial.setPercentageAnalysis(this.percentageAnalysis)
+          if (this.unityType === 'auto') {
+            this.formulaAnalysis = this.ceramicsCalcMaterial.getAutomaticUnityFormula()
+          }
+          else if (this.unityType === 'ror2o') {
+            this.formulaAnalysis = this.ceramicsCalcMaterial.getUmfAnalysis()
+          }
+          else if (this.unityType === 'r2o3') {
+            this.formulaAnalysis = this.ceramicsCalcMaterial.getR2O3UnityFormulaAnalysis()
+          }
+          else {
+            // No unity
+            this.formulaAnalysis = this.ceramicsCalcMaterial.getFormulaAnalysis()
+          }
+          this.formatOxideArray(this.formulaAnalysis)
+        }
+        else {
+          this.oxideWeight = this.formulaAnalysis.getFormulaWeight()
+          if (this.loiWeightSelector === 'weight') {
+            // Need LOI before we can get the percentage analysis:
+            this.form.loi = this.formulaAnalysis.getCalculatedLoiFromWeight(Number(this.form.weight))
+            // this.form.loi = (Number(this.form.weight) - this.oxideWeight) /  this.form.weight * 100
+          }
+          this.ceramicsCalcMaterial.setFormulaAnalysis(this.formulaAnalysis, this.form.loi)
+          this.percentageAnalysis = this.ceramicsCalcMaterial.getPercentageAnalysis()
+          this.formatOxideArray(this.percentageAnalysis)
+        }
+        this.oxideWeight = this.formulaAnalysis.getFormulaWeight()
+        if (this.loiWeightSelector === 'weight') {
+          // Calculate the LOI using weight & formula weight
+          this.form.loi = this.formulaAnalysis.getCalculatedLoiFromWeight(Number(this.form.weight))
+          // this.form.loi = (Number(this.form.weight) - this.oxideWeight) /  this.form.weight * 100
+        }
+        else {
+          // Calculate weight using formula weight & LOI
+          this.form.weight = this.formulaAnalysis.getCalculatedWeightFromLoi(Number(this.form.loi))
+          // this.form.weight = this.oxideWeight / (100 - Number(this.form.loi)) * 100
+        }
       },
 
       formatOxideArrays() {
         this.formatOxideArray(this.percentageAnalysis)
         this.formatOxideArray(this.formulaAnalysis)
-        this.formatOxideArray(this.umfAnalysis)
       },
 
       formatOxideArray (myOxides) {

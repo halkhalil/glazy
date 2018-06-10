@@ -56,6 +56,18 @@ class MaterialAnalysisTransformer extends Fractal\TransformerAbstract
             $umf_analysis['ROTotal'] = $analysis['RO_umf'];
             $analysis_data['umfAnalysis'] = $umf_analysis;
 
+            $formula = [];
+            foreach(Analysis::OXIDE_NAMES as $oxide_name)
+            {
+                $formula_oxide_name = $oxide_name.'_mol';
+
+                if ($analysis[$formula_oxide_name] > 0)
+                {
+                    $formula[$oxide_name] = $analysis[$formula_oxide_name];
+                }
+            }
+            $analysis_data['formulaAnalysis'] = $formula;
+
             $analysis_data['weight'] = $analysis['weight'];
 
         }

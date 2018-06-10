@@ -720,8 +720,11 @@
 
       handleResize: function () {
         if (this.isLoaded) {
-          // this.chartHeight = document.getElementById('umf-d3-chart-container').clientHeight
-          this.chartWidth = document.getElementById('umf-d3-chart-container').clientWidth
+          // this.chartWidth = document.getElementById('umf-d3-chart-container').clientWidth
+          var myContainer = document.getElementById('umf-d3-chart-container')
+          if (myContainer) {
+            this.chartWidth = myContainer.clientWidth
+          }
         }
       },
 

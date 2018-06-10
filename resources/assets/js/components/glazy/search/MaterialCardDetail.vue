@@ -39,21 +39,24 @@
       </div>
 
       <b-btn v-b-toggle="'detail-collapse-' + material.id"
-             variant="primary"
-             class="btn btn-link btn-info btn-more-info">
+            v-if="hasUmf || !material.isPrimitive"
+            variant="primary"
+            class="btn btn-link btn-info btn-more-info">
         <span class="when-opened"><i class="fa fa-chevron-up"></i> Less Info</span>
         <span class="when-closed"><i class="fa fa-chevron-down"></i> More Info</span>
       </b-btn>
 
-      <b-collapse v-model="showCollapse" v-bind:id="'detail-collapse-' + material.id">
+      <b-collapse v-model="showingCollapse" 
+        v-bind:id="'detail-collapse-' + material.id">
 
         <umf-traditional-notation
+                v-if="hasUmf"
                 :material="material"
                 :showSimpleLegend="true"
                 :isSmall="true">
         </umf-traditional-notation>
 
-        <div class="ratios">
+        <div v-if="hasUmf" class="ratios">
           R<sub>2</sub>O:RO
 
           <span class="badge">
@@ -160,7 +163,13 @@
     },
     data() {
       return {
-        glazyHelper: new GlazyHelper()
+        glazyHelper: new GlazyHelper(),
+        showingCollapse: false
+      }
+    },
+    created() {
+      if (this.showCollapse) {
+        this.showingCollapse = true
       }
     },
     computed : {
@@ -168,6 +177,17 @@
         // Only the creator of a material can edit it
         if (this.$auth.check() &&
           this.$auth.user().id === this.material.createdByUserId) {
+          return true
+        }
+        return false
+      },
+
+      hasUmf: function () {
+        if ('umfAnalysis' in this.material.analysis && 
+          'R2OTotal' in this.material.analysis.umfAnalysis &&
+          'ROTotal' in this.material.analysis.umfAnalysis &&
+          this.material.analysis.umfAnalysis.R2OTotal > 0 && 
+          this.material.analysis.umfAnalysis.ROTotal > 0) {
           return true
         }
         return false

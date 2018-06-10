@@ -15,6 +15,7 @@ use App\Models\MaterialReview;
 
 use DerekPhilipAu\Ceramicscalc\Models\Analysis\Analysis;
 use DerekPhilipAu\Ceramicscalc\Models\Analysis\PercentageAnalysis;
+use DerekPhilipAu\Ceramicscalc\Models\Analysis\FormulaAnalysis;
 use DerekPhilipAu\Ceramicscalc\Models\Material\PrimitiveMaterial;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -195,31 +196,95 @@ class MaterialRepository extends Repository
             }
         }
 
-        if (($material->is_primitive || $material->is_analysis)
-            && array_key_exists('analysis',$jsonData)
-            && $jsonData['analysis']) {
-            // For primitive materials & analyses, we also update the analysis
-            $percentageAnalysis = new PercentageAnalysis();
-            $percentageAnalysis->setOxides($jsonData['analysis']);
-            $percentageAnalysis->setLOI($jsonData['loi']);
-            $primitiveMaterial = new PrimitiveMaterial($material->id);
-            $primitiveMaterial->setPercentageAnalysis($percentageAnalysis);
-
-            $analysis = null;
-            if ($material->analysis) {
-                $analysis = $material->analysis;
-            } else {
-                $analysis = new MaterialAnalysis();
-                $analysis->material_id = $material->id;
+        // Either the percentage analysis ('analysis') or 
+        // formula ('formula') may be given:
+        if ($material->is_primitive || $material->is_analysis) {
+            // First, determine if user entered LOI or weight.
+            $loi = null;
+            $weight = null;
+            if (array_key_exists('weight', $jsonData) && $jsonData['weight']) {
+                $weight = $jsonData['weight'];
+            } 
+            else if (array_key_exists('loi', $jsonData) && $jsonData['loi']) {
+                $loi = $jsonData['loi'];
             }
 
-            $analysis->setAnalysis($primitiveMaterial);
+            if (array_key_exists('analysis',$jsonData)
+                && $jsonData['analysis']) {
+                // For primitive materials & analyses, we also update the analysis
+                $percentageAnalysis = new PercentageAnalysis();
+                $percentageAnalysis->setOxides($jsonData['analysis']);
+                if ($loi) {
+                    $percentageAnalysis->setLOI($jsonData['loi']);
+                }
 
-            if (array_key_exists('weight', $jsonData)) {
-                $analysis['weight'] = $jsonData['weight'];
+                $primitiveMaterial = new PrimitiveMaterial($material->id);
+
+                $unityType = FormulaAnalysis::UNITY_TYPE_AUTO;
+                if (array_key_exists('unityType', $jsonData) && $jsonData['unityType']) {
+                    $unityType = $jsonData['unityType'];
+                }
+                $primitiveMaterial->setPercentageAnalysis($percentageAnalysis, $unityType);
+
+                $analysis = null;
+                if ($material->analysis) {
+                    $analysis = $material->analysis;
+                } else {
+                    $analysis = new MaterialAnalysis();
+                    $analysis->material_id = $material->id;
+                }
+
+                $analysis->setAnalysis($primitiveMaterial);
+
+                $formulaAnalysis = $primitiveMaterial->getFormulaAnalysis();
+                if ($weight) {
+                    // If user entered weight, calculate LOI
+                    $loi = $formulaAnalysis->getCalculatedLoiFromWeight($weight);
+                } 
+                else if ($loi) {
+                    // If user entered LOI, calculate weight
+                    $weight = $formulaAnalysis->getCalculatedWeightFromLoi($loi);
+                }
+                $analysis->loi = $loi;
+                $analysis->weight = $weight;
+                $analysis->formula_weight = $formulaAnalysis->getFormulaWeight();
+                $analysis->save();
             }
+            elseif (array_key_exists('formula',$jsonData)
+                && $jsonData['formula']) {
+                // For primitive materials & analyses, we also update the formula
+                $formulaAnalysis = new FormulaAnalysis();
+                $formulaAnalysis->setOxides($jsonData['formula']);
+                $primitiveMaterial = new PrimitiveMaterial($material->id);
 
-            $analysis->save();
+                if ($weight) {
+                    // If user entered weight, calculate LOI
+                    $loi = $formulaAnalysis->getCalculatedLoiFromWeight($weight);
+                } 
+                else if ($loi) {
+                    // If user entered LOI, calculate weight
+                    $weight = $formulaAnalysis->getCalculatedWeightFromLoi($loi);
+                }
+
+                // Make sure to include LOI when setting formula analysis 
+                // so that automatically created percentage analysis is correct
+                $primitiveMaterial->setFormulaAnalysis($formulaAnalysis, $loi);
+
+                $analysis = null;
+                if ($material->analysis) {
+                    $analysis = $material->analysis;
+                } else {
+                    $analysis = new MaterialAnalysis();
+                    $analysis->material_id = $material->id;
+                }
+
+                $analysis->setAnalysis($primitiveMaterial);
+                $analysis->loi = $loi;
+                $analysis->weight = $weight;
+                $analysis->formula_weight = $formulaAnalysis->getFormulaWeight();
+
+                $analysis->save();
+            }
 
             // For primitive materials, automatically add to this users UserMaterials (Inventory)
             $userMaterialRepository = new UserMaterialRepository();

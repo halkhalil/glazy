@@ -468,7 +468,6 @@
         margin: 0;
     }
 
-
     .galleryselected {
         opacity: 0.5;
         filter: alpha(opacity=50);
@@ -486,8 +485,6 @@
         margin-top: .5rem;
         font-size: 3rem;
     }
-
-
 
     .list-group-cone li {
         background-color: #efefef;
