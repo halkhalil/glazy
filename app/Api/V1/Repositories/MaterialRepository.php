@@ -286,6 +286,42 @@ class MaterialRepository extends Repository
                 $analysis->save();
             }
 
+            /**
+             * 
+        // Now that we've updated the material, we need to update
+        // all recipes that contain this material.
+        // Potentially this will update recipes not owned by this user.
+        // However, we are only adjusting the unity and hashes.
+        $recipesContainingMaterial = RecipeMaterial::with('recipe')
+            ->where('material_id', $material->id)
+            ->get();
+
+        if ($recipesContainingMaterial)
+        {
+            foreach($recipesContainingMaterial as $recipeContainingMaterial)
+            {
+                $recipe = $recipeContainingMaterial->recipe;
+                // Make sure we always order by additional, then amount
+                $recipeMaterials = RecipeMaterial::with('material')
+                    ->where('recipe_id', $recipe->id)
+                    ->orderBy('is_additional', 'asc')
+                    ->orderBy('percentage_amount', 'desc')
+                    ->orderBy('id', 'asc')
+                    ->get();
+                if ($recipeMaterials)
+                {
+                    $recipe->setSegerUnity($recipeMaterials);
+                    // We must also set recipe hashes just in case
+                    // this material's parent_id was changed or
+                    // if the material was set to theoretical.
+                    $recipe->setRecipeHashes($recipeMaterials);
+                    $recipe->timestamps = false;
+                    $recipe->update();
+                }
+            }
+        }
+             */
+
             // For primitive materials, automatically add to this users UserMaterials (Inventory)
             $userMaterialRepository = new UserMaterialRepository();
             $userMaterial = $userMaterialRepository->addMaterial($material->id);
