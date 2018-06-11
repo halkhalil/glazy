@@ -113,7 +113,7 @@ class Material extends Model
             ->with('component_material')
             ->orderBy('is_additional', 'asc')
             ->orderBy('percentage_amount', 'desc')
-            ->orderBy('id', 'asc');
+            ->orderBy('component_material_id', 'asc');
     }
 
     public function components()
@@ -126,7 +126,7 @@ class Material extends Model
             // ->with('component_material.thumbnail.created_by_user.profile')
             ->orderBy('is_additional', 'asc')
             ->orderBy('percentage_amount', 'desc')
-            ->orderBy('id', 'asc');
+            ->orderBy('component_material_id', 'asc');
     }
 
 

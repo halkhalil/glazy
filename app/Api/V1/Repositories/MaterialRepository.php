@@ -13,10 +13,13 @@ use App\Models\MaterialImage;
 use App\Models\MaterialMaterial;
 use App\Models\MaterialReview;
 
+use App\Api\V1\Repositories\MaterialMaterialRepository;
+
 use DerekPhilipAu\Ceramicscalc\Models\Analysis\Analysis;
 use DerekPhilipAu\Ceramicscalc\Models\Analysis\PercentageAnalysis;
 use DerekPhilipAu\Ceramicscalc\Models\Analysis\FormulaAnalysis;
 use DerekPhilipAu\Ceramicscalc\Models\Material\PrimitiveMaterial;
+use DerekPhilipAu\Ceramicscalc\Models\Material\CompositeMaterial;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -286,41 +289,32 @@ class MaterialRepository extends Repository
                 $analysis->save();
             }
 
-            /**
-             * 
-        // Now that we've updated the material, we need to update
-        // all recipes that contain this material.
-        // Potentially this will update recipes not owned by this user.
-        // However, we are only adjusting the unity and hashes.
-        $recipesContainingMaterial = RecipeMaterial::with('recipe')
-            ->where('material_id', $material->id)
-            ->get();
+            // Now that we've updated the material, we need to update
+            // all recipes that contain this material.
+            // Potentially this will update recipes not owned by this user.
+            // However, we are only adjusting the analysis and hashes.
+            $materialComponentsContainingMaterial = MaterialMaterial::with('parent_material')
+                ->with('parent_material.analysis')
+                ->with('parent_material.components')
+                ->where('component_material_id', $material->id)
+                ->get();
 
-        if ($recipesContainingMaterial)
-        {
-            foreach($recipesContainingMaterial as $recipeContainingMaterial)
+            if ($materialComponentsContainingMaterial)
             {
-                $recipe = $recipeContainingMaterial->recipe;
-                // Make sure we always order by additional, then amount
-                $recipeMaterials = RecipeMaterial::with('material')
-                    ->where('recipe_id', $recipe->id)
-                    ->orderBy('is_additional', 'asc')
-                    ->orderBy('percentage_amount', 'desc')
-                    ->orderBy('id', 'asc')
-                    ->get();
-                if ($recipeMaterials)
+                // Depending upon how many materials this recipe belongs to, 
+                // this might take a LONG time..
+                set_time_limit(300);
+                
+                $materialMaterialRepository = new MaterialMaterialRepository();
+                foreach($materialComponentsContainingMaterial as $materialComponentContainingMaterial)
                 {
-                    $recipe->setSegerUnity($recipeMaterials);
-                    // We must also set recipe hashes just in case
-                    // this material's parent_id was changed or
-                    // if the material was set to theoretical.
-                    $recipe->setRecipeHashes($recipeMaterials);
-                    $recipe->timestamps = false;
-                    $recipe->update();
+                    $parentMaterial = $materialComponentContainingMaterial->parent_material;
+                    $materialMaterialRepository->updateAnalysis($parentMaterial);
+                    $materialMaterialRepository->setComponentHashes($parentMaterial);
+                    $parentMaterial->timestamps = false;
+                    $parentMaterial->save(); // Required to save the hashes
                 }
             }
-        }
-             */
 
             // For primitive materials, automatically add to this users UserMaterials (Inventory)
             $userMaterialRepository = new UserMaterialRepository();
@@ -556,8 +550,8 @@ class MaterialRepository extends Repository
             ->with('analysis')
             ->with('atmospheres')
             ->with('material_type')
+            ->with('shallowComponents')
             ->with('thumbnail')
-            ->with('components')
             ->with('created_by_user')
             ->with('created_by_user.profile');
 
@@ -813,5 +807,4 @@ class MaterialRepository extends Repository
         return $query->limit(100)->get();
 
     }
-
 }

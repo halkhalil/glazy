@@ -202,8 +202,11 @@ class MaterialMaterialRepository extends Repository
         else
         {
             // No materials for this recipe, set hashes to null
-            $this->base_composite_hash = null;
-            $this->additive_composite_hash = null;
+            // DAU: 20180611 Bug, not this:
+            // $this->base_composite_hash = null;
+            // $this->additive_composite_hash = null;
+            $material->base_composite_hash = null;
+            $material->additive_composite_hash = null;
         }
     }
 
