@@ -183,8 +183,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
 
         Nutsweb\LaravelPrerender\LaravelPrerenderServiceProvider::class,
-        // Clockwork\Support\Laravel\ClockworkServiceProvider::class,
-
+        Clockwork\Support\Laravel\ClockworkServiceProvider::class,
     ],
 
     /*
