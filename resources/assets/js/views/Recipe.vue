@@ -322,7 +322,13 @@
                     </span>
                   </div>
                 </div>
-                <div class="row">
+                <div v-if="recipe.isPrimitive || recipe.isAnalysis"
+                     class="row">
+                  <div class="col-md-12">
+                      <simple-analysis-table :material="material"></simple-analysis-table>
+                  </div>
+                </div>
+                <div v-else class="row">
                   <div class="col-md-12">
                     <b-tabs class="analysis-tabs" active>
                       <b-tab title="% Analysis">
@@ -529,9 +535,10 @@
   import MaterialImageGallery from '../components/glazy/materialimage/MaterialImageGallery.vue'
 
   // import JsonUmfSparkSvg from '../components/glazy/analysis/JsonUmfSparkSvg.vue'
-  import MaterialAnalysisUmfSpark2Single from '../components/glazy/analysis/MaterialAnalysisUmfSpark2Single.vue';
+  // 20180610 import MaterialAnalysisUmfSpark2Single from '../components/glazy/analysis/MaterialAnalysisUmfSpark2Single.vue';
   import UmfTraditionalNotation from '../components/glazy/analysis/UmfTraditionalNotation.vue';
   import ComponentTable from '../components/glazy/analysis/ComponentTable.vue'
+  import SimpleAnalysisTable from '../components/glazy/analysis/SimpleAnalysisTable.vue'
 
   import UmfChart from '../components/glazy/recipe/UmfChart.vue'
   import SimilarBaseComponents from '../components/glazy/recipe/SimilarBaseComponents.vue'
@@ -618,9 +625,10 @@
       MaterialRecipeCalculator,
       MaterialImageGallery,
       UmfChart,
-      MaterialAnalysisUmfSpark2Single,
+      // MaterialAnalysisUmfSpark2Single,
       UmfTraditionalNotation,
       ComponentTable,
+      SimpleAnalysisTable,
       SimilarBaseComponents,
       SimilarUnityFormula,
       ContainsMaterial,
