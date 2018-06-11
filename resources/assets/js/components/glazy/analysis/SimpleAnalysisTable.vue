@@ -97,10 +97,18 @@
     computed: {
       presentOxides: function () {
         if (this.isLoaded) {
-          if ('formulaAnalysis' in this.material.analysis) {
-            return this.material.analysis.formulaAnalysis.getPresentOxideNamesArray()
+          if ('percentageAnalysis' in this.material.analysis) {
+            var presentOxides = this.material.analysis.percentageAnalysis.getPresentOxideNamesArray()
+            if (presentOxides && presentOxides.length) {
+              return presentOxides
+            }
           }
-          return this.material.analysis.percentageAnalysis.getPresentOxideNamesArray()
+          if ('formulaAnalysis' in this.material.analysis) {
+            var presentOxides = this.material.analysis.formulaAnalysis.getPresentOxideNamesArray()
+            if (presentOxides && presentOxides.length) {
+              return presentOxides
+            }
+          }
         }
         return [];
       },
