@@ -69,7 +69,8 @@ class MaterialAnalysisTransformer extends Fractal\TransformerAbstract
             $analysis_data['formulaAnalysis'] = $formula;
 
             $analysis_data['weight'] = $analysis['weight'];
-
+            // formula_weight should be renamed to oxide_weight
+            $analysis_data['oxideWeight'] = $analysis['formula_weight'];
         }
 
         return $analysis_data;

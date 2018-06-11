@@ -264,7 +264,7 @@
                 <view-recipe-materials-analysis
                         :recipe="recipe"></view-recipe-materials-analysis>
                 -->
-                <div class="row" v-if="!recipe.isPrimitive && recipe.baseTypeId == glazeTypeId">
+                <div class="row mb-2" v-if="!recipe.isPrimitive && recipe.baseTypeId == glazeTypeId">
                   <div class="col-12 col-sm-12 col-md-auto mb-2">
                     <umf-traditional-notation
                             :material="material"
@@ -304,7 +304,25 @@
                     </div>
                   </div>
                 </div>
-                <div class="row mt-4">
+                <div class="row" v-if="recipe.isPrimitive">
+                  <div class="col-12 col-sm-12 col-md-auto mb-2">
+                    Weight: 
+                    <span class="badge badge-info">
+                      {{ Number(recipe.analysis.weight).toFixed(3) }}
+                    </span>&nbsp;&nbsp;
+                    Calculated Oxide Weight: 
+                    <span class="badge badge-info">
+                      {{ Number(recipe.analysis.oxideWeight).toFixed(3) }}
+                    </span>&nbsp;&nbsp;
+                    <span v-if="'percentageAnalysis' in recipe.analysis">
+                      LOI: 
+                      <span class="badge badge-info">
+                        {{ Number(recipe.analysis.percentageAnalysis.loi).toFixed(3) }}
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <div class="row">
                   <div class="col-md-12">
                     <b-tabs class="analysis-tabs" active>
                       <b-tab title="% Analysis">
@@ -430,7 +448,7 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-body">
-                <h2 class="card-title">Recipes Containing this Material</h2>
+                <h3 id="recipesContaining">Recipes Containing this Material</h3>
                 <div class="row">
                   <div class="col-sm-12">
                     <contains-material :material="recipe"></contains-material>

@@ -5,7 +5,7 @@
         </div>
 
         <paginator
-                v-if="!isProcessing"
+                v-if="isLoaded && !isProcessing && materialList.length > 0"
                 :pagination="pagination"
                 :numPageLinks="5"
                 :itemTypeName="'Recipes'"
@@ -51,7 +51,7 @@
         </div>
 
         <paginator
-                v-if="!isProcessing"
+                v-if="isLoaded && !isProcessing && materialList.length > 0"
                 :pagination="pagination"
                 :numPageLinks="5"
                 :itemTypeName="'Recipes'"
