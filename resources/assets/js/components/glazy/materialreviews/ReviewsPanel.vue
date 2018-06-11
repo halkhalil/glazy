@@ -22,7 +22,7 @@
                                          :show-rating="false"
                                          :increment="0.01"></star-rating>
                             <p v-if="'description' in review && review.description"
-                                style="white-space: pre-wrap;" 
+                                class="review-description" 
                                 v-html="glazyHelper.getLinkifiedText(review.description.trim())">
                             </p>
                             <div v-if="currentUserReview && currentUserReview.id == review.id && !editOwnReview">
@@ -248,13 +248,13 @@
 
 <style>
 
-    .reviews-table tr {
-        vertical-align: top;
-    }
+.reviews-table .media-body .media-heading {
+  margin-bottom: 0;
+}
 
-
-    .reviews-table th, td {
-        padding: 1rem;
-    }
+.review-description {
+  white-space: pre-wrap;
+  margin-bottom: 0;
+}
 
 </style>

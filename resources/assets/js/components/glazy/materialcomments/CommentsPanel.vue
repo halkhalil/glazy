@@ -43,7 +43,7 @@
                                 </button>
                             </form>
                             <p v-show="!showEditComment(comment.id)"
-                                style="white-space: pre-wrap;" 
+                                class="comment-description" 
                                 v-html="glazyHelper.getLinkifiedText(comment.content.trim())">
                             </p>
                             <div v-if="!showEditComment(comment.id) && $auth.check() && $auth.user().id === comment.userId"
@@ -226,13 +226,13 @@
 
 <style>
 
-    .comments-table tr {
-        vertical-align: top;
-    }
+.comments-table .media-body .media-heading {
+  margin-bottom: 0;
+}
 
-
-    .comments-table th, td {
-        padding: 1rem;
-    }
+.comment-description {
+  white-space: pre-wrap;
+  margin-bottom: 0;
+}
 
 </style>
