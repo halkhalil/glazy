@@ -863,7 +863,7 @@
 
       setMaterial: function () {
         var materialObj = new Material();
-        this.material = materialObj.createFromJson(this.recipe);
+        this.material = materialObj.createFromJson(this.recipe, true);
       },
 
       updatedRecipeMeta: function () {
@@ -1031,7 +1031,7 @@
             this.meta.title = this.recipe.name
             this.meta.description = this.recipe.name
             var materialObj = new Material()
-            this.material = Material.createFromJson(this.recipe)
+            this.material = Material.createFromJson(this.recipe, true)
 
             if (this.searchItems && this.searchItems.length > 0) {
               // doesn't work
