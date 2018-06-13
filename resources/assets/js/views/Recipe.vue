@@ -861,11 +861,6 @@
         })
       },
 
-      setMaterial: function () {
-        var materialObj = new Material();
-        this.material = materialObj.createFromJson(this.recipe, true);
-      },
-
       updatedRecipeMeta: function () {
         this.fetchRecipe()
         this.infoMessageSeconds = 5
@@ -1030,10 +1025,16 @@
             this.recipe = response.data.data
             this.meta.title = this.recipe.name
             this.meta.description = this.recipe.name
-            var materialObj = new Material()
-            this.material = Material.createFromJson(this.recipe, true)
+            this.material = null
+            if (this.recipe.isPrimitive || this.recipe.isAnalysis) {
+              // Don't calculate formula from percentage
+              this.material = Material.createFromJson(this.recipe, false)
+            }
+            else {
+              this.material = Material.createFromJson(this.recipe, true)
+            }
 
-            if (this.searchItems && this.searchItems.length > 0) {
+            //if (this.searchItems && this.searchItems.length > 0) {
               // doesn't work
               //this.$router.push({ path: this.$route.path + '#material-card-' + this.recipe.id })
               //this.$nextTick(() => document.getElementById('#material-card-' + this.recipe.id).scrollIntoView())
@@ -1043,7 +1044,7 @@
               //window.setTimeout(function () {
               //  document.getElementById('#material-card-' + this.recipe.id).scrollIntoView()
               //}.bind(this), 2000)
-            }
+            //}
 
             if (this.isEditRequest && this.canEdit) {
               // User just created this recipe in calculator
