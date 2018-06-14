@@ -80,6 +80,9 @@ class MaterialTransformer extends Fractal\TransformerAbstract
 
         $material_data[self::JSON_NAMES[Material::DB_ID]] = $material[Material::DB_ID];
         $material_data[self::JSON_NAMES[Material::DB_PARENT_ID]] = $material[Material::DB_PARENT_ID];
+        if (isset($material['parent']) && isset($material['parent']['name'])) {
+            $material_data['parentName'] = $material['parent']['name'];
+        }
         $material_data[self::JSON_NAMES[Material::DB_NAME]] = $material[Material::DB_NAME];
         $material_data[self::JSON_NAMES[Material::DB_OTHER_NAMES]] = $material[Material::DB_OTHER_NAMES];
         $material_data[self::JSON_NAMES[Material::DB_DESCRIPTION]] = $material[Material::DB_DESCRIPTION];

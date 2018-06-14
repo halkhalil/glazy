@@ -42,6 +42,7 @@ class MaterialRepository extends Repository
     public function getWithDetails($id)
     {
         return Material::with('analysis')
+            ->with('parent')
             ->with('components')
             ->with('thumbnail')
             ->with('thumbnail.created_by_user')

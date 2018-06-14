@@ -97,6 +97,11 @@ class Material extends Model
                 });
     }
 */
+    public function parent()
+    {
+        return $this->belongsTo('App\Models\Material', 'parent_id');
+    }
+
     public function analysis()
     {
         return $this->hasOne('App\Models\MaterialAnalysis');
