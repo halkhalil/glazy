@@ -14,6 +14,7 @@ use App\Models\MaterialMaterial;
 use App\Models\MaterialReview;
 
 use App\Api\V1\Repositories\MaterialMaterialRepository;
+use App\Api\V1\Repositories\UserMaterialRepository;
 
 use DerekPhilipAu\Ceramicscalc\Models\Analysis\Analysis;
 use DerekPhilipAu\Ceramicscalc\Models\Analysis\PercentageAnalysis;
@@ -411,14 +412,16 @@ class MaterialRepository extends Repository
 
         $copiedMaterial->save();
 
-        // Copy the analysis
-        $analysis = $material->analysis;
-        $copiedAnalysis = $analysis->replicate();
-        $copiedAnalysis->id = null;
-        $copiedAnalysis->material_id = $copiedMaterial->id;
-        $copiedAnalysis->save();
+        if ($material->analysis) {
+            // Copy the analysis
+            $analysis = $material->analysis;
+            $copiedAnalysis = $analysis->replicate();
+            $copiedAnalysis->id = null;
+            $copiedAnalysis->material_id = $copiedMaterial->id;
+            $copiedAnalysis->save();
+        }
 
-        if (!$copiedMaterial->is_primitive) {
+        if (!$copiedMaterial->is_primitive && !$copiedMaterial->is_analysis) {
             $componentMaterials = MaterialMaterial::where('parent_material_id', $material->id)->get();
             foreach ($componentMaterials as $componentMaterial)
             {
@@ -434,6 +437,12 @@ class MaterialRepository extends Repository
             $copiedAtmosphere = $materialAtmosphere->replicate();
             $copiedAtmosphere->material_id = $copiedMaterial->id;
             $copiedAtmosphere->save();
+        }
+
+        if ($copiedMaterial->is_primitive || $copiedMaterial->is_analysis) {
+            // For primitive materials, automatically add to this users UserMaterials (Inventory)
+            $userMaterialRepository = new UserMaterialRepository();
+            $userMaterial = $userMaterialRepository->addMaterial($copiedMaterial->id);
         }
 
         return $copiedMaterial;

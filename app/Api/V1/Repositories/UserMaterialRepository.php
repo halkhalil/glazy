@@ -175,11 +175,18 @@ class UserMaterialRepository extends Repository
      * worring about stock amount, price, etc.
      */
     public function addMaterial($materialId) {
-        $userMaterial = new UserMaterial();
-        $userMaterial->user_id = Auth::guard()->user()->id;
-        $userMaterial->material_id = $materialId;
+        // (Cannot use firstOrCreate because fields not mass-fillable.)
+        $userMaterial = UserMaterial::where('user_id', Auth::guard('api')->user()->id)
+            ->where('material_id', $materialId)
+            ->first();
 
-        $userMaterial->save();
+        if (!$userMaterial) {
+            // No previous record exists.  Add one:
+            $userMaterial = new UserMaterial();
+            $userMaterial->user_id = Auth::guard('api')->user()->id;
+            $userMaterial->material_id = $materialId;    
+            $userMaterial->save();
+        }            
 
         return $userMaterial;
     }
