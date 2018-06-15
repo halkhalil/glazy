@@ -103,7 +103,9 @@ return [
 /*    'ttl' => env('JWT_TTL', 60), */
     // Temporarily increase TTL to 24 hours until fix for refresh token:
     // Just increase to one week:
-    'ttl' => env('JWT_TTL', 10080),
+    // 'ttl' => env('JWT_TTL', 10080),
+    // Aw heck just use one month:
+    'ttl' => env('JWT_TTL', 43800),
 
     /*
     |--------------------------------------------------------------------------
