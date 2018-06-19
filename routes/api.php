@@ -113,7 +113,8 @@ $api->version('v1', function (Router $api) {
         $api->post('/similarMaterials/{id?}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarMaterials')->name('similarMaterials');
         $api->post('/containsMaterials', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@containsMaterials')->name('containsMaterials');
         $api->get('/similarBaseComponents/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarBaseComponents')->name('similarBaseComponents');
-        $api->get('/similarUnityFormula/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarUnityFormula')->name('similarUnityFormula');
+        // $api->get('/similarUnityFormula/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarUnityFormula')->name('similarAnalysis');
+        $api->get('/similarAnalysis/{id}', 'App\\Api\\V1\\Controllers\\Glazy\\SearchController@similarAnalysis')->name('similarAnalysis');
     });
 
     $api->group(['prefix' => 'notifications'], function(Router $api) {

@@ -690,9 +690,24 @@ class SearchController extends ApiBaseController
         return $this->manager->createData($resource)->toArray();
     }
 
+    /*
     public function similarUnityFormula($material_id)
     {
         $materials = $this->materialRepository->similarUnityFormula($material_id);
+
+        if (!$materials)
+        {
+            return $this->respondNotFound('No materials found.');
+        }
+
+        $resource = new FractalCollection($materials, new ChartPointMaterialTransformer());
+        return $this->manager->createData($resource)->toArray();
+    }
+    */
+    
+    public function similarAnalysis($material_id)
+    {
+        $materials = $this->materialRepository->similarAnalysis($material_id);
 
         if (!$materials)
         {

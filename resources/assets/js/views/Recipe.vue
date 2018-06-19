@@ -386,11 +386,11 @@
           </div>
         </div>
 
-        <div v-if="!recipe.isPrimitive" class="row">
+        <div class="row">
           <div class="col-md-12">
             <div class="card">
               <div class="card-body">
-                <h3>Similar Unity Formula</h3>
+                <h3>Similar Analysis</h3>
                 <div class="row">
                   <div class="col-sm-12">
                     <similar-unity-formula :material="recipe"></similar-unity-formula>

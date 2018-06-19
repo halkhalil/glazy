@@ -684,6 +684,7 @@ class MaterialRepository extends Repository
     }
     */
 
+    /*
     public function similarUnityFormula($material_id)
     {
         $current_user_id = null;
@@ -764,6 +765,133 @@ class MaterialRepository extends Repository
         return $query->limit(100)->get();
 
     }
+    */
+
+    public function similarAnalysis($material_id)
+    {
+        $current_user_id = null;
+        if (Auth::check())
+        {
+            $user = Auth::guard('api')->user();
+            $current_user_id = $user->id;
+        }
+
+        $query = Material::query();
+        $query->ofUserViewable($current_user_id, null);
+        $query->where('id', $material_id);
+        $query->with('analysis');
+        $material = $query->first();
+
+        if (!$material) {
+            return null;
+        }
+        $ror2o_percent = 0;
+        foreach(Analysis::RO_R2O_OXIDES as $ror2o) {
+            $ror2o_percent += $material->analysis[$ror2o.'_percent'];
+        }
+        
+        $analysis_type = 'umf';
+        $significantAmountSize = 0.05;
+        $variance = 0.05;
+        if ($material->is_primitive || $material->is_analysis || $ror2o_percent <= 5) {
+            // TODO:  Need better way to determine which comparison to make...  
+            // maybe try mol percent?
+            $analysis_type = 'percent';
+            $significantAmountSize = 1;
+            $variance = 1;
+        }
+        
+        $significantOxides = [];
+        //add knao instead of k na
+        $knao = 0;
+        foreach(Analysis::OXIDE_NAMES as $oxide_name)
+        {
+            $analysis_field_name = $oxide_name.'_'.$analysis_type;
+            if (($oxide_name === Analysis::K2O || $oxide_name === Analysis::Na2O) &&
+                isset($material->analysis[$analysis_field_name])) {
+                $knao += $material->analysis[$analysis_field_name];
+            }
+            else {
+                if (isset($material->analysis[$analysis_field_name]) &&
+                    $material->analysis[$analysis_field_name] >= $significantAmountSize) {
+                    $significantOxides[$analysis_field_name] = $material->analysis[$analysis_field_name];
+                }    
+            }
+        }
+        if ($knao >= $significantAmountSize) {
+            $significantOxides['knao'] = $knao;
+        }
+
+        if (!count($significantOxides)) {
+            return null;
+        }
+
+        // IMPORTANT: Sort this array by the amount of each oxide (greatest to least)
+        arsort($significantOxides);
+
+        // Calculate distance based on the first three significantly present oxides.
+        $distanceField = '';
+        $i = 0;
+        foreach($significantOxides as $analysis_field_name => $amount) {
+            if (strlen($distanceField)) {
+                $distanceField .= ' + '; 
+            }
+            if ($analysis_field_name === 'knao') {
+                $distanceField .= '('.$amount.' - (analyses.K2O_'.$analysis_type.' + analyses.Na2O_'.$analysis_type.')) * ('.$amount.' - (analyses.K2O_'.$analysis_type.' + analyses.Na2O_'.$analysis_type.'))';
+            }
+            else {
+                $distanceField .= '('.$amount.' - analyses.'.$analysis_field_name.') * ('.$amount.' - analyses.'.$analysis_field_name.')';
+            }
+            if ($i > 1) {
+                break;
+            }
+            $i++;
+        }
+
+        $selectFields = 'materials.id, materials.name, materials.is_primitive, materials.material_type_id, '
+            .'materials.is_analysis, materials.is_theoretical, materials.from_orton_cone_id, '
+            .'materials.to_orton_cone_id, materials.surface_type_id, materials.transparency_type_id, '
+            .'materials.thumbnail_id, materials.is_private, materials.is_archived, materials.created_by_user_id, '
+            .'materials.created_at, materials.updated_at, '
+            .$distanceField.' as distance';
+
+        $query = Material::query();
+        $query->join('material_analyses as analyses', 'analyses.material_id', '=', 'materials.id');
+        $query->select(DB::raw($selectFields));
+        $query->with('material_type');
+        $query->with('analysis');
+        $query->with('atmospheres');
+        $query->with('thumbnail');
+        $query->with('created_by_user');
+        $query->with('created_by_user.profile');
+        $query->ofUserViewable($current_user_id, null);
+
+        if ($material_id) {
+            // Exclude the current recipe
+            $query->where('materials.id', '<>', $material_id);
+        }
+
+        foreach($significantOxides as $analysis_field_name => $amount) {
+            // Search for analyses that contain each significantly present oxide.
+            if ($analysis_field_name === 'knao') {
+                $query->whereRaw(
+                    '(analyses.K2O_'.$analysis_type.' + analyses.Na2O_'.$analysis_type.') BETWEEN ? AND ?', 
+                    [$knao - $variance, 
+                    $knao + $variance]
+                );    
+            }
+            else {
+                $query->whereRaw(
+                    'analyses.'.$analysis_field_name.' BETWEEN ? AND ?', 
+                    [$material->analysis[$analysis_field_name] - $variance, 
+                    $material->analysis[$analysis_field_name] + $variance]
+                );    
+            }
+        }
+
+        $query->orderBy('distance', 'ASC');
+        return $query->limit(100)->get();
+    }
 
     public function similarBaseComponents($material_id)
     {
@@ -799,6 +927,10 @@ class MaterialRepository extends Repository
             'created_by_user_id', 'updated_by_user_id',
             'created_at', 'updated_at'
         );
+        $query->with('analysis');
+        $query->with('atmospheres');
+        $query->with('material_type');
+        $query->with('shallowComponents');
         $query->with('thumbnail');
         $query->with('created_by_user');
         $query->with('created_by_user.profile');
