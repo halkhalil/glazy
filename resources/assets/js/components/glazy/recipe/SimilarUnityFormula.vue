@@ -71,7 +71,7 @@
             </table>
         </div>
         <div v-else>
-            <h5 v-if="!isProcessing">No recipes with similar UMF formulas found.</h5>
+            <h5 v-if="!isProcessing">No similar analyses found.</h5>
         </div>
     </div>
 </template>
