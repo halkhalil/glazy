@@ -1,10 +1,10 @@
 <?php namespace App\Models;
 
-use DerekPhilipAu\Ceramicscalc\Models\Analysis\FormulaAnalysis;
 use Illuminate\Database\Eloquent\Model;
 
-use DerekPhilipAu\Ceramicscalc\Models\Analysis\PercentageAnalysis;
 use DerekPhilipAu\Ceramicscalc\Models\Analysis\Analysis;
+use DerekPhilipAu\Ceramicscalc\Models\Analysis\PercentageAnalysis;
+use DerekPhilipAu\Ceramicscalc\Models\Analysis\FormulaAnalysis;
 use DerekPhilipAu\Ceramicscalc\Models\Material\AbstractMaterial;
 use Illuminate\Support\Facades\DB;
 
@@ -74,6 +74,28 @@ class MaterialAnalysis extends Model {
         $this->R2O_umf = $umfAnalysis->getR2OTotal();
         $this->RO_umf = $umfAnalysis->getROTotal();
 
+	}
+
+	public function getPercentageAnalysis()
+	{
+		$percent = [];
+
+		foreach(Analysis::OXIDE_NAMES as $oxide_name)
+		{
+			$property_name = $oxide_name.'_percent';
+			if (isset($this->$property_name) && $this->$property_name) {
+				$percent[$oxide_name] = $this->$property_name;
+			}
+			else {
+				$percent[$oxide_name] = 0;
+			}
+		}
+
+		$analysis = new PercentageAnalysis();
+		$analysis->setOxides($percent);
+		$analysis->setLOI($this->loi);
+
+		return $analysis;
 	}
 
 }

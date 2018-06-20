@@ -14,11 +14,12 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         // DAU
-        Commands\UpdateRecipeAnalyses::class,
-        Commands\UpdateMaterialHashes::class,
-        Commands\DeletePrivateMaterials::class,
-        Commands\CreatePreloadImages::class,
-        Commands\UpdateUserMaterials::class
+        //Commands\UpdateRecipeAnalyses::class,
+        Commands\UpdateMaterialAnalyses::class,
+        //Commands\UpdateMaterialHashes::class,
+        //Commands\DeletePrivateMaterials::class,
+        //Commands\CreatePreloadImages::class,
+        //Commands\UpdateUserMaterials::class
     ];
 
     /**

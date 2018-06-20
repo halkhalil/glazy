@@ -107,10 +107,8 @@ class MaterialMaterialRepository extends Repository
         return $material;
     }
 
-
     public function updateAnalysis($material)
     {
-
         if (!$material->is_primitive) {
 
             $compositeMaterial = new CompositeMaterial();
