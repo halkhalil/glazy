@@ -47,8 +47,8 @@
                      v-if="materialComponent.material.thumbnail"
                      :src="glazyHelper.getSmallImageUrl(materialComponent.material, materialComponent.material.thumbnail)"/>
                 <i class="fa fa-plus"></i>
-                <a v-if="materialComponent.material.isPrimitive" :href="'/materials/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
-                <a v-else :href="'/recipes/' + materialComponent.material.id">{{ materialComponent.material.name }}</a>
+                <router-link v-if="materialComponent.material.isPrimitive" :to="{ name: 'material', params: { id: materialComponent.material.id }}">{{ materialComponent.material.name }}</router-link>
+                <router-link v-else :to="{ name: 'recipes', params: { id: materialComponent.material.id }}">{{ materialComponent.material.name }}</router-link>
             </td>
             <td class="text-right amount">
                 {{ parseFloat(materialComponent.percentageAmount) }}
