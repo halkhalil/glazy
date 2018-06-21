@@ -39,7 +39,7 @@
                         <td class="description">      
                             <img class="img-fluid"
                                     :alt="similar.name"
-                                    :src="glazyHelper.getSmallThumbnailUrl(similar)"
+                                    :src="glazyHelper.getSmallImageUrl(similar, similar.selectedImage)"
                                     width="40" height="40">
                         </td>
                         <td class="description">
