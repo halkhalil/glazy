@@ -4,6 +4,7 @@ namespace App\Api\V1\Transformers\Material;
 
 use App\Api\V1\Transformers\Atmosphere\SimpleAtmosphereTransformer;
 use App\Api\V1\Transformers\MaterialAnalysis\MaterialAnalysisTransformer;
+use App\Api\V1\Transformers\MaterialAnalysis\FullMaterialAnalysisTransformer;
 use App\Api\V1\Transformers\MaterialComponent\ShallowMaterialComponentTransformer;
 use App\Api\V1\Transformers\MaterialImage\ShallowMaterialImageTransformer;
 use App\Api\V1\Transformers\User\UserTransformer;
@@ -58,7 +59,6 @@ class ChartPointMaterialTransformer extends Fractal\TransformerAbstract
     protected $defaultIncludes = [
         'atmospheres',
         'analysis',
-        // 'thumbnail',
         'createdByUser'
     ];
 
@@ -173,16 +173,6 @@ class ChartPointMaterialTransformer extends Fractal\TransformerAbstract
     {
         return $this->item($material->analysis, new MaterialAnalysisTransformer());
     }
-
-    /*
-    public function includeThumbnail(Material $material)
-    {
-        // TODO: add thumbnail url & info
-        if ($material->thumbnail) {
-            return $this->item($material->thumbnail, new ShallowMaterialImageTransformer());
-        }
-    }
-    */
 
     public function includeCreatedByUser(Material $material)
     {

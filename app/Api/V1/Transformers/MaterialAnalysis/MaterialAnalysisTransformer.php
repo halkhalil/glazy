@@ -4,6 +4,8 @@ namespace App\Api\V1\Transformers\MaterialAnalysis;
 
 use DerekPhilipAu\Ceramicscalc\Models\Analysis\Analysis;
 
+use App\Models\MaterialAnalysis;
+
 use League\Fractal;
 
 class MaterialAnalysisTransformer extends Fractal\TransformerAbstract
@@ -27,20 +29,6 @@ class MaterialAnalysisTransformer extends Fractal\TransformerAbstract
             $percent_analysis['loi'] = $analysis['loi'];
             $analysis_data['percentageAnalysis'] = $percent_analysis;
 
-            /*
-            $mol_percent_analysis = [];
-            foreach(Analysis::OXIDE_NAMES as $oxide_name)
-            {
-                $mol_percent_oxide_name = $oxide_name.'_percent_mol';
-
-                if ($analysis[$mol_percent_oxide_name] > 0)
-                {
-                    $mol_percent_analysis[$oxide_name] = $analysis[$mol_percent_oxide_name];
-                }
-            }
-            $analysis_data['molPercentageAnalysis'] = $mol_percent_analysis;
-            */
-
             $umf_analysis = [];
             foreach(Analysis::OXIDE_NAMES as $oxide_name)
             {
@@ -55,6 +43,18 @@ class MaterialAnalysisTransformer extends Fractal\TransformerAbstract
             $umf_analysis['R2OTotal'] = $analysis['R2O_umf'];
             $umf_analysis['ROTotal'] = $analysis['RO_umf'];
             $analysis_data['umfAnalysis'] = $umf_analysis;
+
+            $mol_percent_analysis = [];
+            foreach(Analysis::OXIDE_NAMES as $oxide_name)
+            {
+                $mol_percent_oxide_name = $oxide_name.'_percent_mol';
+    
+                if ($analysis[$mol_percent_oxide_name] > 0)
+                {
+                    $mol_percent_analysis[$oxide_name] = $analysis[$mol_percent_oxide_name];
+                }
+            }
+            $analysis_data['molPercentageAnalysis'] = $mol_percent_analysis;    
 
             $formula = [];
             foreach(Analysis::OXIDE_NAMES as $oxide_name)
@@ -75,4 +75,5 @@ class MaterialAnalysisTransformer extends Fractal\TransformerAbstract
 
         return $analysis_data;
     }
+
 }

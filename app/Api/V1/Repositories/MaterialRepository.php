@@ -785,28 +785,20 @@ class MaterialRepository extends Repository
         if (!$material) {
             return null;
         }
-        $ror2o_percent = 0;
+        $ror2o_percent_mol = 0;
         foreach(Analysis::RO_R2O_OXIDES as $ror2o) {
-            $ror2o_percent += $material->analysis[$ror2o.'_percent'];
+            $ror2o_percent_mol += $material->analysis[$ror2o.'_percent_mol'];
         }
-        
-        $analysis_type = 'umf';
-        $significantAmountSize = 0.05;
-        $variance = 0.05;
-        if ($material->is_primitive || $material->is_analysis || $ror2o_percent <= 5) {
-            // TODO:  Need better way to determine which comparison to make...  
-            // maybe try mol percent?
-            $analysis_type = 'percent';
-            $significantAmountSize = 1;
-            $variance = 1;
-        }
+
+        $significantAmountSize = 1;
+        $variance = 1;
         
         $significantOxides = [];
         //add knao instead of k na
         $knao = 0;
         foreach(Analysis::OXIDE_NAMES as $oxide_name)
         {
-            $analysis_field_name = $oxide_name.'_'.$analysis_type;
+            $analysis_field_name = $oxide_name.'_percent_mol';
             if (($oxide_name === Analysis::K2O || $oxide_name === Analysis::Na2O) &&
                 isset($material->analysis[$analysis_field_name])) {
                 $knao += $material->analysis[$analysis_field_name];
@@ -837,7 +829,7 @@ class MaterialRepository extends Repository
                 $distanceField .= ' + '; 
             }
             if ($analysis_field_name === 'knao') {
-                $distanceField .= '('.$amount.' - (analyses.K2O_'.$analysis_type.' + analyses.Na2O_'.$analysis_type.')) * ('.$amount.' - (analyses.K2O_'.$analysis_type.' + analyses.Na2O_'.$analysis_type.'))';
+                $distanceField .= '('.$amount.' - (analyses.K2O_percent_mol + analyses.Na2O_percent_mol)) * ('.$amount.' - (analyses.K2O_percent_mol + analyses.Na2O_percent_mol))';
             }
             else {
                 $distanceField .= '('.$amount.' - analyses.'.$analysis_field_name.') * ('.$amount.' - analyses.'.$analysis_field_name.')';
@@ -875,7 +867,7 @@ class MaterialRepository extends Repository
             // Search for analyses that contain each significantly present oxide.
             if ($analysis_field_name === 'knao') {
                 $query->whereRaw(
-                    '(analyses.K2O_'.$analysis_type.' + analyses.Na2O_'.$analysis_type.') BETWEEN ? AND ?', 
+                    '(analyses.K2O_percent_mol + analyses.Na2O_percent_mol) BETWEEN ? AND ?', 
                     [$knao - $variance, 
                     $knao + $variance]
                 );    

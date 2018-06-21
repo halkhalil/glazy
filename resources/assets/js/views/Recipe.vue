@@ -390,9 +390,10 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-body">
-                <h3>Similar Analysis</h3>
+                <h3>Similar Analyses</h3>
                 <div class="row">
                   <div class="col-sm-12">
+                    <em>Based on comparisons of mol % analyses.</em>
                     <similar-unity-formula :material="recipe"></similar-unity-formula>
                   </div>
                 </div>
@@ -778,13 +779,32 @@
         return false
       }
     },
+    /*
+    For some reason beforeRouteUpdate not being called.
+    Watch the route instead
     beforeRouteUpdate (to, from, next) {
       // Ensure that the back/forward buttons work within this component/route
+      console.log('call beforeRouteUpdate')
       this.isEditComponents = false
       this.isEditMeta = false
       // this.recipe = null
       this.sendRecipeGetRequest('/recipes/' + to.params.id)
       next()
+      console.log('end beforeRouteUpdate')
+    },
+    */
+    watch: {
+      $route (route) {
+        if (route.hash) {
+          // This is only an internal link, no need to requery
+          return
+        }
+        this.isEditComponents = false
+        this.isEditMeta = false
+        this.sendRecipeGetRequest('/recipes/' + route.params.id)
+        // Go to top of window
+        window.scrollTo(0, 0)
+      }
     },
     methods : {
 

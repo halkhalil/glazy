@@ -8,11 +8,8 @@
                 <thead>
                 <tr>
                     <th colspan="2">Recipe</th>
-                    <th v-if="analysisType === 'umfAnalysis'">
+                    <th v-if="isGlaze">
                         &Delta;Temp
-                    </th>
-                    <th v-if="analysisType === 'umfAnalysis'">
-                        SiO<sub>2</sub>:Al<sub>2</sub>O<sub>3</sub>
                     </th>
                     <th v-for="(oxideValue, oxideName) in presentOxides"
                         v-html="formattedOxideNames[oxideName]"
@@ -23,48 +20,36 @@
                 <tbody>
                     <tr class="table-info">
                         <td class="description">
-                            <a :href="'/recipes/' + material.id">
-                                <img class="img-fluid"
-                                     :alt="material.name"
-                                     :src="glazyHelper.getSmallThumbnailUrl(material)"
-                                     width="40" height="40">
-                            </a>
+                            <img class="img-fluid"
+                                    :alt="material.name"
+                                    :src="glazyHelper.getSmallThumbnailUrl(material)"
+                                    width="40" height="40">
                         </td>
                         <td class="description">
                                 {{ material.name }}
                         </td>
-                        <td v-if="analysisType === 'umfAnalysis'"
+                        <td v-if="isGlaze"
                             v-html="glazyHelper.getConeString(material)">
                         </td>
-                        <td v-if="analysisType === 'umfAnalysis'">
-                            {{ Number(material.analysis.umfAnalysis.SiO2Al2O3Ratio).toFixed(2) }}
-                        </td>
                         <td v-for="(oxideValue, oxideName) in presentOxides">
-                            {{ oxideName in material.analysis[analysisType] && +Number(material.analysis[analysisType][oxideName]).toFixed(2) > 0 ? Number(material.analysis[analysisType][oxideName]).toFixed(2) : '' }}
+                            {{ oxideName in material.analysis.molPercentageAnalysis && +Number(material.analysis.molPercentageAnalysis[oxideName]).toFixed(2) > 0 ? Number(material.analysis.molPercentageAnalysis[oxideName]).toFixed(2) : '' }}
                         </td>
                     </tr>
-                    <tr class="" v-for="similar in materialList">
-                        <td class="description">
-                            <a :href="'/recipes/' + similar.id">
-                                <img class="img-fluid"
-                                     :alt="similar.name"
-                                     :src="glazyHelper.getSmallThumbnailUrl(similar)"
-                                     width="40" height="40">
-                            </a>
+                    <tr class="clickable-row" v-for="similar in materialList"  @click="materialLink(similar)">
+                        <td class="description">      
+                            <img class="img-fluid"
+                                    :alt="similar.name"
+                                    :src="glazyHelper.getSmallThumbnailUrl(similar)"
+                                    width="40" height="40">
                         </td>
                         <td class="description">
-                            <a :href="'/recipes/' + similar.id">
-                                {{ similar.name }}
-                            </a>
+                            {{ similar.name }}
                         </td>
-                        <td v-if="analysisType === 'umfAnalysis'"
+                        <td v-if="isGlaze"
                             v-html="glazyHelper.getConeString(similar)">
                         </td>
-                        <td v-if="analysisType === 'umfAnalysis'">
-                            {{ Number(similar.analysis.umfAnalysis.SiO2Al2O3Ratio).toFixed(2) }}
-                        </td>
                         <td v-for="(oxideValue, oxideName) in presentOxides">
-                            {{ oxideName in similar.analysis[analysisType] && +Number(similar.analysis[analysisType][oxideName]).toFixed(2) > 0 ? Number(similar.analysis[analysisType][oxideName]).toFixed(2) : '' }}
+                            {{ oxideName in similar.analysis.molPercentageAnalysis && +Number(similar.analysis.molPercentageAnalysis[oxideName]).toFixed(2) > 0 ? Number(similar.analysis.molPercentageAnalysis[oxideName]).toFixed(2) : '' }}
                         </td>
                     </tr>
                 </tbody>
@@ -107,11 +92,13 @@
         }
         return false;
       },
-      analysisType: function () {
-        if (this.material.isPrimitive || this.material.isAnalysis) {
-            return 'percentageAnalysis'
-        }
-        return 'umfAnalysis'
+      isGlaze: function () {
+          if (this.material) {
+              if (this.material.baseTypeId === 460) {
+                  return true;
+              }
+          }
+          return false
       }
     },
 
@@ -137,9 +124,9 @@
             this.presentOxides[oxideName] = false
           }.bind(this))
           this.materialList.forEach(function (similarMaterial) {
-              for (const oxideName in similarMaterial.analysis[this.analysisType]) {
-                if (similarMaterial.analysis[this.analysisType].hasOwnProperty(oxideName) && 
-                    +Number(similarMaterial.analysis[this.analysisType][oxideName]).toFixed(2) > 0) {
+              for (const oxideName in similarMaterial.analysis.molPercentageAnalysis) {
+                if (similarMaterial.analysis.molPercentageAnalysis.hasOwnProperty(oxideName) && 
+                    +Number(similarMaterial.analysis.molPercentageAnalysis[oxideName]).toFixed(2) > 0) {
                     this.presentOxides[oxideName] = true
                 }
               }
@@ -162,7 +149,22 @@
           this.isProcessing = false
         })
 
+      },
+
+      materialLink: function (material) {
+        if (material) {
+          if (material.isPrimitive) {
+            this.$router.push({ name: 'material', params: { id: material.id }})
+          }
+          else if (material.isAnalysis) {
+            this.$router.push({ name: 'analysis', params: { id: material.id }})
+          }
+          else {
+            this.$router.push({ name: 'recipes', params: { id: material.id }})
+          }
+        }
       }
+
     }
 
   }
@@ -178,5 +180,8 @@
     }
     .similar-unity-formula-table tr td.amount {
         font-weight: bold;
+    }
+    .clickable-row {
+        cursor: pointer;
     }
 </style>
