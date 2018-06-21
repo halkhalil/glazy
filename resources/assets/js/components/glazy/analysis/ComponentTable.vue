@@ -16,8 +16,8 @@
             <tbody>
             <tr v-for="materialComponent in componentContributions" v-bind:class="{ info : materialComponent.isAdditional }">
                 <td>
-                    <a v-if="materialComponent.isPrimitive" :href="'/materials/' + materialComponent.id">{{ materialComponent.name }}</a>
-                    <a v-else :href="'/recipes/' + materialComponent.id">{{ materialComponent.name }}</a>
+                    <router-link v-if="materialComponent.isPrimitive" :to="{ name: 'material', params: { id: materialComponent.id }}">{{ materialComponent.name }}</router-link>
+                    <router-link v-else :to="{ name: 'recipes', params: { id: materialComponent.id }}">{{ materialComponent.name }}</router-link>
                 </td>
                 <td class="amount">
                     {{ materialComponent.amount }}
