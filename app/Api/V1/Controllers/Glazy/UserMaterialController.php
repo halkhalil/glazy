@@ -4,6 +4,7 @@ namespace App\Api\V1\Controllers\Glazy;
 
 use App\Api\V1\Repositories\UserMaterialRepository;
 use App\Api\V1\Transformers\Material\ShallowMaterialTransformer;
+use App\Api\V1\Transformers\Material\CalculatorMaterialTransformer;
 use App\Api\V1\Transformers\UserMaterial\UserMaterialTransformer;
 use App\Models\Material;
 use App\Models\UserMaterial;
@@ -61,7 +62,8 @@ class UserMaterialController extends ApiBaseController
             $userMaterials = $this->userMaterialRepository->getUnauthenticatedMaterialList();
         }
 
-        $resource = new FractalCollection($userMaterials, new ShallowMaterialTransformer());
+        //$resource = new FractalCollection($userMaterials, new ShallowMaterialTransformer());
+        $resource = new FractalCollection($userMaterials, new CalculatorMaterialTransformer());
 
         return $this->manager->createData($resource)->toArray();
     }

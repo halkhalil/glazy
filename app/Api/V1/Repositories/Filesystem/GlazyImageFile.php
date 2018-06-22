@@ -160,11 +160,12 @@ class GlazyImageFile
     {
         $filename = $this->getFullPathImageFilename(self::LARGE_IMAGE_PREFIX);
 
+        $this->image->orientate();  // Correct for orientation
+
         $this->image->widen(self::IMAGE_SIZE_LARGE, function ($constraint) {
             $constraint->upsize();
         });
 
-        $this->image->orientate();  // Correct for orientation
         $this->image->save($filename);
     }
 
