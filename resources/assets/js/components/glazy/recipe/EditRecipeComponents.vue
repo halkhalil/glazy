@@ -18,9 +18,8 @@
       <div class="load-container load7 fullscreen" v-if="isProcessing">
         <div class="loader">Loading...</div>
       </div>
-      <div class="col-md-8">
-        <b-card no-body class="analysis-card">
-          <b-tabs ref="tabs" card>
+      <div class="col-md-8 analysis-col">
+          <b-tabs ref="tabs">
             <b-tab title="UMF" active>
               <div v-if="!hasMaterials">
                 No analysis.  Please add materials.
@@ -103,12 +102,10 @@
                 No analysis.  Please add materials.
               </div>
               <div v-else class="table-responsive">
-                <MaterialAnalysisPercentTableCompare
-                        :originalMaterial="originalMaterial"
-                        :newMaterial="newMaterial"
-                        :showHeadings="false"
-                        :isPercentMol="true">
-                </MaterialAnalysisPercentTableCompare>
+                <component-table
+                        :material="newMaterial"
+                        :isFormula="true">
+                </component-table>
               </div>
             </b-tab>
             <b-tab title="%">
@@ -116,20 +113,15 @@
                 No analysis.  Please add materials.
               </div>
               <div v-else class="table-responsive">
-                <MaterialAnalysisPercentTableCompare
-                        :originalMaterial="originalMaterial"
-                        :newMaterial="newMaterial"
-                        :showHeadings="false"
-                        :isPercentMol="false">
-                </MaterialAnalysisPercentTableCompare>
+                <component-table
+                        :material="newMaterial"
+                        :isFormula="false">
+                </component-table>
               </div>
             </b-tab>
           </b-tabs>
-        </b-card>
       </div>
-
       <div class="col-md-4 chart-col">
-        <b-card no-body class="chart-card">
           <div v-if="this.originalMaterial && chartMaterials && isLoaded" id="umf-d3-chart-container">
             <umf-d3-chart
                     :recipeData="[this.originalMaterial, this.newMaterial]"
@@ -143,8 +135,8 @@
                     :showCones="false"
                     :showStullChart="true"
                     :showStullLabels="true"
-                    :axisLabelFontSize="'1rem'"
-                    :stullLabelsFontSize="'0.75rem'"
+                    :axisLabelFontSize="'0.75rem'"
+                    :stullLabelsFontSize="'0.5rem'"
                     :showZoomButtons="false"
                     :showAxesLabels="true"
                     :xoxide="'SiO2'"
@@ -173,9 +165,9 @@
             >
             </umf-d3-chart>
           </div>
-        </b-card>
       </div>
     </div>
+
 
     <b-card>
       <div class="row">
@@ -210,6 +202,7 @@
           <b-form-input :id="index + '_amount'"
                         v-model="materialFieldsAmount[index]"
                         type="number"
+                        size="sm"
                         min="0"
                         placeholder="%"
                         v-focus="index === focused"
@@ -248,6 +241,7 @@
           <b-form-input v-model="subtotal"
                         placeholder="Total"
                         type="number"
+                        size="sm"
                         disabled></b-form-input>
           <b-button size="sm"
                     variant="secondary"
@@ -290,10 +284,12 @@
 
   import UmfD3Chart from 'vue-d3-stull-charts/src/components/UmfD3Chart.vue'
 
-  import MaterialAnalysisTableCompare from '../analysis/MaterialAnalysisTableCompare.vue'
-  import MaterialAnalysisUmfSpark2Single from '../analysis/MaterialAnalysisUmfSpark2Single.vue'
-  import MaterialAnalysisPercentTableCompare from '../analysis/MaterialAnalysisPercentTableCompare.vue'
-  import JsonUmfSparkSvg from '../analysis/JsonUmfSparkSvg.vue'
+  //import MaterialAnalysisTableCompare from '../analysis/MaterialAnalysisTableCompare.vue'
+  //import MaterialAnalysisUmfSpark2Single from '../analysis/MaterialAnalysisUmfSpark2Single.vue'
+  //import MaterialAnalysisPercentTableCompare from '../analysis/MaterialAnalysisPercentTableCompare.vue'
+  //import JsonUmfSparkSvg from '../analysis/JsonUmfSparkSvg.vue'
+  import ComponentTable from '../analysis/ComponentTable.vue'
+
   import UmfTraditionalNotation from '../analysis/UmfTraditionalNotation.vue'
 
   import MaterialCardDetail from '../search/MaterialCardDetail.vue'
@@ -307,10 +303,11 @@
     components: {
       Multiselect,
       UmfD3Chart,
-      MaterialAnalysisTableCompare,
-      MaterialAnalysisPercentTableCompare,
-      JsonUmfSparkSvg,
+      //MaterialAnalysisTableCompare,
+      //MaterialAnalysisPercentTableCompare,
+      //JsonUmfSparkSvg,
       UmfTraditionalNotation,
+      ComponentTable,
       MaterialCardDetail
     },
     props: {
@@ -339,7 +336,7 @@
         isProcessing: false,
         isProcessingDuplicates: false,
         similarMaterials: null,
-        chartHeight: 240,
+        chartHeight: 220,
         chartWidth: 0,
         apiError: null,
         serverError: null,
@@ -752,30 +749,18 @@
     margin: 0;
   }
 
-  .calc-container {
+  .analysis-col .tabs .nav-tabs {
+    padding: 0;
+    margin-bottom: 10px;
   }
-
-  .calc-row {
-  }
-
-  .chart-col {
-  }
-
-  .analysis-card .tabs .nav-tabs {
-    justify-content: center;
-    padding: 10px 10px;
-  }
-
-  .analysis-card .card-body {
-    padding: 15px 10px 10px 10px;
-  }
-
-  .analysis-card .tabs .nav-tabs .nav-item .nav-link {
+  .analysis-col .tabs .nav-tabs .nav-item .nav-link {
     padding: 5px 10px;
   }
-
-  .analysis-card .tabs .nav-tabs .nav-item .nav-link.active {
+  .analysis-col .tabs .nav-tabs .nav-item .nav-link.active {
     background-color: #999;
+  }
+  .analysis-card .card-body {
+    padding: 15px 10px 10px 10px;
   }
 
   .table-analysis-layout tr td {
@@ -783,26 +768,38 @@
   }
 
   .card-umf-info {
-    background-color: #efefef;
+    background-color: #cdcdcd;
     max-width: 7em;
     min-width: 6em;
     margin-bottom: 10px;
   }
-
   .card-umf-info .card-body {
     padding: 5px;
     text-align: center;
   }
-
   .card-umf-info .card-body .card-title {
     font-size: .8em;
-    color: #999999;
+    color: #666666;
     margin: 0;
     text-transform: none;
   }
-
   .card-umf-info .card-body .card-text {
     font-size: 1.2em;
+  }
+
+  .material-analysis-table tr th {
+      padding: 0.2rem;
+      font-size: 10px;
+  }
+  .material-analysis-table tr td {
+      padding: 0.2rem;
+      font-size: 12px;
+  }
+  .material-analysis-table tr td, .material-analysis-table tr th {
+      text-align: right;
+  }
+  .material-analysis-table tr td.amount {
+      font-weight: bold;
   }
 
 .dropdown .dropdown-menu {
@@ -811,5 +808,4 @@
 .v-select .dropdown-menu {
   z-index: 999;
 }
-
 </style>

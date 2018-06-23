@@ -15,12 +15,8 @@
         <title>{{ config('app.name') }}</title>
 
         <link href="https://fonts.googleapis.com/css?family=Montserrat:700,300,200" rel="stylesheet">
-        <!--
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-        -->
-        <link rel="stylesheet" href="/font/fontello/css/fontello.min.css">
 
-        <link rel="stylesheet" href="https://unpkg.com/vue-multiselect@2.1.0/dist/vue-multiselect.min.css">
+        <link rel="stylesheet" href="/font/fontello/css/fontello.min.css">
 
         <link href="{{ mix('/css/app.css') }}" rel="stylesheet">
         <script>

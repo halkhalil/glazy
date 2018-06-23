@@ -190,7 +190,7 @@
 
 <style>
     .breadcrumb {
-        padding: 10px 15px;
+        padding: 5px 10px;
         margin-bottom: 10px;
     }
 

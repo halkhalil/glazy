@@ -81,7 +81,6 @@
                 <b-col md="6">
                     <label for="transparencyTypeId">Transparency</label>
                     <b-form-select
-                            size="sm"
                             id="transparencyTypeId"
                             placeholder="Transparency"
                             v-model="form.transparencyTypeId"
@@ -95,7 +94,6 @@
                 <b-col md="6">
                     <label for="surfaceTypeId">Surface</label>
                     <b-form-select
-                            size="sm"
                             id="surfaceTypeId"
                             placeholder="Surface"
                             v-model="form.surfaceTypeId"
