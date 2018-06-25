@@ -348,9 +348,9 @@
         errors: [],
         apiError: null,
         serverError: null,
-        constants: new GlazyConstants(),
-        materialTypes: new MaterialTypes(),
-        atmospheres: new GlazyConstants().ATMOSPHERE_SELECT,
+        constants: GlazyConstants,
+        materialTypes: MaterialTypes,
+        atmospheres: GlazyConstants.ATMOSPHERE_SELECT,
         COUNTRY_SELECT: GlazyConstants.COUNTRY_SELECT,
         OXIDE_NAMES: Analysis.OXIDE_NAMES,
         OXIDE_NAME_DISPLAY: Analysis.OXIDE_NAME_DISPLAY

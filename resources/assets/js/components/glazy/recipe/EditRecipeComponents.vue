@@ -139,8 +139,8 @@
                     :stullLabelsFontSize="'0.5rem'"
                     :showZoomButtons="false"
                     :showAxesLabels="true"
-                    :xoxide="'SiO2'"
-                    :yoxide="'Al2O3'"
+                    :xOxide="'SiO2'"
+                    :yOxide="'Al2O3'"
             >
             </umf-d3-chart>
           </div>
@@ -160,8 +160,8 @@
                     :stullLabelsFontSize="'0.75rem'"
                     :showZoomButtons="false"
                     :showAxesLabels="true"
-                    :xoxide="'SiO2'"
-                    :yoxide="'Al2O3'"
+                    :xOxide="'SiO2'"
+                    :yOxide="'Al2O3'"
             >
             </umf-d3-chart>
           </div>
@@ -319,8 +319,8 @@
     directives: { focus: focus },
     data() {
       return {
-        oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
-        glazetypes: new GlazyConstants().GLAZE_TYPES_SELECT,
+        oxides: GlazyConstants.OXIDE_NAME_UNICODE_SELECT,
+        glazetypes: GlazyConstants.GLAZE_TYPES_SELECT,
         colortype: {value:'r2o'},
         materialLibrary: null,
         lookupMaterialLibrary: {},
@@ -329,7 +329,7 @@
         materialFieldsAmount: [],
         materialFieldsIsAdditional: [],
         newMaterial: new Material(),
-        baseTypeId: new MaterialTypes().GLAZE_TYPE_ID,
+        baseTypeId: MaterialTypes.GLAZE_TYPE_ID,
         maximumRowNumber: 30,
         minimumVisibleRows: 1,
         subtotal: 0,

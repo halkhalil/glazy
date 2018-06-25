@@ -89,7 +89,7 @@
     },
     data() {
       return {
-        oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
+        oxides: GlazyConstants.OXIDE_NAME_UNICODE_SELECT,
         glazyHelper: new GlazyHelper()
       }
     },

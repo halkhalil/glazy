@@ -95,17 +95,14 @@
 
     methods: {
       pageRequest (page_num) {
-        console.log('emit page request: ' + page_num);
         this.$emit('pagerequest', page_num);
       },
 
       orderRequest (order_type) {
-        console.log('emit order request: ' + order_type);
         this.$emit('orderrequest', order_type);
       },
 
       viewRequest (view_type) {
-        console.log('emit view request: ' + view_type);
         this.$emit('viewrequest', view_type);
       },
 

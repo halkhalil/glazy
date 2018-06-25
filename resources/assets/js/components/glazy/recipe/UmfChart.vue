@@ -15,10 +15,10 @@
                 </span>
             </div>
         </div>
-        <div class="load-container load7" v-if="isProcessing">
-            <div class="loader">Searching...</div>
-        </div>
-        <div v-if="isLoaded && !isProcessing" class="row">
+        <div v-if="isLoaded" class="row">
+            <div class="load-container load7 fullscreen" v-if="isProcessing">
+                <div class="loader">Searching...</div>
+            </div>
             <div class="col-md-12 col-sm-12 mb-2">
                 <img src="/img/charts/recipe.png" height="25"/> Recipe &nbsp;
                 <img src="/img/charts/analysis.png" height="25"/> Analysis &nbsp;
@@ -51,8 +51,8 @@
                             :isZoomable="isZoomable"
                             :highlightedRecipeId="{highlightedRecipeId}"
                             :unHighlightedRecipeId="{unHighlightedRecipeId}"
-                            :xoxide="xOxide"
-                            :yoxide="yOxide"
+                            :xOxide="xOxide"
+                            :yOxide="yOxide"
                             v-on:clickedUmfD3Recipe="clickedD3Chart"
                     >
                     </umf-d3-chart>
@@ -78,7 +78,7 @@
                                 id="coneId"
                                 size="sm"
                                 v-model="cone_id"
-                                :options="constants.ORTON_CONES_SELECT"
+                                :options="ORTON_CONES_SELECT"
                                 @input="fetchRecipeList">
                             <template slot="first">
                                 <option :value="null">All Temps</option>
@@ -156,8 +156,7 @@
       return {
         materialList: null,
         chart: null,
-        materialTypes: new MaterialTypes(),
-        constants: new GlazyConstants(),
+        ORTON_CONES_SELECT: GlazyConstants.ORTON_CONES_SELECT,
         oxides: Analysis.OXIDE_NAME_UNICODE_SELECT,
         materialTypeId: null,
         cone_id: null,
@@ -166,7 +165,7 @@
         yOxide: 'Al2O3',
         xOxide: 'SiO2',
         oxide3: 'Fe2O3',
-        baseTypeId: new MaterialTypes().GLAZE_TYPE_ID,
+        baseTypeId: MaterialTypes.GLAZE_TYPE_ID,
         noZeros: false,
         isThreeAxes: false,
         showStullChart: true,
@@ -198,18 +197,17 @@
       },
 
       hasRecipeList: function () {
-
       },
 
       materialTypeOptions: function () {
         if (this.material.baseTypeId) {
           switch (this.material.baseTypeId) {
-            case this.materialTypes.GLAZE_TYPE_ID:
-              return this.materialTypes.getGlazeTypes();
-            case this.materialTypes.CLAYS_TYPE_ID:
-              return this.materialTypes.getClayTypes();
-            case this.materialTypes.SLIPS_TYPE_ID:
-              return this.materialTypes.getSlipTypes();
+            case MaterialTypes.GLAZE_TYPE_ID:
+              return MaterialTypes.getGlazeTypes();
+            case MaterialTypes.CLAYS_TYPE_ID:
+              return MaterialTypes.getClayTypes();
+            case MaterialTypes.SLIPS_TYPE_ID:
+              return MaterialTypes.getSlipTypes();
           }
         }
         return null;
@@ -228,7 +226,7 @@
       },
 
       type_options: function () {
-        return this.materialTypes.getGlazeTypes();
+        return MaterialTypes.getGlazeTypes();
       }
     },
 
@@ -356,5 +354,9 @@
     .r2o-colors tr td.label {
         width: 100px;
     }
-
+    .zoom-buttons {
+        right: 40px !important;
+        top: 10px !important;
+    }
+    
 </style>

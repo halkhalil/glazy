@@ -30,13 +30,6 @@
       }
     },
 
-    data() {
-      return {
-        constants: new GlazyConstants()
-      }
-    },
-
-
     computed: {
 
             coneString: function() {
@@ -67,7 +60,7 @@
                         if (hasAtmosphere) {
                             atmospheres += ', ';
                         }
-                        atmospheres += this.constants.ATMOSPHERE_LOOKUP[atmosphere.id];
+                        atmospheres += GlazyConstants.ATMOSPHERE_LOOKUP[atmosphere.id];
                         hasAtmosphere = true;
                     }
                 }

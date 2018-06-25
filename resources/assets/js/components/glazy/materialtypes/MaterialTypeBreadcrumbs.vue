@@ -4,11 +4,11 @@
             <li class="breadcrumb-item" v-for="type in types" :class="{ active: type.isActive }">
                 <router-link v-if="type.isBaseType"
                              :to="{ name: linkName, query: { base_type: type.id }}">
-                    {{ materialTypes.LOOKUP[type.id] }}
+                    {{ materialTypesLookup[type.id] }}
                 </router-link>
                 <router-link v-else
                              :to="{ name: linkName, query: { type: type.id }}">
-                    {{ materialTypes.LOOKUP[type.id] }}
+                    {{ materialTypesLookup[type.id] }}
                 </router-link>
             </li>
         </ol>
@@ -32,7 +32,7 @@
 
       data() {
         return {
-          materialTypes: new MaterialTypes()
+          materialTypesLookup: MaterialTypes.LOOKUP
         }
       },
 

@@ -203,9 +203,8 @@ export default {
   data() {
     return {
       // query: new SearchQuery(),
-      materialTypes: new MaterialTypes(),
       previousBaseTypeId: null,
-      constants: new GlazyConstants(),
+      constants: GlazyConstants,
       countries: GlazyConstants.COUNTRY_SELECT,
       oxides: Analysis.OXIDE_NAME_UNICODE_SELECT,
       minSearchTextLength: 3,
@@ -274,9 +273,9 @@ export default {
 
     baseTypeOptions: function () {
       if (this.isPrimitiveSearch) {
-        return this.materialTypes.PRIMITIVE_SELECT;
+        return MaterialTypes.PRIMITIVE_SELECT;
       }
-      return this.materialTypes.COMPOSITE_PARENT_SELECT;
+      return MaterialTypes.COMPOSITE_PARENT_SELECT;
     },
 
     subTypeOptions: function () {
@@ -288,12 +287,12 @@ export default {
         }
         this.previousBaseTypeId = this.query.params.base_type;
         switch (this.query.params.base_type) {
-          case this.materialTypes.GLAZE_TYPE_ID:
-            return this.materialTypes.getGlazeTypes();
-          case this.materialTypes.CLAYS_TYPE_ID:
-            return this.materialTypes.getClayTypes();
-          case this.materialTypes.SLIPS_TYPE_ID:
-            return this.materialTypes.getSlipTypes();
+          case MaterialTypes.GLAZE_TYPE_ID:
+            return MaterialTypes.getGlazeTypes();
+          case MaterialTypes.CLAYS_TYPE_ID:
+            return MaterialTypes.getClayTypes();
+          case MaterialTypes.SLIPS_TYPE_ID:
+            return MaterialTypes.getSlipTypes();
         }
       }
       return null;
@@ -351,8 +350,6 @@ export default {
   },
   methods: {
     search: function () {
-      console.log('FORM SEARCH')
-      console.log(this.query.params.base_type)
       this.$emit('searchrequest', this.query.params);
     },
 

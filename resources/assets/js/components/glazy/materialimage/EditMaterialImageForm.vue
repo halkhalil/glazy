@@ -93,7 +93,7 @@
         errors: {},
         hasErrors: false,
         isProcessing: false,
-        constants: new GlazyConstants(),
+        constants: GlazyConstants,
         files: null,
         maxUploadSizeMB: 6,
         apiError: null,

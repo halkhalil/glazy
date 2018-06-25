@@ -43,8 +43,6 @@
 
     data() {
       return {
-        materialTypes: new MaterialTypes(),
-        constants: new GlazyConstants(),
         minSearchTextLength: 3
       }
     },
@@ -90,8 +88,8 @@
 
           // Cone
           if (this.searchQuery.params.cone
-            && this.constants.ORTON_CONES_LOOKUP[this.searchQuery.params.cone]) {
-            var name = this.constants.ORTON_CONES_LOOKUP[this.searchQuery.params.cone]
+            && GlazyConstants.ORTON_CONES_LOOKUP[this.searchQuery.params.cone]) {
+            var name = GlazyConstants.ORTON_CONES_LOOKUP[this.searchQuery.params.cone]
             if (name === 'High' || name === 'Mid' || name === 'Low') {
               name += '-fire'
             } else {
@@ -107,12 +105,12 @@
 
           // Type & subtype hierarchy
           if (this.searchQuery.params.type
-            && this.materialTypes.CHILD_LINEAGES[this.searchQuery.params.type]) {
-            var lineage  = this.materialTypes.CHILD_LINEAGES[this.searchQuery.params.type]
+            && MaterialTypes.CHILD_LINEAGES[this.searchQuery.params.type]) {
+            var lineage  = MaterialTypes.CHILD_LINEAGES[this.searchQuery.params.type]
             lineage.forEach((type) => {
               if (type !== 1 && type !== 100) {
                 breadcrumbs.push({
-                  name: this.materialTypes.LOOKUP[type],
+                  name: MaterialTypes.LOOKUP[type],
                   query: { type: type },
                   routeName: 'search',
                   type: 'search'
@@ -120,9 +118,9 @@
               }
             })
           } else if (this.searchQuery.params.base_type
-            && this.materialTypes.LOOKUP[this.searchQuery.params.base_type]) {
+            && MaterialTypes.LOOKUP[this.searchQuery.params.base_type]) {
             breadcrumbs.push({
-              name: this.materialTypes.LOOKUP[this.searchQuery.params.base_type],
+              name: MaterialTypes.LOOKUP[this.searchQuery.params.base_type],
               query: { base_type: this.searchQuery.params.base_type },
               routeName: 'search',
               type: 'search'
@@ -131,9 +129,9 @@
 
           // Atmosphere
           if (this.searchQuery.params.atmosphere
-            && this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere]) {
+            && GlazyConstants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere]) {
             breadcrumbs.push({
-              name: this.constants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere],
+              name: GlazyConstants.ATMOSPHERE_LOOKUP[this.searchQuery.params.atmosphere],
               query: { atmosphere: this.searchQuery.params.atmosphere },
               routeName: 'search',
               type: 'search'
@@ -142,9 +140,9 @@
 
           // Surface
           if (this.searchQuery.params.surface
-            && this.constants.SURFACE_LOOKUP[this.searchQuery.params.surface]) {
+            && GlazyConstants.SURFACE_LOOKUP[this.searchQuery.params.surface]) {
             breadcrumbs.push({
-              name: this.constants.SURFACE_LOOKUP[this.searchQuery.params.surface],
+              name: GlazyConstants.SURFACE_LOOKUP[this.searchQuery.params.surface],
               query: { surface: this.searchQuery.params.surface },
               routeName: 'search',
               type: 'search'
@@ -153,9 +151,9 @@
 
           // Transparency
           if (this.searchQuery.params.transparency
-            && this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency]) {
+            && GlazyConstants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency]) {
             breadcrumbs.push({
-              name: this.constants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency ],
+              name: GlazyConstants.TRANSPARENCY_LOOKUP[this.searchQuery.params.transparency ],
               query: { transparency: this.searchQuery.params.transparency },
               routeName: 'search',
               type: 'search'

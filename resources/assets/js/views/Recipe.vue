@@ -672,7 +672,7 @@
         isProcessing: false,
         apiError: null,
         serverError: null,
-        glazeTypeId: new MaterialTypes().GLAZE_TYPE_ID,
+        glazeTypeId: MaterialTypes.GLAZE_TYPE_ID,
         glazyHelper: new GlazyHelper(),
         isEditRequest: false,
         searchRoute: null,

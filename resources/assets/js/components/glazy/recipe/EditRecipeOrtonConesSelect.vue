@@ -46,7 +46,6 @@
 
     data() {
       return {
-        constants: new GlazyConstants(),
         to_cone_options: null
       }
     },
@@ -54,13 +53,13 @@
     computed: {
 
       from_cone_options: function () {
-        return this.constants.ORTON_CONES_SELECT_TEXT;
+        return GlazyConstants.ORTON_CONES_SELECT_TEXT;
       }
 
     },
 
     mounted() {
-      this.to_cone_options = this.constants.ORTON_CONES_SELECT_TEXT;
+      this.to_cone_options = GlazyConstants.ORTON_CONES_SELECT_TEXT;
     },
 
     methods: {
@@ -73,7 +72,7 @@
           this.value.to = this.value.from;
         }
 
-        var cones = this.constants.ORTON_CONES_SELECT_TEXT;
+        var cones = GlazyConstants.ORTON_CONES_SELECT_TEXT;
         for (var i = 0; i < cones.length; i++) {
           if (this.value.from === Number(cones[i].value)) {
             console.log('from ' + this.value.from + ' equal to ' + cones[i].value + ' to val: ' + this.value.to);

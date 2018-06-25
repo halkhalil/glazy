@@ -4,7 +4,7 @@ import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
 export default class GlazyHelper {
 
   getMaterialTypeString (material) {
-    return GlazyHelper.MATERIAL_TYPES.LOOKUP[material.materialTypeId]
+    return MaterialTypes.LOOKUP[material.materialTypeId]
   }
 
   getR2ORORatioString (material) {
@@ -69,14 +69,14 @@ export default class GlazyHelper {
       material.fromOrtonConeId &&
       material.toOrtonConeId &&
       material.fromOrtonConeId != material.toOrtonConeId) {
-      return GlazyHelper.CONSTANTS.ORTON_CONES_LOOKUP[material.fromOrtonConeId] +
-        "-" + GlazyHelper.CONSTANTS.ORTON_CONES_LOOKUP[material.toOrtonConeId]
+      return GlazyConstants.ORTON_CONES_LOOKUP[material.fromOrtonConeId] +
+        "-" + GlazyConstants.ORTON_CONES_LOOKUP[material.toOrtonConeId]
     }
     else if ('fromOrtonConeId' in material && material.fromOrtonConeId) {
-      return GlazyHelper.CONSTANTS.ORTON_CONES_LOOKUP[material.fromOrtonConeId]
+      return GlazyConstants.ORTON_CONES_LOOKUP[material.fromOrtonConeId]
     }
     else if ('toOrtonConeId' in material && material.toOrtonConeId) {
-      return GlazyHelper.CONSTANTS.ORTON_CONES_LOOKUP[material.toOrtonConeId]
+      return GlazyConstants.ORTON_CONES_LOOKUP[material.toOrtonConeId]
     }
     return '?'
   }
@@ -109,7 +109,7 @@ export default class GlazyHelper {
         if (str.length) {
         str += ', '
       }
-      str += GlazyHelper.CONSTANTS.ATMOSPHERE_SHORT_LOOKUP[atmosphere.id]
+      str += GlazyConstants.ATMOSPHERE_SHORT_LOOKUP[atmosphere.id]
     })
     }
     return str
@@ -214,7 +214,5 @@ export default class GlazyHelper {
 
 }
 
-GlazyHelper.MATERIAL_TYPES = new MaterialTypes()
-GlazyHelper.CONSTANTS = new GlazyConstants()
 GlazyHelper.MAX_UPLOAD_SIZE_MB = 6
 GlazyHelper.AVATAR_URL = 'https://www.gravatar.com/avatar/?d=mm'

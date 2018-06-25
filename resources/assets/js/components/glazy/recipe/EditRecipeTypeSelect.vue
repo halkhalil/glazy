@@ -50,14 +50,6 @@
       Multiselect
     },
 
-    data() {
-      return {
-        materialTypes: new MaterialTypes()
-        //selected_parent: null,
-        //selectBaseTypeValue: {}
-      }
-    },
-
     computed: {
 
       isLoaded: function () {
@@ -68,18 +60,18 @@
       },
 
       baseTypeOptions: function () {
-        return this.materialTypes.getParentTypes();
+        return MaterialTypes.getParentTypes();
       },
 
       subTypeOptions: function () {
         if (this.isLoaded) {
           switch (this.baseTypeId) {
-            case this.materialTypes.GLAZE_TYPE_ID:
-              return this.materialTypes.getGlazeTypes();
-            case this.materialTypes.CLAYS_TYPE_ID:
-              return this.materialTypes.getClayTypes();
-            case this.materialTypes.SLIPS_TYPE_ID:
-              return this.materialTypes.getSlipTypes();
+            case MaterialTypes.GLAZE_TYPE_ID:
+              return MaterialTypes.getGlazeTypes();
+            case MaterialTypes.CLAYS_TYPE_ID:
+              return MaterialTypes.getClayTypes();
+            case MaterialTypes.SLIPS_TYPE_ID:
+              return MaterialTypes.getSlipTypes();
           }
         }
         return null;

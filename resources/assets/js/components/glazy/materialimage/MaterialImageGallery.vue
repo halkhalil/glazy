@@ -213,7 +213,7 @@
     data() {
       return {
         selectedImage: null,
-        constants: new GlazyConstants(),
+        constants: GlazyConstants,
         glazyHelper: new GlazyHelper(),
         apiError: null,
         serverError: null

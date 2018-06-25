@@ -61,8 +61,8 @@
                 :showAxesLabels="true"
                 :highlightedRecipeId="highlightedMaterialId"
                 :unHighlightedRecipeId="unHighlightedMaterialId"
-                :xoxide="searchQuery.params.x"
-                :yoxide="searchQuery.params.y"
+                :xOxide="searchQuery.params.x"
+                :yOxide="searchQuery.params.y"
                 v-on:clickedUmfD3Recipe="clickedD3Chart"
         >
         </umf-d3-chart>
@@ -372,25 +372,14 @@
       selectedCollection: {
         type: Object,
         default: null
-      },
-      /*
-      isPrimitive: {
-        type: Number,
-        default: 0
       }
-      */
     },
     data() {
       return {
         title: 'Search',
-        oxides: new GlazyConstants().OXIDE_NAME_UNICODE_SELECT,
         materials: null,
-        // searchQuery: new SearchQuery(),
         searchQuery: null,
         isProcessingLocal: false,
-        //isPrimitive: false,
-        materialTypes: new MaterialTypes(),
-        constants: new GlazyConstants(),
         chartHeight: 200,
         chartWidth: 0,
         chartMargin: {

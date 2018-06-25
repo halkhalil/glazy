@@ -154,7 +154,7 @@ export default {
     return {
       materialTypes: new MaterialTypes(),
       previousBaseTypeId: 0,
-      constants: new GlazyConstants(),
+      constants: GlazyConstants,
       colors: {
         hex: '#194d33',
         hsl: {
