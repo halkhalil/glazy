@@ -16,6 +16,7 @@
     "bootstrap": "4.1.0",
     "ceramicscalc-js": "github:derekphilipau/ceramicscalc-js",
     "js-cookie": "^2.1.4",
+    "lodash.debounce": "^4.0.8",
     "popper.js": "^1.14.3",
     "tween.js": "^16.6.0",
     "vform": "^0.8.2",

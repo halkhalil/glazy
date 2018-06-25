@@ -177,9 +177,7 @@ import MaterialTypes from 'ceramicscalc-js/src/material/MaterialTypes'
 import GlazyConstants from 'ceramicscalc-js/src/helpers/GlazyConstants'
 import { Chrome } from 'vue-color'
 
-import _ from 'lodash'
-
-// import { Chrome } from 'vue-color'
+import debounce from 'lodash/debounce'
 
 export default {
   name: 'SearchForm',
@@ -353,7 +351,7 @@ export default {
       this.$emit('searchrequest', this.query.params);
     },
 
-    updateKeywords: _.debounce(function (e) {
+    updateKeywords: debounce(function (e) {
       if (this.query.params.keywords.length >= this.minSearchTextLength) {
         this.query.params.keywords = e.target.value
         this.search()
@@ -365,7 +363,7 @@ export default {
       }
     }, 1000),
 
-    updateUsername: _.debounce(function (e) {
+    updateUsername: debounce(function (e) {
       if (this.query.params.username.length >= this.minSearchTextLength) {
         this.query.params.username = e.target.value
         this.search()

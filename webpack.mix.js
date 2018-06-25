@@ -25,9 +25,10 @@ if (mix.inProduction()) {
     'vue-router',
     'vuex-router-sync',
     'bootstrap-vue',
-    'lodash',
     'vue-multiselect',
-    'vue-color'
+    'vue-color',
+    'vue-star-rating',
+    'vue-progressive-image'
   ])
 }
 
