@@ -1,6 +1,6 @@
 <template>
 
-<table v-if="'materialComponents' in material && material.materialComponents.length > 0"
+<table v-if="material && 'materialComponents' in material && material.materialComponents.length > 0"
         class="table table-sm simple-material-component-table">
     <thead v-if="title">
     <tr>

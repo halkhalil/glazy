@@ -87,6 +87,17 @@
                 </td>
                 <td v-if="!isFormula"></td>
             </tr>
+            <tr class="table-dark" v-if="originalMaterial">
+                <td>
+                    Difference
+                </td>
+                <td>
+                </td>
+                <td v-for="oxideName in presentOxides">
+                  {{ parseFloat(originalAdjustedPercentageAnalysis.getOxide(oxideName)-adjustedPercentageAnalysis.getOxide(oxideName)).toFixed(precision) }}
+                </td>
+                <td v-if="!isFormula"></td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -114,6 +125,10 @@
       isFormula: {
         type: Boolean,
         default: true
+      },
+      precision: {
+        type: Number,
+        default: 2
       }
     },
     data() {
@@ -209,14 +224,14 @@
         }
         return null;
       },
-
+      /*
       precision: function () {
         if (this.isFormula) {
           return 3
         }
         return 2
       },
-
+      */
       isLoaded: function () {
         if (this.material
           && this.material.hasOwnProperty('name')
