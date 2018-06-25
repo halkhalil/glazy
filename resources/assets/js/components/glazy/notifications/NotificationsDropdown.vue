@@ -3,7 +3,7 @@
                          text='<i class="fa fa-bell fa-fw"></i>'>
         <b-dropdown-item v-for="(notification, index) in unreadNotifications"
                          v-bind:key="notification.id"
-                         :to="notification.data.link">
+                         :href="notification.data.link">
             <i v-bind:class="'fa-'+notification.data.type" class="fa fa-fw"></i> {{ notification.data.title }}
         </b-dropdown-item>
         <b-dropdown-item @click.prevent="markAsRead()">
