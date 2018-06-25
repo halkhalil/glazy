@@ -71,6 +71,22 @@
                 </td>
                 <td v-if="!isFormula"></td>
             </tr>
+            <tr class="table-dark" v-if="originalMaterial">
+                <td v-if="isFormula">
+                    Original Mol %
+                </td>
+                <td v-else>
+                    Original Total (100%)
+                </td>
+                <td>
+                </td>
+                <td v-for="oxideName in presentOxides">
+                    <span v-if="originalAdjustedPercentageAnalysis.getOxide(oxideName) > 0">
+                        {{ parseFloat(originalAdjustedPercentageAnalysis.getOxide(oxideName)).toFixed(precision) }}
+                    </span>
+                </td>
+                <td v-if="!isFormula"></td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -91,6 +107,10 @@
         type: Object,
         default: null
       },
+      originalMaterial: {
+        type: Object,
+        default: null
+      },
       isFormula: {
         type: Boolean,
         default: true
@@ -104,8 +124,12 @@
     computed: {
       presentOxides: function () {
         if (this.isLoaded) {
-          if (this.isFormula) {
-            return this.material.analysis.formulaAnalysis.getPresentOxideNamesArray()
+          if (this.originalMaterial) {
+            var materialOxides = this.material.analysis.percentageAnalysis.getPresentOxideNamesArray();
+            var originalOxides = this.originalMaterial.analysis.percentageAnalysis.getPresentOxideNamesArray();
+            return materialOxides.concat(originalOxides.filter(function (item) {
+              return materialOxides.indexOf(item) < 0;
+            }));
           }
           return this.material.analysis.percentageAnalysis.getPresentOxideNamesArray()
         }
@@ -172,6 +196,16 @@
             return this.material.getMolePercentageFormula()
           }
           return this.material.get100PercentPercentageAnalysis()
+        }
+        return null;
+      },
+
+      originalAdjustedPercentageAnalysis: function () {
+        if (this.isLoaded && this.originalMaterial) {
+          if (this.isFormula) {
+            return this.originalMaterial.getMolePercentageFormula()
+          }
+          return this.originalMaterial.get100PercentPercentageAnalysis()
         }
         return null;
       },

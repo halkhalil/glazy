@@ -28,6 +28,9 @@
                 <table class="table-analysis-layout">
                   <tr v-if="originalMaterial && originalUMFAnalysis">
                     <td>
+                      Original
+                    </td>
+                    <td>
                       <umf-traditional-notation
                               :material="originalMaterial"
                               :isSmall="false">
@@ -60,11 +63,21 @@
                     </td>
                   </tr>
                   <tr v-if="newMaterial && newUMFAnalysis">
+                    <td v-if="originalMaterial && originalUMFAnalysis">
+                      Modified
+                    </td>
                     <td>
                       <umf-traditional-notation
+                              v-if="originalMaterial && originalUMFAnalysis"
                               class="mt-1"
                               :material="newMaterial"
                               :showLegend="false"
+                              :isSmall="false">
+                      </umf-traditional-notation>
+                      <umf-traditional-notation
+                              v-else
+                              class="mt-1"
+                              :material="newMaterial"
                               :isSmall="false">
                       </umf-traditional-notation>
                     </td>
@@ -104,6 +117,7 @@
               <div v-else class="table-responsive">
                 <component-table
                         :material="newMaterial"
+                        :originalMaterial="originalMaterial"
                         :isFormula="true">
                 </component-table>
               </div>
@@ -115,8 +129,38 @@
               <div v-else class="table-responsive">
                 <component-table
                         :material="newMaterial"
+                        :originalMaterial="originalMaterial"
                         :isFormula="false">
                 </component-table>
+              </div>
+            </b-tab>
+            <b-tab title="Recipe">
+              <div v-if="!hasMaterials">
+                No recipe.  Please add materials.
+              </div>
+              <div v-else-if="originalMaterial" class="row">
+                <div class="col-6">
+                  <simple-material-component-table                    
+                      :material="originalMaterial"
+                      title="Original Recipe">
+                  </simple-material-component-table>
+                </div>
+                <div class="col-6">
+                  <simple-material-component-table
+                      :material="newMaterial"
+                      title="Modified Recipe">
+                  </simple-material-component-table>
+                </div>
+              </div>
+              <div v-else class="row">
+                <div class="col-12">
+                  <simple-material-component-table                    
+                      :material="originalMaterial">
+                  </simple-material-component-table>
+                  <simple-material-component-table
+                      :material="newMaterial">
+                  </simple-material-component-table>
+                </div>
               </div>
             </b-tab>
           </b-tabs>
@@ -290,6 +334,8 @@
   //import JsonUmfSparkSvg from '../analysis/JsonUmfSparkSvg.vue'
   import ComponentTable from '../analysis/ComponentTable.vue'
 
+  import SimpleMaterialComponentTable from './SimpleMaterialComponentTable.vue'
+
   import UmfTraditionalNotation from '../analysis/UmfTraditionalNotation.vue'
 
   import MaterialCardDetail from '../search/MaterialCardDetail.vue'
@@ -308,6 +354,7 @@
       //JsonUmfSparkSvg,
       UmfTraditionalNotation,
       ComponentTable,
+      SimpleMaterialComponentTable,
       MaterialCardDetail
     },
     props: {
