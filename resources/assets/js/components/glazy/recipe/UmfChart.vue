@@ -16,9 +16,6 @@
             </div>
         </div>
         <div v-if="isLoaded" class="row">
-            <div class="load-container load7 fullscreen" v-if="isProcessing">
-                <div class="loader">Searching...</div>
-            </div>
             <div class="col-md-12 col-sm-12 mb-2">
                 <img src="/img/charts/recipe.png" height="25"/> Recipe &nbsp;
                 <img src="/img/charts/analysis.png" height="25"/> Analysis &nbsp;
@@ -59,6 +56,9 @@
                 </div>
             </div>
             <div class="col-md-4">
+                <div class="load-container load7 floating" v-if="!isLoaded || isProcessing">
+                    <div class="loader">Searching...</div>
+                </div>
                 <div class="form-row">
                     <div class="col-md-12 form-group">
                         <b-form-select
