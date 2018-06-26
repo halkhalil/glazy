@@ -27,7 +27,12 @@
          :style="'background-color: #' + material.selectedImage.secondaryHexColor">
       </a>
     </div>
-
+    <div class="checkimage" v-if="$auth.check()">
+      <input type="checkbox" 
+          v-bind:id="'material-checkbox-' + material.id"
+          @change="selectMaterialRequest(material.id)"
+          v-model="checkboxIsSelected">
+    </div>
     <ul v-if="!material.isPrimitive" class="list-group list-group-flush list-group-cone">
       <li class="list-group-item"
           v-html="'&#9651;' + glazyHelper.getConeString(material) + ' ' + glazyHelper.getAtmospheresString(material)">
@@ -100,11 +105,16 @@
       isViewingSelfCollection: {
         type: Boolean,
         default: false
+      },
+      isSelected: {
+        type: Boolean,
+        default: false
       }
   },
     data() {
       return {
-        glazyHelper: new GlazyHelper()
+        glazyHelper: new GlazyHelper(),
+        checkboxIsSelected: false
       }
     },
     computed : {
@@ -130,6 +140,11 @@
       }
 
     },
+    watch: {
+      isSelected: function(val) {
+        this.checkboxIsSelected = this.isSelected
+      }
+    },
     methods: {
 
       highlightMaterial: function (id) {
@@ -154,7 +169,12 @@
 
       deleteMaterialRequest: function (id) {
         this.$emit('deleteMaterialRequest', id);
+      },
+
+      selectMaterialRequest: function (id) {
+        this.$emit('selectMaterialRequest', id);
       }
+
     }
   }
 </script>
@@ -186,6 +206,15 @@
     position: absolute;
     top: 5px;
     right: 5px;
+    padding: 0;
+    margin: 0;
+    z-index: 2;
+  }
+
+  .material-card .checkimage {
+    position: absolute;
+    top: 0;
+    left: 5px;
     padding: 0;
     margin: 0;
     z-index: 2;

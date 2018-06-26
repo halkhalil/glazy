@@ -44,7 +44,8 @@ class CollectionMaterialController extends ApiBaseController
     {
         $collection_id = (int)$request->input('collectionId');
         $new_collection_name = $request->input('collectionName');
-        $material_id = (int)$request->input('materialId');
+        //$material_id = (int)$request->input('materialId');
+        $material_ids = $request->input('materialIds');
 
         $collection = null;
 
@@ -57,29 +58,36 @@ class CollectionMaterialController extends ApiBaseController
         else {
             $collection = Collection::find($collection_id);
         }
-
-        $material = Material::find($material_id);
-
         if (! $collection) {
             return $this->respondNotFound('Collection does not exist');
         }
-        if (! $material) {
-            return $this->respondNotFound('Material does not exist');
-        }
-
         if (!Auth::guard()->user()->can('update', $collection)) {
             return $this->respondUnauthorized('This collection does not belong to you.');
         }
-        if (!Auth::guard()->user()->can('view', $material)) {
-            return $this->respondUnauthorized('This material cannot be collected by you.');
+
+        if (!is_array($material_ids)) {
+            // We were only passed a single material ID
+            $tmp = $material_ids;
+            $material_ids = [$tmp];
+        }
+        $materials = Material::whereIn('id', $material_ids)->get();
+        if (! $materials) {
+            return $this->respondNotFound('Materials to add to Collection do not exist');
         }
 
-        $this->collectionMaterialRepository->create([
-            'collection_id' =>  $collection_id,
-            'material_id' => $material_id
-        ]);
+        foreach ($materials as $material) {
+            if (!Auth::guard()->user()->can('view', $material)) {
+                return $this->respondUnauthorized('This material cannot be collected by you.');
+            }
+        }
+        foreach ($materials as $material) {
+            $this->collectionMaterialRepository->create([
+                'collection_id' =>  $collection_id,
+                'material_id' => $material->id
+            ]);
+        }
 
-        return $this->respondCreated('Collection material successfully added');
+        return $this->respondCreated('Collection materials successfully added');
     }
 
     public function destroy(Request $request, $collection_id, $material_id)

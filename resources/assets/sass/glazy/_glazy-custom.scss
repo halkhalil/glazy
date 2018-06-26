@@ -73,6 +73,10 @@ a:hover, a:focus {
 }
 
 
+.btn-sm, .btn-group-sm > .btn {
+  font-size: 0.875rem;
+}
+
 // https://www.materialpalette.com/colors
 /* OXIDE COLORS */
 .oxide-colors-R2O    { color: #d32f2f; }

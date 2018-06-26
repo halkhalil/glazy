@@ -132,7 +132,7 @@
           </div>
         </div>
 
-        <div class="col-sm-12">
+        <div class="col-12 col-md-8 col-sm-12 d-none d-sm-none d-md-block">
           <search-breadcrumbs :searchQuery="searchQuery"
                               :searchUser="searchUser"
                               :isViewingSelf="isViewingSelf"
@@ -140,6 +140,30 @@
                               v-on:deleteCollectionRequest="confirmDeleteCollection"
           ></search-breadcrumbs>
         </div>
+        <div class="col-12 col-md-4 col-sm-12 text-right d-none d-sm-none d-md-block">
+          <b-button-group class="checkbox-buttons">
+            <b-btn @click="selectAllMaterials()"
+                v-if="!isAllMaterialsSelected"
+                size="sm"
+                class="btn btn-link btn-checkbox">
+                <i class="fa fa-ok"></i> Select All
+            </b-btn>
+            <b-btn @click="deselectAllMaterials()"
+                v-else
+                size="sm"
+                class="btn btn-link btn-checkbox">
+                <i class="fa fa-times"></i> Deselect All
+            </b-btn>
+            <b-dropdown class="dropdown-checkbox m-0" 
+                right
+                size="sm"
+                variant="link"
+                text="With Selected">
+                <b-dropdown-item @click="collectSelectedMaterialsSelect()">Collect</b-dropdown-item>
+            </b-dropdown>
+          </b-button-group>
+        </div>
+
         <div class="col-sm-12 d-xl-none d-lg-none d-md-none">
           <search-form
                   v-if="searchQuery"
@@ -149,7 +173,6 @@
                   :isLarge="false">
           </search-form>
         </div>
-
       </div>
 
       <filter-paginator
@@ -192,12 +215,14 @@
                   :material="material"
                   :isViewingSelf="isViewingSelf"
                   :isViewingSelfCollection="isViewingSelfCollection"
+                  :isSelected="selectedMaterials[material.id]"
                   v-on:highlightMaterial="highlightMaterial"
                   v-on:unhighlightMaterial="unhighlightMaterial"
                   v-on:copyMaterialRequest="copyMaterial"
                   v-on:deleteMaterialRequest="confirmDeleteMaterial"
                   v-on:collectMaterialRequest="collectMaterialSelect"
                   v-on:uncollectMaterialRequest="uncollectMaterial"
+                  v-on:selectMaterialRequest="selectMaterial"
           ></material-card-thumb>
         </div>
       </section>
@@ -214,6 +239,7 @@
                   v-on:deleteMaterialRequest="confirmDeleteMaterial"
                   v-on:collectMaterialRequest="collectMaterialSelect"
                   v-on:uncollectMaterialRequest="uncollectMaterial"
+                  v-on:selectMaterialRequest="selectMaterial"
           ></material-card-detail>
         </div>
       </section>
@@ -272,7 +298,7 @@
     <b-modal id="collectModal"
              ref="collectModal"
              title="Bookmark Recipe"
-             v-on:ok="collectMaterial"
+             v-on:ok="collectMaterials"
              ok-title="Add"
     >
       <b-form-group
@@ -401,7 +427,7 @@
         unHighlightedMaterialId: {},
         selectedCollectionId: 0,
         newCollectionName: '',
-        materialToCollect: 0,
+        materialsToCollect: {},
         toDeleteMaterialId: 0,
         toDeleteCollectionId: 0,
         minSearchTextLength: 3,
@@ -409,7 +435,9 @@
         serverError: null,
         actionMessage: null,
         actionMessageSeconds: 0,
-        selectedSearchTypeOrCollection: null
+        selectedSearchTypeOrCollection: null,
+        selectedMaterials: {},
+        isAllMaterialsSelected: false
       }
     },
     computed: {
@@ -643,6 +671,9 @@
           // We're looking at a user collection
           this.selectedSearchTypeOrCollection = this.searchQuery.params.collection
         }
+        // Clear out the selected materials
+        this.selectedMaterials = {}
+        this.isAllMaterialsSelected = false
       }
     },
     mounted() {
@@ -761,23 +792,42 @@
 
       collectMaterialSelect(id) {
         if (id) {
-          this.materialToCollect = id
+          this.materialsToCollect[id] = true;
           this.$refs.collectModal.show()
         }
       },
 
-      collectMaterial() {
-        if (!this.materialToCollect) {
+      collectSelectedMaterialsSelect() {
+        var hasMaterial = false
+        for (var materialId in this.selectedMaterials) {
+          if (this.selectedMaterials.hasOwnProperty(materialId)) {
+            this.materialsToCollect[materialId] = true
+            hasMaterial = true
+          }
+        }
+        if (hasMaterial) {
+          this.$refs.collectModal.show()
+        }
+      },
+
+      collectMaterials() {
+        if (!this.materialsToCollect || this.materialsToCollect.length == 0) {
           return
         }
         if (!this.selectedCollectionId && !this.newCollectionName) {
           return
         }
         this.isProcessingLocal = true
+        var materialIds = []
+        for (var materialId in this.materialsToCollect) {
+          if (this.materialsToCollect.hasOwnProperty(materialId)) {
+            materialIds.push(materialId)
+          }
+        }
         var form = {
           collectionName: this.newCollectionName,
           collectionId: this.selectedCollectionId,
-          materialId: this.materialToCollect
+          materialIds: materialIds
         }
         Vue.axios.post(Vue.axios.defaults.baseURL + '/collectionmaterials', form)
           .then((response) => {
@@ -803,13 +853,13 @@
             }
           }
           this.newCollectionName = ''
-          this.materialToCollect = 0
+          this.materialsToCollect = {}
         })
         .catch(response => {
           this.serverError = response
           this.isProcessingLocal = false
           this.newCollectionName = ''
-          this.materialToCollect = 0
+          this.materialsToCollect = {}
         })
       },
 
@@ -839,6 +889,33 @@
           console.log(response)
           this.isProcessingLocal = false
         })
+      },
+
+      selectMaterial(materialId) {
+        if (materialId in this.selectedMaterials) {
+          delete this.selectedMaterials[materialId]
+        }
+        else {
+          this.selectedMaterials[materialId] = true
+        }
+      },
+
+      selectAllMaterials() {
+        if (this.searchItems) {
+          this.searchItems.forEach((material) => {
+            this.selectedMaterials[material.id] = true
+          })
+          this.isAllMaterialsSelected = true
+        }
+      },
+
+      deselectAllMaterials() {
+        if (this.searchItems) {
+          this.searchItems.forEach((material) => {
+            delete this.selectedMaterials[material.id]
+          })
+          this.isAllMaterialsSelected = false
+        }
       },
 
       actionMessageCountdown(seconds) {
@@ -1014,6 +1091,15 @@
   .search-buttons .btn {
     margin-bottom: 0px;
     margin-top: 0px;
+  }
+
+  .btn-checkbox {
+    margin: 0;
+    padding: 0 5px;
+  }
+
+  .dropdown-checkbox .btn {
+    margin: 0;
   }
 
   .material-detail-table {
