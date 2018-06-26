@@ -159,7 +159,7 @@
                 size="sm"
                 variant="link"
                 text="With Selected">
-                <b-dropdown-item @click="collectSelectedMaterialsSelect()">Collect</b-dropdown-item>
+                <b-dropdown-item @click="collectSelectedMaterialsSelect()">Bookmark</b-dropdown-item>
             </b-dropdown>
           </b-button-group>
         </div>
