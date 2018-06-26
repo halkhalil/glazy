@@ -44,8 +44,17 @@ class CollectionMaterialController extends ApiBaseController
     {
         $collection_id = (int)$request->input('collectionId');
         $new_collection_name = $request->input('collectionName');
-        //$material_id = (int)$request->input('materialId');
         $material_ids = $request->input('materialIds');
+        if (!$material_ids) {
+            $material_id = (int)$request->input('materialId');
+            if ($material_id) {
+                $material_ids = [$material_id];
+            }
+            else {
+                // Neither an array of material IDs nor a single material ID were given
+                return $this->respondInternalError('Request did not contain materials to bookmark.');
+            }
+        }
 
         $collection = null;
 
@@ -65,11 +74,6 @@ class CollectionMaterialController extends ApiBaseController
             return $this->respondUnauthorized('This collection does not belong to you.');
         }
 
-        if (!is_array($material_ids)) {
-            // We were only passed a single material ID
-            $tmp = $material_ids;
-            $material_ids = [$tmp];
-        }
         $materials = Material::whereIn('id', $material_ids)->get();
         if (! $materials) {
             return $this->respondNotFound('Materials to add to Collection do not exist');
