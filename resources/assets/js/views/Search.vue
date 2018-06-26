@@ -131,8 +131,19 @@
           </div>
         </div>
       </div>
+      <div class="row">
+        <div class="col-sm-12 d-xl-none d-lg-none d-md-none">
+          <search-form
+                  v-if="searchQuery"
+                  :searchQuery="searchQuery"
+                  :searchUser="searchUser"
+                  v-on:searchrequest="search"
+                  :isLarge="false">
+          </search-form>
+        </div>
+      </div>
       <div v-if="$auth.check()" class="row">
-        <div class="col-md-8 d-none d-sm-none d-md-block">
+        <div class="col-md-8">
           <search-breadcrumbs :searchQuery="searchQuery"
                               :searchUser="searchUser"
                               :isViewingSelf="isViewingSelf"
@@ -140,7 +151,7 @@
                               v-on:deleteCollectionRequest="confirmDeleteCollection"
           ></search-breadcrumbs>
         </div>
-        <div class="col-md-4 text-right d-none d-sm-none d-md-block">
+        <div class="col-md-4 text-right">
           <b-button-group class="checkbox-buttons">
             <b-btn @click="selectAllMaterials()"
                 v-if="!isAllMaterialsSelected"
@@ -172,17 +183,6 @@
                               :isViewingSelfCollection="isViewingSelfCollection"
                               v-on:deleteCollectionRequest="confirmDeleteCollection"
           ></search-breadcrumbs>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-sm-12 d-xl-none d-lg-none d-md-none">
-          <search-form
-                  v-if="searchQuery"
-                  :searchQuery="searchQuery"
-                  :searchUser="searchUser"
-                  v-on:searchrequest="search"
-                  :isLarge="false">
-          </search-form>
         </div>
       </div>
 
