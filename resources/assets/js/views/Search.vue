@@ -106,12 +106,11 @@
         {{ actionMessage }}
       </b-alert>
 
-      <div class="row">
-
+      <div v-if="searchUser" class="row">
         <div class="col-sm-12 d-xl-none d-lg-none d-md-none">
-          <user-profile-card v-if="searchUser"
-                             :searchUser="searchUser"></user-profile-card>
-          <div v-if="searchUser" class="form-group">
+          <user-profile-card 
+              :searchUser="searchUser"></user-profile-card>
+          <div class="form-group">
             <label for="collectionsSelectSelect">Recipes, Materials & Bookmarks:</label>
             <b-form-select
                     id="collectionsSelectSelect"
@@ -131,8 +130,9 @@
             </b-form-select>
           </div>
         </div>
-
-        <div class="col-12 col-md-8 col-sm-12 d-none d-sm-none d-md-block">
+      </div>
+      <div v-if="$auth.check()" class="row">
+        <div class="col-md-8 d-none d-sm-none d-md-block">
           <search-breadcrumbs :searchQuery="searchQuery"
                               :searchUser="searchUser"
                               :isViewingSelf="isViewingSelf"
@@ -140,7 +140,7 @@
                               v-on:deleteCollectionRequest="confirmDeleteCollection"
           ></search-breadcrumbs>
         </div>
-        <div class="col-12 col-md-4 col-sm-12 text-right d-none d-sm-none d-md-block">
+        <div class="col-md-4 text-right d-none d-sm-none d-md-block">
           <b-button-group class="checkbox-buttons">
             <b-btn @click="selectAllMaterials()"
                 v-if="!isAllMaterialsSelected"
@@ -163,7 +163,18 @@
             </b-dropdown>
           </b-button-group>
         </div>
-
+      </div>
+      <div v-else class="row">
+        <div class="col-12">
+          <search-breadcrumbs :searchQuery="searchQuery"
+                              :searchUser="searchUser"
+                              :isViewingSelf="isViewingSelf"
+                              :isViewingSelfCollection="isViewingSelfCollection"
+                              v-on:deleteCollectionRequest="confirmDeleteCollection"
+          ></search-breadcrumbs>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-sm-12 d-xl-none d-lg-none d-md-none">
           <search-form
                   v-if="searchQuery"
