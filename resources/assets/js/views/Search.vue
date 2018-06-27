@@ -220,7 +220,7 @@
       </div>
 
       <section class="row search-results-row" v-if="(searchQuery.params.view === 'cards')">
-        <div v-bind:class="materialCardClass" class=""
+        <div v-bind:class="materialCardClass"
              v-for="(material, index) in searchItems">
           <material-card-thumb
                   :material="material"
@@ -237,13 +237,14 @@
           ></material-card-thumb>
         </div>
       </section>
-      <section class="row" v-else-if="(searchQuery.params.view === 'details')">
-        <div v-bind:class="materialCardClass" class=""
+      <section class="row detail-results-row flex-nowrap" v-else-if="(searchQuery.params.view === 'details')">
+        <div v-bind:class="detailCardClass" class="detail-col"
              v-for="(material, index) in searchItems">
           <material-card-detail
                   :material="material"
                   :isViewingSelf="isViewingSelf"
                   :isViewingSelfCollection="isViewingSelfCollection"
+                  :showCollapse="true"
                   v-on:highlightMaterial="highlightMaterial"
                   v-on:unhighlightMaterial="unhighlightMaterial"
                   v-on:copyMaterialRequest="copyMaterial"
@@ -253,21 +254,6 @@
                   v-on:selectMaterialRequest="selectMaterial"
           ></material-card-detail>
         </div>
-      </section>
-      <section class="row" v-else-if="(searchQuery.params.view === 'rows')">
-        <table class="table table-hover material-detail-table">
-          <tbody>
-            <tr is="material-card-row"
-                v-for="(material, index) in searchItems"
-                :material="material"
-                :isViewingSelf="isViewingSelf"
-                :isViewingSelfCollection="isViewingSelfCollection"
-                v-on:highlightMaterial="highlightMaterial"
-                v-on:unhighlightMaterial="unhighlightMaterial"
-                v-on:uncollectMaterialRequest="uncollectMaterialSelect"
-            ></tr>
-          </tbody>
-        </table>
       </section>
 
       <filter-paginator
@@ -363,7 +349,7 @@
 
   import MaterialCardThumb from '../components/glazy/search/MaterialCardThumb.vue'
   import MaterialCardDetail from '../components/glazy/search/MaterialCardDetail.vue'
-  import MaterialCardRow from '../components/glazy/search/MaterialCardRow.vue'
+  // import MaterialCardRow from '../components/glazy/search/MaterialCardRow.vue'
 
   import SearchBreadcrumbs from '../components/glazy/search/SearchBreadcrumbs.vue'
 
@@ -389,7 +375,7 @@
       FilterPaginator,
       MaterialCardThumb,
       MaterialCardDetail,
-      MaterialCardRow,
+      // MaterialCardRow,
       UmfD3Chart,
       SearchForm,
       SearchBreadcrumbs,
@@ -432,6 +418,7 @@
         sidebarClass: 'col-md-3',
         mainClass: 'col-md-9',
         materialCardClass: 'col-lg-3 col-md-4 col-sm-6 col-6 search-col',
+        detailCardClass: 'col-lg-4 col-md-6 col-sm-12 col-12 search-col',
         currentPage: null,
         isThumbnailView: true,
         highlightedMaterialId: {},
@@ -758,7 +745,8 @@
           this.expandbuttonTooltip = 'Show More Map'
           this.sidebarClass = 'col-md-3'
           this.mainClass = 'col-md-9'
-          this.materialCardClass = 'col-lg-3 col-md-4 col-sm-6 col-6 search-col'
+          this.materialCardClass = 'col-lg-3 col-md-4 col-sm-6 col-6 search-col',
+          this.detailCardClass = 'col-lg-4 col-md-6 col-sm-12 col-12 search-col'
           this.chartHeight = 200
           this.isShowChartImages = false
         } else {
@@ -767,6 +755,7 @@
           this.sidebarClass = 'col-md-9'
           this.mainClass = 'col-md-3'
           this.materialCardClass = 'col-12 search-col'
+          this.detailCardClass = 'col-12 search-col'
           this.chartHeight = 300
         }
         this.isMapExpanded = !this.isMapExpanded
@@ -1054,6 +1043,17 @@
     padding-left: 10px;
   }
 
+  .detail-results-row {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .detail-col {
+    display: inline-block;
+    float: none;
+    white-space: normal;
+  }
+  
   .sidebar {
     background-color: #efefef;
     position: fixed;
