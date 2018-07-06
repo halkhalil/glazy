@@ -112,6 +112,8 @@ class SearchController extends ApiBaseController
             } else {
                 // this is an alphanumeric username
                 $searchUser = User::with('profile')
+                    ->with('collections.created_by_user')
+                    ->with('collections.created_by_user.profile')
                     ->with(['collections' => function ($q) {
                         $q->orderBy('name', 'asc');
                     }])->whereHas('profile', function($q) use ($search_user_id) {
@@ -704,7 +706,7 @@ class SearchController extends ApiBaseController
         return $this->manager->createData($resource)->toArray();
     }
     */
-    
+
     public function similarAnalysis($material_id)
     {
         $materials = $this->materialRepository->similarAnalysis($material_id);
