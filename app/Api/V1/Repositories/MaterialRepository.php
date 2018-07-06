@@ -73,7 +73,7 @@ class MaterialRepository extends Repository
     public function create(array $data)
     {
         $material = $this->getModel();
-        
+
         $material->fill($data);
 
         // Set this recipe's owner
@@ -171,9 +171,17 @@ class MaterialRepository extends Repository
         }
         if (array_key_exists('fromOrtonConeId', $jsonData)) {
             $data['from_orton_cone_id'] = $jsonData['fromOrtonConeId'];
+            // Make sure we always have both a 'from' and 'to' orton cone
+            if (!array_key_exists('toOrtonConeId', $jsonData)) {
+                $data['to_orton_cone_id'] = $jsonData['fromOrtonConeId'];
+            }
         }
         if (array_key_exists('toOrtonConeId', $jsonData)) {
             $data['to_orton_cone_id'] = $jsonData['toOrtonConeId'];
+            // Make sure we always have both a 'from' and 'to' orton cone
+            if (!array_key_exists('fromOrtonConeId', $jsonData)) {
+                $data['from_orton_cone_id'] = $jsonData['toOrtonConeId'];
+            }
         }
         if (array_key_exists('atmospheres', $jsonData)) {
             $data['atmospheres'] = $jsonData['atmospheres'];
@@ -201,7 +209,7 @@ class MaterialRepository extends Repository
             }
         }
 
-        // Either the percentage analysis ('analysis') or 
+        // Either the percentage analysis ('analysis') or
         // formula ('formula') may be given:
         if ($material->is_primitive || $material->is_analysis) {
             // First, determine if user entered LOI or weight.
@@ -209,7 +217,7 @@ class MaterialRepository extends Repository
             $weight = null;
             if (array_key_exists('weight', $jsonData) && $jsonData['weight']) {
                 $weight = $jsonData['weight'];
-            } 
+            }
             else if (array_key_exists('loi', $jsonData) && $jsonData['loi']) {
                 $loi = $jsonData['loi'];
             }
@@ -245,7 +253,7 @@ class MaterialRepository extends Repository
                 if ($weight) {
                     // If user entered weight, calculate LOI
                     $loi = $formulaAnalysis->getCalculatedLoiFromWeight($weight);
-                } 
+                }
                 else if ($loi) {
                     // If user entered LOI, calculate weight
                     $weight = $formulaAnalysis->getCalculatedWeightFromLoi($loi);
@@ -265,13 +273,13 @@ class MaterialRepository extends Repository
                 if ($weight) {
                     // If user entered weight, calculate LOI
                     $loi = $formulaAnalysis->getCalculatedLoiFromWeight($weight);
-                } 
+                }
                 else if ($loi) {
                     // If user entered LOI, calculate weight
                     $weight = $formulaAnalysis->getCalculatedWeightFromLoi($loi);
                 }
 
-                // Make sure to include LOI when setting formula analysis 
+                // Make sure to include LOI when setting formula analysis
                 // so that automatically created percentage analysis is correct
                 $primitiveMaterial->setFormulaAnalysis($formulaAnalysis, $loi);
 
@@ -303,10 +311,10 @@ class MaterialRepository extends Repository
 
             if ($materialComponentsContainingMaterial)
             {
-                // Depending upon how many materials this recipe belongs to, 
+                // Depending upon how many materials this recipe belongs to,
                 // this might take a LONG time..
                 set_time_limit(300);
-                
+
                 $materialMaterialRepository = new MaterialMaterialRepository();
                 foreach($materialComponentsContainingMaterial as $materialComponentContainingMaterial)
                 {
@@ -792,7 +800,7 @@ class MaterialRepository extends Repository
 
         $significantAmountSize = 1;
         $variance = 1;
-        
+
         $significantOxides = [];
         //add knao instead of k na
         $knao = 0;
@@ -807,7 +815,7 @@ class MaterialRepository extends Repository
                 if (isset($material->analysis[$analysis_field_name]) &&
                     $material->analysis[$analysis_field_name] >= $significantAmountSize) {
                     $significantOxides[$analysis_field_name] = $material->analysis[$analysis_field_name];
-                }    
+                }
             }
         }
         if ($knao >= $significantAmountSize) {
@@ -826,7 +834,7 @@ class MaterialRepository extends Repository
         $i = 0;
         foreach($significantOxides as $analysis_field_name => $amount) {
             if (strlen($distanceField)) {
-                $distanceField .= ' + '; 
+                $distanceField .= ' + ';
             }
             if ($analysis_field_name === 'knao') {
                 $distanceField .= '('.$amount.' - (analyses.K2O_percent_mol + analyses.Na2O_percent_mol)) * ('.$amount.' - (analyses.K2O_percent_mol + analyses.Na2O_percent_mol))';
@@ -867,17 +875,17 @@ class MaterialRepository extends Repository
             // Search for analyses that contain each significantly present oxide.
             if ($analysis_field_name === 'knao') {
                 $query->whereRaw(
-                    '(analyses.K2O_percent_mol + analyses.Na2O_percent_mol) BETWEEN ? AND ?', 
-                    [$knao - $variance, 
+                    '(analyses.K2O_percent_mol + analyses.Na2O_percent_mol) BETWEEN ? AND ?',
+                    [$knao - $variance,
                     $knao + $variance]
-                );    
+                );
             }
             else {
                 $query->whereRaw(
-                    'analyses.'.$analysis_field_name.' BETWEEN ? AND ?', 
-                    [$material->analysis[$analysis_field_name] - $variance, 
+                    'analyses.'.$analysis_field_name.' BETWEEN ? AND ?',
+                    [$material->analysis[$analysis_field_name] - $variance,
                     $material->analysis[$analysis_field_name] + $variance]
-                );    
+                );
             }
         }
 
