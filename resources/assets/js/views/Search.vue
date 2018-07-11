@@ -367,7 +367,42 @@
     name: 'Search',
     metaInfo () {
       return {
-        title: this.title
+        title: this.title,
+        meta: [
+          {
+            'vmid': "description",
+            'property': 'description',
+            'content': 'Glazy Search for Recipes'
+          },
+          {
+            'property': 'og:description',
+            'content': 'Glazy Search for Recipes'
+          },
+          {
+            'property': 'og:title',
+            'content': this.title
+          },
+          {
+            'property': 'og:url',
+            'content': GLAZY_APP_URL + this.$route.fullPath
+          },
+          {
+            'property': 'og:image',
+            'content': 'https://glazy.org/img/logoPromo.png'
+          },
+          {
+            'property': 'og:image:width',
+            'content': 400
+          },
+          {
+            'property': 'og:image:height',
+            'content': 400
+          },
+          {
+            'property': 'twitter:description',
+            'content': 'Glazy Search for Recipes'
+          }
+        ]
       }
     },
     components: {
