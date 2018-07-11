@@ -10,6 +10,21 @@
         </tr>
         </thead>
         <tbody>
+        <tr v-if="batchValues && tareSize"
+            class="table-warning">
+            <td>Tare Weight</td>
+            <td></td>
+            <td v-if="batchValues"
+                class="text-right batch"
+                id="batch_tare">
+                {{ parseFloat(tareSize) }}
+            </td>
+            <td v-if="batchValues"
+                class="text-right subtotal"
+                id="subtotal_tare">
+                {{ parseFloat(tareSize) }}
+            </td>
+        </tr>
         <tr v-for="(materialComponent, index) in this.materialComponents"
             v-if="!materialComponent.isAdditional">
             <td class="align-middle">
@@ -70,13 +85,25 @@
         </tr>
         <tr class="batch_form">
             <td v-bind:colspan="numColumns" class="text-right">
-                        Calculate Batch:&nbsp;
-                        <input type="number"
-                               inputmode="numeric"
-                               size="10"
-                               placeholder="0.00"
-                               id="batchSize"
-                               v-model.number="batchSize">
+                Tare Weight:&nbsp;
+                <input type="number"
+                       inputmode="numeric"
+                       size="4"
+                       maxlength="10"
+                       placeholder="0.0"
+                       id="tareSize"
+                       class="material-recipe-calculator-tare-input"
+                       v-model.number="tareSize">
+
+                Batch Size:&nbsp;
+                <input type="number"
+                       inputmode="numeric"
+                       size="8"
+                       maxlength="10"
+                       placeholder="0.0"
+                       id="batchSize"
+                       class="material-recipe-calculator-batch-input"
+                       v-model.number="batchSize">
             </td>
         </tr>
         </tbody>
@@ -99,7 +126,8 @@ export default {
   data() {
     return {
       glazyHelper: new GlazyHelper(),
-      batchSize: null
+      batchSize: null,
+      tareSize: null
     }
   },
 
@@ -141,6 +169,9 @@ export default {
           subtotalRows: []
         }
         var subtotal = 0;
+        if (this.tareSize && parseFloat(this.tareSize) > 0) {
+          subtotal += parseFloat(this.tareSize)
+        }
         this.materialComponents.forEach(function (materialComponent, index) {
           var value = parseFloat(materialComponent.percentageAmount)
             * parseFloat(this.batchSize)
@@ -203,6 +234,15 @@ export default {
     }
 
     .material-recipe-calculator-table tr.batch_form {
+    }
+
+    .material-recipe-calculator-tare-input {
+        width: 90px;
+        margin-right: 10px;
+    }
+
+    .material-recipe-calculator-batch-input {
+        width: 90px;
     }
 
 </style>
