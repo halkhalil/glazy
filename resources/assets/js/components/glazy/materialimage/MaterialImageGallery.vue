@@ -113,6 +113,20 @@
                     </div>
                 </div>
             </div>
+            <div v-else-if="!material.isPrivate">
+                <div class="col-md-12">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                Why is there no photo?
+                            </h6>
+                            Glazy is a community effort.
+                            Photos are uploaded by people just like you!
+                            If you test this recipe, please consider adding a photo.
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div v-if="currentImage && imageList.length > 1" class="row">
             <div class="col-md-4 col-sm-6 col-6 image-gallery-thumb" v-for="image in imageList">
