@@ -1,113 +1,115 @@
 <template>
-    <table v-if="isLoaded"
-           class="table table-hover material-recipe-calculator-table">
-        <thead>
-        <tr>
-            <th>Material</th>
-            <th class="text-right">Amount</th>
-            <th v-if="batchValues" class="text-right">Batch</th>
-            <th v-if="batchValues" class="text-right">Subtotal</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-if="batchValues && tareSize"
-            class="table-warning">
-            <td>Tare Weight</td>
-            <td></td>
-            <td v-if="batchValues"
-                class="text-right batch"
-                id="batch_tare">
-                {{ parseFloat(tareSize) }}
-            </td>
-            <td v-if="batchValues"
-                class="text-right subtotal"
-                id="subtotal_tare">
-                {{ parseFloat(tareSize) }}
-            </td>
-        </tr>
-        <tr v-for="(materialComponent, index) in this.materialComponents"
-            v-if="!materialComponent.isAdditional">
-            <td class="align-middle">
-                <img class="rounded-circle"
-                     width="40" height="40"
-                     v-if="materialComponent.material.thumbnail"
-                     :src="glazyHelper.getSmallImageUrl(materialComponent.material, materialComponent.material.thumbnail)"/>
-                <router-link v-if="materialComponent.material.isPrimitive" :to="{ name: 'material', params: { id: materialComponent.material.id }}">{{ materialComponent.material.name }}</router-link>
-                <router-link v-else :to="{ name: 'recipes', params: { id: materialComponent.material.id }}">{{ materialComponent.material.name }}</router-link>
-            </td>
-            <td class="text-right amount">
-                {{ parseFloat(materialComponent.percentageAmount) }}
-            </td>
-            <td v-if="batchValues"
-                class="text-right batch" :id="'batch_' + materialComponent.material.id">
-                {{ parseFloat(batchValues.batchRows[index]) }}
-            </td>
-            <td v-if="batchValues"
-                class="text-right subtotal" :id="'subtotal_' + materialComponent.material.id">
-                {{ parseFloat(batchValues.subtotalRows[index]) }}
-            </td>
-        </tr>
-        <tr v-if="hasAdditional" class="align-middle total">
-            <td>Total Base Recipe</td>
-            <td class="text-right">{{ parseFloat(baseRecipeAmount) }}</td>
-            <td v-if="batchValues" colspan="2"></td>
-        </tr>
+    <div class="table-responsive">
+        <table v-if="isLoaded"
+               class="table table-hover material-recipe-calculator-table">
+            <thead>
+            <tr>
+                <th>Material</th>
+                <th class="text-right">Amount</th>
+                <th v-if="batchValues" class="text-right">Batch</th>
+                <th v-if="batchValues" class="text-right">Subtotal</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-if="batchValues && tareSize"
+                class="table-warning">
+                <td>Tare Weight</td>
+                <td></td>
+                <td v-if="batchValues"
+                    class="text-right batch"
+                    id="batch_tare">
+                    {{ parseFloat(tareSize) }}
+                </td>
+                <td v-if="batchValues"
+                    class="text-right subtotal"
+                    id="subtotal_tare">
+                    {{ parseFloat(tareSize) }}
+                </td>
+            </tr>
+            <tr v-for="(materialComponent, index) in this.materialComponents"
+                v-if="!materialComponent.isAdditional">
+                <td class="align-middle">
+                    <img class="rounded-circle d-none d-sm-block"
+                         width="40" height="40"
+                         v-if="materialComponent.material.thumbnail"
+                         :src="glazyHelper.getSmallImageUrl(materialComponent.material, materialComponent.material.thumbnail)"/>
+                    <router-link v-if="materialComponent.material.isPrimitive" :to="{ name: 'material', params: { id: materialComponent.material.id }}">{{ materialComponent.material.name }}</router-link>
+                    <router-link v-else :to="{ name: 'recipes', params: { id: materialComponent.material.id }}">{{ materialComponent.material.name }}</router-link>
+                </td>
+                <td class="text-right amount">
+                    {{ parseFloat(materialComponent.percentageAmount) }}
+                </td>
+                <td v-if="batchValues"
+                    class="text-right batch" :id="'batch_' + materialComponent.material.id">
+                    {{ parseFloat(batchValues.batchRows[index]) }}
+                </td>
+                <td v-if="batchValues"
+                    class="text-right subtotal" :id="'subtotal_' + materialComponent.material.id">
+                    {{ parseFloat(batchValues.subtotalRows[index]) }}
+                </td>
+            </tr>
+            <tr v-if="hasAdditional" class="align-middle total">
+                <td>Total Base Recipe</td>
+                <td class="text-right">{{ parseFloat(baseRecipeAmount) }}</td>
+                <td v-if="batchValues" colspan="2"></td>
+            </tr>
 
-        <tr v-for="(materialComponent, index) in this.materialComponents"
-            v-if="materialComponent.isAdditional"
-            class="table-info">
-            <td class="align-middle">
-                <img class="rounded-circle"
-                     width="40" height="40"
-                     v-if="materialComponent.material.thumbnail"
-                     :src="glazyHelper.getSmallImageUrl(materialComponent.material, materialComponent.material.thumbnail)"/>
-                <i class="fa fa-plus"></i>
-                <router-link v-if="materialComponent.material.isPrimitive" :to="{ name: 'material', params: { id: materialComponent.material.id }}">{{ materialComponent.material.name }}</router-link>
-                <router-link v-else :to="{ name: 'recipes', params: { id: materialComponent.material.id }}">{{ materialComponent.material.name }}</router-link>
-            </td>
-            <td class="text-right amount">
-                {{ parseFloat(materialComponent.percentageAmount) }}
-            </td>
-            <td v-if="batchValues"
-                class="text-right batch" :id="'batch_' + materialComponent.material.id">
-                {{ parseFloat(batchValues.batchRows[index]) }}
-            </td>
-            <td v-if="batchValues"
-                class="text-right subtotal" :id="'subtotal_' + materialComponent.material.id">
-                {{ parseFloat(batchValues.subtotalRows[index]) }}
-            </td>
-        </tr>
+            <tr v-for="(materialComponent, index) in this.materialComponents"
+                v-if="materialComponent.isAdditional"
+                class="table-info">
+                <td class="align-middle">
+                    <img class="rounded-circle d-none d-sm-block"
+                         width="40" height="40"
+                         v-if="materialComponent.material.thumbnail"
+                         :src="glazyHelper.getSmallImageUrl(materialComponent.material, materialComponent.material.thumbnail)"/>
+                    <i class="fa fa-plus"></i>
+                    <router-link v-if="materialComponent.material.isPrimitive" :to="{ name: 'material', params: { id: materialComponent.material.id }}">{{ materialComponent.material.name }}</router-link>
+                    <router-link v-else :to="{ name: 'recipes', params: { id: materialComponent.material.id }}">{{ materialComponent.material.name }}</router-link>
+                </td>
+                <td class="text-right amount">
+                    {{ parseFloat(materialComponent.percentageAmount) }}
+                </td>
+                <td v-if="batchValues"
+                    class="text-right batch" :id="'batch_' + materialComponent.material.id">
+                    {{ parseFloat(batchValues.batchRows[index]) }}
+                </td>
+                <td v-if="batchValues"
+                    class="text-right subtotal" :id="'subtotal_' + materialComponent.material.id">
+                    {{ parseFloat(batchValues.subtotalRows[index]) }}
+                </td>
+            </tr>
 
-        <tr class="align-middle total">
-            <td>Total</td>
-            <td class="text-right">{{ parseFloat(totalRecipeAmount) }}</td>
-            <td v-if="batchValues" colspan="2"></td>
-        </tr>
-        <tr class="batch_form">
-            <td v-bind:colspan="numColumns" class="text-right">
-                Tare Weight:&nbsp;
-                <input type="number"
-                       inputmode="numeric"
-                       size="4"
-                       maxlength="10"
-                       placeholder="0.0"
-                       id="tareSize"
-                       class="material-recipe-calculator-tare-input"
-                       v-model.number="tareSize">
+            <tr class="align-middle total">
+                <td>Total</td>
+                <td class="text-right">{{ parseFloat(totalRecipeAmount) }}</td>
+                <td v-if="batchValues" colspan="2"></td>
+            </tr>
+            <tr class="batch_form">
+                <td v-bind:colspan="numColumns" class="text-right">
+                    Tare:
+                    <input type="number"
+                           inputmode="numeric"
+                           size="4"
+                           maxlength="10"
+                           placeholder="0.0"
+                           id="tareSize"
+                           class="material-recipe-calculator-tare-input"
+                           v-model.number="tareSize">
 
-                Batch Size:&nbsp;
-                <input type="number"
-                       inputmode="numeric"
-                       size="8"
-                       maxlength="10"
-                       placeholder="0.0"
-                       id="batchSize"
-                       class="material-recipe-calculator-batch-input"
-                       v-model.number="batchSize">
-            </td>
-        </tr>
-        </tbody>
-    </table>
+                    Batch:
+                    <input type="number"
+                           inputmode="numeric"
+                           size="8"
+                           maxlength="10"
+                           placeholder="0.0"
+                           id="batchSize"
+                           class="material-recipe-calculator-batch-input"
+                           v-model.number="batchSize">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 </template>
 
 <script>
@@ -237,12 +239,12 @@ export default {
     }
 
     .material-recipe-calculator-tare-input {
-        width: 90px;
+        width: 80px;
         margin-right: 10px;
     }
 
     .material-recipe-calculator-batch-input {
-        width: 90px;
+        width: 80px;
     }
 
 </style>

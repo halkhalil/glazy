@@ -190,12 +190,16 @@
                                v-b-tooltip.hover title="Bookmark">
                           <i class="fa fa-bookmark" aria-hidden="true"></i> Bookmark
                         </b-button>
+                        <b-button v-on:click="copyRecipe()">
+                          <i class="fa fa-copy" aria-hidden="true"></i> Copy
+                        </b-button>
                         <b-dropdown left>
-                          <span slot=text><i class="fa fa-cloud-download" aria-hidden="true"></i> Export</span>
+                          <span slot=text>
+                            <i class="fa fa-cloud-download" aria-hidden="true"></i> Export
+                          </span>
                           <b-dropdown-item v-on:click="exportRecipe('Insight')">Insight</b-dropdown-item>
                           <b-dropdown-item v-on:click="exportRecipe('GlazeChem')">GlazeChem</b-dropdown-item>
                         </b-dropdown>
-                        <b-button v-on:click="copyRecipe()"><i class="fa fa-copy"></i> Copy</b-button>
                       </b-button-group>
                       <b-button v-if="recipe.isPrimitive && isUserMaterial" class="btn-info" :disabled="true">
                         <i class="fa fa-cubes"></i> In Inventory
@@ -207,6 +211,8 @@
                         <b-button class="btn-info" v-if="recipe.isPrivate" v-on:click="publishRecipe()"><i class="fa fa-eye"></i> Publish</b-button>
                         <b-button class="btn-info" v-if="!recipe.isPrivate" v-on:click="unpublishRecipe()"><i class="fa fa-eye-slash"></i> Unpublish</b-button>
                         <b-button class="btn-info" v-if="!recipe.isPrivate" v-b-modal.archiveConfirmModal><i class="fa fa-lock"></i> Lock</b-button>
+                      </b-button-group>
+                      <b-button-group class="recipe-action-group" v-if="canEdit && !recipe.isArchived">
                         <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
                         <b-button class="btn-info" v-if="!recipe.isPrimitive && !recipe.isAnalysis" v-on:click="editComponents()"><i class="fa fa-list"></i> Edit Recipe</b-button>
                         <b-button class="btn-danger" v-b-modal.deleteRecipeConfirmModal><i class="fa fa-trash"></i></b-button>
@@ -1159,7 +1165,9 @@
   }
 
   .recipe-action-group .btn {
-    padding: 11px 16px;
+    padding: 8px 12px;
+    margin-top: 0;
+    margin-bottom: 10px;
   }
 
   .material-metadata {
