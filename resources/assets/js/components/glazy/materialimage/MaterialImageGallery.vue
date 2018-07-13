@@ -193,8 +193,8 @@
         </b-modal>
 
         <!-- Confirm Delete Modal -->
-        <b-modal id="deleteConfirmModal"
-                 ref="deleteConfirmModal"
+        <b-modal id="deleteImageConfirmModal"
+                 ref="deleteImageConfirmModal"
                  title="Delete Image?"
                  v-on:ok="deleteImage"
                  ok-title="Delete Forever">
@@ -330,14 +330,14 @@
       },
 
       confirmDelete: function () {
-        this.$refs.deleteConfirmModal.show()
+        this.$refs.deleteImageConfirmModal.show()
       },
 
       deleteImage: function() {
         if (!this.currentImage) {
           return;
         }
-        this.$refs.deleteConfirmModal.hide();
+        this.$refs.deleteImageConfirmModal.hide();
 
         Vue.axios.delete(Vue.axios.defaults.baseURL + '/materialimages/' + this.currentImage.id)
           .then((response) => {

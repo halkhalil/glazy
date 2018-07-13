@@ -209,12 +209,12 @@
                         <b-button class="btn-info" v-if="!recipe.isPrivate" v-b-modal.archiveConfirmModal><i class="fa fa-lock"></i> Lock</b-button>
                         <b-button class="btn-info" v-on:click="editMeta()"><i class="fa fa-edit"></i> Edit Info</b-button>
                         <b-button class="btn-info" v-if="!recipe.isPrimitive && !recipe.isAnalysis" v-on:click="editComponents()"><i class="fa fa-list"></i> Edit Recipe</b-button>
-                        <b-button class="btn-danger" v-b-modal.deleteConfirmModal><i class="fa fa-trash"></i></b-button>
+                        <b-button class="btn-danger" v-b-modal.deleteRecipeConfirmModal><i class="fa fa-trash"></i></b-button>
                       </b-button-group>
 
                       <b-modal v-if="canEdit"
-                               id="deleteConfirmModal"
-                               title="Delete Recipe?"
+                               id="deleteRecipeConfirmModal"
+                               :title="'Delete ' + materialTypeName + '?'"
                                v-on:ok="deleteRecipe"
                                ok-title="Delete Forever"
                       >
@@ -717,6 +717,7 @@
       materialTypeName: function () {
         if (!this.isLoaded) return ''
         if (this.recipe.isPrimitive) return 'Material'
+        if (this.recipe.isAnalysis) return 'Analysis'
         return 'Recipe'
       },
       mainClass: function() {
@@ -992,13 +993,26 @@
         Vue.axios.delete(Vue.axios.defaults.baseURL + '/recipes/' + this.recipe.id)
           .then((response) => {
           if (response.data.error) {
-          this.apiError = response.data.error
-          console.log(this.apiError)
-          this.isProcessing = false
-        } else {
-          this.isProcessing = false
-          this.$router.push({ name: 'search' })
-        }
+            this.apiError = response.data.error
+            console.log(this.apiError)
+            this.isProcessing = false
+          } else {
+            this.isProcessing = false
+            // this.$router.push({ name: 'search' })
+            let routeName = 'user'
+            if (this.recipe.isPrimitive) {
+              routeName = 'user-materials'
+            }
+            else if (this.recipe.isAnalysis) {
+              routeName = 'user-analyses'
+            }
+            this.$router.push({
+              name: routeName,
+              params: {
+                id: this.glazyHelper.getUserProfileUrlId(this.recipe.createdByUser)
+              }
+            })
+          }
         })
         .catch(response => {
           this.serverError = response;
