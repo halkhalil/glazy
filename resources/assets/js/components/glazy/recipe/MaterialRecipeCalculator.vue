@@ -29,7 +29,7 @@
             <tr v-for="(materialComponent, index) in this.materialComponents"
                 v-if="!materialComponent.isAdditional">
                 <td class="align-middle">
-                    <img class="rounded-circle d-none d-sm-block"
+                    <img class="rounded-circle"
                          width="40" height="40"
                          v-if="materialComponent.material.thumbnail"
                          :src="glazyHelper.getSmallImageUrl(materialComponent.material, materialComponent.material.thumbnail)"/>
@@ -58,7 +58,7 @@
                 v-if="materialComponent.isAdditional"
                 class="table-info">
                 <td class="align-middle">
-                    <img class="rounded-circle d-none d-sm-block"
+                    <img class="rounded-circle"
                          width="40" height="40"
                          v-if="materialComponent.material.thumbnail"
                          :src="glazyHelper.getSmallImageUrl(materialComponent.material, materialComponent.material.thumbnail)"/>
@@ -86,7 +86,7 @@
             </tr>
             <tr class="batch_form">
                 <td v-bind:colspan="numColumns" class="text-right">
-                    Tare:
+                    Tare:&nbsp;
                     <input type="number"
                            inputmode="numeric"
                            size="4"
