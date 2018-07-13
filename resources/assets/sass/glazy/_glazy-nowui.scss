@@ -237,6 +237,9 @@ $social-behance-state-color:       lighten(#1769ff, 6%) !default;
 
 @import "nowui/buttons";
 
+@import "nowui/mixins/social-buttons";
+@import "nowui/social-buttons";
+
 $general-transition-time:  300ms             !default;
 
 $slow-transition-time:           370ms       !default;
@@ -252,6 +255,7 @@ $transition-ease:           ease 0s;
 
 @import "nowui/mixins/cards";
 @import "nowui/cards";
+@import "nowui/cards/card-extend";
 
 .card .author span {
     color: inherit; // leave links blue
@@ -265,7 +269,10 @@ $transition-ease:           ease 0s;
 @import "nowui/mixins/_dropdown.scss";
 //@import "nowui/dropdown";
 // 20180514 added back in with trouble spots commented out
-@import "nowui/glazy_dropdown";
+//@import "nowui/glazy_dropdown";
+// Upgrading to BS 4.1.1
+@import "nowui/dropdown-glazy";
+@import "nowui/dropdown-extend";
 
 $line-height-nav-link:       1.625rem       !default;
 
