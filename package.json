@@ -38,7 +38,7 @@
     "cross-env": "^5.2.0",
     "eslint": "^3.19.0",
     "eslint-plugin-vue-libs": "^1.2.1",
-    "laravel-mix": "^1.7.2",
+    "laravel-mix": "^2.1.11",
     "svg-sprite-loader": "^3.8.0",
     "vue-axios": "^2.1.1",
     "vue-color": "https://github.com/derekphilipau/vue-color/tarball/36d1969b0d9298e310f24c9734c485eff6b61693",
