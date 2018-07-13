@@ -15,6 +15,21 @@
                             />
                         </a>
 
+                        <div v-if="currentImage && imageList.length > 1" class="gallery-nav-left">
+                            <b-button @click.stop.prevent="previousImage()"
+                                      class="btn btn-icon btn-round btn-gallery-nav"
+                                      type="button">
+                                <i class="fa fa-chevron-left"></i>
+                            </b-button>
+                        </div>
+                        <div v-if="currentImage && imageList.length > 1" class="gallery-nav-right">
+                            <b-button @click.stop.prevent="nextImage()"
+                                      class="btn btn-icon btn-round btn-gallery-nav"
+                                      type="button">
+                                <i class="fa fa-chevron-right"></i>
+                            </b-button>
+                        </div>
+
                         <div v-if="currentUser" class="gallery-actions">
                             <b-button v-if="(currentUser.id == material.createdByUserId) && (currentImage.id !== material.thumbnailId) && !material.isArchived"
                                       @click.stop.prevent="setThumbnail()"
@@ -439,6 +454,22 @@
     .image-gallery-card .card-image {
     }
 
+    .image-gallery-card .card-image .gallery-nav-left {
+        position: absolute;
+        top: 50%;
+        left: 10px;
+        padding: 0;
+        margin: 0;
+        z-index: 2;
+    }
+    .image-gallery-card .card-image .gallery-nav-right {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        padding: 0;
+        margin: 0;
+        z-index: 2;
+    }
     .image-gallery-card .card-image .gallery-actions {
         position: absolute;
         bottom: 0px;
@@ -446,6 +477,16 @@
         padding: 0;
         margin: 0;
         z-index: 2;
+    }
+    .btn-gallery-nav,
+    .btn-gallery-nav:focus {
+        color: rgba(255,255,255,0.6);
+        background-color: rgba(255,255,255,0.2);
+    }
+    .btn-gallery-nav:active,
+    .btn-gallery-nav:hover {
+        color: rgba(255,255,255,1.0);
+        background-color: rgba(255,255,255,0.6);
     }
     .image-gallery-card .card-body {
         padding: 10px;
