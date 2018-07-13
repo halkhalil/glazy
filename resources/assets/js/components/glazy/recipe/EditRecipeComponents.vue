@@ -245,7 +245,6 @@
         <div class="col-sm-3">
           <b-form-input :id="index + '_amount'"
                         v-model="materialFieldsAmount[index]"
-                        type="number"
                         inputmode="numeric"
                         size="sm"
                         min="0"
@@ -254,7 +253,24 @@
                         @focus="focused = index"
                         @blur="focused = null"
                         @change="focused = index"
-                        @input="updateMaterial"></b-form-input>
+                        @input="updateMaterial"
+                        class="amount-input float-left"></b-form-input>
+          <b-button-group
+                  v-if="materialFieldsId[index] && materialFieldsId[index].value"
+                  class="btn-amount-group float-left">
+            <b-button @click.stop.prevent="incrementAmount(index)"
+                      class="btn btn-neutral"
+                      tabindex="-1"
+                      type="button">
+              <i class="fa fa-plus"></i>
+            </b-button>
+            <b-button @click.stop.prevent="decrementAmount(index)"
+                      class="btn btn-neutral"
+                      tabindex="-1"
+                      type="button">
+              <i class="fa fa-minus"></i>
+            </b-button>
+          </b-button-group>
         </div>
         <div class="col-sm-2">
           <b-form-checkbox id="index + '_add'"
@@ -775,6 +791,25 @@
 
       editComponentsCancel: function() {
         this.$emit('editComponentsCancel');
+      },
+
+      incrementAmount: function (i) {
+        if (this.materialFieldsId[i]) {
+          let originalValue = parseFloat(this.materialFieldsAmount[i])
+          if (!originalValue) {
+            originalValue = 0
+          }
+          this.materialFieldsAmount[i] = originalValue + 1
+          this.setSubtotal()
+        }
+      },
+
+      decrementAmount: function (i) {
+        let originalValue = parseFloat(this.materialFieldsAmount[i])
+        if (originalValue > 0 && this.materialFieldsId[i]) {
+          this.materialFieldsAmount[i] = parseFloat(originalValue) - 1
+          this.setSubtotal()
+        }
       }
 
     }
@@ -848,6 +883,25 @@
   }
   .material-analysis-table tr td.amount {
       font-weight: bold;
+  }
+
+  .btn-amount-group {
+    margin-left: 2px;
+  }
+
+  .btn-amount-group .btn {
+    color: #888888;
+    font-size: 12px;
+    min-width: 24px;
+    width: 24px;
+    height: 30px;
+    line-height: 24px;
+    padding: 0;
+    margin: 0;
+  }
+
+  .amount-input {
+    width: 6rem;
   }
 
 .dropdown .dropdown-menu {
