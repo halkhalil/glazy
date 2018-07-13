@@ -247,7 +247,6 @@
                         v-model="materialFieldsAmount[index]"
                         type="number"
                         inputmode="numeric"
-                        @focus.native="$event.target.select()"
                         size="sm"
                         min="0"
                         placeholder="%"
