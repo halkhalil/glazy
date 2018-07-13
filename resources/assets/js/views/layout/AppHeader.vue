@@ -31,6 +31,7 @@
                     </b-nav-item-dropdown>
 
                     <notifications-dropdown
+                            v-if="$auth.check()"
                             v-on:notificationsUpdated="fetchUser"
                     ></notifications-dropdown>
 
