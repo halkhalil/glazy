@@ -1172,6 +1172,7 @@
 
   .material-metadata {
     font-size: 1em;
+    margin-bottom: 10px;
   }
 
   .material-metadata .badge {
