@@ -1,4 +1,5 @@
 /node_modules
+/public/css
 /public/js
 /public/storage
 /public/hot
@@ -18,3 +19,5 @@ Homestead.yaml
 /resources/assets/sass/glazy/nowui.tgz
 npm-debug.log
 yarn-error.log
+
+public/css/app.css
