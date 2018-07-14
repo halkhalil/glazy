@@ -250,6 +250,7 @@
                         min="0"
                         placeholder="%"
                         v-focus="index === focused"
+                        @focus.native="selectAmountField"
                         @focus="focused = index"
                         @blur="focused = null"
                         @change="focused = index"
@@ -810,6 +811,10 @@
           this.materialFieldsAmount[i] = parseFloat(originalValue) - 1
           this.setSubtotal()
         }
+      },
+
+      selectAmountField: function (event) {
+        event.target.setSelectionRange(0, 99999);
       }
 
     }
