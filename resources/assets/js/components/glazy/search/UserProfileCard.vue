@@ -16,25 +16,25 @@
                    v-bind:href="'http://' + searchUser.profile.url"
                    target="_blank"
                    class="btn btn-icon btn-sm btn-round btn-default">
-                    <i class="fa fa-link"></i>
+                    <i class="fab fa-link"></i>
                 </a>
                 <a v-if="'facebook' in searchUser.profile && searchUser.profile.facebook"
                    v-bind:href="'https://www.facebook.com/' + searchUser.profile.facebook"
                    target="_blank"
                    class="btn btn-icon btn-sm btn-round btn-facebook">
-                    <i class="fa fa-facebook"></i>
+                    <i class="fab fa-facebook"></i>
                 </a>
                 <a v-if="'instagram' in searchUser.profile && searchUser.profile.instagram"
                    v-bind:href="'https://www.instagram.com/' + searchUser.profile.instagram"
                    target="_blank"
                    class="btn btn-icon btn-sm btn-round btn-instagram">
-                    <i class="fa fa-instagram"></i>
+                    <i class="fab fa-instagram"></i>
                 </a>
                 <a v-if="'pinterest' in searchUser.profile && searchUser.profile.pinterest"
                    v-bind:href="'https://www.pinterest.com/' + searchUser.profile.pinterest"
                    target="_blank"
                    class="btn btn-icon btn-sm btn-round btn-pinterest">
-                    <i class="fa fa-pinterest"></i>
+                    <i class="fab fa-pinterest"></i>
                 </a>
                 <a v-if="'artaxis' in searchUser.profile && searchUser.profile.artaxis"
                    v-bind:href="'https://artaxis.org/' + searchUser.profile.artaxis"
